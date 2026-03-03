@@ -102,13 +102,10 @@ fun LoginScreen() {
             )
         }
     }
-
-
 }
 
 fun saveTokenToFile(context: Context, fileName: String, content: String) {
     try {
-        // Mở file ở chế độ Private (chỉ app này mới đọc được)
         context.openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
             output.write(content.toByteArray())
         }
