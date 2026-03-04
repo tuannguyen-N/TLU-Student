@@ -32,8 +32,8 @@ import org.example.project.presentations.utils.MsalHelper
 @Preview
 @Composable
 fun LoginScreen() {
-//    val context = LocalContext.current
-//    val activity = context as Activity
+    val context = LocalContext.current
+    val activity = context as Activity
 
     Box(
         modifier = Modifier
@@ -73,16 +73,11 @@ fun LoginScreen() {
                 modifier = Modifier.padding(horizontal = 40.dp),
                 textSize = 16.sp,
                 onClick = {
-//                    MsalHelper.signIn(activity) { account, token ->
-//                        if (account != null && token != null) {
-//                            val content = "Username: ${account.username}\nToken: $token"
-//
-//                            // Ghi vào file token.txt
-//                            saveTokenToFile(activity, "token.txt", content)
-//
-//                            // TODO: Navigate to HomeScreen
-//                        }
-//                    }
+                    MsalHelper.signIn(activity) { token ->
+                        if (token != null) {
+                            val content = "Token: $token"
+                        }
+                    }
                 }
             )
 
@@ -98,22 +93,10 @@ fun LoginScreen() {
                     .padding(bottom = 30.dp)
                     .clickable {
                         MsalHelper.signOut {
-                            Log.e("LOGIN", "LoginScreen: $it", )
+                            Log.e("LOGIN", "LoginScreen: $it",)
                         }
                     }
             )
         }
-    }
-}
-
-fun saveTokenToFile(context: Context, fileName: String, content: String) {
-    try {
-        context.openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
-            output.write(content.toByteArray())
-        }
-        Log.d("FILE_SAVE", "Lưu file thành công tại: ${context.filesDir}/$fileName")
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Log.e("FILE_SAVE", "Lỗi khi ghi file: ${e.message}")
     }
 }

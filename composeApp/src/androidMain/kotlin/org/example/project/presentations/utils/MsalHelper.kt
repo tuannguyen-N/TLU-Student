@@ -31,26 +31,24 @@ object MsalHelper {
         )
     }
 
-    fun signIn(activity: Activity, onResult: (IAccount?, String?) -> Unit) {
+    fun signIn(activity: Activity, onResult: (String?) -> Unit) {
         msalApp?.signIn(
             activity,
             null,
             arrayOf("User.Read"),
             object : AuthenticationCallback {
                 override fun onSuccess(authenticationResult: IAuthenticationResult) {
-                    val account = authenticationResult.account
-                    val token = account.idToken
-                    Log.d("MSAL", "✅ Account: ${account.username}")
-                    Log.d("MSAL", "✅ Token: $token")
-                    onResult(account, token)
+                    val token = authenticationResult.accessToken
+                    Log.d("MSAL", "✅ Access Token: $token")
+                    onResult(token)
                 }
                 override fun onError(exception: MsalException) {
                     Log.e("MSAL", "❌ Sign in error: ${exception.message}")
-                    onResult(null, null)
+                    onResult(null)
                 }
                 override fun onCancel() {
                     Log.d("MSAL", "⚠️ Cancelled")
-                    onResult(null, null)
+                    onResult(null)
                 }
             }
         )
