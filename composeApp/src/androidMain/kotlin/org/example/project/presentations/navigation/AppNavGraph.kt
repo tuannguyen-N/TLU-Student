@@ -27,7 +27,11 @@ fun AppNavGraph() {
         }
 
         composable(Routes.Login){
-            LoginScreen()
+            LoginScreen(
+                onNavigateToHome = {
+                    navController.navigate(Routes.Main)
+                }
+            )
         }
 
         composable(Routes.Main) {

@@ -3,17 +3,13 @@ package org.example.project.presentations.utils
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import com.microsoft.identity.client.AuthenticationCallback
-import com.microsoft.identity.client.IAccount
-import com.microsoft.identity.client.IAuthenticationResult
-import com.microsoft.identity.client.IPublicClientApplication
-import com.microsoft.identity.client.ISingleAccountPublicClientApplication
-import com.microsoft.identity.client.PublicClientApplication
+import com.microsoft.identity.client.*
 import com.microsoft.identity.client.exception.MsalException
 import org.example.project.R
 
 object MsalHelper {
     private var msalApp: ISingleAccountPublicClientApplication? = null
+    private val SCOPES = arrayOf("api://77df993d-e728-4b8e-9770-6b409aa99552/access_as_user")
 
     fun init(context: Context, onReady: () -> Unit) {
         PublicClientApplication.createSingleAccountPublicClientApplication(
@@ -25,57 +21,67 @@ object MsalHelper {
                     onReady()
                 }
                 override fun onError(exception: MsalException) {
-                    Log.e("MSAL", "Init error: ${exception.message}")
+                    Log.e("MSAL", "Lỗi khởi tạo: ${exception.message}")
                 }
             }
         )
     }
 
-    fun signIn(activity: Activity, onResult: (String?) -> Unit) {
-        msalApp?.signIn(
-            activity,
-            null,
-            arrayOf("User.Read"),
-            object : AuthenticationCallback {
-                override fun onSuccess(authenticationResult: IAuthenticationResult) {
-                    val token = authenticationResult.accessToken
-                    Log.d("MSAL", "✅ Access Token: $token")
-                    onResult(token)
+    fun signIn(activity: Activity, onResult: (IAccount?, String?) -> Unit) {
+        val app = msalApp ?: return onResult(null, null)
+
+        app.signIn(activity, null, SCOPES, object : AuthenticationCallback {
+            override fun onSuccess(result: IAuthenticationResult) {
+                val accessToken = result.accessToken
+                accessToken.chunked(200).forEachIndexed { index, chunk ->
+                    Log.d("MSAL", "$chunk")
                 }
-                override fun onError(exception: MsalException) {
-                    Log.e("MSAL", "❌ Sign in error: ${exception.message}")
-                    onResult(null)
-                }
-                override fun onCancel() {
-                    Log.d("MSAL", "⚠️ Cancelled")
-                    onResult(null)
-                }
+                onResult(result.account, accessToken)
             }
-        )
+
+            override fun onError(exception: MsalException) {
+                Log.e("MSAL", "Lỗi đăng nhập: ${exception.message}")
+                onResult(null, null)
+            }
+
+            override fun onCancel() {
+                Log.d("MSAL", "Người dùng đã hủy")
+                onResult(null, null)
+            }
+        })
     }
 
-    fun signOut(onResult: (Boolean) -> Unit) {
-        msalApp?.getCurrentAccountAsync(object : ISingleAccountPublicClientApplication.CurrentAccountCallback {
+    fun checkExistingAccount(onResult: (IAccount?, String?) -> Unit) {
+        val app = msalApp ?: return onResult(null, null)
+
+        app.getCurrentAccountAsync(object : ISingleAccountPublicClientApplication.CurrentAccountCallback {
             override fun onAccountLoaded(activeAccount: IAccount?) {
                 if (activeAccount == null) {
-                    Log.d("MSAL", "⚠️ No account to sign out")
-                    onResult(false)
+                    onResult(null, null)
                     return
                 }
-                msalApp?.signOut(object : ISingleAccountPublicClientApplication.SignOutCallback {
-                    override fun onSignOut() {
-                        Log.d("MSAL", "✅ Signed out successfully")
-                        onResult(true)
+                app.acquireTokenSilentAsync(SCOPES, activeAccount.authority, object : SilentAuthenticationCallback {
+                    override fun onSuccess(result: IAuthenticationResult) {
+                        onResult(result.account, result.accessToken)
                     }
                     override fun onError(exception: MsalException) {
-                        Log.e("MSAL", "❌ Sign out error: ${exception.message}")
-                        onResult(false)
+                        onResult(null, null)
                     }
                 })
             }
             override fun onAccountChanged(priorAccount: IAccount?, currentAccount: IAccount?) {}
+            override fun onError(exception: MsalException) = onResult(null, null)
+        })
+    }
+
+    fun signOut(onResult: (Boolean) -> Unit) {
+        msalApp?.signOut(object : ISingleAccountPublicClientApplication.SignOutCallback {
+            override fun onSignOut() {
+                Log.d("MSAL", "Đã đăng xuất")
+                onResult(true)
+            }
             override fun onError(exception: MsalException) {
-                Log.e("MSAL", "❌ Get account error: ${exception.message}")
+                Log.e("MSAL", "Lỗi đăng xuất: ${exception.message}")
                 onResult(false)
             }
         })

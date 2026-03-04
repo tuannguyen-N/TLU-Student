@@ -1,5 +1,5 @@
 {
-  "client_id": "8c655ce5-23dd-4e14-9b84-dd51218f8c3e",
+  "client_id": "77df993d-e728-4b8e-9770-6b409aa99552",
   "authorization_user_agent": "WEBVIEW",
   "redirect_uri": "msauth://org.example.project/ulPDb8t17cAqv1ANYqA4%2FDvmmSQ%3D",
   "broker_redirect_uri_registered": false,
@@ -9,7 +9,7 @@
       "type": "AAD",
       "audience": {
         "type": "AzureADMyOrg",
-        "tenant_id": "fc0bdaaf-292e-45cc-b51f-872867f9c981"
+        "tenant_id": "aec003eb-c537-4e8a-b0f3-1144a93a60bc"
       }
     }
   ]
