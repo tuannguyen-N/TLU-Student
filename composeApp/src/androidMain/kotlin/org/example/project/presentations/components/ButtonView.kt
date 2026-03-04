@@ -36,11 +36,12 @@ fun ButtonView(
     onClick: () -> Unit = {},
     enabled: Boolean = false,
     iconRes: Int? = null,
+    shape: RoundedCornerShape = RoundedCornerShape(12.dp)
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(12.dp),
+        shape = shape,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),

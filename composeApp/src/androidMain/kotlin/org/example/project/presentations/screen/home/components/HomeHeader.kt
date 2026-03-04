@@ -44,7 +44,7 @@ fun HomeHeader(
             modifier = Modifier
                 .statusBarsPadding()
                 .padding(start = 24.dp, end = 15.dp)
-                .padding(vertical = 10.dp)
+                .padding(vertical = 12.dp)
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_launcher_foreground),

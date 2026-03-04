@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.example.project.R
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -31,8 +32,8 @@ import org.example.project.presentations.utils.MsalHelper
 @Preview
 @Composable
 fun LoginScreen() {
-    val context = LocalContext.current
-    val activity = context as Activity
+//    val context = LocalContext.current
+//    val activity = context as Activity
 
     Box(
         modifier = Modifier
@@ -69,18 +70,19 @@ fun LoginScreen() {
                 enabled = true,
                 backgroundColorRes = LocalExtendedColors.current.mainRed,
                 text = "Đăng nhập bằng microsoft",
-                modifier = Modifier.padding(horizontal = 45.dp),
+                modifier = Modifier.padding(horizontal = 40.dp),
+                textSize = 16.sp,
                 onClick = {
-                    MsalHelper.signIn(activity) { account, token ->
-                        if (account != null && token != null) {
-                            val content = "Username: ${account.username}\nToken: $token"
-
-                            // Ghi vào file token.txt
-                            saveTokenToFile(activity, "token.txt", content)
-
-                            // TODO: Navigate to HomeScreen
-                        }
-                    }
+//                    MsalHelper.signIn(activity) { account, token ->
+//                        if (account != null && token != null) {
+//                            val content = "Username: ${account.username}\nToken: $token"
+//
+//                            // Ghi vào file token.txt
+//                            saveTokenToFile(activity, "token.txt", content)
+//
+//                            // TODO: Navigate to HomeScreen
+//                        }
+//                    }
                 }
             )
 

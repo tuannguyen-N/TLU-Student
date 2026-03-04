@@ -1,7 +1,7 @@
 {
-  "client_id": "77df993d-e728-4b8e-9770-6b409aa99552",
+  "client_id": "8c655ce5-23dd-4e14-9b84-dd51218f8c3e",
   "authorization_user_agent": "WEBVIEW",
-  "redirect_uri": "msauth://org.example.project/ulPDb8t17cAqv1ANYqA4%2FDvmmSQ%3D",
+  "redirect_uri": "https://online.thanglong.edu.vn/login",
   "broker_redirect_uri_registered": true,
   "account_mode": "SINGLE",
   "authorities": [
@@ -9,9 +9,9 @@
       "type": "AAD",
       "audience": {
         "type": "AzureADandPersonalMicrosoftAccount",
-        "tenant_id": "aec003eb-c537-4e8a-b0f3-1144a93a60bc"
+        "tenant_id": "fc0bdaaf-292e-45cc-b51f-872867f9c981"
       },
-      "authority_url": "https://login.microsoftonline.com/aec003eb-c537-4e8a-b0f3-1144a93a60bc/v2.0"
+      "authority_url": "https://login.microsoftonline.com/thanglongedu.onmicrosoft.com"
     }
   ]
 }

@@ -41,9 +41,9 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Preview
 @Composable
 fun EditProfileScreen(
+    viewModel: EditProfileViewModel = viewModel(),
     onBack: () -> Unit = {}
 ) {
-    val viewModel: EditProfileViewModel = viewModel()
     val state = viewModel.state
 
     val launcher = rememberLauncherForActivityResult(
