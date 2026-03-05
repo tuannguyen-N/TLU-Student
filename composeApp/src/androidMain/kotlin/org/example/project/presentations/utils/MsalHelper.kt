@@ -27,26 +27,26 @@ object MsalHelper {
         )
     }
 
-    fun signIn(activity: Activity, onResult: (IAccount?, String?) -> Unit) {
-        val app = msalApp ?: return onResult(null, null)
+    fun signIn(activity: Activity, onResult: (String?) -> Unit) {
+        val app = msalApp ?: return onResult(null)
 
         app.signIn(activity, null, SCOPES, object : AuthenticationCallback {
             override fun onSuccess(result: IAuthenticationResult) {
                 val accessToken = result.accessToken
-                accessToken.chunked(200).forEachIndexed { index, chunk ->
-                    Log.d("MSAL", "$chunk")
+                accessToken.chunked(200).forEachIndexed { _, chunk ->
+                    Log.d("MSAL", chunk)
                 }
-                onResult(result.account, accessToken)
+                onResult(accessToken)
             }
 
             override fun onError(exception: MsalException) {
                 Log.e("MSAL", "Lỗi đăng nhập: ${exception.message}")
-                onResult(null, null)
+                onResult(null)
             }
 
             override fun onCancel() {
                 Log.d("MSAL", "Người dùng đã hủy")
-                onResult(null, null)
+                onResult(null)
             }
         })
     }

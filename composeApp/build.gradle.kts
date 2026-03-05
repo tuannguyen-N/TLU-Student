@@ -23,6 +23,9 @@ kotlin {
             implementation("androidx.core:core-splashscreen:1.2.0")
             implementation("androidx.navigation:navigation-compose:2.9.7")
             implementation("com.microsoft.identity.client:msal:5.+")
+            implementation("androidx.security:security-crypto:1.1.0")
+            implementation("androidx.compose.material:material-icons-extended:1.7.8")
+            implementation("io.coil-kt:coil-compose:2.7.0")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -33,8 +36,6 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation("androidx.compose.material:material-icons-extended:1.7.8")
-            implementation("io.coil-kt:coil-compose:2.7.0")
             implementation(projects.shared)
         }
         commonTest.dependencies {

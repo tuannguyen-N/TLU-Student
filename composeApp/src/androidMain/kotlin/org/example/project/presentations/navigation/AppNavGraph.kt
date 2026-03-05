@@ -1,11 +1,15 @@
 package org.example.project.presentations.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
 import org.example.project.presentations.screen.login.LoginScreen
+import org.example.project.presentations.screen.login.LoginViewModel
+import org.example.project.presentations.screen.login.LoginViewModelFactory
+import org.example.project.presentations.screen.main.LocalAppContainer
 import org.example.project.presentations.screen.main.MainScreen
 import org.example.project.presentations.screen.notification.NotificationScreen
 import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
@@ -27,10 +31,16 @@ fun AppNavGraph() {
         }
 
         composable(Routes.Login){
+            val container = LocalAppContainer.current
+            val loginViewModel: LoginViewModel = viewModel(
+                factory = LoginViewModelFactory(container.loginUseCase)
+            )
+
             LoginScreen(
                 onNavigateToHome = {
                     navController.navigate(Routes.Main)
-                }
+                },
+                loginViewModel =loginViewModel
             )
         }
 
