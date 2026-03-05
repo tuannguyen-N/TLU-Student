@@ -30,11 +30,12 @@ import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun HeaderProfile(
-    onClickBack: () -> Unit = {},
-    onClickSetting: () -> Unit = {}
+    studentName: String,
+    majorName: String,
+    onClickBack: () -> Unit,
+    onClickSetting: () -> Unit
 ) {
     Box {
         Image(
@@ -86,7 +87,7 @@ fun HeaderProfile(
             )
 
             Text(
-                text = "Nguyen Van Vanh",
+                text = studentName,
                 fontWeight = FontWeight.Bold,
                 color = LocalExtendedColors.current.mainBlue,
                 style = MaterialTheme.typography.titleLarge,
@@ -94,7 +95,7 @@ fun HeaderProfile(
             )
 
             Text(
-                text = "Cong Nghe Thong Tin",
+                text = majorName,
                 color = LocalExtendedColors.current.gray,
                 style = MaterialTheme.typography.bodyMedium,
             )

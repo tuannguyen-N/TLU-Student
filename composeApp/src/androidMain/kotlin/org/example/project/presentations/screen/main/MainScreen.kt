@@ -1,5 +1,8 @@
 package org.example.project.presentations.screen.main
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.example.project.data.remote.dto.me.StudentInformation
 import org.example.project.presentations.navigation.BottomRoutes
 import org.example.project.presentations.screen.school_schedule.SchoolScheduleScreen
 import org.example.project.presentations.screen.BottomBar
 import org.example.project.presentations.screen.home.HomeScreen
+import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.transcript.TranscriptScreen
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -25,7 +30,8 @@ fun MainScreen(
     onOpenProfileScreen: () -> Unit,
     onOpenNotificationScreen: () -> Unit,
     onOpenTranscriptTerm: () -> Unit,
-    onOpenTimetable: () -> Unit
+    onOpenTimetable: () -> Unit,
+    homeViewModel: HomeViewModel
 ) {
     val navController = rememberNavController()
 
@@ -41,25 +47,43 @@ fun MainScreen(
                 startDestination = BottomRoutes.Home,
                 modifier = Modifier.padding(paddingValues)
             ) {
-                composable(BottomRoutes.Home) {
+                composable(
+                    BottomRoutes.Home,
+                    enterTransition = { fadeIn(tween(300)) },
+                    exitTransition = { fadeOut(tween(300)) },
+                ) {
                     HomeScreen(
-                        onOpenProfileScreen = onOpenProfileScreen,
-                        onOpenNotificationScreen = onOpenNotificationScreen
+                        onOpenProfileScreen = {
+                            onOpenProfileScreen()
+                        },
+                        onOpenNotificationScreen = onOpenNotificationScreen,
+                        homeViewModel = homeViewModel,
+
                     )
                 }
 
-                composable(BottomRoutes.SchoolSchedule) {
+                composable(
+                    BottomRoutes.SchoolSchedule,
+                    enterTransition = { fadeIn(tween(300)) },
+                    exitTransition = { fadeOut(tween(300)) },
+                ) {
                     SchoolScheduleScreen(
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenTimetable = onOpenTimetable
                     )
                 }
 
-                composable(BottomRoutes.Chat) {
+                composable(
+                    BottomRoutes.Chat, enterTransition = { fadeIn(tween(300)) },
+                    exitTransition = { fadeOut(tween(300)) },
+                ) {
 
                 }
 
-                composable(BottomRoutes.Transcript) {
+                composable(
+                    BottomRoutes.Transcript, enterTransition = { fadeIn(tween(300)) },
+                    exitTransition = { fadeOut(tween(300)) },
+                ) {
                     TranscriptScreen(
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenTranscriptTerm = onOpenTranscriptTerm

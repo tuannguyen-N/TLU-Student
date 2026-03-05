@@ -27,6 +27,7 @@ import org.example.project.presentations.screen.login.components.AuthenticationE
 import org.example.project.presentations.screen.login.components.CenterContent
 import org.example.project.presentations.screen.login.components.LoginButton
 import org.example.project.presentations.utils.CollectWithLifecycle
+import org.example.project.presentations.utils.MsalHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +50,7 @@ fun LoginScreen(
 
     if (showErrorSheet) {
         ModalBottomSheet(
+            dragHandle = null,
             onDismissRequest = {
                 showErrorSheet = false
             },
@@ -90,6 +92,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .padding(bottom = 30.dp)
                     .clickable {
+                        MsalHelper.signOut {  }
                         // TODO:
                     }
             )

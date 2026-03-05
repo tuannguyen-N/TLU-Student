@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -23,14 +24,17 @@ class LoginViewModel(
     private val _event = Channel<LoginUiEvent>()
     val event = _event.receiveAsFlow()
 
-    fun onLoginClick(activity: Activity){
-        MsalHelper.signIn(activity) { token ->
-            if (token != null) onSignMsalSuccess(token)
+    fun onLoginClick(activity: Activity) {
+        viewModelScope.launch {
+            MsalHelper.signOut {}//todo
+            delay(1000L)
+            MsalHelper.signIn(activity) { newToken ->
+                if (newToken != null) onSignMsalSuccess(newToken)
+            }
         }
     }
 
     fun onSignMsalSuccess(token: String) {
-        Log.e("123123", "onSignMsalSuccess: $token", )
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
 
@@ -40,6 +44,7 @@ class LoginViewModel(
                     sendUiEvent(LoginUiEvent.OnNavigateToHome)
                 },
                 onFailure = {
+                    Log.e("123123", "onSignMsalSuccess: $it", )
                     updateState { copy(isLoading = false) }
                     sendUiEvent(LoginUiEvent.ShowError)
                 }

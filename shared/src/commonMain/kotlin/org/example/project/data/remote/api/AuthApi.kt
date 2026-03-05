@@ -6,8 +6,8 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import org.example.project.data.remote.dto.LoginRequest
-import org.example.project.data.remote.dto.LoginResponse
+import org.example.project.data.remote.dto.login.LoginRequest
+import org.example.project.data.remote.dto.login.LoginResponse
 
 class AuthApi(
     private val client: HttpClient

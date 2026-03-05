@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.data.remote.dto.me.StudentInformation
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.domain.model.FeatureUiModel
 import org.example.project.domain.model.NewAndEventUiModel
@@ -24,11 +27,14 @@ import org.example.project.presentations.screen.home.components.NewsAndEventsLis
 import org.example.project.presentations.screen.home.components.ScheduleClassList
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun HomeScreen(
-    onOpenProfileScreen: () -> Unit = {}, onOpenNotificationScreen: () -> Unit = {}
+    onOpenProfileScreen: () -> Unit = {},
+    onOpenNotificationScreen: () -> Unit = {},
+    homeViewModel: HomeViewModel
 ) {
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+
     val alerts = remember { AlertUiModel.getDemoList() }
     val schedule = remember { ScheduleClassUiModel.getDataDemo() }
     val features = remember { FeatureUiModel.getDemoList() }
@@ -38,7 +44,11 @@ fun HomeScreen(
         contentWindowInsets = WindowInsets(0),
         topBar = {
             HomeHeader(
-                onOpenProfile = onOpenProfileScreen, onOpenNotification = onOpenNotificationScreen
+                name = uiState.studentInfo?.fullName ?: "",
+                studentCode = uiState.studentInfo?.fullName ?: "",
+                onOpenProfile = { onOpenProfileScreen() },
+                onOpenNotification = onOpenNotificationScreen,
+                isProfileReady = uiState.studentInfo != null
             )
         }) { paddingValues ->
         LazyColumn(

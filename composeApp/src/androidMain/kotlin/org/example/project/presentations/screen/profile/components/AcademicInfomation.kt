@@ -15,19 +15,19 @@ import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
-fun ContactPersonInformation(
+fun AcademicInformation(
     modifier: Modifier = Modifier,
-    contactName: String = "Nguyễn Văn A",
-    contactPhone: String = "0123456789",
-    contactAddress: String = "Hà Nội"
+    classCode: String,
+    position: String,
+    academicAdvisor: String,
+    cohort: String,
+    educationMode: String
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
+
         Text(
-            text = "Thông tin người liên hệ",
+            text = "Thông tin học tập",
             fontWeight = FontWeight.SemiBold,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(bottom = 10.dp)
@@ -39,9 +39,37 @@ fun ContactPersonInformation(
                 .background(LocalExtendedColors.current.white)
                 .padding(horizontal = 15.dp)
         ) {
-            InformationItem(R.drawable.icon_name, "Họ và tên", contactName)
-            InformationItem(R.drawable.icon_phone_number, "Số điện thoại", contactPhone)
-            InformationItem(R.drawable.icon_adress, "Địa chỉ", contactAddress, true)
+
+            InformationItem(
+                R.drawable.icon_student_class,
+                "Lớp sinh viên",
+                classCode
+            )
+
+            InformationItem(
+                R.drawable.icon_class_position,
+                "Chức vụ",
+                position
+            )
+
+            AcademicAdvisorItem(
+                R.drawable.icon_academic_advisor,
+                "Cố vấn học tập",
+                "Nguyễn Var Tày",
+                academicAdvisor
+            )
+
+            InformationItem(
+                R.drawable.icon_course,
+                "Khoá học",
+                cohort
+            )
+
+            InformationItem(
+                R.drawable.icon_course,
+                "Hệ",
+                educationMode
+            )
         }
     }
 }

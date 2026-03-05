@@ -24,15 +24,20 @@ import org.example.project.R
 import org.example.project.presentations.screen.profile.components.AcademicAdvisorItem
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
-fun StudentInformation(
+fun PersonalInformation(
+    studentCode: String,
+    fullName: String,
+    gender: String,
+    cardNumber: String,
+    phoneNumber: String,
+    email: String,
+    address: String,
     modifier: Modifier = Modifier,
     onEditProfile: () -> Unit = {}
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -40,13 +45,17 @@ fun StudentInformation(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Text(
-                text = "Thông Tin Sinh Viên",
+                text = "Thông tin cá nhân",
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            IconButton(onClick = onEditProfile, modifier = Modifier.size(28.dp)) {
+            IconButton(
+                onClick = onEditProfile,
+                modifier = Modifier.size(28.dp)
+            ) {
                 Image(
                     painter = painterResource(R.drawable.icon_edit_profile),
                     contentDescription = "edit_profile"
@@ -60,22 +69,14 @@ fun StudentInformation(
                 .background(LocalExtendedColors.current.white)
                 .padding(horizontal = 15.dp)
         ) {
-            InformationItem(R.drawable.icon_student_code, "Mã sinh viên", "A45044")
-            InformationItem(R.drawable.icon_name, "Họ và tên", "Nguyễn Văn Vận")
-            InformationItem(R.drawable.icon_sex, "Giới tính", "Nam")
-            InformationItem(R.drawable.icon_cmnd, "CMND/CCCD", "123456789")
-            InformationItem(R.drawable.icon_student_class, "Lớp Sinh Viên", "ABCABC")
-            InformationItem(R.drawable.icon_phone_number, "Số điện thoại", "0123456789")
-            InformationItem(R.drawable.icon_course, "Khoá học", "Khoá 36")
-            AcademicAdvisorItem(
-                R.drawable.icon_academic_advisor,
-                "Cố vấn học tập",
-                "Nguyễn Var Tày",
-                "123123"
-            )
-            InformationItem(R.drawable.icon_mail, "Email", "john.blair@example-pet-store.com")
-            InformationItem(R.drawable.icon_ethnic, "Dân tộc", "Kinh")
-            InformationItem(R.drawable.icon_adress, "Địa chỉ", "Hà Nội", true)
+
+            InformationItem(R.drawable.icon_student_code, "Mã sinh viên", studentCode)
+            InformationItem(R.drawable.icon_name, "Họ và tên", fullName)
+            InformationItem(R.drawable.icon_sex, "Giới tính", gender)
+            InformationItem(R.drawable.icon_cmnd, "CMND/CCCD", cardNumber)
+            InformationItem(R.drawable.icon_phone_number, "Số điện thoại", phoneNumber)
+            InformationItem(R.drawable.icon_mail, "Email", email)
+            InformationItem(R.drawable.icon_adress, "Địa chỉ", address, true)
         }
     }
 }

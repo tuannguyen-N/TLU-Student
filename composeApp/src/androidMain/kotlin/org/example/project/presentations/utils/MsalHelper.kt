@@ -28,6 +28,7 @@ object MsalHelper {
     }
 
     fun signIn(activity: Activity, onResult: (String?) -> Unit) {
+        Log.d("MSAL", "msalApp = $msalApp")
         val app = msalApp ?: return onResult(null)
 
         app.signIn(activity, null, SCOPES, object : AuthenticationCallback {
@@ -69,7 +70,11 @@ object MsalHelper {
                     }
                 })
             }
-            override fun onAccountChanged(priorAccount: IAccount?, currentAccount: IAccount?) {}
+
+            override fun onAccountChanged(priorAccount: IAccount?, currentAccount: IAccount?) {
+                if (currentAccount == null) onResult(null, null)
+            }
+
             override fun onError(exception: MsalException) = onResult(null, null)
         })
     }

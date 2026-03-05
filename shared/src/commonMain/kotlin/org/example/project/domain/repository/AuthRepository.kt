@@ -10,7 +10,7 @@ class AuthRepository(
     suspend fun login(microsoftAccessToken: String): Result<Unit> {
         try {
             val response = authApi.login(microsoftAccessToken)
-            val token = response.data?.token ?: return Result.failure(Exception("$response"))
+            val token = response.data?.token ?: return Result.failure(Exception("$response")) //todo code = -1, code = -2, code = -3
             tokenStorage.saveAccessToken(token)
             return Result.success(Unit)
         } catch (e: Exception) {

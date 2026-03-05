@@ -10,4 +10,6 @@ object Routes {
     const val EditProfile = "edit_profile"
     const val TranscriptTerm = "transcript_term"
     const val TimetableScreen = "timetable_screen"
+
+    fun profileRoute(studentCode: String) = "profile/$studentCode"
 }

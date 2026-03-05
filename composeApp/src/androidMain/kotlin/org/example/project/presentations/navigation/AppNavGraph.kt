@@ -5,7 +5,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.example.project.presentations.screen.SharedViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
+import org.example.project.presentations.screen.home.HomeViewModel
+import org.example.project.presentations.screen.home.HomeViewModelFactory
 import org.example.project.presentations.screen.login.LoginScreen
 import org.example.project.presentations.screen.login.LoginViewModel
 import org.example.project.presentations.screen.login.LoginViewModelFactory
@@ -14,6 +17,8 @@ import org.example.project.presentations.screen.main.MainScreen
 import org.example.project.presentations.screen.notification.NotificationScreen
 import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
 import org.example.project.presentations.screen.profile.ProfileScreen
+import org.example.project.presentations.screen.profile.ProfileViewModel
+import org.example.project.presentations.screen.profile.ProfileViewModelFactory
 import org.example.project.presentations.screen.setting.SettingScreen
 import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.timetable.TimetableScreen
@@ -21,6 +26,7 @@ import org.example.project.presentations.screen.timetable.TimetableScreen
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
+    val sharedViewModel: SharedViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -30,7 +36,7 @@ fun AppNavGraph() {
             SplashScreen(navController)
         }
 
-        composable(Routes.Login){
+        composable(Routes.Login) {
             val container = LocalAppContainer.current
             val loginViewModel: LoginViewModel = viewModel(
                 factory = LoginViewModelFactory(container.loginUseCase)
@@ -40,11 +46,16 @@ fun AppNavGraph() {
                 onNavigateToHome = {
                     navController.navigate(Routes.Main)
                 },
-                loginViewModel =loginViewModel
+                loginViewModel = loginViewModel
             )
         }
 
         composable(Routes.Main) {
+            val container = LocalAppContainer.current
+            val homeViewModel: HomeViewModel = viewModel(
+                factory = HomeViewModelFactory(container.studentUseCase)
+            )
+
             MainScreen(
                 onOpenProfileScreen = {
                     navController.navigate(Routes.Profile)
@@ -57,19 +68,23 @@ fun AppNavGraph() {
                 },
                 onOpenTimetable = {
                     navController.navigate(Routes.TimetableScreen)
-                }
+                },
+                homeViewModel = homeViewModel
             )
         }
 
         composable(Routes.Profile) {
+            val container = LocalAppContainer.current
+
+            val profileViewModel: ProfileViewModel = viewModel(
+                factory = ProfileViewModelFactory(container.studentUseCase)
+            )
+
             ProfileScreen(
-                rootNavController = navController,
-                onOpenSetting = {
-                    navController.navigate(Routes.Setting)
-                },
-                onOpenEditProfile = {
-                    navController.navigate(Routes.EditProfile)
-                }
+                onBack = { navController.popBackStack() },
+                onOpenSetting = { navController.navigate(Routes.Setting) },
+                onOpenEditProfile = { navController.navigate(Routes.EditProfile) },
+                profileViewModel = profileViewModel,
             )
         }
 
