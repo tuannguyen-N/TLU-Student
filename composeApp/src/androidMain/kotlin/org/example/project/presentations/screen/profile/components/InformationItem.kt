@@ -28,9 +28,7 @@ fun InformationItem(
     value: String = "A45044",
     isLastItem: Boolean = false
 ) {
-    Column(
-
-    ) {
+    Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,7 +60,10 @@ fun InformationItem(
 
         if (!isLastItem) {
             Spacer(
-                modifier = Modifier.background(LocalExtendedColors.current.gray).fillMaxWidth().height(1.dp)
+                modifier = Modifier
+                    .background(LocalExtendedColors.current.gray)
+                    .fillMaxWidth()
+                    .height(1.dp)
             )
         }
     }

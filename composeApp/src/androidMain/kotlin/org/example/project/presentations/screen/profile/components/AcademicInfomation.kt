@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -68,7 +67,8 @@ fun AcademicInformation(
             InformationItem(
                 R.drawable.icon_course,
                 "Hệ",
-                educationMode
+                educationMode,
+                true
             )
         }
     }

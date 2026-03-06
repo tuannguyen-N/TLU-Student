@@ -18,10 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
-import org.example.project.presentations.screen.profile.components.AcademicAdvisorItem
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -72,7 +70,7 @@ fun PersonalInformation(
 
             InformationItem(R.drawable.icon_student_code, "Mã sinh viên", studentCode)
             InformationItem(R.drawable.icon_name, "Họ và tên", fullName)
-            InformationItem(R.drawable.icon_sex, "Giới tính", gender)
+            InformationItem(R.drawable.icon_gender, "Giới tính", gender)
             InformationItem(R.drawable.icon_cmnd, "CMND/CCCD", cardNumber)
             InformationItem(R.drawable.icon_phone_number, "Số điện thoại", phoneNumber)
             InformationItem(R.drawable.icon_mail, "Email", email)

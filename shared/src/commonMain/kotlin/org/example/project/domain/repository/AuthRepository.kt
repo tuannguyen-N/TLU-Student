@@ -5,7 +5,7 @@ import org.example.project.data.remote.api.AuthApi
 
 class AuthRepository(
     private val authApi: AuthApi,
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
 ) {
     suspend fun login(microsoftAccessToken: String): Result<Unit> {
         try {
@@ -18,5 +18,7 @@ class AuthRepository(
         }
     }
 
-    private fun logout() {}
+    suspend fun signOut() {
+        tokenStorage.clearAccessToken()
+    }
 }

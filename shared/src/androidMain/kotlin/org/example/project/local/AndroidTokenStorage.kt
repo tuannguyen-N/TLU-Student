@@ -35,4 +35,10 @@ class AndroidTokenStorage(
 
     override fun getAccessToken(): String? =
         sharedPreferences.getString(KEY_ACCESS_TOKEN, null)
+
+    override fun clearAccessToken(){
+        sharedPreferences.edit {
+            remove(KEY_ACCESS_TOKEN)
+        }
+    }
 }

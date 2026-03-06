@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.example.project.presentations.screen.SharedViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
+import org.example.project.presentations.screen.edit_profile.EditProfileViewModel
+import org.example.project.presentations.screen.edit_profile.EditProfileViewModelFactory
 import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.home.HomeViewModelFactory
 import org.example.project.presentations.screen.login.LoginScreen
@@ -15,13 +17,13 @@ import org.example.project.presentations.screen.login.LoginViewModelFactory
 import org.example.project.presentations.screen.main.LocalAppContainer
 import org.example.project.presentations.screen.main.MainScreen
 import org.example.project.presentations.screen.notification.NotificationScreen
-import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
 import org.example.project.presentations.screen.profile.ProfileScreen
 import org.example.project.presentations.screen.profile.ProfileViewModel
 import org.example.project.presentations.screen.profile.ProfileViewModelFactory
 import org.example.project.presentations.screen.setting.SettingScreen
 import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.timetable.TimetableScreen
+import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
 
 @Composable
 fun AppNavGraph() {
@@ -84,7 +86,7 @@ fun AppNavGraph() {
                 onBack = { navController.popBackStack() },
                 onOpenSetting = { navController.navigate(Routes.Setting) },
                 onOpenEditProfile = { navController.navigate(Routes.EditProfile) },
-                profileViewModel = profileViewModel,
+                viewModel = profileViewModel,
             )
         }
 
@@ -97,7 +99,13 @@ fun AppNavGraph() {
         }
 
         composable(Routes.EditProfile) {
+            val container = LocalAppContainer.current
+            val editProfileViewModel: EditProfileViewModel = viewModel(
+                factory = EditProfileViewModelFactory(container.studentUseCase)
+            )
+
             EditProfileScreen(
+                viewModel = editProfileViewModel,
                 onBack = {
                     navController.popBackStack()
                 }

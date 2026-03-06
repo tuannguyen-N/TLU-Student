@@ -44,7 +44,8 @@ fun EditTextView(
             placeholder = {
                 Text(
                     text = hint,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
             },
             leadingIcon = {
@@ -59,8 +60,16 @@ fun EditTextView(
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (error != null) Color.Red else LocalExtendedColors.current.gray,
-                unfocusedBorderColor = if (error != null) Color.Red else LocalExtendedColors.current.gray,
+                focusedBorderColor = if (error != null) Color.Red else LocalExtendedColors.current.mainBlue,
+                unfocusedBorderColor = if (error != null) Color.Red else LocalExtendedColors.current.gray.copy(alpha = 0.5f),
+
+                cursorColor = MaterialTheme.colorScheme.primary,
+
+                focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+                unfocusedLeadingIconColor = LocalExtendedColors.current.gray,
+
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
             )
         )
 

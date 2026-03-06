@@ -19,12 +19,13 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun ProfileScreen(
-    profileViewModel: ProfileViewModel,
+    viewModel: ProfileViewModel,
     onOpenSetting: () -> Unit = {},
     onOpenEditProfile: () -> Unit = {},
     onBack: () -> Unit = {}
 ) {
-    val uiState by profileViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val student = uiState.studentInfo
 
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
@@ -33,8 +34,8 @@ fun ProfileScreen(
             HeaderProfile(
                 onClickBack = onBack,
                 onClickSetting = onOpenSetting,
-                studentName = uiState.studentInfo?.fullName ?: "",
-                majorName = uiState.studentInfo?.major?.majorName ?: ""
+                studentName = student?.fullName.orEmpty(),
+                majorName = student?.major?.majorName.orEmpty()
             )
         }
     ) { paddingValues ->
@@ -48,13 +49,13 @@ fun ProfileScreen(
 
             item {
                 PersonalInformation(
-                    studentCode = uiState.studentInfo?.studentCode ?: "",
-                    fullName = uiState.studentInfo?.fullName ?: "",
-                    gender = uiState.studentInfo?.gender ?: "",
-                    cardNumber = uiState.studentInfo?.identityCard?.cardNumber ?: "",
-                    phoneNumber = uiState.studentInfo?.contact?.phoneNumber ?: "",
-                    email = uiState.studentInfo?.contact?.email ?: "",
-                    address = uiState.studentInfo?.contact?.address ?: "",
+                    studentCode = student?.studentCode.orEmpty(),
+                    fullName = student?.fullName.orEmpty(),
+                    gender = student?.gender.orEmpty(),
+                    cardNumber = student?.identityCard?.cardNumber.orEmpty(),
+                    phoneNumber = student?.contact?.phoneNumber.orEmpty(),
+                    email = student?.contact?.email.orEmpty(),
+                    address = student?.contact?.address.orEmpty(),
                     onEditProfile = onOpenEditProfile,
                     modifier = Modifier.padding(horizontal = 25.dp)
                 )
@@ -63,19 +64,19 @@ fun ProfileScreen(
             item {
                 AcademicInformation(
                     modifier = Modifier.padding(horizontal = 25.dp),
-                    classCode = uiState.studentInfo?.classCode ?: "",
-                    position = uiState.studentInfo?.academicInfo?.position ?: "",
-                    academicAdvisor = uiState.studentInfo?.academicAdvisor ?: "",
-                    cohort = uiState.studentInfo?.academicInfo?.cohort ?: "",
-                    educationMode = uiState.studentInfo?.academicInfo?.educationMode ?: ""
+                    classCode = student?.classCode.orEmpty(),
+                    position = student?.academicInfo?.position.orEmpty(),
+                    academicAdvisor = student?.academicAdvisor.orEmpty(),
+                    cohort = student?.academicInfo?.cohort.orEmpty(),
+                    educationMode = student?.academicInfo?.educationMode.orEmpty()
                 )
             }
 
             item {
                 ContactPersonInformation(
-                    contactName = uiState.studentInfo?.emergencyContact?.name ?: "",
-                    contactPhone = uiState.studentInfo?.emergencyContact?.phoneNumber ?: "",
-                    contactAddress = uiState.studentInfo?.emergencyContact?.address ?: "",
+                    contactName = student?.emergencyContact?.name.orEmpty(),
+                    contactPhone = student?.emergencyContact?.phoneNumber.orEmpty(),
+                    contactAddress = student?.emergencyContact?.address.orEmpty(),
                     modifier = Modifier
                         .padding(horizontal = 25.dp)
                         .padding(bottom = 50.dp)

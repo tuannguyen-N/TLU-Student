@@ -10,4 +10,8 @@ class IosTokenStorage : TokenStorage {
     override fun getAccessToken(): String? {
         TODO("Not yet implemented")
     }
+
+    override fun clearAccessToken() {
+        TODO("Not yet implemented")
+    }
 }
