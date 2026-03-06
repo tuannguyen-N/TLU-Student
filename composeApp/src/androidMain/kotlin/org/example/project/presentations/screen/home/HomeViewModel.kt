@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -30,7 +29,9 @@ class HomeViewModel(
     private fun observeStudentInfo() {
         viewModelScope.launch {
             studentUseCase.studentInfo.collect { studentInformation ->
-                updateState { copy(studentInfo = studentInformation) }
+                studentInformation?.let {
+                    updateState { copy(studentInfo = it) }
+                }
             }
         }
     }

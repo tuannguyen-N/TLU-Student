@@ -32,6 +32,7 @@ kotlin {
             implementation("androidx.security:security-crypto:1.1.0")
             implementation("androidx.compose.material:material-icons-extended:1.7.8")
             implementation("io.coil-kt:coil-compose:2.7.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

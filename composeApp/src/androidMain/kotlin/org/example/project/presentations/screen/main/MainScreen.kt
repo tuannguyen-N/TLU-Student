@@ -16,12 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import org.example.project.data.remote.dto.me.StudentInformation
 import org.example.project.presentations.navigation.BottomRoutes
-import org.example.project.presentations.screen.school_schedule.SchoolScheduleScreen
 import org.example.project.presentations.screen.BottomBar
 import org.example.project.presentations.screen.home.HomeScreen
 import org.example.project.presentations.screen.home.HomeViewModel
+import org.example.project.presentations.screen.school_schedule.ScheduleScreen
+import org.example.project.presentations.screen.school_schedule.ScheduleViewModel
 import org.example.project.presentations.screen.transcript.TranscriptScreen
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -31,7 +31,8 @@ fun MainScreen(
     onOpenNotificationScreen: () -> Unit,
     onOpenTranscriptTerm: () -> Unit,
     onOpenTimetable: () -> Unit,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    scheduleViewModel: ScheduleViewModel
 ) {
     val navController = rememberNavController()
 
@@ -67,9 +68,10 @@ fun MainScreen(
                     enterTransition = { fadeIn(tween(300)) },
                     exitTransition = { fadeOut(tween(300)) },
                 ) {
-                    SchoolScheduleScreen(
+                    ScheduleScreen(
                         onOpenNotificationScreen = onOpenNotificationScreen,
-                        onOpenTimetable = onOpenTimetable
+                        onOpenTimetable = onOpenTimetable,
+                        viewModel = scheduleViewModel
                     )
                 }
 

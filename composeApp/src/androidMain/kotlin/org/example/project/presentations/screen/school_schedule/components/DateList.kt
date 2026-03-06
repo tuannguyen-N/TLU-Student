@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -26,12 +26,15 @@ import java.time.temporal.TemporalAdjusters
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DateList(modifier: Modifier) {
+fun DateList(
+    modifier: Modifier = Modifier,
+    selectedDayOfWeek: Int,
+    onChangeDayOfWeek: (Int) -> Unit
+) {
     val today = remember { LocalDate.now() }
-
     val dates = remember {
         val monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-        (0..5).map { monday.plusDays(it.toLong()) }
+        (0..6).map { monday.plusDays(it.toLong()) }
     }
 
     LazyRow(
@@ -39,12 +42,14 @@ fun DateList(modifier: Modifier) {
         horizontalArrangement = Arrangement.spacedBy(15.dp),
         modifier = modifier.fillMaxWidth()
     ) {
-        itemsIndexed(dates) { _, date ->
+        items(dates) { date ->
             DateItem(
-                day = date.dayOfWeek,
+                day = date.dayOfWeek.value,
                 dayNumber = date.dayOfMonth,
-                isCurrent = date == today,
-                onClickItem = {}
+                isCurrent = date.dayOfWeek.value == selectedDayOfWeek,
+                onClickItem = {
+                    onChangeDayOfWeek(date.dayOfWeek.value)
+                }
             )
         }
     }
@@ -53,11 +58,12 @@ fun DateList(modifier: Modifier) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateItem(
-    day: DayOfWeek,
+    day: Int,
     dayNumber: Int,
     isCurrent: Boolean = false,
     onClickItem: () -> Unit
 ) {
+    val dayText = if (day ==7) "CN" else "Th ${day + 1}"
     val backgroundColor =
         if (isCurrent) LocalExtendedColors.current.mainBlue
         else Color.White
@@ -65,16 +71,6 @@ fun DateItem(
     val textColor =
         if (isCurrent) Color.White
         else Color.Gray
-
-    val dayLabel = when (day) {
-        DayOfWeek.MONDAY -> "Th 2"
-        DayOfWeek.TUESDAY -> "Th 3"
-        DayOfWeek.WEDNESDAY -> "Th 4"
-        DayOfWeek.THURSDAY -> "Th 5"
-        DayOfWeek.FRIDAY -> "Th 6"
-        DayOfWeek.SATURDAY -> "Th 7"
-        DayOfWeek.SUNDAY -> "CN"
-    }
 
     Surface(
         onClick = onClickItem,
@@ -87,7 +83,7 @@ fun DateItem(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
         ) {
             Text(
-                text = dayLabel,
+                text = dayText,
                 color = textColor,
                 style = MaterialTheme.typography.titleSmall
             )
@@ -99,4 +95,3 @@ fun DateItem(
         }
     }
 }
-

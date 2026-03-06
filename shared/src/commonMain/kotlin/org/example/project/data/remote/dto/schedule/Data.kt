@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Data(
-    val courseClasses: List<CourseClasses>
+    val courseClasses: List<CourseClass>
 )

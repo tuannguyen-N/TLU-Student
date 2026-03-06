@@ -24,26 +24,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.data.remote.dto.schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.isGoing
+import org.example.project.presentations.utils.toHourMinute
 
-@Preview
 @Composable
 fun ScheduleItem(
     modifier: Modifier = Modifier,
-    shift: String = "1",
-    startTime: String = "7:30",
-    isOngoing: Boolean = true
+    courseClass: CourseClass,
 ) {
+    val isOngoing = courseClass.isGoing()
     Row(
         modifier = modifier.height(IntrinsicSize.Min)
     ) {
         TimeView(
             isOngoing = isOngoing,
-            shift = shift,
-            startTime = startTime
+            shift = courseClass.startPeriod.toString(),
+            startTime = courseClass.startTime.toHourMinute()
         )
         ScheduleDotLine(isOngoing = isOngoing, modifier = Modifier.padding(horizontal = 20.dp))
-        SubjectInformationCard(isOngoing = isOngoing, modifier = Modifier.padding(bottom = 25.dp))
+        SubjectInformationCard(courseClass = courseClass,isOngoing = isOngoing, modifier = Modifier.padding(bottom = 25.dp))
     }
 }
 

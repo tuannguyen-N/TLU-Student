@@ -2,11 +2,14 @@ package org.example.project.di
 
 import org.example.project.data.local.TokenStorage
 import org.example.project.data.remote.api.AuthApi
+import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.api.StudentApi
 import org.example.project.data.remote.createHttpClient
 import org.example.project.domain.repository.AuthRepository
+import org.example.project.domain.repository.ScheduleRepository
 import org.example.project.domain.repository.StudentRepository
 import org.example.project.domain.usecase.LoginUseCase
+import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.StudentUseCase
 
 class AppContainer(
@@ -26,4 +29,9 @@ class AppContainer(
     private val studentApi = StudentApi(httpClient)
     private val studentRepository = StudentRepository(studentApi)
     val studentUseCase = StudentUseCase(studentRepository)
+
+    //for schedule
+    private val scheduleApi = ScheduleApi(httpClient)
+    private val scheduleRepository = ScheduleRepository(scheduleApi)
+    val scheduleUseCase = ScheduleUseCase(scheduleRepository)
 }

@@ -22,16 +22,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.data.remote.dto.schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun SubjectInformationCard(
     modifier: Modifier = Modifier,
-    name: String = "Toán",
-    location: String = "Phong A302",
-    time: String = "12:00 - 14:00",
-    teacher: String = "Nguyễn Văn A",
+    courseClass: CourseClass,
     isOngoing: Boolean = true
 ) {
     val backgroundColor = if (isOngoing) LocalExtendedColors.current.mainBlue else Color.White
@@ -54,7 +51,7 @@ fun SubjectInformationCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = name,
+                text = courseClass.subjectName,
                 color = primaryTextColor,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Bold,
@@ -71,21 +68,21 @@ fun SubjectInformationCard(
         }
 
         Text(
-            text = location,
+            text = courseClass.room,
             color = secondaryTextColor,
             style = MaterialTheme.typography.bodyMedium,
         )
 
         InformationView(
             iconRes = R.drawable.icon_clock,
-            value = time,
+            value = "${courseClass.startTime} - ${courseClass.endTime}",
             color = secondaryTextColor,
             modifier = Modifier.padding(top = 10.dp)
         )
 
         InformationView(
             iconRes = R.drawable.icon_teacher,
-            value = teacher,
+            value = courseClass.lecturerName,
             color = secondaryTextColor,
             modifier = Modifier.padding(top = 5.dp)
         )

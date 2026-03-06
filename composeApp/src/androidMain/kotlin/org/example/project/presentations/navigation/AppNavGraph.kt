@@ -20,6 +20,8 @@ import org.example.project.presentations.screen.notification.NotificationScreen
 import org.example.project.presentations.screen.profile.ProfileScreen
 import org.example.project.presentations.screen.profile.ProfileViewModel
 import org.example.project.presentations.screen.profile.ProfileViewModelFactory
+import org.example.project.presentations.screen.school_schedule.ScheduleViewModel
+import org.example.project.presentations.screen.school_schedule.ScheduleViewModelFactory
 import org.example.project.presentations.screen.setting.SettingScreen
 import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.timetable.TimetableScreen
@@ -57,6 +59,9 @@ fun AppNavGraph() {
             val homeViewModel: HomeViewModel = viewModel(
                 factory = HomeViewModelFactory(container.studentUseCase)
             )
+            val scheduleViewModel: ScheduleViewModel = viewModel(
+                factory = ScheduleViewModelFactory(container.scheduleUseCase)
+            )
 
             MainScreen(
                 onOpenProfileScreen = {
@@ -71,7 +76,8 @@ fun AppNavGraph() {
                 onOpenTimetable = {
                     navController.navigate(Routes.TimetableScreen)
                 },
-                homeViewModel = homeViewModel
+                homeViewModel = homeViewModel,
+                scheduleViewModel = scheduleViewModel
             )
         }
 
