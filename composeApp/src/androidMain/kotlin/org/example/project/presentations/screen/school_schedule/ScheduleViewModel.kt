@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.example.project.data.remote.dto.schedule.CourseClass
 import org.example.project.domain.model.ScheduleState
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.presentations.utils.getTodayDayOfWeek
@@ -51,6 +52,14 @@ class ScheduleViewModel(
             updateState { copy(selectedDayOfWeek = value) }
             scheduleUseCase.getDayOfWeekSchedule(value)
         }
+    }
+
+    fun onOpenDetailCourseClass(courseClass: CourseClass) {
+        updateState { copy(showDetailCourseClass = true, selectedCourseClass = courseClass) }
+    }
+
+    fun onDismissDetailCourseClass() {
+        updateState { copy(showDetailCourseClass = false) }
     }
 
     private fun updateState(newState: ScheduleState.() -> ScheduleState) {

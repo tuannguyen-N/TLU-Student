@@ -15,14 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.example.project.presentations.screen.login.components.AuthenticationErrorBottomSheet
 import org.example.project.presentations.screen.login.components.CenterContent
 import org.example.project.presentations.screen.login.components.LoginButton
@@ -38,28 +36,23 @@ fun LoginScreen(
     val context = LocalContext.current
     val activity = context as? Activity ?: return
 
-    var showErrorSheet by remember { mutableStateOf(false) }
+    val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState()
 
     loginViewModel.event.CollectWithLifecycle { event ->
         when (event) {
             LoginUiEvent.OnNavigateToHome -> onNavigateToHome()
-            LoginUiEvent.ShowError -> showErrorSheet = true
         }
     }
 
-    if (showErrorSheet) {
+    if (uiState.showErrorSheet) {
         ModalBottomSheet(
             dragHandle = null,
-            onDismissRequest = {
-                showErrorSheet = false
-            },
+            onDismissRequest = loginViewModel::onDismissErrorSheet,
             sheetState = sheetState
         ) {
             AuthenticationErrorBottomSheet(
-                onRetry = {
-                    showErrorSheet = false
-                },
+                onRetry = loginViewModel::onDismissErrorSheet
             )
         }
     }
@@ -76,7 +69,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LoginButton(
-                onLogin = { loginViewModel.onLoginClick(activity)}
+                onLogin = { loginViewModel.onLoginClick(activity) }
             )
 
             HorizontalDivider(
@@ -92,7 +85,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .padding(bottom = 30.dp)
                     .clickable {
-                        MsalHelper.signOut {  }
+                        MsalHelper.signOut { }
                         // TODO:
                     }
             )

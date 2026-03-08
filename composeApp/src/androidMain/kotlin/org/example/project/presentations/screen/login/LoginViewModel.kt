@@ -46,10 +46,14 @@ class LoginViewModel(
                 onFailure = {
                     Log.e("123123", "onSignMsalSuccess: $it", )
                     updateState { copy(isLoading = false) }
-                    sendUiEvent(LoginUiEvent.ShowError)
+                    updateState { copy(showErrorSheet = true) }
                 }
             )
         }
+    }
+
+    fun onDismissErrorSheet() {
+        updateState { copy(showErrorSheet = false) }
     }
 
     private fun updateState(newState: LoginState.() -> LoginState) {

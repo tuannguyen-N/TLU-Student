@@ -23,7 +23,8 @@ import org.example.project.data.remote.dto.schedule.CourseClass
 fun TodayScheduleList(
     modifier: Modifier = Modifier,
     courseClasses: List<CourseClass> = emptyList(),
-    onOpenTimetable: () -> Unit = {}
+    onOpenTimetable: () -> Unit = {},
+    onOpenDetailCourseClass: (CourseClass) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -36,7 +37,8 @@ fun TodayScheduleList(
             items(courseClasses) { courseClass ->
                 ScheduleItem(
                     courseClass = courseClass,
-                    modifier = Modifier
+                    modifier = Modifier,
+                    onOpenDetailCourseClass = {onOpenDetailCourseClass(courseClass)}
                 )
             }
         }

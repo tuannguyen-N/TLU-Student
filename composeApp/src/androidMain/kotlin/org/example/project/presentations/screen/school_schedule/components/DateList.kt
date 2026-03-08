@@ -1,7 +1,5 @@
 package org.example.project.presentations.screen.school_schedule.components
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,22 +17,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.presentations.theme.LocalExtendedColors
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
+import kotlin.time.Clock
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateList(
     modifier: Modifier = Modifier,
     selectedDayOfWeek: Int,
     onChangeDayOfWeek: (Int) -> Unit
 ) {
-    val today = remember { LocalDate.now() }
+    val today = remember {
+        Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+    }
+
     val dates = remember {
-        val monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-        (0..6).map { monday.plusDays(it.toLong()) }
+        val monday = today.minus((today.dayOfWeek.isoDayNumber - 1), DateTimeUnit.DAY)
+
+        (0..6).map { monday.plus(it, DateTimeUnit.DAY) }
     }
 
     LazyRow(
@@ -44,18 +51,17 @@ fun DateList(
     ) {
         items(dates) { date ->
             DateItem(
-                day = date.dayOfWeek.value,
+                day = date.dayOfWeek.isoDayNumber,
                 dayNumber = date.dayOfMonth,
-                isCurrent = date.dayOfWeek.value == selectedDayOfWeek,
+                isCurrent = date.dayOfWeek.isoDayNumber == selectedDayOfWeek,
                 onClickItem = {
-                    onChangeDayOfWeek(date.dayOfWeek.value)
+                    onChangeDayOfWeek(date.dayOfWeek.isoDayNumber)
                 }
             )
         }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateItem(
     day: Int,
@@ -63,7 +69,10 @@ fun DateItem(
     isCurrent: Boolean = false,
     onClickItem: () -> Unit
 ) {
-    val dayText = if (day ==7) "CN" else "Th ${day + 1}"
+    val dayText = remember(day) {
+        if (day == 7) "CN" else "Th ${day + 1}"
+    }
+
     val backgroundColor =
         if (isCurrent) LocalExtendedColors.current.mainBlue
         else Color.White

@@ -33,6 +33,7 @@ import org.example.project.presentations.utils.toHourMinute
 fun ScheduleItem(
     modifier: Modifier = Modifier,
     courseClass: CourseClass,
+    onOpenDetailCourseClass: () -> Unit
 ) {
     val isOngoing = courseClass.isGoing()
     Row(
@@ -44,7 +45,12 @@ fun ScheduleItem(
             startTime = courseClass.startTime.toHourMinute()
         )
         ScheduleDotLine(isOngoing = isOngoing, modifier = Modifier.padding(horizontal = 20.dp))
-        SubjectInformationCard(courseClass = courseClass,isOngoing = isOngoing, modifier = Modifier.padding(bottom = 25.dp))
+        SubjectInformationCard(
+            courseClass = courseClass,
+            isOngoing = isOngoing,
+            modifier = Modifier.padding(bottom = 25.dp),
+            onClick = onOpenDetailCourseClass
+        )
     }
 }
 

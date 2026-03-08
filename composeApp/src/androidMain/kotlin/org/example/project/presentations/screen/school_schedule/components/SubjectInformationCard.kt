@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,63 +30,64 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun SubjectInformationCard(
     modifier: Modifier = Modifier,
     courseClass: CourseClass,
-    isOngoing: Boolean = true
+    isOngoing: Boolean = true,
+    onClick: () -> Unit = {}
 ) {
     val backgroundColor = if (isOngoing) LocalExtendedColors.current.mainBlue else Color.White
     val primaryTextColor = if (isOngoing) Color.White else Color.Black
     val secondaryTextColor = if (isOngoing) Color(0xFFCFD3F5) else LocalExtendedColors.current.gray
 
-    Column(
-        modifier = modifier
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(12.dp),
-                clip = false
-            )
-            .clip(RoundedCornerShape(12.dp))
-            .background(backgroundColor)
-            .padding(12.dp)
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        shadowElevation = 4.dp,
+        onClick = onClick,
+        color = backgroundColor
     ) {
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(12.dp)
         ) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = courseClass.subjectName,
+                    color = primaryTextColor,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+
+                CardState(
+                    isOngoing = isOngoing,
+                    modifier = Modifier.padding(start = 10.dp)
+                )
+            }
+
             Text(
-                text = courseClass.subjectName,
-                color = primaryTextColor,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
+                text = courseClass.room,
+                color = secondaryTextColor,
+                style = MaterialTheme.typography.bodyMedium,
             )
 
-            CardState(
-                isOngoing = isOngoing,
-                modifier = Modifier.padding(start = 10.dp)
+            InformationView(
+                iconRes = R.drawable.icon_clock,
+                value = "${courseClass.startTime} - ${courseClass.endTime}",
+                color = secondaryTextColor,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+
+            InformationView(
+                iconRes = R.drawable.icon_teacher,
+                value = courseClass.lecturerName,
+                color = secondaryTextColor,
+                modifier = Modifier.padding(top = 5.dp)
             )
         }
-
-        Text(
-            text = courseClass.room,
-            color = secondaryTextColor,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        InformationView(
-            iconRes = R.drawable.icon_clock,
-            value = "${courseClass.startTime} - ${courseClass.endTime}",
-            color = secondaryTextColor,
-            modifier = Modifier.padding(top = 10.dp)
-        )
-
-        InformationView(
-            iconRes = R.drawable.icon_teacher,
-            value = courseClass.lecturerName,
-            color = secondaryTextColor,
-            modifier = Modifier.padding(top = 5.dp)
-        )
     }
 }
 
