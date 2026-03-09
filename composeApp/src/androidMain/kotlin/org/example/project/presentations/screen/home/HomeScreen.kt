@@ -28,6 +28,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun HomeScreen(
     onOpenProfileScreen: () -> Unit = {},
     onOpenNotificationScreen: () -> Unit = {},
+    onOpenFeatureScreen: () -> Unit,
     homeViewModel: HomeViewModel
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -70,8 +71,12 @@ fun HomeScreen(
 
                 FeatureList(
                     modifier = Modifier
-                        .padding(horizontal = 15.dp)
-                        .padding(top = 15.dp)
+                        .padding(top = 15.dp),
+                    onClickItem = {
+                        // TODO:
+                    },
+                    onClickAll = onOpenFeatureScreen,
+                    items = uiState.quickAccessList
                 )
 
                 NewsAndEventsList(

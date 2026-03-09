@@ -12,4 +12,5 @@ object Routes {
     const val TimetableScreen = "timetable_screen"
     const val Feedback = "feedback"
     const val FeedbackDetail = "feedback_detail"
+    const val FeaturesScreen = "features_screen"
 }

@@ -36,7 +36,6 @@ import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.feedback.components.FeedbackStatusBadge
 import org.example.project.presentations.theme.LocalExtendedColors
 
-
 @Composable
 fun FeedbackDetailContent(
     modifier: Modifier = Modifier

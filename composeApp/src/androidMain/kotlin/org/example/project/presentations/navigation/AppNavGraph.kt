@@ -9,7 +9,10 @@ import org.example.project.presentations.screen.SharedViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModelFactory
-import org.example.project.presentations.screen.feedback.ScreenView
+import org.example.project.presentations.screen.features.FeaturesScreen
+import org.example.project.presentations.screen.features.FeaturesViewModel
+import org.example.project.presentations.screen.features.FeaturesViewModelFactory
+import org.example.project.presentations.screen.feedback.FeedbackScreen
 import org.example.project.presentations.screen.feedback_detail.FeedbackDetailScreen
 import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.home.HomeViewModelFactory
@@ -28,6 +31,7 @@ import org.example.project.presentations.screen.setting.SettingScreen
 import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.timetable.TimetableScreen
 import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
+import org.example.project.presentations.utils.toRoute
 
 @Composable
 fun AppNavGraph() {
@@ -59,13 +63,19 @@ fun AppNavGraph() {
         composable(Routes.Main) {
             val container = LocalAppContainer.current
             val homeViewModel: HomeViewModel = viewModel(
-                factory = HomeViewModelFactory(container.studentUseCase, container.scheduleUseCase)
+                factory = HomeViewModelFactory(
+                    container.studentUseCase,
+                    container.scheduleUseCase,
+                    container.featureRepository
+                )
             )
             val scheduleViewModel: ScheduleViewModel = viewModel(
                 factory = ScheduleViewModelFactory(container.scheduleUseCase)
             )
 
             MainScreen(
+                homeViewModel = homeViewModel,
+                scheduleViewModel = scheduleViewModel,
                 onOpenProfileScreen = {
                     navController.navigate(Routes.Profile)
                 },
@@ -78,8 +88,9 @@ fun AppNavGraph() {
                 onOpenTimetable = {
                     navController.navigate(Routes.TimetableScreen)
                 },
-                homeViewModel = homeViewModel,
-                scheduleViewModel = scheduleViewModel
+                onOpenFeatureScreen = {
+                    navController.navigate(Routes.FeaturesScreen)
+                }
             )
         }
 
@@ -144,8 +155,25 @@ fun AppNavGraph() {
             )
         }
 
+        composable(Routes.FeaturesScreen) {
+            val container = LocalAppContainer.current
+            val featuresViewModel: FeaturesViewModel = viewModel(
+                factory = FeaturesViewModelFactory(container.featureRepository)
+            )
+
+            FeaturesScreen(
+                viewModel = featuresViewModel,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onOpenFeatureScreen = {
+                    navController.navigate(it.type.toRoute())
+                }
+            )
+        }
+
         composable(Routes.Feedback) {
-            ScreenView(
+            FeedbackScreen(
                 viewModel = viewModel(), // TODO:
                 onBack = {
                     navController.popBackStack()

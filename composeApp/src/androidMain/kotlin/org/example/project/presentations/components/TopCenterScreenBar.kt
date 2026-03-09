@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,8 +36,10 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Preview
 @Composable
 fun TopCenterScreenBar(
+    title: String = "Title",
+    enableActionButton: Boolean = false,
     onBack: () -> Unit = {},
-    title: String = "Title"
+    onClickAction: () -> Unit = {}
 ) {
 
     Box(
@@ -67,6 +71,19 @@ fun TopCenterScreenBar(
                 color = Color.White,
                 modifier = Modifier.align(Alignment.Center)
             )
+
+            if (enableActionButton){
+                IconButton(
+                    onClick = onClickAction,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Done,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
         }
     }
 }

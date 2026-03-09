@@ -3,24 +3,38 @@ package org.example.project.presentations.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.domain.model.HomeState
 import org.example.project.domain.model.HomeUiEvent
+import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.presentations.utils.getTodayDayOfWeek
 
 class HomeViewModel(
     private val studentUseCase: StudentUseCase,
-    private val scheduleUseCase: ScheduleUseCase
+    private val scheduleUseCase: ScheduleUseCase,
+    private val featureRepository: FeatureRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
-    val uiState = _uiState.asStateFlow()
+    val uiState = combine(
+        _uiState,
+        featureRepository.getQuickAccessList()
+    ) { state, quickAccessList ->
+        state.copy(quickAccessList = quickAccessList)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = HomeState()
+    )
 
     private val _event = Channel<HomeUiEvent>()
     val event = _event.receiveAsFlow()
@@ -31,58 +45,46 @@ class HomeViewModel(
         loadInitData()
     }
 
-    private fun observeCourseClasses(){
-        viewModelScope.launch {
-            scheduleUseCase.dayOfWeekSchedule.collect { courseClasses ->
-                courseClasses?.let {
-                    updateState { copy(courseClasses = it.courseClasses, loadingScheduleClassList = false) }
+    private fun observeCourseClasses() {
+        scheduleUseCase.dayOfWeekSchedule
+            .onEach {
+                it?.let { data ->
+                    updateState {
+                        copy(courseClasses = data.courseClasses, loadingScheduleClassList = false)
+                    }
                 }
             }
-        }
+            .launchIn(viewModelScope)
     }
 
     private fun observeStudentInfo() {
-        viewModelScope.launch {
-            studentUseCase.studentInfo.collect { studentInformation ->
-                studentInformation?.let {
-                    updateState { copy(studentInfo = it, loadingStudentInfo = false) }
+        studentUseCase.studentInfo
+            .onEach {
+                it?.let { info ->
+                    updateState { copy(studentInfo = info, loadingStudentInfo = false) }
                 }
             }
-        }
+            .launchIn(viewModelScope)
     }
 
     private fun loadInitData() {
-        viewModelScope.launch {
-            coroutineScope {
-                launch { loadStudentInfo() }
-                launch { loadCourseClasses() }
-            }
-        }
+        viewModelScope.launch { loadStudentInfo() }
+        viewModelScope.launch { loadCourseClasses() }
     }
 
-    private suspend fun loadCourseClasses(){
-        _uiState.update { it.copy(loadingScheduleClassList = true) }
+    private suspend fun loadCourseClasses() {
+        updateState { copy(loadingScheduleClassList = true) }
         scheduleUseCase.getDayOfWeekSchedule(getTodayDayOfWeek()).fold(
-            onSuccess = {
-                _uiState.update { it.copy(loadingScheduleClassList = false) }
-            },
-            onFailure = {
-                _uiState.update { it.copy(loadingScheduleClassList = false) }
-            }
+            onSuccess = { updateState { copy(loadingScheduleClassList = false) } },
+            onFailure = { updateState { copy(loadingScheduleClassList = false) } }
         )
     }
 
     private suspend fun loadStudentInfo() {
-        _uiState.update { it.copy(loadingStudentInfo = true) }
+        updateState { copy(loadingStudentInfo = true) }
         studentUseCase.getStudentInfo().fold(
-            onSuccess = {
-                // TODO:
-                _uiState.update { it.copy(loadingStudentInfo = false) }
-            },
-            onFailure = {
-                // TODO:
-                _uiState.update { it.copy(loadingStudentInfo = false) }
-            }
+            onSuccess = { updateState { copy(loadingStudentInfo = false) } },
+            onFailure = { updateState { copy(loadingStudentInfo = false) } }
         )
     }
 

@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         val tokenStorage = AndroidTokenStorage(
             context = applicationContext
         )
-        container = AppContainer(tokenStorage)
+        container = AppContainer(tokenStorage, applicationContext)
     }
 
     private fun initMsal(){

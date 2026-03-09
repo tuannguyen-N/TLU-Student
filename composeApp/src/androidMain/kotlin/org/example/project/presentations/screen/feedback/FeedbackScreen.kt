@@ -21,7 +21,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Preview
 @Composable
-fun ScreenView(
+fun FeedbackScreen(
     viewModel: FeedbackViewModel = viewModel(),
     onBack: () -> Unit ={}
 ) {

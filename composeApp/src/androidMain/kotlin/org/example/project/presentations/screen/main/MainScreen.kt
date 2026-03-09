@@ -27,12 +27,13 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun MainScreen(
+    scheduleViewModel: ScheduleViewModel,
+    homeViewModel: HomeViewModel,
     onOpenProfileScreen: () -> Unit,
     onOpenNotificationScreen: () -> Unit,
     onOpenTranscriptTerm: () -> Unit,
     onOpenTimetable: () -> Unit,
-    homeViewModel: HomeViewModel,
-    scheduleViewModel: ScheduleViewModel
+    onOpenFeatureScreen: () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -54,12 +55,12 @@ fun MainScreen(
                     exitTransition = { fadeOut(tween(300)) },
                 ) {
                     HomeScreen(
+                        homeViewModel = homeViewModel,
                         onOpenProfileScreen = {
                             onOpenProfileScreen()
                         },
                         onOpenNotificationScreen = onOpenNotificationScreen,
-                        homeViewModel = homeViewModel,
-
+                        onOpenFeatureScreen = onOpenFeatureScreen
                     )
                 }
 
