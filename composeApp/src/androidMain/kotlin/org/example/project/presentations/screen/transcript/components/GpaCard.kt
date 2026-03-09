@@ -43,7 +43,7 @@ fun GpaCard(
         modifier = modifier
             .shadow(
                 elevation = 4.dp,
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(16.dp),
                 clip = false
             )
             .clip(RoundedCornerShape(14.dp))

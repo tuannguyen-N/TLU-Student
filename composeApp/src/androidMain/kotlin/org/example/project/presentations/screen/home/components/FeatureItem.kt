@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,15 +35,20 @@ fun FeatureItem(
         },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(item.type.toDrawable()),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        Surface(
+            onClick = onClickItem,
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
                 .clip(RoundedCornerShape(12.dp))
-        )
+        ) {
+            Image(
+                painter = painterResource(item.type.toDrawable()),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+            )
+        }
 
         Text(
             text = item.name,

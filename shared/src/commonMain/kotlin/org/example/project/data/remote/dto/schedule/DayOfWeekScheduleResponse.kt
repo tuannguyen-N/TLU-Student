@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class DayOfWeekScheduleResponse(
     val code: Int,
     val message: String,
-    val data: Data?
+    val data: CourseClasses?
 )

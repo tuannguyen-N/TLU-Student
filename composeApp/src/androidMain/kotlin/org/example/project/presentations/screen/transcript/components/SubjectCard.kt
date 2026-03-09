@@ -50,7 +50,7 @@ fun SubjectCard(
                 shape = RoundedCornerShape(14.dp),
                 clip = false
             )
-            .clip(RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .background(Color.White)
             .padding(12.dp)

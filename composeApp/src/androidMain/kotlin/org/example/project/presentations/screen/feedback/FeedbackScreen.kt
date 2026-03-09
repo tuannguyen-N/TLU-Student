@@ -16,12 +16,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.screen.feedback.components.FeedbackFormContent
 import org.example.project.presentations.screen.feedback.components.FeedbackHistoryContent
-import org.example.project.presentations.screen.feedback.components.FeedbackTabRow
+import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Preview
 @Composable
-fun FeedbackScreen(
+fun ScreenView(
     viewModel: FeedbackViewModel = viewModel(),
     onBack: () -> Unit ={}
 ) {
@@ -42,9 +42,8 @@ fun FeedbackScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
         ) {
-            FeedbackTabRow(
+            TabRowView(
                 tabs = tabs,
                 selectedTab = uiState.selectedTab,
                 onTabSelected = viewModel::onTabSelected
@@ -52,6 +51,9 @@ fun FeedbackScreen(
 
             if (uiState.selectedTab == 0) {
                 FeedbackFormContent(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
                     uiState = uiState,
                     onTitleChange = viewModel::onTitleChange,
                     onSubjectChange = viewModel::onSubjectChange,
@@ -62,7 +64,12 @@ fun FeedbackScreen(
                     onAddImage = viewModel::onAddImage
                 )
             } else {
-                FeedbackHistoryContent()
+                FeedbackHistoryContent(
+                    onCreateFeedback = { viewModel.onTabSelected(0) },
+                    onViewDetail = {
+                        // TODO:
+                    }
+                )
             }
         }
     }

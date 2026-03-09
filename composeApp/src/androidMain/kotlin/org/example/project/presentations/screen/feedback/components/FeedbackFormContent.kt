@@ -88,7 +88,6 @@ fun FeedbackFormContent(
             singleLine = true,
         )
 
-        // Subject Dropdown
         FeedbackLabel(text = "Chủ đề", true)
         Box {
             OutlinedTextField(
@@ -135,7 +134,6 @@ fun FeedbackFormContent(
             }
         }
 
-        // Content Field
         FeedbackLabel(text = "Nội dung phản hồi", true)
         OutlinedTextField(
             value = uiState.content,
@@ -160,7 +158,6 @@ fun FeedbackFormContent(
             maxLines = 5
         )
 
-        // Image Attachment
         ImageAttachmentContent(
             uiState = uiState,
             onRemoveImage = onRemoveImage,
@@ -169,7 +166,6 @@ fun FeedbackFormContent(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Submit Button
         ButtonView(
             text = "Gửi phản hồi",
             backgroundColorRes = LocalExtendedColors.current.mainRed,

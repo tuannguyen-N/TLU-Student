@@ -18,4 +18,5 @@ data class FeatureUiModel(
 
 enum class FeatureType {
     UPCOMING,
+    FEEDBACK
 }

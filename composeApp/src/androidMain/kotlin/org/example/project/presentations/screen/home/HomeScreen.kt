@@ -12,14 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.example.project.data.remote.dto.me.StudentInformation
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.domain.model.FeatureUiModel
 import org.example.project.domain.model.NewAndEventUiModel
-import org.example.project.domain.model.ScheduleClassUiModel
 import org.example.project.presentations.screen.home.components.AlertList
 import org.example.project.presentations.screen.home.components.FeatureList
 import org.example.project.presentations.screen.home.components.HomeHeader
@@ -36,8 +33,6 @@ fun HomeScreen(
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     val alerts = remember { AlertUiModel.getDemoList() }
-    val schedule = remember { ScheduleClassUiModel.getDataDemo() }
-    val features = remember { FeatureUiModel.getDemoList() }
     val newAndEvent = remember { NewAndEventUiModel.getDataDemo() }
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
@@ -48,7 +43,7 @@ fun HomeScreen(
                 studentCode = uiState.studentInfo?.fullName ?: "",
                 onOpenProfile = { onOpenProfileScreen() },
                 onOpenNotification = onOpenNotificationScreen,
-                isProfileReady = uiState.studentInfo != null
+                isProfileReady = !uiState.loadingStudentInfo && uiState.studentInfo != null
             )
         }) { paddingValues ->
         LazyColumn(
@@ -60,24 +55,29 @@ fun HomeScreen(
             item {
                 AlertList(
                     items = alerts,
+                    isLoading = uiState.loadingAlertList,
                     onClickAction = {},
                     modifier = Modifier.padding(top = 15.dp),
                 )
                 ScheduleClassList(
                     onClickAll = {
                         // TODO:
-                    }, items = schedule, modifier = Modifier.padding(horizontal = 15.dp)
+                    },
+                    isLoading = uiState.loadingScheduleClassList,
+                    courseClasses = uiState.courseClasses,
+                    modifier = Modifier.padding(horizontal = 15.dp)
                 )
 
                 FeatureList(
-                    items = features,
                     modifier = Modifier
                         .padding(horizontal = 15.dp)
                         .padding(top = 15.dp)
                 )
 
                 NewsAndEventsList(
-                    items = newAndEvent, modifier = Modifier.padding(top = 15.dp)
+                    items = newAndEvent,
+                    isLoading = uiState.loadingEventList,
+                    modifier = Modifier.padding(top = 15.dp)
                 )
                 Spacer(modifier = Modifier.height(200.dp))
             }

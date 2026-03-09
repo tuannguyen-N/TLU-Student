@@ -62,10 +62,10 @@ fun SubjectResultCard(
         modifier = modifier
             .shadow(
                 elevation = 4.dp,
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(16.dp),
                 clip = false
             )
-            .clip(RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .background(Color.White)
             .padding(12.dp)

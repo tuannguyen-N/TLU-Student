@@ -27,11 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.FeedBackState
-import org.example.project.presentations.theme.LocalExtendedColors
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
+import org.example.project.domain.model.FeedBackState
+import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun ImageAttachmentContent(
@@ -41,20 +42,16 @@ fun ImageAttachmentContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.padding(top = 15.dp)
+        modifier = modifier.padding(top = 15.dp)
     ) {
         Text(
             text = "Đính kèm hình ảnh",
             style = MaterialTheme.typography.titleMedium,
             color = Color.Black
         )
-        Text(
-            text = "Tối đa 5 hình ảnh (${uiState.attachedImages.size}/5)",
-            style = MaterialTheme.typography.bodySmall,
-        )
 
         LazyRow(
-            modifier = Modifier.padding(top = 10.dp),
+            modifier = Modifier.padding(top = 10.dp, bottom = 5.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(uiState.attachedImages) { imageUriString ->
@@ -137,5 +134,12 @@ fun ImageAttachmentContent(
                 }
             }
         }
+
+        Text(
+            text = "Tối đa 5 hình ảnh (${uiState.attachedImages.size}/5)",
+            color = LocalExtendedColors.current.gray,
+            style = MaterialTheme.typography.bodySmall.copy(fontStyle = FontStyle.Italic),
+        )
+
     }
 }

@@ -9,6 +9,8 @@ import org.example.project.presentations.screen.SharedViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModelFactory
+import org.example.project.presentations.screen.feedback.ScreenView
+import org.example.project.presentations.screen.feedback_detail.FeedbackDetailScreen
 import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.home.HomeViewModelFactory
 import org.example.project.presentations.screen.login.LoginScreen
@@ -57,7 +59,7 @@ fun AppNavGraph() {
         composable(Routes.Main) {
             val container = LocalAppContainer.current
             val homeViewModel: HomeViewModel = viewModel(
-                factory = HomeViewModelFactory(container.studentUseCase)
+                factory = HomeViewModelFactory(container.studentUseCase, container.scheduleUseCase)
             )
             val scheduleViewModel: ScheduleViewModel = viewModel(
                 factory = ScheduleViewModelFactory(container.scheduleUseCase)
@@ -136,6 +138,23 @@ fun AppNavGraph() {
 
         composable(Routes.TimetableScreen) {
             TimetableScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.Feedback) {
+            ScreenView(
+                viewModel = viewModel(), // TODO:
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.FeedbackDetail) {
+            FeedbackDetailScreen(
                 onBack = {
                     navController.popBackStack()
                 }

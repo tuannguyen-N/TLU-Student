@@ -1,6 +1,5 @@
 package org.example.project.domain.usecase
 
-import org.example.project.data.remote.dto.schedule.DayOfWeekScheduleResponse
 import org.example.project.domain.repository.ScheduleRepository
 
 class ScheduleUseCase(
@@ -8,7 +7,7 @@ class ScheduleUseCase(
 ) {
     val dayOfWeekSchedule = repository.dayOfWeekSchedule
 
-    suspend fun getDayOfWeekSchedule(dayOfWeek: Int): Result<DayOfWeekScheduleResponse>{
+    suspend fun getDayOfWeekSchedule(dayOfWeek: Int): Result<Any>{
         if (dayOfWeek !in 1..8) {
             return Result.failure(IllegalArgumentException("Ngày không hợp lệ"))
         }

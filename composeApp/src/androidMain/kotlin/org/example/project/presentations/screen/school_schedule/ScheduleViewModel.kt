@@ -26,7 +26,7 @@ class ScheduleViewModel(
         viewModelScope.launch {
             scheduleUseCase.dayOfWeekSchedule.collect { dayOfWeekSchedule ->
                 dayOfWeekSchedule?.let {
-                    updateState { copy(courseClasses = it.data?.courseClasses) }
+                    updateState { copy(courseClasses = it.courseClasses) }
                 }
             }
         }

@@ -26,14 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.data.remote.dto.schedule.CourseClass
 import org.example.project.domain.model.ScheduleClassUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun ScheduleCurrent(
     modifier: Modifier = Modifier,
-    item: ScheduleClassUiModel = ScheduleClassUiModel("Demo", "demo", "demo", true)
+    item: CourseClass
 ) {
     Row(
         modifier = modifier
@@ -75,7 +75,10 @@ fun ScheduleCurrent(
                     )
                     drawLine(
                         color = lineColor,
-                        start = androidx.compose.ui.geometry.Offset(startX, topOffset + dotRadius * 2),
+                        start = androidx.compose.ui.geometry.Offset(
+                            startX,
+                            topOffset + dotRadius * 2
+                        ),
                         end = androidx.compose.ui.geometry.Offset(startX, size.height),
                         strokeWidth = 1.dp.toPx()
                     )
@@ -105,7 +108,7 @@ fun ScheduleCurrent(
                 }
 
                 Text(
-                    text = item.name,
+                    text = item.subjectName,
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier
@@ -139,7 +142,7 @@ fun ScheduleCurrent(
                     )
 
                     Text(
-                        text = item.houseLocation,
+                        text = "Toà ${item.room.first()}",
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Normal,
                         color = LocalExtendedColors.current.gray,

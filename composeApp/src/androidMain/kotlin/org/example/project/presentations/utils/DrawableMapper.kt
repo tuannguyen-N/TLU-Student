@@ -8,6 +8,7 @@ import org.example.project.domain.model.NotificationType
 fun FeatureType.toDrawable(): Int {
     return when (this) {
         FeatureType.UPCOMING -> R.drawable.ic_launcher_background
+        FeatureType.FEEDBACK -> R.drawable.ic_feedback
     }
 }
 

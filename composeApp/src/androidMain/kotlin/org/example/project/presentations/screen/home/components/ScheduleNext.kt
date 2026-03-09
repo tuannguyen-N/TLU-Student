@@ -28,15 +28,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.data.remote.dto.schedule.CourseClass
 import org.example.project.domain.model.ScheduleClassUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.theme.Poppins
 
-@Preview
 @Composable
 fun ScheduleNext(
     modifier: Modifier = Modifier,
-    item: ScheduleClassUiModel = ScheduleClassUiModel("Demo", "demo", "demo", true)
+    item: CourseClass
 ) {
     Row(
         modifier = modifier
@@ -114,7 +114,7 @@ fun ScheduleNext(
                 }
 
                 Text(
-                    text = item.name,
+                    text = item.subjectName,
                     style = MaterialTheme.typography.titleMedium,
                     fontFamily = Poppins,
                     color = LocalExtendedColors.current.gray,
@@ -150,7 +150,7 @@ fun ScheduleNext(
                     )
 
                     Text(
-                        text = item.houseLocation,
+                        text = "Toà ${item.room.first()}",
                         fontWeight = FontWeight.Normal,
                         style = MaterialTheme.typography.bodySmall,
                         color = LocalExtendedColors.current.gray,

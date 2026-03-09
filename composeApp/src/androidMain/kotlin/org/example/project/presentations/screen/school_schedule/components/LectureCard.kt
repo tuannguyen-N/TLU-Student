@@ -82,7 +82,7 @@ fun LecturerCard(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = name,
+                        text = lecturerName,
                         style = MaterialTheme.typography.titleLarge,
                         color = LocalExtendedColors.current.mainBlue,
                         fontWeight = FontWeight.Bold
@@ -111,7 +111,7 @@ fun LecturerCard(
             LecturerInfoRow(
                 icon = Icons.Outlined.Email,
                 label = "EMAIL LIÊN HỆ",
-                value = email
+                value = lectureEmail
             )
 
             HorizontalDivider(
