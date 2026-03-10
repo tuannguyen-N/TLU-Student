@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.example.project.data.remote.dto.schedule.CourseClass
 import org.example.project.domain.model.ScheduleState
@@ -14,7 +16,11 @@ import org.example.project.presentations.utils.getTodayDayOfWeek
 class ScheduleViewModel(
     private val scheduleUseCase: ScheduleUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ScheduleState(selectedDayOfWeek = getTodayDayOfWeek()))
+    private val _uiState = MutableStateFlow(
+        ScheduleState(
+            selectedDayOfWeek = getTodayDayOfWeek(), currentDay = getTodayDayOfWeek()
+        )
+    )
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -23,28 +29,29 @@ class ScheduleViewModel(
     }
 
     private fun observeDayOfWeekSchedule() {
-        viewModelScope.launch {
-            scheduleUseCase.dayOfWeekSchedule.collect { dayOfWeekSchedule ->
-                dayOfWeekSchedule?.let {
-                    updateState { copy(courseClasses = it.courseClasses) }
-                }
+        scheduleUseCase.dayOfWeekSchedule.onEach {
+            it?.let { data ->
+                updateState { copy(courseClasses = data.courseClasses) }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun loadData() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
-            scheduleUseCase.getDayOfWeekSchedule(getTodayDayOfWeek()).fold(
-                onSuccess = {
-                    updateState { copy(isLoading = false) }
-                },
-                onFailure = {
-                    Log.e("123123", "loadData: $it", )
-                    updateState { copy(isLoading = false) }
-                }
-            )
+            scheduleUseCase.getDayOfWeekSchedule(getTodayDayOfWeek()).fold(onSuccess = {
+                updateState { copy(isLoading = false) }
+            }, onFailure = {
+                Log.e("123123", "loadData: $it")
+                updateState { copy(isLoading = false) }
+            })
         }
+    }
+
+    fun onClickViewTomorrow() {
+        if (uiState.value.currentDay == 7) onChangeDayOfWeek(1)
+        else onChangeDayOfWeek(uiState.value.currentDay + 1)
+
     }
 
     fun onChangeDayOfWeek(value: Int) {

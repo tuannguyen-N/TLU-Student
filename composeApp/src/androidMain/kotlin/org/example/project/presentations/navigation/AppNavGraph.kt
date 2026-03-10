@@ -1,5 +1,7 @@
 package org.example.project.presentations.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -30,7 +32,11 @@ import org.example.project.presentations.screen.school_schedule.ScheduleViewMode
 import org.example.project.presentations.screen.setting.SettingScreen
 import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.timetable.TimetableScreen
+import org.example.project.presentations.screen.transcript.TranscriptViewModel
+import org.example.project.presentations.screen.transcript.TranscriptViewModelFactory
 import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
+import org.example.project.presentations.screen.transcript_term.TranscriptTermViewModel
+import org.example.project.presentations.screen.transcript_term.TranscriptTermViewModelFactory
 import org.example.project.presentations.utils.toRoute
 
 @Composable
@@ -40,7 +46,31 @@ fun AppNavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Splash
+        startDestination = Routes.Splash,
+        enterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(500)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(500)
+            )
+        },
+        popEnterTransition = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(500)
+            )
+        },
+        popExitTransition = {
+            slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(500)
+            )
+        }
     ) {
         composable(Routes.Splash) {
             SplashScreen(navController)
@@ -72,18 +102,22 @@ fun AppNavGraph() {
             val scheduleViewModel: ScheduleViewModel = viewModel(
                 factory = ScheduleViewModelFactory(container.scheduleUseCase)
             )
+            val transcriptViewModel: TranscriptViewModel = viewModel(
+                factory = TranscriptViewModelFactory(container.transcriptUseCase)
+            )
 
             MainScreen(
                 homeViewModel = homeViewModel,
                 scheduleViewModel = scheduleViewModel,
+                transcriptViewModel = transcriptViewModel,
                 onOpenProfileScreen = {
                     navController.navigate(Routes.Profile)
                 },
                 onOpenNotificationScreen = {
                     navController.navigate(Routes.Notification)
                 },
-                onOpenTranscriptTerm = {
-                    navController.navigate(Routes.TranscriptTerm)
+                onOpenTranscriptTerm = { semesterLabel ->
+                    navController.navigate("${Routes.TranscriptTerm}/$semesterLabel")
                 },
                 onOpenTimetable = {
                     navController.navigate(Routes.TimetableScreen)
@@ -139,8 +173,14 @@ fun AppNavGraph() {
             )
         }
 
-        composable(Routes.TranscriptTerm) {
+        composable("${Routes.TranscriptTerm}/{semesterLabel}") {
+            val container = LocalAppContainer.current
+            val transcriptTermViewModel: TranscriptTermViewModel = viewModel(
+                factory = TranscriptTermViewModelFactory(container.transcriptUseCase)
+            )
+
             TranscriptTermScreen(
+                viewModel = transcriptTermViewModel,
                 onBack = {
                     navController.popBackStack()
                 }

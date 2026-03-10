@@ -39,6 +39,7 @@ fun ScheduleScreen(
             DateList(
                 modifier = Modifier.padding(top = 5.dp),
                 selectedDayOfWeek = uiState.selectedDayOfWeek,
+                currentDay = uiState.currentDay,
                 onChangeDayOfWeek = { day ->
                     viewModel.onChangeDayOfWeek(day)
                 }
@@ -47,9 +48,8 @@ fun ScheduleScreen(
             TodayScheduleList(
                 modifier = Modifier.padding(top = 20.dp),
                 onOpenTimetable = onOpenTimetable,
-                onOpenDetailCourseClass = {courseClass ->
-                    viewModel.onOpenDetailCourseClass(courseClass)
-                }
+                onOpenDetailCourseClass = viewModel::onOpenDetailCourseClass,
+                onClickViewTomorrow =viewModel::onClickViewTomorrow
             )
         }
         

@@ -28,19 +28,27 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import org.example.project.R
 import org.example.project.presentations.navigation.BottomRoutes
 import org.example.project.presentations.theme.LocalExtendedColors
 
+@Preview
 @Composable
 fun BottomBar(
-    navController: NavHostController
+    currentPage: Int = 0,
+    onTabSelected: (Int) -> Unit = {}
 ) {
-    val currentRoute =
-        navController.currentBackStackEntryAsState().value?.destination?.route
+    val tabs = listOf(
+        R.drawable.icon_home,
+        R.drawable.icon_calendar,
+        R.drawable.icon_chat,
+        R.drawable.icon_transcript
+    )
 
     Box(
         modifier = Modifier
@@ -51,68 +59,19 @@ fun BottomBar(
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(30.dp))
-                .height(56.dp)
-                .width(240.dp)
+                .height(60.dp)
+                .width(250.dp)
                 .background(LocalExtendedColors.current.mainBlue),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            BottomIcon(
-                drawRes = R.drawable.icon_home,
-                selected = currentRoute == BottomRoutes.Home,
-                onClick = {
-                    navController.navigate(BottomRoutes.Home) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                    }
-                }
-            )
-
-            BottomIcon(
-                drawRes = R.drawable.icon_calendar,
-                selected = currentRoute == BottomRoutes.SchoolSchedule,
-                onClick = {
-                    navController.navigate(BottomRoutes.SchoolSchedule) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                    }
-                }
-            )
-
-            BottomIcon(
-                drawRes = R.drawable.icon_chat,
-                selected = currentRoute == BottomRoutes.Chat,
-                onClick = {
-                    navController.navigate(BottomRoutes.Chat) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                    }
-                }
-            )
-
-            BottomIcon(
-                drawRes = R.drawable.icon_transcript,
-                selected = currentRoute == BottomRoutes.Transcript,
-                onClick = {
-                    navController.navigate(BottomRoutes.Transcript) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                    }
-                }
-            )
+            tabs.forEachIndexed { index, drawRes ->
+                BottomIcon(
+                    drawRes = drawRes,
+                    selected = currentPage == index,
+                    onClick = { onTabSelected(index) }
+                )
+            }
         }
     }
 }
@@ -123,7 +82,6 @@ fun BottomIcon(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-
     val animatedBackground by animateColorAsState(
         targetValue = if (selected)
             LocalExtendedColors.current.red
@@ -167,7 +125,7 @@ fun BottomIcon(
             painter = painterResource(drawRes),
             contentDescription = "icon_bottom_bar",
             colorFilter = ColorFilter.tint(animatedIconColor),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(24.dp)
         )
     }
 }

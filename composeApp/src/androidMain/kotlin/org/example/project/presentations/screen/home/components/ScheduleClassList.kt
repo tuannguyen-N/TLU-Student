@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.data.remote.dto.schedule.CourseClass
-import org.example.project.domain.model.ScheduleClassUiModel
 import org.example.project.presentations.components.shimmerBrush
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.isGoing
@@ -30,6 +29,7 @@ fun ScheduleClassList(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     onClickAll: () -> Unit = {},
+    onClickViewTomorrow: () -> Unit = {},
     courseClasses: List<CourseClass>?
 ) {
     Column {
@@ -51,37 +51,40 @@ fun ScheduleClassList(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = LocalExtendedColors.current.fontBlue,
-                modifier = Modifier.clickable(
-                    onClick = onClickAll
-                )
+                modifier = Modifier.clickable(onClick = onClickAll)
             )
         }
 
-        if (isLoading) {
-            Column(modifier = Modifier.padding(top = 10.dp)) {
-                repeat(2) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(80.dp)
-                            .padding(bottom = 10.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(shimmerBrush())
-                    )
+        when {
+            isLoading -> {
+                Column(modifier = Modifier.padding(top = 10.dp)) {
+                    repeat(2) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp)
+                                .padding(bottom = 10.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(shimmerBrush())
+                        )
+                    }
                 }
             }
-        } else {
-            courseClasses?.forEach { item ->
-                if (item.isGoing()) {
-                    ScheduleCurrent(
-                        modifier = modifier,
-                        item = item
-                    )
-                } else {
-                    ScheduleNext(
-                        modifier = modifier,
-                        item = item
-                    )
+
+            courseClasses.isNullOrEmpty() -> {
+                ScheduleEmptyCard(
+                    onClickViewTomorrow = onClickViewTomorrow,
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                )
+            }
+
+            else -> {
+                courseClasses.forEach { item ->
+                    if (item.isGoing()) {
+                        ScheduleCurrent(modifier = modifier, item = item)
+                    } else {
+                        ScheduleNext(modifier = modifier, item = item)
+                    }
                 }
             }
         }

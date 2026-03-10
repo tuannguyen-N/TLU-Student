@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.data.remote.dto.schedule.CourseClass
+import org.example.project.presentations.screen.home.components.ScheduleEmptyCard
 
 @Preview(showBackground = true)
 @Composable
@@ -24,7 +25,8 @@ fun TodayScheduleList(
     modifier: Modifier = Modifier,
     courseClasses: List<CourseClass> = emptyList(),
     onOpenTimetable: () -> Unit = {},
-    onOpenDetailCourseClass: (CourseClass) -> Unit = {}
+    onOpenDetailCourseClass: (CourseClass) -> Unit = {},
+    onClickViewTomorrow: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -33,14 +35,20 @@ fun TodayScheduleList(
     ) {
         TitleView(onOpenTimetable)
 
-        LazyColumn(modifier = Modifier) {
-            items(courseClasses) { courseClass ->
-                ScheduleItem(
-                    courseClass = courseClass,
-                    modifier = Modifier,
-                    onOpenDetailCourseClass = {onOpenDetailCourseClass(courseClass)}
-                )
+        if(!courseClasses.isEmpty()){
+            LazyColumn(modifier = Modifier) {
+                items(courseClasses) { courseClass ->
+                    ScheduleItem(
+                        courseClass = courseClass,
+                        modifier = Modifier,
+                        onOpenDetailCourseClass = {onOpenDetailCourseClass(courseClass)}
+                    )
+                }
             }
+        }else {
+            ScheduleEmptyCard(
+                onClickViewTomorrow = onClickViewTomorrow,
+            )
         }
     }
 }

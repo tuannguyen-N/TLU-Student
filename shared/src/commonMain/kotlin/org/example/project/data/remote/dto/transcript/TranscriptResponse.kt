@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class TranscriptResponse(
     val code: Int,
     val message: String,
-    val data: Data?
+    val data: Transcript?
 )

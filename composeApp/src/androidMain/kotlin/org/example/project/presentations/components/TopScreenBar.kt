@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +36,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun TopScreenBar(
     onBack: () -> Unit = {},
+    justView: Boolean = false,
+    yearValue: String = "2023-2024",
     title: String = "Chi tiết học kỳ 1"
 ) {
     var showTermYear by remember { mutableStateOf(false) }
@@ -60,6 +63,8 @@ fun TopScreenBar(
                 )
             }
 
+            Spacer(modifier = Modifier.width(5.dp))
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
@@ -72,12 +77,13 @@ fun TopScreenBar(
 
             Box {
                 TermYear(
-                    academicYear = "2023-2024",
+                    academicYear = yearValue,
                     onClick = { showTermYear = true },
-                    modifier = Modifier.padding(end = 12.dp)
+                    modifier = Modifier.padding(end = 12.dp),
+                    justView = justView
                 )
 
-                if (showTermYear) {
+                if (showTermYear && !justView) {
                     TermYearMenuView(
                         onDismiss = { showTermYear = false }
                     )
@@ -91,6 +97,7 @@ fun TopScreenBar(
 fun TermYear(
     academicYear: String,
     onClick: () -> Unit,
+    justView: Boolean,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -114,11 +121,13 @@ fun TermYear(
                 style = MaterialTheme.typography.titleSmall,
             )
 
-            Icon(
-                painter = painterResource(R.drawable.icon_down),
-                contentDescription = null,
-                tint = Color.White
-            )
+            if (!justView) {
+                Icon(
+                    painter = painterResource(R.drawable.icon_down),
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
         }
     }
 }

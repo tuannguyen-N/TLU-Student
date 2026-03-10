@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
@@ -26,11 +28,13 @@ import kotlinx.datetime.toLocalDateTime
 import org.example.project.presentations.theme.LocalExtendedColors
 import kotlin.time.Clock
 
+@Preview(showBackground = true)
 @Composable
 fun DateList(
     modifier: Modifier = Modifier,
-    selectedDayOfWeek: Int,
-    onChangeDayOfWeek: (Int) -> Unit
+    selectedDayOfWeek: Int = 2,
+    currentDay: Int = 2,
+    onChangeDayOfWeek: (Int) -> Unit = {}
 ) {
     val today = remember {
         Clock.System.now()
@@ -52,8 +56,9 @@ fun DateList(
         items(dates) { date ->
             DateItem(
                 day = date.dayOfWeek.isoDayNumber,
-                dayNumber = date.dayOfMonth,
+                dayNumber = date.day,
                 isCurrent = date.dayOfWeek.isoDayNumber == selectedDayOfWeek,
+                currentDay = currentDay,
                 onClickItem = {
                     onChangeDayOfWeek(date.dayOfWeek.isoDayNumber)
                 }
@@ -66,6 +71,7 @@ fun DateList(
 fun DateItem(
     day: Int,
     dayNumber: Int,
+    currentDay: Int,
     isCurrent: Boolean = false,
     onClickItem: () -> Unit
 ) {
@@ -75,6 +81,7 @@ fun DateItem(
 
     val backgroundColor =
         if (isCurrent) LocalExtendedColors.current.mainBlue
+        else if (day == currentDay) LocalExtendedColors.current.fontBlue.copy(alpha = 0.2f)
         else Color.White
 
     val textColor =

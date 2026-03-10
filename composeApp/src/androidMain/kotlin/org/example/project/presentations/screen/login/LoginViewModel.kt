@@ -29,6 +29,7 @@ class LoginViewModel(
             MsalHelper.signOut {}//todo
             delay(1000L)
             MsalHelper.signIn(activity) { newToken ->
+                Log.e("123123", "onLoginClick: $newToken", )
                 if (newToken != null) onSignMsalSuccess(newToken)
             }
         }

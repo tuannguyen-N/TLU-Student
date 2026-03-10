@@ -5,7 +5,9 @@ import org.example.project.data.remote.dto.schedule.CourseClass
 data class ScheduleState(
     val courseClasses: List<CourseClass>? = emptyList(),
     val selectedCourseClass: CourseClass? = null,
-    val selectedDayOfWeek: Int,
     val showDetailCourseClass: Boolean = false,
+    val currentDay: Int,
+    val selectedDayOfWeek: Int,
+
     val isLoading: Boolean = false
 )

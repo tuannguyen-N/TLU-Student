@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.main
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -8,14 +9,18 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import org.example.project.presentations.navigation.BottomRoutes
 import org.example.project.presentations.screen.BottomBar
 import org.example.project.presentations.screen.home.HomeScreen
@@ -23,73 +28,55 @@ import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.school_schedule.ScheduleScreen
 import org.example.project.presentations.screen.school_schedule.ScheduleViewModel
 import org.example.project.presentations.screen.transcript.TranscriptScreen
+import org.example.project.presentations.screen.transcript.TranscriptViewModel
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun MainScreen(
     scheduleViewModel: ScheduleViewModel,
+    transcriptViewModel: TranscriptViewModel,
     homeViewModel: HomeViewModel,
     onOpenProfileScreen: () -> Unit,
     onOpenNotificationScreen: () -> Unit,
-    onOpenTranscriptTerm: () -> Unit,
+    onOpenTranscriptTerm: (String) -> Unit,
     onOpenTimetable: () -> Unit,
     onOpenFeatureScreen: () -> Unit
 ) {
-    val navController = rememberNavController()
+    val pagerState = rememberPagerState(pageCount = { 4 })
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
-
         Scaffold(
             containerColor = LocalExtendedColors.current.background,
             contentWindowInsets = WindowInsets(0)
         ) { paddingValues ->
 
-            NavHost(
-                navController = navController,
-                startDestination = BottomRoutes.Home,
-                modifier = Modifier.padding(paddingValues)
-            ) {
-                composable(
-                    BottomRoutes.Home,
-                    enterTransition = { fadeIn(tween(300)) },
-                    exitTransition = { fadeOut(tween(300)) },
-                ) {
-                    HomeScreen(
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                userScrollEnabled = false
+            ) { page ->
+                when (page) {
+                    0 -> HomeScreen(
                         homeViewModel = homeViewModel,
-                        onOpenProfileScreen = {
-                            onOpenProfileScreen()
-                        },
+                        onOpenProfileScreen = onOpenProfileScreen,
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenFeatureScreen = onOpenFeatureScreen
                     )
-                }
 
-                composable(
-                    BottomRoutes.SchoolSchedule,
-                    enterTransition = { fadeIn(tween(300)) },
-                    exitTransition = { fadeOut(tween(300)) },
-                ) {
-                    ScheduleScreen(
+                    1 -> ScheduleScreen(
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenTimetable = onOpenTimetable,
                         viewModel = scheduleViewModel
                     )
-                }
 
-                composable(
-                    BottomRoutes.Chat, enterTransition = { fadeIn(tween(300)) },
-                    exitTransition = { fadeOut(tween(300)) },
-                ) {
-
-                }
-
-                composable(
-                    BottomRoutes.Transcript, enterTransition = { fadeIn(tween(300)) },
-                    exitTransition = { fadeOut(tween(300)) },
-                ) {
-                    TranscriptScreen(
+                    2 -> Box(modifier = Modifier.fillMaxSize())
+                    3 -> TranscriptScreen(
+                        viewModel = transcriptViewModel,
                         onOpenNotificationScreen = onOpenNotificationScreen,
-                        onOpenTranscriptTerm = onOpenTranscriptTerm
+                        onOpenTranscriptTerm = { semester -> onOpenTranscriptTerm(semester.semesterLabel) }
                     )
                 }
             }
@@ -101,7 +88,14 @@ fun MainScreen(
                 .navigationBarsPadding()
                 .padding(bottom = 10.dp)
         ) {
-            BottomBar(navController)
+            BottomBar(
+                currentPage = pagerState.currentPage,
+                onTabSelected = { index ->
+                    coroutineScope.launch {
+                        pagerState.scrollToPage(index)
+                    }
+                }
+            )
         }
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +29,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun NewsAndEventsList(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
-    items: List<NewAndEventUiModel>
+    items: List<NewAndEventUiModel> = NewAndEventUiModel.getDataDemo()
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -44,7 +45,6 @@ fun NewsAndEventsList(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
-
             Text(
                 text = "Tất cả",
                 style = MaterialTheme.typography.bodyMedium,
@@ -53,12 +53,15 @@ fun NewsAndEventsList(
             )
         }
 
-        LazyRow(modifier = Modifier.fillMaxWidth()) {
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 15.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             if (isLoading) {
-                items(3) {
+                items(count = 3, key = { "shimmer_news_$it" }) {
                     Box(
                         modifier = Modifier
-                            .padding(horizontal = 15.dp)
                             .width(250.dp)
                             .height(180.dp)
                             .clip(RoundedCornerShape(12.dp))
@@ -68,9 +71,9 @@ fun NewsAndEventsList(
             } else {
                 itemsIndexed(
                     items = items,
-                    key = { index, _ -> index },
+                    key = { index, item -> "${index}_${item.title}" },
                     contentType = { _, _ -> "NewsAndEvent" }
-                ){ _, item ->
+                ) { _, item ->
                     NewAndEventCard(item)
                 }
             }

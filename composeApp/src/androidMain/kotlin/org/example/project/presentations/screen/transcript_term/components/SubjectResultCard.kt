@@ -48,10 +48,14 @@ import org.example.project.presentations.utils.toColor
 @Preview
 @Composable
 fun SubjectResultCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    subjectCode: String = "IT2110",
+    subjectName: String = "Lập trình Android",
+    score10: Double = 8.5,
+    score4: Double = 3.5,
+    letterGrade: String ="B"
 ) {
-    val gpa = 2.3
-    val color = gpa.toAcademicRank().toColor()
+    val color = score4.toAcademicRank().toColor()
 
     var isExpanded by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(
@@ -73,7 +77,7 @@ fun SubjectResultCard(
 
         Image(
             painterResource(
-                if (gpa.isPass())
+                if (score4.isPass())
                     R.drawable.icon_pass else R.drawable.icon_fail
             ),
             contentDescription = null,
@@ -83,10 +87,10 @@ fun SubjectResultCard(
         Column(
             modifier = Modifier
         ) {
-            SubjectCode("CS100")
+            SubjectCode(subjectCode)
 
             Text(
-                text = "Tin đại cương",
+                text = subjectName,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(vertical = 5.dp)
@@ -103,19 +107,19 @@ fun SubjectResultCard(
             ) {
                 Information(
                     title = "ĐIỂM HỆ 4",
-                    value = gpa.toString(),
+                    value = score4.toString(),
                     color = color,
                 )
 
                 Information(
                     title = "ĐIỂM HỆ 10",
-                    value = gpa.toString(),
+                    value = score10.toString(),
                     color = color,
                 )
 
                 Information(
                     title = "ĐIỂM CHỮ",
-                    value = "B",
+                    value = letterGrade,
                     color = color,
                 )
 
@@ -153,23 +157,23 @@ fun SubjectResultCard(
                 Column {
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    DetailInformation(
-                        title = "Điểm chuyên cần (10%)",
-                        value = gpa.toString(),
-                        color = color,
-                    )
-
-                    DetailInformation(
-                        title = "Điểm giữa kỳ (30%)",
-                        value = gpa.toString(),
-                        color = color,
-                    )
-
-                    DetailInformation(
-                        title = "Điểm cuối kỳ (60%)",
-                        value = gpa.toString(),
-                        color = color,
-                    )
+//                    DetailInformation(
+//                        title = "Điểm chuyên cần (10%)",
+//                        value = gpa.toString(),
+//                        color = color,
+//                    )
+//
+//                    DetailInformation(
+//                        title = "Điểm giữa kỳ (30%)",
+//                        value = gpa.toString(),
+//                        color = color,
+//                    )
+//
+//                    DetailInformation(
+//                        title = "Điểm cuối kỳ (60%)",
+//                        value = gpa.toString(),
+//                        color = color,
+//                    )
                 }
             }
         }

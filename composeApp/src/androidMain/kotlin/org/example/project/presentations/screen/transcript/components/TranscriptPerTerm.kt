@@ -10,49 +10,43 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.example.project.domain.model.SemesterUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun TranscriptPerTerm(
     modifier: Modifier = Modifier,
-    onOpenTranscriptTerm: () -> Unit = {},
-    academicYear: String = "2025-2026"
-){
+    academicYear: String,
+    semesters: List<SemesterUiModel>,
+    onOpenTranscriptTerm: (SemesterUiModel) -> Unit = {},
+) {
     Column(
         modifier = modifier.padding(bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        SubjectCard(
-            onOpenTranscriptTerm = onOpenTranscriptTerm
-        )
+        semesters.forEachIndexed { index, semester ->
+            SubjectCard(
+                onOpenTranscriptTerm = ({ onOpenTranscriptTerm(semester) }),
+                termNumber = index + 1,
+                subjects = semester.subjects.map { it.subjectName },
+                gpa = semester.semesterGpa,
+                credits = semester.creditsPassed,
+            )
+        }
 
-        SubjectCard(
-            onOpenTranscriptTerm = onOpenTranscriptTerm
-        )
-
-        SubjectCard(
-            onOpenTranscriptTerm = onOpenTranscriptTerm
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
                 thickness = 0.5.dp,
                 color = LocalExtendedColors.current.gray
             )
-
             Text(
                 text = academicYear,
                 color = LocalExtendedColors.current.gray,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(horizontal = 12.dp)
             )
-
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
                 thickness = 0.5.dp,
