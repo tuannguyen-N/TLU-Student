@@ -9,6 +9,6 @@ class StudyProgramApi(
     private val client: HttpClient
 ) {
     suspend fun getStudyPrograms(): StudyProgramResponse {
-        return client.get("/api/v1/study-programs/studyProgramCode").body()
+        return client.get("/api/v1/study-programs").body()
     }
 }

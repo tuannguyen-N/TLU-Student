@@ -16,7 +16,6 @@ import org.example.project.presentations.screen.timetable.components.TimetableSc
 import org.example.project.presentations.screen.timetable.components.WeekView
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun TimetableScreen(
 //    viewModel: TimetableViewModel,
@@ -47,10 +46,4 @@ fun TimetableScreen(
             )
         }
     }
-
-//    if (state.isShowDetailSubjectDialog){
-//        SubjectDetailDialog(
-//            onDismiss = { timetableViewModel.onDismissSubjectDetailDialog() }
-//        )
-//    }
 }

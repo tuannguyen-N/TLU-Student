@@ -1,8 +1,11 @@
 package org.example.project.presentations.utils
 
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.remote.dto.day_schedule.CourseClass
 import java.time.Instant
@@ -25,6 +28,17 @@ fun getTodayDayOfWeek(): Int {
         .dayOfWeek  // MONDAY, TUESDAY,...
 
     return today.isoDayNumber
+}
+
+fun getCurrentWeek(): Pair<String, String> {
+    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+
+    val dayOfWeek = today.dayOfWeek.isoDayNumber
+
+    val startOfWeek = today.minus(dayOfWeek - 1, DateTimeUnit.DAY)
+    val endOfWeek = today.plus(7 - dayOfWeek, DateTimeUnit.DAY)
+
+    return Pair(startOfWeek.toString(), endOfWeek.toString())
 }
 
 fun String.toHourMinute(): String {

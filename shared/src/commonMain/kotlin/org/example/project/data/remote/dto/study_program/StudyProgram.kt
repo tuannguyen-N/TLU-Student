@@ -1,4 +1,12 @@
 package org.example.project.data.remote.dto.study_program
 
-class StudyProgram {
-}
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class StudyProgram(
+    val id: Int?,
+    val isPrimary: Boolean,
+    val studentCode: String,
+    val studyProgramCode: String,
+    val studyProgramName: String
+)

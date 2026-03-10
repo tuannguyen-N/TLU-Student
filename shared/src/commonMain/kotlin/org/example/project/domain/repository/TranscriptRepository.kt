@@ -15,14 +15,14 @@ class TranscriptRepository(
 
     suspend fun getTranscript(): Result<Transcript> {
         return try {
-//            val studyProgram = studyProgramApi
-//                .getStudyPrograms()
-//                .data
-//                ?.firstOrNull()
-//                ?: return Result.failure(Exception("Study program not found"))
+            val studyProgram = studyProgramApi
+                .getStudyPrograms()
+                .data
+                ?.firstOrNull()
+                ?: return Result.failure(Exception("Study program not found"))
 
             val transcript = transcriptApi
-                .getTranscript("CTDT-KHMT-2021")
+                .getTranscript(studyProgram.studyProgramCode)
                 .data ?: return Result.failure(Exception("Transcript empty"))
             _transcriptCached.value = transcript
             Result.success(transcript)

@@ -5,12 +5,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.dto.day_schedule.CourseClasses
 import org.example.project.data.remote.dto.day_schedule.DayOfWeekScheduleResponse
+import org.example.project.data.remote.dto.weak_schedule.WeekSchedule
 
 class ScheduleRepository(
     private val scheduleApi: ScheduleApi
 ) {
     private val _dayOfWeekSchedule = MutableStateFlow<CourseClasses?>(null)
     val dayOfWeekSchedule = _dayOfWeekSchedule.asStateFlow()
+
+    private val _weakSchedule = MutableStateFlow<WeekSchedule?>(null)
+    val weakSchedule = _weakSchedule.asStateFlow()
 
     private val dayScheduleCache = mutableMapOf<Int, DayOfWeekScheduleResponse>()
 
@@ -26,7 +30,9 @@ class ScheduleRepository(
         }
     }
 
-    suspend fun getWeakSchedule(startDate: String, endDate: String): Result<Unit>{
-        return runCatching { scheduleApi.getWeakSchedule(startDate, endDate) }
+    suspend fun getWeakSchedule(startDate: String, endDate: String): Result<Any>{
+        return runCatching { scheduleApi.getWeakSchedule(startDate, endDate) }.onSuccess {
+            _weakSchedule.value = it.data
+        }
     }
 }
