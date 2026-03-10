@@ -59,7 +59,6 @@ fun HomeScreen(
 
             item(key = "schedule_list", contentType = "ScheduleList") {
                 ScheduleClassList(
-                    onClickAll = {},
                     isLoading = uiState.loadingScheduleClassList,
                     courseClasses = uiState.courseClasses,
                     modifier = Modifier.padding(horizontal = 15.dp)

@@ -28,7 +28,6 @@ import org.example.project.presentations.utils.isGoing
 fun ScheduleClassList(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
-    onClickAll: () -> Unit = {},
     onClickViewTomorrow: () -> Unit = {},
     courseClasses: List<CourseClass>?
 ) {
@@ -44,14 +43,6 @@ fun ScheduleClassList(
                 text = "Lịch học hôm nay",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
-            )
-
-            Text(
-                text = "Tất cả",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = LocalExtendedColors.current.fontBlue,
-                modifier = Modifier.clickable(onClick = onClickAll)
             )
         }
 

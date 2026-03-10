@@ -51,7 +51,6 @@ class ScheduleViewModel(
     fun onClickViewTomorrow() {
         if (uiState.value.currentDay == 7) onChangeDayOfWeek(1)
         else onChangeDayOfWeek(uiState.value.currentDay + 1)
-
     }
 
     fun onChangeDayOfWeek(value: Int) {

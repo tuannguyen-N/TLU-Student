@@ -42,10 +42,6 @@ fun HighAlertCard(
     ) {
         Card(
             shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(
-                1.dp,
-                LocalExtendedColors.current.red
-            ),
             colors = CardDefaults.cardColors(
                 containerColor = LocalExtendedColors.current.white
             ),

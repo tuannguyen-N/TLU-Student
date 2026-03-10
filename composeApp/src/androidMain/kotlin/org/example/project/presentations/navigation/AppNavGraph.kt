@@ -3,10 +3,12 @@ package org.example.project.presentations.navigation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.example.project.domain.model.FeatureType
 import org.example.project.presentations.screen.SharedViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModel
@@ -37,6 +39,7 @@ import org.example.project.presentations.screen.transcript.TranscriptViewModelFa
 import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
 import org.example.project.presentations.screen.transcript_term.TranscriptTermViewModel
 import org.example.project.presentations.screen.transcript_term.TranscriptTermViewModelFactory
+import org.example.project.presentations.utils.openDialer
 import org.example.project.presentations.utils.toRoute
 
 @Composable
@@ -197,17 +200,19 @@ fun AppNavGraph() {
 
         composable(Routes.FeaturesScreen) {
             val container = LocalAppContainer.current
+            val context = LocalContext.current
             val featuresViewModel: FeaturesViewModel = viewModel(
                 factory = FeaturesViewModelFactory(container.featureRepository)
             )
 
             FeaturesScreen(
                 viewModel = featuresViewModel,
-                onBack = {
-                    navController.popBackStack()
-                },
-                onOpenFeatureScreen = {
-                    navController.navigate(it.type.toRoute())
+                onBack = { navController.popBackStack() },
+                onNavigate = {
+                    if (it.type == FeatureType.TRAINING_OFFICE)
+                        context.openDialer()
+                    else
+                        navController.navigate(it.type.toRoute())
                 }
             )
         }

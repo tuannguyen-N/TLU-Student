@@ -39,10 +39,6 @@ fun MediumAlertCard(
     ) {
         Card(
             shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(
-                1.dp,
-                LocalExtendedColors.current.yellow
-            ),
             colors = CardDefaults.cardColors(
                 containerColor = LocalExtendedColors.current.white
             ),

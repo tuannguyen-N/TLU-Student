@@ -32,7 +32,7 @@ import org.example.project.presentations.utils.CollectWithLifecycle
 fun FeaturesScreen(
     viewModel: FeaturesViewModel,
     onBack: () -> Unit = {},
-    onOpenFeatureScreen: (FeatureUiModel) -> Unit = {}
+    onNavigate:(FeatureUiModel) -> Unit = {},
 ) {
     val isEditing by viewModel.isEditing.collectAsState()
     val isExitDialog by viewModel.showExitDialog.collectAsState()
@@ -81,7 +81,7 @@ fun FeaturesScreen(
                 editMode = FeatureEditMode.REMOVE,
                 isQuickAccessFull = quickAccessTypes.size >= 4,
                 isQuickAccessMin = quickAccessTypes.size <= 1,
-                onClickFeature = { onOpenFeatureScreen(it) },
+                onClickFeature = { onNavigate(it) },
                 onClickRemoveFromQuickAccess = { viewModel.removeFromQuickAccess(it) }
             )
 
@@ -93,7 +93,7 @@ fun FeaturesScreen(
                 items = FeatureUiModel.getGeneralList().filter { it.type !in quickAccessTypes },
                 isEditing = isEditing,
                 editMode = FeatureEditMode.ADD,
-                onClickFeature = { onOpenFeatureScreen(it) },
+                onClickFeature = { onNavigate(it) },
                 onClickAddToQuickAccess = { viewModel.addToQuickAccess(it) }
             )
 
@@ -104,7 +104,7 @@ fun FeaturesScreen(
             FeatureGrid(
                 items = FeatureUiModel.getSupportList(),
                 isEditing = false,
-                onClickFeature = { onOpenFeatureScreen(it) }
+                onClickFeature = { onNavigate(it) }
             )
         }
     }
