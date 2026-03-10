@@ -25,10 +25,10 @@ fun TranscriptPerTerm(
         modifier = modifier.padding(bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        semesters.forEachIndexed { index, semester ->
+        semesters.forEachIndexed { _, semester ->
             SubjectCard(
                 onOpenTranscriptTerm = ({ onOpenTranscriptTerm(semester) }),
-                termNumber = index + 1,
+                termNumber = semester.semesterLabel.last().code, // TODO: update when add temp semester
                 subjects = semester.subjects.map { it.subjectName },
                 gpa = semester.semesterGpa,
                 credits = semester.creditsPassed,

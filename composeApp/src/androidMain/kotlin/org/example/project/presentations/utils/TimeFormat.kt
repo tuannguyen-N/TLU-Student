@@ -4,14 +4,10 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
-import org.example.project.data.remote.dto.schedule.CourseClass
-import java.text.SimpleDateFormat
+import org.example.project.data.remote.dto.day_schedule.CourseClass
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle
-import java.util.Date
 import java.util.Locale
 import kotlin.time.Clock
 

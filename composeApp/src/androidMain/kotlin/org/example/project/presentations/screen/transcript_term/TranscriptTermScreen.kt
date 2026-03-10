@@ -52,6 +52,9 @@ fun TranscriptTermScreen(
                 SubjectResultCard(
                     subjectCode = subject.subjectCode,
                     subjectName = subject.subjectName,
+                    attendanceScore = subject.attendanceScore,
+                    midtermScore = subject.midtermScore,
+                    finalScore = subject.finalScore,
                     score10 = subject.score10,
                     score4 = subject.score4,
                     letterGrade = subject.letterGrade

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.dialog.SubjectDetailDialog
@@ -18,10 +19,10 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Preview
 @Composable
 fun TimetableScreen(
+//    viewModel: TimetableViewModel,
     onBack: () -> Unit = {}
 ){
-    val timetableViewModel: TimetableViewModel = viewModel()
-    val state = timetableViewModel.state
+//    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
@@ -47,9 +48,9 @@ fun TimetableScreen(
         }
     }
 
-    if (state.isShowDetailSubjectDialog){
-        SubjectDetailDialog(
-            onDismiss = { timetableViewModel.onDismissSubjectDetailDialog() }
-        )
-    }
+//    if (state.isShowDetailSubjectDialog){
+//        SubjectDetailDialog(
+//            onDismiss = { timetableViewModel.onDismissSubjectDetailDialog() }
+//        )
+//    }
 }

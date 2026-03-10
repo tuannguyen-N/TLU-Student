@@ -20,6 +20,7 @@ class TranscriptTermViewModel(
     val uiState = _uiState.asStateFlow()
 
     private val semesterLabel: String = checkNotNull(savedStateHandle["semesterLabel"])
+    private val academicYear: String = checkNotNull(savedStateHandle["academicYear"])
 
     init {
         loadSemesterData()
@@ -32,7 +33,7 @@ class TranscriptTermViewModel(
                 .collect { transcriptUiModel ->
                     val semester = transcriptUiModel.academicYearGroups
                         .flatMap { it.semesters }
-                        .firstOrNull { it.semesterLabel == semesterLabel }
+                        .firstOrNull { it.semesterLabel == semesterLabel && it.academicYear == academicYear }
 
                     semester?.let {
                         _uiState.update { _ ->

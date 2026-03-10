@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.example.project.data.remote.dto.schedule.CourseClass
+import org.example.project.data.remote.dto.day_schedule.CourseClass
 import org.example.project.presentations.screen.home.components.ScheduleEmptyCard
 
 @Preview(showBackground = true)

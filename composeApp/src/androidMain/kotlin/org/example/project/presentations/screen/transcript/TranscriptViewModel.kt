@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.example.project.data.mapper.TranscriptMapper
-import org.example.project.data.mapper.TranscriptMapper.toUiModel
 import org.example.project.domain.model.TranscriptState
 import org.example.project.domain.usecase.TranscriptUseCase
 

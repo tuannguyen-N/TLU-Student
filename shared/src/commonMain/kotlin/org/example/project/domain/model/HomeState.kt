@@ -1,7 +1,7 @@
 package org.example.project.domain.model
 
 import org.example.project.data.remote.dto.me.StudentInformation
-import org.example.project.data.remote.dto.schedule.CourseClass
+import org.example.project.data.remote.dto.day_schedule.CourseClass
 
 data class HomeState(
     val studentInfo: StudentInformation? = null,

@@ -1,4 +1,4 @@
-package org.example.project.data.remote.dto.schedule
+package org.example.project.data.remote.dto.day_schedule
 
 import kotlinx.serialization.Serializable
 

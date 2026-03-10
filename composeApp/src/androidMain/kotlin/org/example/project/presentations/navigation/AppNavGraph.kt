@@ -119,8 +119,8 @@ fun AppNavGraph() {
                 onOpenNotificationScreen = {
                     navController.navigate(Routes.Notification)
                 },
-                onOpenTranscriptTerm = { semesterLabel ->
-                    navController.navigate("${Routes.TranscriptTerm}/$semesterLabel")
+                onOpenTranscriptTerm = { semesterLabel, academicYear ->
+                    navController.navigate("${Routes.TranscriptTerm}/$academicYear/$semesterLabel")
                 },
                 onOpenTimetable = {
                     navController.navigate(Routes.TimetableScreen)
@@ -176,7 +176,7 @@ fun AppNavGraph() {
             )
         }
 
-        composable("${Routes.TranscriptTerm}/{semesterLabel}") {
+        composable("${Routes.TranscriptTerm}/{academicYear}/{semesterLabel}") {
             val container = LocalAppContainer.current
             val transcriptTermViewModel: TranscriptTermViewModel = viewModel(
                 factory = TranscriptTermViewModelFactory(container.transcriptUseCase)

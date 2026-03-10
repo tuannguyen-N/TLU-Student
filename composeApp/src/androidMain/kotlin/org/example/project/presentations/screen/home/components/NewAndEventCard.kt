@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,110 +42,75 @@ fun NewAndEventCard(
             .padding(horizontal = 8.dp)
             .shadow(
                 elevation = 4.dp,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
                 clip = false
             )
-            .width(250.dp)
-            .height(140.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .width(220.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(LocalExtendedColors.current.white)
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_launcher_background),
-            contentDescription = "new and event",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        val gradientBrush = remember {
-            Brush.verticalGradient(
-                colors = listOf(
-                    Color.Black.copy(alpha = 0f),
-                    Color.Black.copy(alpha = 0.5f),
-                    Color.Black.copy(alpha = 0.9f)
-                )
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(brush = gradientBrush)
-        )
-
-        Box(
-            modifier = Modifier
-                .padding(7.dp)
-                .clip(RoundedCornerShape(6.dp))
-                .background(LocalExtendedColors.current.red)
-                .padding(horizontal = 8.dp)
-                .align(Alignment.TopEnd),
-        ) {
-            if (item.isNew) {
-                Text(
-                    text = "Mới",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = LocalExtendedColors.current.white,
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-                .align(Alignment.BottomStart)
-        ) {
+        Column {
             Box(
                 modifier = Modifier
-                    .padding(bottom = 2.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(LocalExtendedColors.current.fontBlue)
-                    .padding(horizontal = 8.dp, vertical = 1.dp)
+                    .fillMaxWidth()
+                    .height(130.dp)
             ) {
-                Text(
-                    text = "Hội thảo",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = LocalExtendedColors.current.white,
+                Image(
+                    painter = painterResource(R.drawable.ic_launcher_background),
+                    contentDescription = "new and event",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
                 )
+
+                if (item.isNew) {
+                    Box(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(LocalExtendedColors.current.red)
+                            .padding(horizontal = 12.dp, vertical = 2.dp)
+                            .align(Alignment.TopEnd),
+                    ) {
+                        Text(
+                            text = "MỚI",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = LocalExtendedColors.current.white,
+                        )
+                    }
+                }
             }
 
-            Text(
-                text = item.title,
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                color = LocalExtendedColors.current.white,
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 3.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 8.dp)
             ) {
-                Image(
-                    painter = painterResource(R.drawable.icon_clock_small),
-                    contentDescription = "clock"
-                )
-
                 Text(
-                    text = "${item.time} ngày trước",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = LocalExtendedColors.current.white,
-                    modifier = Modifier.padding(start = 2.dp)
+                    text = item.title,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
-                Image(
-                    painter = painterResource(R.drawable.icon_location_small),
-                    contentDescription = "location",
-                    modifier = Modifier.padding(start = 5.dp)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.icon_clock_small),
+                        contentDescription = "clock",
+                        colorFilter = ColorFilter.tint(LocalExtendedColors.current.gray)
+                    )
 
-                Text(
-                    text = item.location,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = LocalExtendedColors.current.white,
-                    modifier = Modifier.padding(start = 2.dp)
-                )
+                    Text(
+                        text = "${item.time} ngày trước",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = LocalExtendedColors.current.gray,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
             }
         }
     }

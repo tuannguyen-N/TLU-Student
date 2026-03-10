@@ -25,8 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
-import org.example.project.data.remote.dto.schedule.CourseClass
+import org.example.project.data.remote.dto.day_schedule.CourseClass
 import org.example.project.presentations.components.ButtonView
+import org.example.project.presentations.screen.transcript_term.components.SubjectCode
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.toHourMinute
 
@@ -41,34 +42,41 @@ fun ClassDetailContent(
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .background(
-                    color = if (isGoing) LocalExtendedColors.current.greenLight else LocalExtendedColors.current.gray.copy(
-                        alpha = 0.3f
-                    ),
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .padding(horizontal = 12.dp, vertical = 5.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .background(
-                            color = if (isGoing) LocalExtendedColors.current.green else LocalExtendedColors.current.gray,
-                            shape = CircleShape
-                        )
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = if (isGoing) "Đang diễn ra" else "Chưa diễn ra",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (isGoing) LocalExtendedColors.current.green else LocalExtendedColors.current.gray,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 0.5.sp
-                )
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = if (isGoing) LocalExtendedColors.current.greenLight else LocalExtendedColors.current.gray.copy(
+                            alpha = 0.3f
+                        ),
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 5.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(
+                                color = if (isGoing) LocalExtendedColors.current.green else LocalExtendedColors.current.gray,
+                                shape = CircleShape
+                            )
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (isGoing) "Đang diễn ra" else "Chưa diễn ra",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isGoing) LocalExtendedColors.current.green else LocalExtendedColors.current.gray,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.5.sp
+                    )
+                }
             }
+
+            SubjectCode(courseClass.subjectCode)
         }
 
         Spacer(modifier = Modifier.height(12.dp))

@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.project.data.remote.dto.schedule.CourseClass
+import org.example.project.data.remote.dto.day_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @OptIn(ExperimentalMaterial3Api::class)

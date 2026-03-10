@@ -21,10 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
-import org.example.project.data.remote.dto.schedule.CourseClass
+import org.example.project.data.remote.dto.day_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.isGoing
 import org.example.project.presentations.utils.toHourMinute

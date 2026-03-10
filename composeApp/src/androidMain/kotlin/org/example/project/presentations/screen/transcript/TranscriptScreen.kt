@@ -106,7 +106,9 @@ fun TranscriptScreen(
                         TranscriptPerTerm(
                             academicYear = group.academicYear,
                             semesters = group.semesters,
-                            onOpenTranscriptTerm = { semester -> onOpenTranscriptTerm(semester) }
+                            onOpenTranscriptTerm = {
+                                semester -> onOpenTranscriptTerm(semester)
+                            }
                         )
                     }
                 }

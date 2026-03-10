@@ -1,9 +1,5 @@
 package org.example.project.presentations.screen.main
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import org.example.project.presentations.navigation.BottomRoutes
 import org.example.project.presentations.screen.BottomBar
 import org.example.project.presentations.screen.home.HomeScreen
 import org.example.project.presentations.screen.home.HomeViewModel
@@ -38,7 +30,7 @@ fun MainScreen(
     homeViewModel: HomeViewModel,
     onOpenProfileScreen: () -> Unit,
     onOpenNotificationScreen: () -> Unit,
-    onOpenTranscriptTerm: (String) -> Unit,
+    onOpenTranscriptTerm: (String, String) -> Unit,
     onOpenTimetable: () -> Unit,
     onOpenFeatureScreen: () -> Unit
 ) {
@@ -76,7 +68,9 @@ fun MainScreen(
                     3 -> TranscriptScreen(
                         viewModel = transcriptViewModel,
                         onOpenNotificationScreen = onOpenNotificationScreen,
-                        onOpenTranscriptTerm = { semester -> onOpenTranscriptTerm(semester.semesterLabel) }
+                        onOpenTranscriptTerm = { semester -> 
+                            onOpenTranscriptTerm(semester.semesterLabel, semester.academicYear) 
+                        }
                     )
                 }
             }

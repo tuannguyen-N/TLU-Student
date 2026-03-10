@@ -55,18 +55,12 @@ fun NewsAndEventsList(
 
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 15.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            contentPadding = PaddingValues(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (isLoading) {
                 items(count = 3, key = { "shimmer_news_$it" }) {
-                    Box(
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(shimmerBrush())
-                    )
+                    ShimmerNew()
                 }
             } else {
                 itemsIndexed(

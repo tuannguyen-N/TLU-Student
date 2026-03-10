@@ -51,6 +51,9 @@ fun SubjectResultCard(
     modifier: Modifier = Modifier,
     subjectCode: String = "IT2110",
     subjectName: String = "Lập trình Android",
+    attendanceScore: Double = 8.5,
+    midtermScore: Double = 8.5,
+    finalScore: Double = 8.5,
     score10: Double = 8.5,
     score4: Double = 3.5,
     letterGrade: String ="B"
@@ -157,23 +160,23 @@ fun SubjectResultCard(
                 Column {
                     Spacer(modifier = Modifier.height(8.dp))
 
-//                    DetailInformation(
-//                        title = "Điểm chuyên cần (10%)",
-//                        value = gpa.toString(),
-//                        color = color,
-//                    )
-//
-//                    DetailInformation(
-//                        title = "Điểm giữa kỳ (30%)",
-//                        value = gpa.toString(),
-//                        color = color,
-//                    )
-//
-//                    DetailInformation(
-//                        title = "Điểm cuối kỳ (60%)",
-//                        value = gpa.toString(),
-//                        color = color,
-//                    )
+                    DetailInformation(
+                        title = "Điểm chuyên cần (10%)",
+                        value = attendanceScore.toString(),
+                        color = color,
+                    )
+
+                    DetailInformation(
+                        title = "Điểm giữa kỳ (30%)",
+                        value = midtermScore.toString(),
+                        color = color,
+                    )
+
+                    DetailInformation(
+                        title = "Điểm cuối kỳ (60%)",
+                        value = finalScore.toString(),
+                        color = color,
+                    )
                 }
             }
         }

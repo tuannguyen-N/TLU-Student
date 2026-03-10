@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.example.project.data.remote.dto.schedule.CourseClass
+import org.example.project.data.remote.dto.day_schedule.CourseClass
 import org.example.project.domain.model.ScheduleState
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.presentations.utils.getTodayDayOfWeek
@@ -49,8 +49,8 @@ class ScheduleViewModel(
     }
 
     fun onClickViewTomorrow() {
-        if (uiState.value.currentDay == 7) onChangeDayOfWeek(1)
-        else onChangeDayOfWeek(uiState.value.currentDay + 1)
+        if (uiState.value.selectedDayOfWeek == 7) onChangeDayOfWeek(1)
+        else onChangeDayOfWeek(uiState.value.selectedDayOfWeek + 1)
     }
 
     fun onChangeDayOfWeek(value: Int) {
