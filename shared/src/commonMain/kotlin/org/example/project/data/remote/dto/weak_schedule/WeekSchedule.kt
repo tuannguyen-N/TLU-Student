@@ -1,6 +1,9 @@
 package org.example.project.data.remote.dto.weak_schedule
 
-data class Data(
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class WeakSchedule(
     val dailySchedules: List<DailySchedule>,
     val endDate: String,
     val semester: String,

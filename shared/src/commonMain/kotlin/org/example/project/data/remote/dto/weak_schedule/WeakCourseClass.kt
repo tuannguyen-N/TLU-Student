@@ -1,6 +1,6 @@
 package org.example.project.data.remote.dto.weak_schedule
 
-data class CourseClasse(
+data class WeakCourseClass(
     val classCode: String,
     val dayOfWeek: Int,
     val endPeriod: Int,
