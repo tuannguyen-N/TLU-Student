@@ -34,6 +34,7 @@ kotlin {
             implementation(libs.ktor.client.logging)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
+            implementation(libs.compose.multiplatform) // for calendar
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.android)

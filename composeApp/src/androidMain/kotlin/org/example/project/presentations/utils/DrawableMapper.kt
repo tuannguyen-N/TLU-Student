@@ -28,7 +28,7 @@ import org.example.project.presentations.navigation.Routes
 fun FeatureType.toImageVector(): ImageVector {
     return when (this) {
         FeatureType.VIEW_GRADES     -> Icons.Outlined.Grade
-        FeatureType.SCHEDULE        -> Icons.Outlined.CalendarMonth
+        FeatureType.EXAM_SCHEDULE        -> Icons.Outlined.CalendarMonth
         FeatureType.COURSE_REGISTER -> Icons.Outlined.EditNote
         FeatureType.DOCUMENTS       -> Icons.AutoMirrored.Outlined.MenuBook
         FeatureType.DORMITORY       -> Icons.Outlined.Apartment
@@ -48,7 +48,7 @@ fun FeatureType.toImageVector(): ImageVector {
 fun FeatureType.toIconBackgroundColor(): Color {
     return when (this) {
         FeatureType.VIEW_GRADES      -> Color(0xFFDDE8FF)
-        FeatureType.SCHEDULE         -> Color(0xFFD6F5EC)
+        FeatureType.EXAM_SCHEDULE         -> Color(0xFFD6F5EC)
         FeatureType.COURSE_REGISTER  -> Color(0xFFEFE0FF)
         FeatureType.DOCUMENTS        -> Color(0xFFFFEDD5)
         FeatureType.DORMITORY        -> Color(0xFFFFD6E7)
@@ -68,7 +68,7 @@ fun FeatureType.toIconBackgroundColor(): Color {
 fun FeatureType.toIconTintColor(): Color {
     return when (this) {
         FeatureType.VIEW_GRADES      -> Color(0xFF3D72E8)
-        FeatureType.SCHEDULE         -> Color(0xFF1AAF7A)
+        FeatureType.EXAM_SCHEDULE         -> Color(0xFF1AAF7A)
         FeatureType.COURSE_REGISTER  -> Color(0xFF9B4DCA)
         FeatureType.DOCUMENTS        -> Color(0xFFE87D3D)
         FeatureType.DORMITORY        -> Color(0xFFE8437A)

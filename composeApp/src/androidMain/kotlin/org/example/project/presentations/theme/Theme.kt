@@ -11,7 +11,6 @@ private val LightColorScheme = lightColorScheme(
     surface = Background,
     onBackground = TextPrimary,
 )
-
 @Composable
 fun AppTheme(
     content: @Composable () -> Unit

@@ -5,9 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,27 +19,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.presentations.theme.LocalExtendedColors
 
-
 @Composable
 fun TabRowView(
-    tabs: List<String>,
+    tabs: List<Pair<String, ImageVector>>,
     selectedTab: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 30.dp).padding(top = 12.dp)
+            .padding(horizontal = 30.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(LocalExtendedColors.current.gray.copy(alpha = 0.1f))
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        tabs.forEachIndexed { index, title ->
+        tabs.forEachIndexed { index, tab ->
             val isSelected = index == selectedTab
             Box(
                 modifier = Modifier
@@ -46,12 +52,23 @@ fun TabRowView(
                     .padding(vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = title,
-                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = if (isSelected) Color.Black else LocalExtendedColors.current.gray
-                )
+                Row {
+                    Icon(
+                        imageVector = tab.second,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = if (isSelected) LocalExtendedColors.current.fontBlue else LocalExtendedColors.current.gray
+                    )
+
+                    Spacer(Modifier.width(5.dp))
+
+                    Text(
+                        text = tab.first,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = if (isSelected) LocalExtendedColors.current.fontBlue else LocalExtendedColors.current.gray
+                    )
+                }
             }
         }
     }
