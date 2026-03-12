@@ -1,15 +1,19 @@
 package org.example.project.presentations.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import org.example.project.domain.model.FeatureType
-import org.example.project.presentations.screen.SharedViewModel
+import org.example.project.domain.model.FeatureUiModel
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModelFactory
@@ -54,25 +58,37 @@ fun AppNavGraph() {
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(500)
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         exitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(500)
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         popEnterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(500)
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
             )
         },
         popExitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(500)
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
             )
         }
     ) {
@@ -82,62 +98,54 @@ fun AppNavGraph() {
 
         composable(Routes.Login) {
             val container = LocalAppContainer.current
-            val loginViewModel: LoginViewModel = viewModel(
-                factory = LoginViewModelFactory(container.loginUseCase)
-            )
+            val factory = remember(container) { LoginViewModelFactory(container.loginUseCase) }
+            val loginViewModel: LoginViewModel = viewModel(factory = factory)
 
             LoginScreen(
-                onNavigateToHome = {
-                    navController.navigate(Routes.Main)
-                },
+                onNavigateToHome = { navController.navigate(Routes.Main) },
                 loginViewModel = loginViewModel
             )
         }
 
         composable(Routes.Main) {
             val container = LocalAppContainer.current
-            val homeViewModel: HomeViewModel = viewModel(
-                factory = HomeViewModelFactory(
+
+            val homeFactory = remember(container) {
+                HomeViewModelFactory(
                     container.studentUseCase,
                     container.scheduleUseCase,
                     container.featureRepository
                 )
-            )
-            val scheduleViewModel: ScheduleViewModel = viewModel(
-                factory = ScheduleViewModelFactory(container.scheduleUseCase)
-            )
-            val transcriptViewModel: TranscriptViewModel = viewModel(
-                factory = TranscriptViewModelFactory(container.transcriptUseCase)
-            )
+            }
+            val scheduleFactory = remember(container) {
+                ScheduleViewModelFactory(container.scheduleUseCase)
+            }
+            val transcriptFactory = remember(container) {
+                TranscriptViewModelFactory(container.transcriptUseCase)
+            }
+
+            val homeViewModel: HomeViewModel = viewModel(factory = homeFactory)
+            val scheduleViewModel: ScheduleViewModel = viewModel(factory = scheduleFactory)
+            val transcriptViewModel: TranscriptViewModel = viewModel(factory = transcriptFactory)
 
             MainScreen(
                 homeViewModel = homeViewModel,
                 scheduleViewModel = scheduleViewModel,
                 transcriptViewModel = transcriptViewModel,
-                onOpenProfileScreen = {
-                    navController.navigate(Routes.Profile)
-                },
-                onOpenNotificationScreen = {
-                    navController.navigate(Routes.Notification)
-                },
+                onOpenProfileScreen = { navController.navigate(Routes.Profile) },
+                onOpenNotificationScreen = { navController.navigate(Routes.Notification) },
                 onOpenTranscriptTerm = { semesterLabel, academicYear ->
                     navController.navigate("${Routes.TranscriptTerm}/$academicYear/$semesterLabel")
                 },
-                onOpenTimetable = {
-                    navController.navigate(Routes.TimetableScreen)
-                },
-                onOpenFeatureScreen = {
-                    navController.navigate(Routes.FeaturesScreen)
-                }
+                onOpenTimetable = { navController.navigate(Routes.TimetableScreen) },
+                onOpenFeatureScreen = { navController.navigate(Routes.FeaturesScreen) }
             )
         }
 
         composable(Routes.Profile) {
             val container = LocalAppContainer.current
-
-            val profileViewModel: ProfileViewModel = viewModel(
-                factory = ProfileViewModelFactory(container.studentUseCase)
-            )
+            val factory = remember(container) { ProfileViewModelFactory(container.studentUseCase) }
+            val profileViewModel: ProfileViewModel = viewModel(factory = factory)
 
             ProfileScreen(
                 onBack = { navController.popBackStack() },
@@ -148,97 +156,83 @@ fun AppNavGraph() {
         }
 
         composable(Routes.Setting) {
-            SettingScreen(
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
+            SettingScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Routes.EditProfile) {
             val container = LocalAppContainer.current
-            val editProfileViewModel: EditProfileViewModel = viewModel(
-                factory = EditProfileViewModelFactory(container.studentUseCase)
-            )
+            val factory = remember(container) { EditProfileViewModelFactory(container.studentUseCase) }
+            val editProfileViewModel: EditProfileViewModel = viewModel(factory = factory)
 
             EditProfileScreen(
                 viewModel = editProfileViewModel,
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
         composable(Routes.Notification) {
-            NotificationScreen(
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
+            NotificationScreen(onBack = { navController.popBackStack() })
         }
 
-        composable("${Routes.TranscriptTerm}/{academicYear}/{semesterLabel}") {
-            val container = LocalAppContainer.current
-            val transcriptTermViewModel: TranscriptTermViewModel = viewModel(
-                factory = TranscriptTermViewModelFactory(container.transcriptUseCase)
+        composable(
+            route = "${Routes.TranscriptTerm}/{academicYear}/{semesterLabel}",
+            arguments = listOf(
+                navArgument("academicYear") { type = NavType.StringType },
+                navArgument("semesterLabel") { type = NavType.StringType }
             )
+        ) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) { TranscriptTermViewModelFactory(container.transcriptUseCase) }
+            val transcriptTermViewModel: TranscriptTermViewModel = viewModel(factory = factory)
 
             TranscriptTermScreen(
                 viewModel = transcriptTermViewModel,
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
         composable(Routes.TimetableScreen) {
             val container = LocalAppContainer.current
-            val timetableViewModel: TimetableViewModel = viewModel(
-                factory = TimetableViewModelFactory(container.scheduleUseCase)
-            )
+            val factory = remember(container) { TimetableViewModelFactory(container.scheduleUseCase) }
+            val timetableViewModel: TimetableViewModel = viewModel(factory = factory)
 
             TimetableScreen(
                 viewModel = timetableViewModel,
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
         composable(Routes.FeaturesScreen) {
             val container = LocalAppContainer.current
             val context = LocalContext.current
-            val featuresViewModel: FeaturesViewModel = viewModel(
-                factory = FeaturesViewModelFactory(container.featureRepository)
-            )
+            val factory = remember(container) { FeaturesViewModelFactory(container.featureRepository) }
+            val featuresViewModel: FeaturesViewModel = viewModel(factory = factory)
+
+            val onNavigate: (FeatureUiModel) -> Unit = remember {
+                { feature ->
+                    if (feature.type == FeatureType.TRAINING_OFFICE)
+                        context.openDialer()
+                    else
+                        navController.navigate(feature.type.toRoute())
+                }
+            }
 
             FeaturesScreen(
                 viewModel = featuresViewModel,
                 onBack = { navController.popBackStack() },
-                onNavigate = {
-                    if (it.type == FeatureType.TRAINING_OFFICE)
-                        context.openDialer()
-                    else
-                        navController.navigate(it.type.toRoute())
-                }
+                onNavigate = onNavigate
             )
         }
 
         composable(Routes.Feedback) {
             FeedbackScreen(
                 viewModel = viewModel(), // TODO:
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
         composable(Routes.FeedbackDetail) {
-            FeedbackDetailScreen(
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
+            FeedbackDetailScreen(onBack = { navController.popBackStack() })
         }
     }
 }
