@@ -24,11 +24,10 @@ import org.example.project.presentations.components.shimmerBrush
 import org.example.project.presentations.screen.features.components.FeatureGrid
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview(showBackground = true)
 @Composable
 fun FeatureList(
     modifier: Modifier = Modifier,
-    items: List<FeatureUiModel> = FeatureUiModel.getQuickAccessList(),
+    items: List<FeatureUiModel>,
     onClickItem: (FeatureUiModel) -> Unit = {},
     onClickAll: () -> Unit = {}
 ) {
@@ -59,7 +58,8 @@ fun FeatureList(
         }
 
         FeatureGrid(
-            items = items
+            items = items,
+            onClickFeature = onClickItem
         )
     }
 }

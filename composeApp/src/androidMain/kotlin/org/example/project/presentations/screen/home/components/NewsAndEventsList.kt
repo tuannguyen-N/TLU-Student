@@ -29,7 +29,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun NewsAndEventsList(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
-    items: List<NewAndEventUiModel> = NewAndEventUiModel.getDataDemo()
+    items: List<NewAndEventUiModel>
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(

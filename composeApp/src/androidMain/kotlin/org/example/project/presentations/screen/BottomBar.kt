@@ -34,7 +34,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.example.project.R
-import org.example.project.presentations.navigation.BottomRoutes
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Preview

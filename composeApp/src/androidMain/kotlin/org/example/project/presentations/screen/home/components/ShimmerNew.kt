@@ -19,7 +19,7 @@ import org.example.project.presentations.components.shimmerBrush
 @Composable
 fun ShimmerNew(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 8.dp)
             .width(220.dp)
             .clip(RoundedCornerShape(12.dp))

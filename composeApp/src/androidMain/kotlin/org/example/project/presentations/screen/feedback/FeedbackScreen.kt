@@ -19,10 +19,9 @@ import org.example.project.presentations.screen.feedback.components.FeedbackHist
 import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun FeedbackScreen(
-    viewModel: FeedbackViewModel = viewModel(),
+    viewModel: FeedbackViewModel,
     onBack: () -> Unit ={}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

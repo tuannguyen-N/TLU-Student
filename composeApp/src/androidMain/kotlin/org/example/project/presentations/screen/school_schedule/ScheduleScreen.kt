@@ -70,6 +70,7 @@ fun ScheduleScreen(
             TodayScheduleList(
                 modifier = Modifier.padding(top = 20.dp),
                 onOpenTimetable = onOpenTimetable,
+                courseClasses = uiState.courseClasses ?: emptyList(),
                 onOpenDetailCourseClass = viewModel::onOpenDetailCourseClass,
                 onClickViewTomorrow = viewModel::onClickViewTomorrow
             )
@@ -92,8 +93,18 @@ fun ScheduleScreen(
                 lecturer = lecturer,
                 onDismiss = viewModel::onDismissDetailLecturerInfo,
                 onContact = {},
-                onCopyPhoneNumber = { copyToClipboard(lecturer.phoneNumber.orEmpty(), "số điện thoại") },
-                onCopyLecturerCode = { copyToClipboard(lecturer.lecturerCode.orEmpty(), "mã giảng viên") },
+                onCopyPhoneNumber = {
+                    copyToClipboard(
+                        lecturer.phoneNumber.orEmpty(),
+                        "số điện thoại"
+                    )
+                },
+                onCopyLecturerCode = {
+                    copyToClipboard(
+                        lecturer.lecturerCode.orEmpty(),
+                        "mã giảng viên"
+                    )
+                },
                 onCopyEmail = { copyToClipboard(lecturer.email, "email") }
             )
         }

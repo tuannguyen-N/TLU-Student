@@ -47,7 +47,6 @@ import org.example.project.presentations.utils.toRoute
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
-    val sharedViewModel: SharedViewModel = viewModel()
 
     NavHost(
         navController = navController,

@@ -20,12 +20,11 @@ import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun AppTopBar(
-    onOpenNotificationScreen: () -> Unit = {},
-    iconRes: Int = R.drawable.icon_school_schedule,
-    title: String = "Lich Hoc"
+    onOpenNotificationScreen: () -> Unit,
+    iconRes: Int,
+    title: String
 ) {
     Row(
         modifier = Modifier

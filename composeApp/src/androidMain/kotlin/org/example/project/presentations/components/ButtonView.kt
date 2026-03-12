@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun ButtonView(
     modifier: Modifier = Modifier,
@@ -71,4 +70,10 @@ fun ButtonView(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun ButtonViewPreview() {
+    ButtonView()
 }

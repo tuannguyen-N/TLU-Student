@@ -18,11 +18,10 @@ import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.presentations.components.shimmerBrush
 
-@Preview
 @Composable
 fun AlertList(
     modifier: Modifier = Modifier,
-    items: List<AlertUiModel> = AlertUiModel.getDemoList(),
+    items: List<AlertUiModel>,
     isLoading: Boolean = false,
     onClickAction: () -> Unit = {}
 ) {

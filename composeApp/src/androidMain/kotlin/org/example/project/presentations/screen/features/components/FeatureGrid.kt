@@ -12,10 +12,9 @@ import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.FeatureEditMode
 import org.example.project.domain.model.FeatureUiModel
 
-@Preview(showBackground = true)
 @Composable
 fun FeatureGrid(
-    items: List<FeatureUiModel> = FeatureUiModel.getGeneralList(),
+    items: List<FeatureUiModel>,
     isEditing: Boolean = false,
     editMode: FeatureEditMode = FeatureEditMode.ADD,
     isQuickAccessFull: Boolean = false,

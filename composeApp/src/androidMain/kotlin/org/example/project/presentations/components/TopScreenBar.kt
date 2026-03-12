@@ -32,15 +32,14 @@ import androidx.compose.ui.unit.sp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun TopScreenBar(
     onBack: () -> Unit = {},
     justView: Boolean = false,
-    schoolYears: List<String> = listOf("2023-2024", "2022-2023", "2021-2022"),
+    schoolYears: List<String> = emptyList(),
     onClickSchoolYear: (String) -> Unit = {},
-    yearValue: String = "2023-2024",
-    title: String = "Chi tiết học kỳ 1"
+    yearValue: String,
+    title: String
 ) {
     var showTermYear by remember { mutableStateOf(false) }
 

@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -31,15 +30,14 @@ import org.example.project.presentations.utils.toAcademicRank
 import org.example.project.presentations.utils.toColor
 import org.example.project.presentations.utils.toTextTermRank
 
-@Preview
 @Composable
 fun SubjectCard(
     modifier: Modifier = Modifier,
-    termNumber: String = "1",
-    subjects: List<String> = listOf("Toán", "Lý", "Hóa"),
+    termNumber: String,
+    subjects: List<String> ,
     gpa: Double = 2.2,
     credits: Int = 15,
-    onOpenTranscriptTerm: () -> Unit = {}
+    onOpenTranscriptTerm: () -> Unit
 ) {
     val color = gpa.toAcademicRank().toColor()
     val rank = gpa.toTextTermRank()
