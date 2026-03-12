@@ -32,7 +32,8 @@ fun MainScreen(
     onOpenNotificationScreen: () -> Unit,
     onOpenTranscriptTerm: (String, String) -> Unit,
     onOpenTimetable: () -> Unit,
-    onOpenFeatureScreen: () -> Unit
+    onOpenFeatureScreen: () -> Unit,
+    onSendEmail: (String) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()
@@ -61,7 +62,8 @@ fun MainScreen(
                     1 -> ScheduleScreen(
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenTimetable = onOpenTimetable,
-                        viewModel = scheduleViewModel
+                        viewModel = scheduleViewModel,
+                        onSendEmail = { onSendEmail(it) }
                     )
 
                     2 -> Box(modifier = Modifier.fillMaxSize())

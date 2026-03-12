@@ -11,10 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
 
+@Preview
 @Composable
 fun CenterContent(modifier: Modifier = Modifier) {
     Column(
@@ -25,7 +27,7 @@ fun CenterContent(modifier: Modifier = Modifier) {
             painter = painterResource(R.drawable.tlu_logo),
             contentDescription = null,
             modifier = Modifier
-                .height(50.dp)
+                .height(60.dp)
                 .padding(bottom = 10.dp)
         )
 

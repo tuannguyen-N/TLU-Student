@@ -53,7 +53,6 @@ fun FeaturesScreen(
                 enableActionButton = isEditing,
                 onClickAction = {
                     viewModel.toggleEditMode()
-                    // TODO:
                 }
             )
         }

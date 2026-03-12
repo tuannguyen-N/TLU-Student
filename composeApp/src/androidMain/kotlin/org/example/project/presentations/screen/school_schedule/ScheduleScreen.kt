@@ -26,8 +26,9 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun ScheduleScreen(
     viewModel: ScheduleViewModel,
-    onOpenNotificationScreen: () -> Unit = {},
-    onOpenTimetable: () -> Unit = {}
+    onOpenNotificationScreen: () -> Unit,
+    onOpenTimetable: () -> Unit,
+    onSendEmail: (String)-> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -92,7 +93,9 @@ fun ScheduleScreen(
             TeacherDetailInfoDialog(
                 lecturer = lecturer,
                 onDismiss = viewModel::onDismissDetailLecturerInfo,
-                onContact = {},
+                onContact = {
+                    onSendEmail(lecturer.email)
+                },
                 onCopyPhoneNumber = {
                     copyToClipboard(
                         lecturer.phoneNumber.orEmpty(),

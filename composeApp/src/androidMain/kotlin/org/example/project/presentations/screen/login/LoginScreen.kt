@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +15,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.presentations.components.LoadingView
 import org.example.project.presentations.screen.login.components.AuthenticationErrorBottomSheet
 import org.example.project.presentations.screen.login.components.CenterContent
 import org.example.project.presentations.screen.login.components.LoginButton
@@ -42,18 +45,6 @@ fun LoginScreen(
     loginViewModel.event.CollectWithLifecycle { event ->
         when (event) {
             LoginUiEvent.OnNavigateToHome -> onNavigateToHome()
-        }
-    }
-
-    if (uiState.showErrorSheet) {
-        ModalBottomSheet(
-            dragHandle = null,
-            onDismissRequest = loginViewModel::onDismissErrorSheet,
-            sheetState = sheetState
-        ) {
-            AuthenticationErrorBottomSheet(
-                onRetry = loginViewModel::onDismissErrorSheet
-            )
         }
     }
 
@@ -85,10 +76,25 @@ fun LoginScreen(
                 modifier = Modifier
                     .padding(bottom = 30.dp)
                     .clickable {
-                        MsalHelper.signOut { }
                         // TODO:
                     }
             )
+        }
+
+        if (uiState.isLoading) {
+            LoadingView()
+        }
+
+        if (uiState.showErrorSheet) {
+            ModalBottomSheet(
+                dragHandle = null,
+                onDismissRequest = loginViewModel::onDismissErrorSheet,
+                sheetState = sheetState
+            ) {
+                AuthenticationErrorBottomSheet(
+                    onRetry = loginViewModel::onDismissErrorSheet
+                )
+            }
         }
     }
 }

@@ -26,27 +26,25 @@ class LoginViewModel(
 
     fun onLoginClick(activity: Activity) {
         viewModelScope.launch {
+            updateState { copy(isLoading = true) }
             MsalHelper.signOut {}//todo
             delay(1000L)
             MsalHelper.signIn(activity) { newToken ->
                 Log.e("123123", "onLoginClick: $newToken", )
                 if (newToken != null) onSignMsalSuccess(newToken)
             }
+            updateState { copy(isLoading = false) }
         }
     }
 
     fun onSignMsalSuccess(token: String) {
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
-
             loginUseCase(token).fold(
                 onSuccess = {
-                    updateState { copy(isLoading = false) }
                     sendUiEvent(LoginUiEvent.OnNavigateToHome)
                 },
                 onFailure = {
                     Log.e("123123", "onSignMsalSuccess: $it", )
-                    updateState { copy(isLoading = false) }
                     updateState { copy(showErrorSheet = true) }
                 }
             )

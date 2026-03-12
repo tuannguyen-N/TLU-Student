@@ -55,7 +55,6 @@ fun SemesterSelector(
         Text(
             text = "Chọn Học Kỳ",
             style = MaterialTheme.typography.labelLarge.copy(
-                fontWeight = FontWeight.SemiBold,
                 color = LocalExtendedColors.current.gray,
                 letterSpacing = 0.5.sp
             )

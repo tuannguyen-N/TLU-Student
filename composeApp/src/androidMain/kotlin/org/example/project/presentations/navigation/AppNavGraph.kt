@@ -46,6 +46,7 @@ import org.example.project.presentations.screen.transcript_term.TranscriptTermSc
 import org.example.project.presentations.screen.transcript_term.TranscriptTermViewModel
 import org.example.project.presentations.screen.transcript_term.TranscriptTermViewModelFactory
 import org.example.project.presentations.utils.openDialer
+import org.example.project.presentations.utils.openEmail
 import org.example.project.presentations.utils.toRoute
 
 @Composable
@@ -109,6 +110,7 @@ fun AppNavGraph() {
 
         composable(Routes.Main) {
             val container = LocalAppContainer.current
+            val context = LocalContext.current
 
             val homeFactory = remember(container) {
                 HomeViewModelFactory(
@@ -138,7 +140,8 @@ fun AppNavGraph() {
                     navController.navigate("${Routes.TranscriptTerm}/$academicYear/$semesterLabel")
                 },
                 onOpenTimetable = { navController.navigate(Routes.TimetableScreen) },
-                onOpenFeatureScreen = { navController.navigate(Routes.FeaturesScreen) }
+                onOpenFeatureScreen = { navController.navigate(Routes.FeaturesScreen) },
+                onSendEmail = { email -> context.openEmail(email) }
             )
         }
 
@@ -161,7 +164,8 @@ fun AppNavGraph() {
 
         composable(Routes.EditProfile) {
             val container = LocalAppContainer.current
-            val factory = remember(container) { EditProfileViewModelFactory(container.studentUseCase) }
+            val factory =
+                remember(container) { EditProfileViewModelFactory(container.studentUseCase) }
             val editProfileViewModel: EditProfileViewModel = viewModel(factory = factory)
 
             EditProfileScreen(
@@ -182,7 +186,8 @@ fun AppNavGraph() {
             )
         ) {
             val container = LocalAppContainer.current
-            val factory = remember(container) { TranscriptTermViewModelFactory(container.transcriptUseCase) }
+            val factory =
+                remember(container) { TranscriptTermViewModelFactory(container.transcriptUseCase) }
             val transcriptTermViewModel: TranscriptTermViewModel = viewModel(factory = factory)
 
             TranscriptTermScreen(
@@ -193,19 +198,23 @@ fun AppNavGraph() {
 
         composable(Routes.TimetableScreen) {
             val container = LocalAppContainer.current
-            val factory = remember(container) { TimetableViewModelFactory(container.scheduleUseCase) }
+            val context = LocalContext.current
+            val factory =
+                remember(container) { TimetableViewModelFactory(container.scheduleUseCase) }
             val timetableViewModel: TimetableViewModel = viewModel(factory = factory)
 
             TimetableScreen(
                 viewModel = timetableViewModel,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onOpenEmail = { email -> context.openEmail(email) }
             )
         }
 
         composable(Routes.FeaturesScreen) {
             val container = LocalAppContainer.current
             val context = LocalContext.current
-            val factory = remember(container) { FeaturesViewModelFactory(container.featureRepository) }
+            val factory =
+                remember(container) { FeaturesViewModelFactory(container.featureRepository) }
             val featuresViewModel: FeaturesViewModel = viewModel(factory = factory)
 
             val onNavigate: (FeatureUiModel) -> Unit = remember {

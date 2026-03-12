@@ -41,11 +41,11 @@ fun EditProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) {uri ->
-        // TODO:
-    }
+//    val launcher = rememberLauncherForActivityResult(
+//        ActivityResultContracts.GetContent()
+//    ) {uri ->
+//        // TODO:
+//    }
 
     LazyColumn(
         modifier = Modifier.statusBarsPadding(),
@@ -85,19 +85,19 @@ fun EditProfileScreen(
                                 BorderStroke(1.dp, Color.White), CircleShape
                             )
                     )
-
-                    IconButton(
-                        onClick = {
-                            launcher.launch("image/*")
-                        }, modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.BottomEnd)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.icon_change_avatar),
-                            contentDescription = null
-                        )
-                    }
+//
+//                    IconButton(
+//                        onClick = {
+//                            launcher.launch("image/*")
+//                        }, modifier = Modifier
+//                            .size(35.dp)
+//                            .align(Alignment.BottomEnd)
+//                    ) {
+//                        Image(
+//                            painter = painterResource(R.drawable.icon_change_avatar),
+//                            contentDescription = null
+//                        )
+//                    }
                 }
             }
         }

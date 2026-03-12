@@ -24,7 +24,7 @@ fun TimetableContent(
     onNextWeekSchedule: () -> Unit,
     onPreviousWeekSchedule: () -> Unit,
     onShowSubjectDetail: (CourseClass) -> Unit,
-    onContact: () -> Unit,
+    onContact: (String) -> Unit,
     onOpenDetailLecturerInfo: () -> Unit,
     onDismissDetailCourseClass: () -> Unit,
     onDismissDetailLecturerInfo: () -> Unit,
@@ -83,7 +83,7 @@ fun TimetableContent(
             TeacherDetailInfoDialog(
                 lecturer = lecturer,
                 onDismiss = onDismissDetailLecturerInfo,
-                onContact = onContact,
+                onContact = {onContact(lecturer.email)},
                 onCopyLecturerCode = { onCopyLecturerCode(lecturer.lecturerCode.orEmpty(), "mã giảng viên") },
                 onCopyPhoneNumber = { onCopyPhoneNumber(lecturer.phoneNumber.orEmpty(), "số điện thoại") },
                 onCopyEmail = { onCopyEmail(lecturer.email, "email") }

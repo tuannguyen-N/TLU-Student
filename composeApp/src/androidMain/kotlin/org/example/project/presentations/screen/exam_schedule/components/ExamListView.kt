@@ -146,7 +146,6 @@ private fun ExamDayHeader(
         Text(
             text = dateText,
             style = MaterialTheme.typography.labelLarge.copy(
-                fontWeight = FontWeight.SemiBold,
                 color = LocalExtendedColors.current.gray,
                 letterSpacing = 0.5.sp
             )

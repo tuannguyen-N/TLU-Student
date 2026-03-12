@@ -15,6 +15,7 @@ import org.example.project.presentations.screen.timetable.components.TimetableCo
 @Composable
 fun TimetableScreen(
     viewModel: TimetableViewModel,
+    onOpenEmail: (String) -> Unit,
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -41,6 +42,6 @@ fun TimetableScreen(
         onCopyPhoneNumber = copyToClipboard,
         onCopyEmail = copyToClipboard,
         onCopyLecturerCode = copyToClipboard,
-        onContact = {}
+        onContact = { onOpenEmail(it) }
     )
 }
