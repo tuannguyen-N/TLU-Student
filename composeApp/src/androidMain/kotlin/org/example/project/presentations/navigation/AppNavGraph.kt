@@ -34,6 +34,8 @@ import org.example.project.presentations.screen.school_schedule.ScheduleViewMode
 import org.example.project.presentations.screen.setting.SettingScreen
 import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.timetable.TimetableScreen
+import org.example.project.presentations.screen.timetable.TimetableViewModel
+import org.example.project.presentations.screen.timetable.TimetableViewModelFactory
 import org.example.project.presentations.screen.transcript.TranscriptViewModel
 import org.example.project.presentations.screen.transcript.TranscriptViewModelFactory
 import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
@@ -191,7 +193,13 @@ fun AppNavGraph() {
         }
 
         composable(Routes.TimetableScreen) {
+            val container = LocalAppContainer.current
+            val timetableViewModel: TimetableViewModel = viewModel(
+                factory = TimetableViewModelFactory(container.scheduleUseCase)
+            )
+
             TimetableScreen(
+                viewModel = timetableViewModel,
                 onBack = {
                     navController.popBackStack()
                 }

@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.getCurrentWeek
+import org.example.project.presentations.utils.getTodayDayOfWeek
 
 @Preview(showBackground = true)
 @Composable
@@ -32,7 +34,7 @@ fun GridBackground(
             Box(
                 Modifier
                     .width(leftColumnWidth)
-                    .height(cellHeight/2)
+                    .height(cellHeight / 2)
                     .border(0.5.dp, LocalExtendedColors.current.gray),
                 contentAlignment = Alignment.Center
             ) {
@@ -47,14 +49,14 @@ fun GridBackground(
                 Box(
                     Modifier
                         .width(cellWidth)
-                        .height(cellHeight/2)
+                        .height(cellHeight / 2)
                         .border(0.5.dp, LocalExtendedColors.current.gray),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         "Thứ ${day + 2}",
                         style = MaterialTheme.typography.labelLarge,
-                        color = LocalExtendedColors.current.mainBlue
+                        color = if (day == getTodayDayOfWeek() - 1) LocalExtendedColors.current.red else LocalExtendedColors.current.mainBlue
                     )
                 }
             }

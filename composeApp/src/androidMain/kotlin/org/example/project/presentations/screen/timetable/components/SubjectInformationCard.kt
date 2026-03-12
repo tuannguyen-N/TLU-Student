@@ -24,6 +24,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun SubjectInformationCard(
     modifier: Modifier = Modifier,
+    room: String = "Phòng 101",
+    subjectName: String = "Lập trình di động",
     onShowSubjectDetail: () -> Unit = {}
 ) {
     Column(
@@ -37,7 +39,7 @@ fun SubjectInformationCard(
         ) {
             Text(
                 color = LocalExtendedColors.current.red,
-                text = "B605",
+                text = room,
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -58,7 +60,7 @@ fun SubjectInformationCard(
         }
 
         Text(
-            text = "Toán rời rạc",
+            text = subjectName,
             color = LocalExtendedColors.current.mainBlue,
             style = MaterialTheme.typography.labelMedium,
             overflow = TextOverflow.Ellipsis,

@@ -19,7 +19,11 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Preview
 @Composable
 fun WeekView(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    week: String = "Thứ 2",
+    weekDate: String = "123123-123123",
+    onClickPreviousWeek: () -> Unit = {},
+    onClickNextWeek: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -29,19 +33,19 @@ fun WeekView(
         IconView(
             R.drawable.icon_left,
             onClick = {
-                // TODO:
+                onClickPreviousWeek()
             }
         )
 
         Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Tuần 10",
+                text = week,
                 color = LocalExtendedColors.current.gray,
                 style = MaterialTheme.typography.labelLarge
             )
 
             Text(
-                text = "09/02 - 15/02/2026",
+                text = weekDate,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 )
@@ -51,7 +55,7 @@ fun WeekView(
         IconView(
             R.drawable.icon_right,
             onClick = {
-                // TODO:
+                onClickNextWeek()
             }
         )
     }

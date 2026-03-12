@@ -42,7 +42,6 @@ fun SubjectDetailDialog(
             dismissOnClickOutside = false
         )
     ) {
-
         Card(
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(

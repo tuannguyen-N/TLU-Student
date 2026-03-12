@@ -4,18 +4,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.TimetableSubject
+import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.DailySchedule
 
-@Preview(showBackground = true)
 @Composable
 fun TimetableGrid(
-    subjects: List<TimetableSubject> = TimetableSubject.getDataDemo(),
+    dailySchedules: List<DailySchedule>,
     totalDays: Int = 6,
     totalPeriods: Int = 15,
-    onShowSubjectDetail: () -> Unit = {}
+    onShowSubjectDetail: (CourseClass) -> Unit = {}
 ) {
     SubcomposeLayout {
 
@@ -25,9 +24,7 @@ fun TimetableGrid(
 
         val totalWidth = leftColumnWidth + cellWidth * totalDays
         val headerHeight = cellHeight / 2
-
         val totalHeight = headerHeight + cellHeight * totalPeriods
-
 
         val gridPlaceables = subcompose("grid") {
             GridBackground(
@@ -38,37 +35,45 @@ fun TimetableGrid(
                 leftColumnWidth = 50.dp
             )
         }.map {
-            it.measure(
-                Constraints.fixed(totalWidth, totalHeight)
-            )
+            it.measure(Constraints.fixed(totalWidth, totalHeight))
         }
 
-        val subjectPlaceables = subjects.map { subject ->
-            subcompose(subject.id) {
-                SubjectInformationCard(
-                    modifier = Modifier.fillMaxSize(),
-                    onShowSubjectDetail = onShowSubjectDetail
+        val subjectPlaceables = dailySchedules.map { daily ->
+            daily.courseClasses.map { courseClass ->
+                val endPeriod = courseClass.endPeriod
+                val startPeriod = courseClass.startPeriod
+
+                subcompose("${courseClass.subjectCode}_${courseClass.dayOfWeek}_${courseClass.startPeriod}") {
+                    SubjectInformationCard(
+                        modifier = Modifier.fillMaxSize(),
+                        room = courseClass.room,
+                        subjectName = courseClass.subjectName,
+                        onShowSubjectDetail = { onShowSubjectDetail(courseClass) }
+                    )
+                }.first().measure(
+                    Constraints.fixed(
+                        width = cellWidth,
+                        height = cellHeight * (endPeriod - startPeriod)
+                    )
                 )
-            }.first().measure(
-                Constraints.fixed(
-                    width = cellWidth,
-                    height = cellHeight * subject.duration
-                )
-            )
+            }
         }
 
         layout(totalWidth, totalHeight) {
-
             gridPlaceables.forEach {
                 it.place(0, 0)
             }
 
-            subjects.forEachIndexed { index, subject ->
+            dailySchedules.forEachIndexed { dayIndex, daily ->
+                daily.courseClasses.forEachIndexed { classIndex, subject ->
+                    val dayOfWeek = subject.dayOfWeek
+                    val startPeriod = subject.startPeriod
 
-                val x = leftColumnWidth + subject.day * cellWidth
-                val y = headerHeight + subject.startPeriod * cellHeight
+                    val x = leftColumnWidth + (dayOfWeek - 1) * cellWidth
+                    val y = headerHeight + startPeriod * cellHeight
 
-                subjectPlaceables[index].placeWithLayer(x, y)
+                    subjectPlaceables[dayIndex][classIndex].placeWithLayer(x, y)
+                }
             }
         }
     }

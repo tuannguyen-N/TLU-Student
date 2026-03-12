@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
@@ -34,7 +35,7 @@ import org.example.project.presentations.utils.toTextTermRank
 @Composable
 fun SubjectCard(
     modifier: Modifier = Modifier,
-    termNumber: Int = 1,
+    termNumber: String = "1",
     subjects: List<String> = listOf("Toán", "Lý", "Hóa"),
     gpa: Double = 2.2,
     credits: Int = 15,
@@ -68,6 +69,8 @@ fun SubjectCard(
 
             RankCard(color, rank)
         }
+
+        Spacer(Modifier.height(3.dp))
 
         Text(
             text = subjects.joinToString(", "),

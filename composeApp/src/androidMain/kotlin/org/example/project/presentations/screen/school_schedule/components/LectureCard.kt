@@ -20,6 +20,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +40,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun LecturerCard(
     lecturerName: String = "ThS. Nguyễn Văn Tây",
     lecturerId: String = "GV001",
-    lectureEmail: String = "william.henry.harrison@example-pet-store.vn",
+    onOpenDetailLecturerInfo: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -48,14 +50,13 @@ fun LecturerCard(
     ) {
         Column {
             Row(
-                modifier = Modifier
+                Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(12.dp), verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
-                        .size(56.dp)
+                        .size(45.dp)
                         .background(
                             color = LocalExtendedColors.current.mainBlue,
                             shape = CircleShape
@@ -66,7 +67,7 @@ fun LecturerCard(
                         imageVector = Icons.Filled.Person,
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(25.dp)
                     )
                 }
 
@@ -85,7 +86,7 @@ fun LecturerCard(
                         text = lecturerName,
                         style = MaterialTheme.typography.titleLarge,
                         color = LocalExtendedColors.current.mainBlue,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Box(
@@ -104,60 +105,21 @@ fun LecturerCard(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(
+                    onClick = onOpenDetailLecturerInfo,
+                    modifier = Modifier.size(18.dp).align(Alignment.Top)
+                ) {
+                    Icon(
+                        painter = painterResource(org.example.project.R.drawable.icon_more_information),
+                        contentDescription = null,
+                        tint = LocalExtendedColors.current.mainBlue,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
             }
-
-            HorizontalDivider(color = Color(0xFFE8E8EC))
-
-            LecturerInfoRow(
-                icon = Icons.Outlined.Email,
-                label = "EMAIL LIÊN HỆ",
-                value = lectureEmail
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(start = 52.dp),
-                color = Color(0xFFE8E8EC)
-            )
-
-            LecturerInfoRow(
-                icon = Icons.Outlined.Badge,
-                label = "MÃ GIẢNG VIÊN",
-                value = lecturerId
-            )
-        }
-    }
-}
-
-@Composable
-private fun LecturerInfoRow(
-    icon: ImageVector,
-    label: String,
-    value: String
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = LocalExtendedColors.current.gray,
-            modifier = Modifier.size(22.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = LocalExtendedColors.current.gray,
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleMedium,
-                color = LocalExtendedColors.current.mainBlue,
-            )
         }
     }
 }

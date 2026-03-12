@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.data.remote.dto.day_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.shimmerBrush
 import org.example.project.presentations.utils.isGoing
 

@@ -1,8 +1,16 @@
-package org.example.project.presentations.utils
+package org.example.project.domain.model
 
-private data class CacheEntry<T>(
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+
+@OptIn(ExperimentalTime::class)
+data class CacheEntry<T>(
     val data: T,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = Clock.System.now().toEpochMilliseconds()
 ) {
-    fun isExpired(ttlMs: Long) = System.currentTimeMillis() - timestamp > ttlMs
+    fun isExpired(ttl: Duration): Boolean {
+        val now = Clock.System.now().toEpochMilliseconds()
+        return (now - timestamp) > ttl.inWholeMilliseconds
+    }
 }

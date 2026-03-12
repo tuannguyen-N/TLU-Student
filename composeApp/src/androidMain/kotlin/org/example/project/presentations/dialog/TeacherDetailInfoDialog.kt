@@ -49,7 +49,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Preview
 @Composable
-fun DialogTeacherDetailInfo(
+fun TeacherDetailInfoDialog(
     lecturer: Lecturer = Lecturer("123123", "Nguyễn Văn A", "0987654321","asdfasdfasdf@adsfasdf"),
     onContact: () -> Unit = {},
     onDismiss: () -> Unit = {},
@@ -67,8 +67,7 @@ fun DialogTeacherDetailInfo(
     ){
         Surface(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp),
+                .fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             color = Color.White,
             tonalElevation = 6.dp
@@ -90,13 +89,6 @@ fun DialogTeacherDetailInfo(
                             fontWeight = FontWeight.SemiBold
                         ),
                     )
-                    IconButton(onClick = onDismiss, modifier = Modifier.size(20.dp)) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Đóng",
-                            tint = colors.gray,
-                        )
-                    }
                 }
 
                 HorizontalDivider(color = colors.gray.copy(alpha = 0.2f))
@@ -147,7 +139,7 @@ fun DialogTeacherDetailInfo(
                     LecturerInfoCard(
                         icon = Icons.Default.Badge,
                         label = "MÃ GIẢNG VIÊN",
-                        value = lecturer.lecturerCode,
+                        value = lecturer.lecturerCode ?: "",
                         colors = colors,
                         trailingIcon = {
                             IconButton(
@@ -167,7 +159,7 @@ fun DialogTeacherDetailInfo(
                     LecturerInfoCard(
                         icon = Icons.Default.Phone,
                         label = "SỐ ĐIỆN THOẠI",
-                        value = lecturer.phoneNumber,
+                        value = lecturer.phoneNumber.orEmpty(),
                         colors = colors,
                         trailingIcon = {
                             IconButton(
@@ -225,7 +217,7 @@ fun DialogTeacherDetailInfo(
                     ) {
                         Text(
                             text = "Đóng",
-                            style = MaterialTheme.typography.labelSmall.copy(
+                            style = MaterialTheme.typography.labelLarge.copy(
                                 fontWeight = FontWeight.SemiBold
                             )
                         )
@@ -245,7 +237,7 @@ fun DialogTeacherDetailInfo(
                     ) {
                         Text(
                             text = "Liên hệ ngay",
-                            style = MaterialTheme.typography.labelSmall.copy(
+                            style = MaterialTheme.typography.labelLarge.copy(
                                 fontWeight = FontWeight.Bold
                             )
                         )

@@ -250,11 +250,12 @@ fun Information(
 
 @Composable
 fun SubjectCode(
-    name: String
+    name: String,
+    modifier: Modifier = Modifier
 ) {
     val color = LocalExtendedColors.current.gray
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(
                 RoundedCornerShape(14.dp)
             )

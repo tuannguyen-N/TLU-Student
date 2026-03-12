@@ -13,7 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.project.data.remote.dto.day_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,7 +23,8 @@ fun ClassDetailBottomSheet(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     courseClass: CourseClass,
-    onViewMaterials: () -> Unit
+    onViewMaterials: () -> Unit,
+    onOpenDetailLecturerInfo: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -48,7 +50,8 @@ fun ClassDetailBottomSheet(
         ClassDetailContent(
             isGoing = false,
             courseClass = courseClass,
-            onViewMaterials = onViewMaterials
+            onViewMaterials = onViewMaterials,
+            onOpenDetailLecturerInfo = onOpenDetailLecturerInfo
         )
     }
 }

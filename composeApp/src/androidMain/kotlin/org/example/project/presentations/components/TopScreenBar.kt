@@ -37,6 +37,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun TopScreenBar(
     onBack: () -> Unit = {},
     justView: Boolean = false,
+    schoolYears: List<String> = listOf("2023-2024", "2022-2023", "2021-2022"),
+    onClickSchoolYear: (String) -> Unit = {},
     yearValue: String = "2023-2024",
     title: String = "Chi tiết học kỳ 1"
 ) {
@@ -85,6 +87,8 @@ fun TopScreenBar(
 
                 if (showTermYear && !justView) {
                     TermYearMenuView(
+                        schoolYears = schoolYears,
+                        onClickSchoolYear = { onClickSchoolYear(it) },
                         onDismiss = { showTermYear = false }
                     )
                 }

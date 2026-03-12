@@ -71,6 +71,8 @@ object TranscriptMapper {
         isPass = isPass
     )
 
+    fun String.extractYear(): Int = substringBefore("-").toIntOrNull() ?: 0
+
     // "HK2 2021-2022" → "2021-2022"
     private fun SemesterResult.extractYear(): String =
         semester.substringAfter(" ").trim()

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
@@ -38,6 +40,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Preview
 @Composable
 fun TermYearMenuView(
+    schoolYears: List<String> = listOf("2023-2024", "2022-2023", "2021-2022"),
+    onClickSchoolYear: (String) -> Unit = {},
     onDismiss: () -> Unit = {},
 ) {
     var itemHeightPx by remember { mutableIntStateOf(0) }
@@ -63,15 +67,15 @@ fun TermYearMenuView(
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
             ) {
-                items(10) { index ->
+                itemsIndexed(schoolYears) {index, schoolYear ->
                     Surface(
                         onClick = {
-                            // TODO:
+                            onClickSchoolYear(schoolYear)
                         },
                         color = Color.White
                     ) {
                         Text(
-                            text = "2023-2024",
+                            text = schoolYear,
                             modifier = Modifier
                                 .padding(vertical = 12.dp)
                                 .fillMaxWidth()

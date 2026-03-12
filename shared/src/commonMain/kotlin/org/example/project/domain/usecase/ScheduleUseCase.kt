@@ -6,7 +6,7 @@ class ScheduleUseCase(
     private val repository: ScheduleRepository
 ) {
     val dayOfWeekSchedule = repository.dayOfWeekSchedule
-    val weakSchedule = repository.weakSchedule
+    val weekSchedule = repository.weekSchedule
 
     suspend fun getDayOfWeekSchedule(dayOfWeek: Int): Result<Any>{
         if (dayOfWeek !in 1..8) {
@@ -15,7 +15,7 @@ class ScheduleUseCase(
         return repository.getDayOfWeekSchedule(dayOfWeek)
     }
 
-    suspend fun getWeakSchedule(startDate: String, endDate: String): Result<Any>{
-        return repository.getWeakSchedule(startDate, endDate)
+    suspend fun getWeekSchedule(startDate: String, endDate: String): Result<Any>{
+        return repository.getWeekSchedule(startDate, endDate)
     }
 }

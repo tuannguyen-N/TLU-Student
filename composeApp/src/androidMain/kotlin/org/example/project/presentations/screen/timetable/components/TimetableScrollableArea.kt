@@ -7,12 +7,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.DailySchedule
 
 @Composable
 fun TimetableScrollableArea(
-    onShowSubjectDetail: () -> Unit,
+    dailySchedules: List<DailySchedule>,
+    onShowSubjectDetail: (CourseClass) -> Unit,
 ) {
-
     val verticalScroll = rememberScrollState()
     val horizontalScroll = rememberScrollState()
 
@@ -23,7 +25,8 @@ fun TimetableScrollableArea(
             .verticalScroll(verticalScroll)
     ) {
         TimetableGrid(
-            onShowSubjectDetail = onShowSubjectDetail
+            dailySchedules = dailySchedules,
+            onShowSubjectDetail = { onShowSubjectDetail(it) }
         )
     }
 }

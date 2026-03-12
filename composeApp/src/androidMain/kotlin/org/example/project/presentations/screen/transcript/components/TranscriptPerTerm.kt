@@ -28,7 +28,7 @@ fun TranscriptPerTerm(
         semesters.forEachIndexed { _, semester ->
             SubjectCard(
                 onOpenTranscriptTerm = ({ onOpenTranscriptTerm(semester) }),
-                termNumber = semester.semesterLabel.last().code, // TODO: update when add temp semester
+                termNumber = semester.semesterLabel.last().toString(), // TODO: update when add temp semester
                 subjects = semester.subjects.map { it.subjectName },
                 gpa = semester.semesterGpa,
                 credits = semester.creditsPassed,

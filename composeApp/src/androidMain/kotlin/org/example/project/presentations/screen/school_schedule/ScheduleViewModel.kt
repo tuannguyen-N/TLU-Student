@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.example.project.data.remote.dto.day_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.model.ScheduleState
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.presentations.utils.getTodayDayOfWeek
@@ -66,6 +66,14 @@ class ScheduleViewModel(
 
     fun onDismissDetailCourseClass() {
         updateState { copy(showDetailCourseClass = false) }
+    }
+
+    fun onOpenDetailLecturerInfo() {
+        updateState { copy(showDetailLecturerInfo = true) }
+    }
+
+    fun onDismissDetailLecturerInfo() {
+        updateState { copy(showDetailLecturerInfo = false) }
     }
 
     private fun updateState(newState: ScheduleState.() -> ScheduleState) {

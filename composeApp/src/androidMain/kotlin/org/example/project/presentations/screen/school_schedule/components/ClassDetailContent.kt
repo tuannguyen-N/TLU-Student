@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
-import org.example.project.data.remote.dto.day_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.transcript_term.components.SubjectCode
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -35,12 +35,13 @@ import org.example.project.presentations.utils.toHourMinute
 fun ClassDetailContent(
     isGoing: Boolean = false,
     courseClass: CourseClass,
-    onViewMaterials: () -> Unit = {}
+    onViewMaterials: () -> Unit = {},
+    onOpenDetailLecturerInfo: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp, vertical = 10.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -75,18 +76,22 @@ fun ClassDetailContent(
                     )
                 }
             }
-
-            SubjectCode(courseClass.subjectCode)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = courseClass.subjectName,
-            style = MaterialTheme.typography.headlineSmall,
-            color = LocalExtendedColors.current.mainBlue,
-            fontWeight = FontWeight.Bold
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = courseClass.subjectName,
+                style = MaterialTheme.typography.headlineSmall,
+                color = LocalExtendedColors.current.mainBlue,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            SubjectCode(courseClass.subjectCode, modifier = Modifier.padding(start = 5.dp))
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -114,9 +119,9 @@ fun ClassDetailContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         LecturerCard(
-            lecturerName = courseClass.lecturerName,
-            lecturerId = "",
-            lectureEmail = courseClass.lecturerEmail
+            lecturerName = courseClass.lecturer.fullName,
+            lecturerId = courseClass.lecturer.lecturerCode?:"",
+            onOpenDetailLecturerInfo = onOpenDetailLecturerInfo
         )
 
         Spacer(modifier = Modifier.height(20.dp))
