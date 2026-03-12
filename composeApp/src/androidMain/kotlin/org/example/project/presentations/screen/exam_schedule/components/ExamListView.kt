@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material.icons.outlined.AccessTime
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MeetingRoom
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -192,7 +193,7 @@ private fun ExamCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(42.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         LocalExtendedColors.current.gray.copy(alpha = 0.1f)
@@ -202,7 +203,8 @@ private fun ExamCard(
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.LibraryBooks,
                     contentDescription = null,
-                    tint = if (isPast) LocalExtendedColors.current.gray else if (isToday) LocalExtendedColors.current.green else Color.Black
+                    tint = if (isPast) LocalExtendedColors.current.gray else if (isToday) LocalExtendedColors.current.green else Color.Black,
+                    modifier = Modifier.size(18.dp)
                 )
             }
 
@@ -211,8 +213,8 @@ private fun ExamCard(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = exam.subjectName,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
                         color = if (isPast) LocalExtendedColors.current.gray else Color.Black
                     )
                 )
@@ -244,7 +246,7 @@ private fun ExamCard(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.MeetingRoom,
+                            imageVector = Icons.Outlined.LocationOn,
                             contentDescription = null,
                             tint = LocalExtendedColors.current.gray,
                             modifier = Modifier.size(14.dp)

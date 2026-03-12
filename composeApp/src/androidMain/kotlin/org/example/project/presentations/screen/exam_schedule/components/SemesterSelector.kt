@@ -79,7 +79,7 @@ fun SemesterSelector(
                 ) {
                     Text(
                         text = selectedSemester.label,
-                        style = MaterialTheme.typography.bodyLarge.copy(
+                        style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                         )
                     )
