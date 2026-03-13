@@ -266,6 +266,7 @@ fun SubjectCode(
             text = name,
             color = color,
             style = MaterialTheme.typography.labelSmall,
+            maxLines = 1
         )
     }
 }

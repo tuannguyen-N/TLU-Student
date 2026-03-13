@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.toHourMinuteAmPm
 
 @Composable
 fun SubjectInformationCard(
@@ -74,7 +75,7 @@ fun SubjectInformationCard(
 
             InformationView(
                 iconRes = R.drawable.icon_clock,
-                value = "${courseClass.startTime} - ${courseClass.endTime}",
+                value = "${courseClass.startTime.toHourMinuteAmPm()} - ${courseClass.endTime.toHourMinuteAmPm()}",
                 color = secondaryTextColor,
                 modifier = Modifier.padding(top = 10.dp)
             )

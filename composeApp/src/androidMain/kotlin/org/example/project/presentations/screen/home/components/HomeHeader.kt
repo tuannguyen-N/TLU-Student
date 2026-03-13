@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
-import org.example.project.presentations.components.shimmerBrush
+import org.example.project.presentations.components.shimmerEffect
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -75,7 +75,7 @@ fun HomeHeader(
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(shimmerBrush())
+                            .shimmerEffect()
                     )
                 }
             }

@@ -12,10 +12,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
 
-@Preview
-@Composable
-fun shimmerBrush(): Brush {
+fun Modifier.shimmerEffect(): Modifier = composed {
     val shimmerColors = listOf(
         Color.LightGray.copy(alpha = 0.6f),
         Color.LightGray.copy(alpha = 0.2f),
@@ -33,9 +34,12 @@ fun shimmerBrush(): Brush {
         label = "shimmer"
     )
 
-    return Brush.linearGradient(
-        colors = shimmerColors,
-        start = Offset.Zero,
-        end = Offset(x = translateAnim, y = translateAnim)
-    )
+    drawBehind {
+        val brush = Brush.linearGradient(
+            colors = shimmerColors,
+            start = Offset.Zero,
+            end = Offset(x = translateAnim, y = translateAnim)
+        )
+        drawRect(brush = brush)
+    }
 }

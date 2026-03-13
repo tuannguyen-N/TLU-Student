@@ -16,13 +16,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.MeetingRoom
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -30,10 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,26 +38,27 @@ import androidx.compose.ui.unit.sp
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
+import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
+import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamDay
-import org.example.project.domain.model.ExamItem
-import org.example.project.domain.model.Semester
+import org.example.project.domain.model.ExamScheduleState
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun ExamListView(
-    examDays: List<ExamDay>,
-    semesters: List<Semester> = Semester.getSampleSemesters(),
-    initialSemester: Semester = Semester.getSampleSemesters().first(),
-    onSemesterChanged: (Semester) -> Unit = {}
+    uiState: ExamScheduleState,
+    onSemesterChanged: (Semester) -> Unit,
+    isDropdownExpanded: Boolean,
+    onToggleDropdown: () -> Unit
 ) {
-    var selectedSemester by remember { mutableStateOf(initialSemester) }
-    val targetExamDayIndex = examDays.indexOfFirst { it.isToday }
-        .takeIf { it != -1 } ?: examDays.indexOfFirst { !it.isPast }.takeIf { it != -1 } ?: 0
+    val targetExamDayIndex = uiState.examDays.indexOfFirst { it.isToday }
+        .takeIf { it != -1 } ?: uiState.examDays.indexOfFirst { !it.isPast }.takeIf { it != -1 }
+    ?: 0
     val listState = rememberLazyListState()
 
-    LaunchedEffect(examDays) {
-        val todayIndex = calculateScrollIndex(examDays, targetExamDayIndex)
+    LaunchedEffect(uiState.examDays) {
+        val todayIndex = calculateScrollIndex(uiState.examDays, targetExamDayIndex)
         listState.animateScrollToItem(todayIndex)
     }
 
@@ -75,21 +70,22 @@ fun ExamListView(
     ) {
         item {
             SemesterSelector(
-                semesters = semesters,
-                selectedSemester = selectedSemester,
+                semesters = uiState.semesters,
+                selectedSemester = uiState.selectedSemester,
                 onSemesterSelected = {
-                    selectedSemester = it
                     onSemesterChanged(it)
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onToggleDropdown = onToggleDropdown,
+                isDropdownExpanded = isDropdownExpanded
             )
             Spacer(Modifier.height(16.dp))
         }
 
-        examDays.sortedBy { it.date }.forEach { examDay ->
+        uiState.examDays.forEach { examDay ->
             item {
                 ExamDayHeader(
-                    date = examDay.date,
+                    date = examDay.localExamDay,
                     isPast = examDay.isPast,
                     isToday = examDay.isToday
                 )
@@ -100,7 +96,6 @@ fun ExamListView(
                 ExamCard(exam = exam, isPast = examDay.isPast, isToday = examDay.isToday)
                 Spacer(Modifier.height(8.dp))
             }
-
             item { Spacer(Modifier.height(8.dp)) }
         }
     }
@@ -176,7 +171,7 @@ private fun ExamDayHeader(
 
 @Composable
 private fun ExamCard(
-    exam: ExamItem,
+    exam: ExamSchedule,
     isPast: Boolean,
     isToday: Boolean
 ) {
@@ -252,7 +247,7 @@ private fun ExamCard(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = "Phòng: ${exam.room}",
+                            text = "Phòng: ${exam.examRoom}",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = LocalExtendedColors.current.gray
                             )
@@ -263,37 +258,3 @@ private fun ExamCard(
         }
     }
 }
-
-fun sampleExamDays(): List<ExamDay> = listOf(
-    ExamDay(
-        date = LocalDate(2026, 3, 5),
-        exams = listOf(
-            ExamItem("Toán cao cấp A2", "07:30", "09:30", "A301")
-        )
-    ),
-    ExamDay(
-        date = LocalDate(2027, 3, 5),
-        exams = listOf(
-            ExamItem("Toán cao cấp A2", "07:30", "09:30", "A301")
-        )
-    ),
-    ExamDay(
-        date = LocalDate(2029, 3, 5),
-        exams = listOf(
-            ExamItem("Toán cao cấp A2", "07:30", "09:30", "A301")
-        )
-    ),
-    ExamDay(
-        date = LocalDate(2026, 3, 12),
-        exams = listOf(
-            ExamItem("Lập trình hướng đối tượng", "13:30", "15:30", "C202"),
-            ExamItem("Cơ sở dữ liệu", "15:45", "17:45", "B105")
-        )
-    ),
-    ExamDay(
-        date = LocalDate(2026, 5, 11),
-        exams = listOf(
-            ExamItem("Anh văn chuyên ngành", "08:00", "10:00", "D401")
-        )
-    )
-)

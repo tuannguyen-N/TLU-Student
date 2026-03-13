@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.home.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,10 +12,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.AlertUiModel
-import org.example.project.presentations.components.shimmerBrush
+import org.example.project.presentations.components.shimmerEffect
 
 @Composable
 fun AlertList(
@@ -37,7 +35,7 @@ fun AlertList(
                         .width(300.dp)
                         .height(130.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(shimmerBrush())
+                        .shimmerEffect()
                 )
             }
         } else {

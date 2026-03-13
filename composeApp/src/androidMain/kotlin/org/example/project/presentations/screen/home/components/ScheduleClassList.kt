@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.home.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.data.remote.dto.week_schedule.CourseClass
-import org.example.project.presentations.components.shimmerBrush
+import org.example.project.presentations.components.shimmerEffect
 import org.example.project.presentations.utils.isGoing
 
 @Composable
@@ -63,7 +62,7 @@ fun ScheduleClassList(
                                         .width(55.dp)
                                         .height(16.dp)
                                         .clip(RoundedCornerShape(4.dp))
-                                        .background(shimmerBrush())
+                                        .shimmerEffect()
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Box(
@@ -71,7 +70,7 @@ fun ScheduleClassList(
                                         .width(55.dp)
                                         .height(14.dp)
                                         .clip(RoundedCornerShape(4.dp))
-                                        .background(shimmerBrush())
+                                        .shimmerEffect()
                                 )
                             }
 
@@ -82,7 +81,7 @@ fun ScheduleClassList(
                                     .weight(1f)
                                     .height(90.dp)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(shimmerBrush())
+                                    .shimmerEffect()
                             )
                         }
                     }

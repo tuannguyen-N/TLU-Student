@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.toHourMinuteAmPm
 
 @Composable
 fun ScheduleCurrent(
@@ -42,13 +43,13 @@ fun ScheduleCurrent(
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                text = "07:30 am",
+                text = item.startTime.toHourMinuteAmPm(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
             )
 
             Text(
-                text = "09:30 am",
+                text = item.endTime.toHourMinuteAmPm(),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
             )

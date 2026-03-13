@@ -25,32 +25,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.example.project.domain.model.Semester
+import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.today
 
-@Preview
 @Composable
 fun SemesterSelector(
     modifier: Modifier = Modifier,
-    semesters: List<Semester> = Semester.getSampleSemesters(),
-    selectedSemester: Semester = Semester.getSampleSemesters().first(),
-    onSemesterSelected: (Semester) -> Unit = {}
+    semesters: List<Semester>,
+    selectedSemester: Semester?,
+    onSemesterSelected: (Semester) -> Unit = {},
+    onToggleDropdown: () -> Unit = {},
+    isDropdownExpanded: Boolean = false
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
     Column(modifier = modifier) {
         Text(
             text = "Chọn Học Kỳ",
@@ -72,19 +65,19 @@ fun SemesterSelector(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { expanded = true }
+                        .clickable {onToggleDropdown()}
                         .padding(horizontal = 14.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = selectedSemester.label,
+                        text = selectedSemester?.semesterName ?: "$today",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                         )
                     )
                     Icon(
-                        imageVector = if (expanded)
+                        imageVector = if (isDropdownExpanded)
                             Icons.Default.KeyboardArrowUp
                         else
                             Icons.Default.KeyboardArrowDown,
@@ -96,18 +89,18 @@ fun SemesterSelector(
             }
 
             DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
+                expanded = isDropdownExpanded,
+                onDismissRequest = onToggleDropdown,
                 modifier = Modifier
                     .background(Color.White),
             ) {
-                semesters.forEachIndexed { index, semester ->
-                    val isSelected = semester.id == selectedSemester.id
+                semesters?.forEachIndexed { index, semester ->
+                    val isSelected = semester.semesterName == selectedSemester?.semesterName
 
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = semester.label,
+                                text = semester.semesterName,
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     fontWeight = if (isSelected) FontWeight.SemiBold
                                     else FontWeight.Normal,
@@ -130,7 +123,7 @@ fun SemesterSelector(
                         },
                         onClick = {
                             onSemesterSelected(semester)
-                            expanded = false
+                            onToggleDropdown()
                         },
                         modifier = Modifier.background(
                             if (isSelected) Color(0xFFF0F6FF) else Color.White

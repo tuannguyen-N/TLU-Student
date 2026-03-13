@@ -26,7 +26,7 @@ fun LabelView(
             text = text,
             modifier = modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelMedium.copy(
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Normal,
                 color = textColor
             ),
         )

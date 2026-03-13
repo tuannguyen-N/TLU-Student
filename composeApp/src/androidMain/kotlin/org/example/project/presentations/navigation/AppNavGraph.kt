@@ -17,6 +17,9 @@ import org.example.project.domain.model.FeatureUiModel
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModelFactory
+import org.example.project.presentations.screen.exam_schedule.ExamScheduleScreen
+import org.example.project.presentations.screen.exam_schedule.ExamScheduleViewModel
+import org.example.project.presentations.screen.exam_schedule.ExamScheduleViewModelFactory
 import org.example.project.presentations.screen.features.FeaturesScreen
 import org.example.project.presentations.screen.features.FeaturesViewModel
 import org.example.project.presentations.screen.features.FeaturesViewModelFactory
@@ -207,6 +210,22 @@ fun AppNavGraph() {
                 viewModel = timetableViewModel,
                 onBack = { navController.popBackStack() },
                 onOpenEmail = { email -> context.openEmail(email) }
+            )
+        }
+
+        composable(Routes.ExamSchedule){
+            val container = LocalAppContainer.current
+            val factory = remember(container){
+                ExamScheduleViewModelFactory(
+                    container.examScheduleRepository,
+                    container.semesterUseCase
+                )
+            }
+            val examScheduleViewModel: ExamScheduleViewModel = viewModel(factory = factory)
+
+            ExamScheduleScreen(
+                viewModel = examScheduleViewModel,
+                onBack = { navController.popBackStack() }
             )
         }
 

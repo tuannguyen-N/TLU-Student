@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.school_schedule
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,21 +29,19 @@ class ScheduleViewModel(
 
     private fun observeDayOfWeekSchedule() {
         scheduleUseCase.dayOfWeekSchedule.onEach {
-            it?.let { data ->
-                updateState { copy(courseClasses = data.courseClasses) }
-            }
+            updateState { copy(courseClasses = it?.courseClasses.orEmpty()) }
         }.launchIn(viewModelScope)
     }
 
     private fun loadData() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
-            scheduleUseCase.getDayOfWeekSchedule(getTodayDayOfWeek()).fold(onSuccess = {
-                updateState { copy(isLoading = false) }
-            }, onFailure = {
-                Log.e("123123", "loadData: $it")
-                updateState { copy(isLoading = false) }
-            })
+//            updateState { copy(isLoading = true) }
+//            scheduleUseCase.getDayOfWeekSchedule(getTodayDayOfWeek()).fold(onSuccess = {
+//                updateState { copy(isLoading = false) }
+//            }, onFailure = {
+//                Log.e("123123", "loadData: $it")
+//                updateState { copy(isLoading = false) }
+//            })
         }
     }
 

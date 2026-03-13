@@ -80,7 +80,7 @@ fun LecturerCard(
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = lecturerName,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         color = LocalExtendedColors.current.mainBlue,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -91,13 +91,12 @@ fun LecturerCard(
                                 color = Color.Blue.copy(alpha = 0.12f),
                                 shape = RoundedCornerShape(20.dp)
                             )
-                            .padding(horizontal = 10.dp, vertical = 3.dp)
+                            .padding(horizontal = 10.dp, vertical = 1.dp)
                     ) {
                         Text(
                             text = lecturerId,
-                            style = MaterialTheme.typography.labelMedium,
+                            style = MaterialTheme.typography.labelSmall,
                             color = Color.Blue,
-                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }

@@ -33,7 +33,7 @@ fun TodayScheduleList(
     ) {
         TitleView(onOpenTimetable)
 
-        if(!courseClasses.isEmpty()){
+        if(courseClasses.isNotEmpty()){
             LazyColumn(modifier = Modifier) {
                 items(courseClasses) { courseClass ->
                     ScheduleItem(

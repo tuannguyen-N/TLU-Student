@@ -68,6 +68,7 @@ class HomeViewModel(
     }
 
     private fun loadInitData() {
+        viewModelScope.launch { featureRepository.seedDefaultsIfNeeded() }
         viewModelScope.launch { loadStudentInfo() }
         viewModelScope.launch { loadCourseClasses() }
     }

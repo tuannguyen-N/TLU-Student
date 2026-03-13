@@ -4,18 +4,23 @@ import org.example.project.data.local.TokenStorage
 import org.example.project.data.local.createDatabase
 import org.example.project.data.local.getDatabaseBuilder
 import org.example.project.data.remote.api.AuthApi
+import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.api.ScheduleApi
+import org.example.project.data.remote.api.SemesterApi
 import org.example.project.data.remote.api.StudentApi
 import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.api.TranscriptApi
 import org.example.project.data.remote.createHttpClient
 import org.example.project.domain.repository.AuthRepository
+import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.ScheduleRepository
+import org.example.project.domain.repository.SemesterRepository
 import org.example.project.domain.repository.StudentRepository
 import org.example.project.domain.repository.TranscriptRepository
 import org.example.project.domain.usecase.LoginUseCase
 import org.example.project.domain.usecase.ScheduleUseCase
+import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.domain.usecase.TranscriptUseCase
 
@@ -55,4 +60,11 @@ class AppContainer(
     private val studyProgramApi = StudyProgramApi(httpClient)
     private val transcriptRepository = TranscriptRepository(transcriptApi, studyProgramApi)
     val transcriptUseCase = TranscriptUseCase(transcriptRepository)
+
+    //for exam schedule
+    private val semesterApi = SemesterApi(httpClient)
+    private val semesterResponse = SemesterRepository(semesterApi)
+    private val examScheduleApi = ExamScheduleApi(httpClient)
+    val semesterUseCase = SemesterUseCase(semesterResponse)
+    val examScheduleRepository = ExamScheduleRepository(examScheduleApi)
 }

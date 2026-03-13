@@ -45,6 +45,20 @@ fun String.toHourMinute(): String {
     return "%02d:%02d".format(time.hour, time.minute)
 }
 
+fun String.toHourMinuteAmPm(): String {
+    val time = LocalTime.parse(this)
+
+    val hour12 = when {
+        time.hour == 0 -> 12
+        time.hour > 12 -> time.hour - 12
+        else -> time.hour
+    }
+
+    val amPm = if (time.hour < 12) "AM" else "PM"
+
+    return "%02d:%02d %s".format(hour12, time.minute, amPm)
+}
+
 fun CourseClass.isGoing(): Boolean {
     val now = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
@@ -53,4 +67,37 @@ fun CourseClass.isGoing(): Boolean {
     val end = LocalTime.parse(endTime)
 
     return now in start..end
+}
+
+fun CourseClass.getStatusText(): String {
+    val now = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+
+    val currentTime = now.time
+
+    val start = LocalTime.parse(startTime)
+    val end = LocalTime.parse(endTime)
+
+    val startMinutes = start.hour * 60 + start.minute
+    val endMinutes = end.hour * 60 + end.minute
+    val currentMinutes = currentTime.hour * 60 + currentTime.minute
+
+    return when {
+        currentMinutes > endMinutes -> {
+            "Đã kết thúc"
+        }
+
+        currentMinutes in startMinutes..endMinutes -> {
+            "Đang diễn ra"
+        }
+
+        startMinutes - currentMinutes <= 60 -> {
+            val diff = startMinutes - currentMinutes
+            "Sau $diff phút"
+        }
+
+        else -> {
+            ""
+        }
+    }
 }

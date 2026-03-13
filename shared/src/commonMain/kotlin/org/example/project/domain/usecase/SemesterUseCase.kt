@@ -1,0 +1,31 @@
+package org.example.project.domain.usecase
+
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import org.example.project.data.remote.dto.semester.Semester
+import org.example.project.domain.repository.SemesterRepository
+import kotlin.time.Clock
+
+class SemesterUseCase(
+    private val semesterRepository: SemesterRepository
+) {
+    val semesters = semesterRepository.semesters
+
+    suspend fun getSemesters(): Result<List<Semester>> {
+        return semesterRepository.getSemesters()
+            .map { semesters ->
+                semesters.filter { semester ->
+                    checkingAvailableDate(semester.startDate)
+                }
+            }
+    }
+
+    private fun checkingAvailableDate(startDate: String): Boolean {
+        val today = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+        val start = LocalDate.parse(startDate)
+        return today >= start
+    }
+}

@@ -11,13 +11,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -32,17 +33,15 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun NewAndEventCard(
     item: NewAndEventUiModel
 ) {
-    Box(
+    Card(
         modifier = Modifier
             .padding(horizontal = 8.dp)
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(12.dp),
-                clip = false
-            )
-            .width(220.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(LocalExtendedColors.current.white)
+            .width(220.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = LocalExtendedColors.current.white
+        ),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column {
             Box(

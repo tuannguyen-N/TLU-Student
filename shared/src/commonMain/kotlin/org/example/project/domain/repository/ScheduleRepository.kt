@@ -27,18 +27,18 @@ class ScheduleRepository(
     private val dayScheduleCache = mutableMapOf<Int, CacheEntry<DayOfWeekScheduleResponse>>()
     private val weekScheduleCache = mutableMapOf<String, CacheEntry<WeekSchedule>>()
 
-    suspend fun getDayOfWeekSchedule(dayOfWeek: Int): Result<Any> {
-        dayScheduleCache[dayOfWeek]
-            ?.takeIf { !it.isExpired(DAY_SCHEDULE_TTL) }
-            ?.let {
-                _dayOfWeekSchedule.value = it.data.data
-                return Result.success(Unit)
-            }
+    suspend fun getDayOfWeekSchedule(dayOfWeek: Int): Result<DayOfWeekScheduleResponse> {
+//        dayScheduleCache[dayOfWeek]
+//            ?.takeIf { !it.isExpired(DAY_SCHEDULE_TTL) }
+//            ?.let {
+//                _dayOfWeekSchedule.value = it.data.data
+//                return Result.success(Unit)
+//            }
 
         return runCatching { scheduleApi.getDayOfWeekSchedule(dayOfWeek) }.onSuccess {
-            val data = it.data ?: return@onSuccess
-            dayScheduleCache[dayOfWeek] = CacheEntry(it)
-            _dayOfWeekSchedule.value = data
+//            val data = it.data ?: return@onSuccess
+//            dayScheduleCache[dayOfWeek] = CacheEntry(it)
+            _dayOfWeekSchedule.value = it.data
         }
     }
 

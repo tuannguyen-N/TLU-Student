@@ -30,6 +30,8 @@ import org.example.project.R
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.theme.Poppins
+import org.example.project.presentations.utils.getStatusText
+import org.example.project.presentations.utils.toHourMinuteAmPm
 
 @Composable
 fun ScheduleNext(
@@ -46,14 +48,14 @@ fun ScheduleNext(
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                text = "07:30 am",
+                text = item.startTime.toHourMinuteAmPm(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = LocalExtendedColors.current.gray
             )
 
             Text(
-                text = "09:30 am",
+                text = item.endTime.toHourMinuteAmPm(),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
                 color = LocalExtendedColors.current.gray
@@ -95,7 +97,6 @@ fun ScheduleNext(
                     .background(Color(0xFFF7F7F7))
                     .padding(horizontal = 12.dp, vertical = 10.dp)
                     .fillMaxWidth()
-
             ) {
                 Row(
                     modifier = Modifier
@@ -104,7 +105,7 @@ fun ScheduleNext(
                         .padding(horizontal = 12.dp, vertical = 3.dp)
                 ) {
                     Text(
-                        text = "Sau 15p",
+                        text = item.getStatusText(),
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodySmall,
                         color = LocalExtendedColors.current.red,

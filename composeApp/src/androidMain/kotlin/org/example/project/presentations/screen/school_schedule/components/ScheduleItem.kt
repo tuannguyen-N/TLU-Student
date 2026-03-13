@@ -27,6 +27,7 @@ import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.isGoing
 import org.example.project.presentations.utils.toHourMinute
+import org.example.project.presentations.utils.toHourMinuteAmPm
 
 @Composable
 fun ScheduleItem(
@@ -41,7 +42,7 @@ fun ScheduleItem(
         TimeView(
             isOngoing = isOngoing,
             shift = courseClass.startPeriod.toString(),
-            startTime = courseClass.startTime.toHourMinute()
+            startTime = courseClass.startTime
         )
         ScheduleDotLine(isOngoing = isOngoing, modifier = Modifier.padding(horizontal = 20.dp))
         SubjectInformationCard(
@@ -99,7 +100,7 @@ fun TimeView(
         )
 
         Text(
-            text = startTime,
+            text = startTime.toHourMinuteAmPm(),
             fontWeight = FontWeight.SemiBold,
             style = MaterialTheme.typography.titleMedium,
             color = if (isOngoing) Color.Black else LocalExtendedColors.current.gray,

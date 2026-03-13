@@ -11,7 +11,7 @@ class ScheduleApi(
     private val client: HttpClient
 ) {
     suspend fun getDayOfWeekSchedule(dayOfWeek: Int): DayOfWeekScheduleResponse {
-        return client.get("/api/v1/student/schedules/") {
+        return client.get("/api/v1/student/schedules/day-of-week") {
             parameter("day-of-week", dayOfWeek)
         }.body()
     }

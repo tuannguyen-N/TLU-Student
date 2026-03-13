@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.project.presentations.components.shimmerBrush
+import org.example.project.presentations.components.shimmerEffect
 
 @Composable
 fun ShimmerNew(modifier: Modifier = Modifier) {
@@ -28,7 +28,7 @@ fun ShimmerNew(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(130.dp)
-                .background(shimmerBrush())
+                .shimmerEffect()
         )
 
         Column(
@@ -42,7 +42,7 @@ fun ShimmerNew(modifier: Modifier = Modifier) {
                     .fillMaxWidth(0.9f)
                     .height(14.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(shimmerBrush())
+                    .shimmerEffect()
             )
             Spacer(modifier = Modifier.height(6.dp))
             Box(
@@ -50,7 +50,7 @@ fun ShimmerNew(modifier: Modifier = Modifier) {
                     .fillMaxWidth(0.6f)
                     .height(14.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(shimmerBrush())
+                    .shimmerEffect()
             )
             Spacer(modifier = Modifier.height(6.dp))
             Box(
@@ -58,7 +58,7 @@ fun ShimmerNew(modifier: Modifier = Modifier) {
                     .fillMaxWidth(0.4f)
                     .height(12.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(shimmerBrush())
+                    .shimmerEffect()
             )
         }
     }

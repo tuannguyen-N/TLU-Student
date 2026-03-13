@@ -30,6 +30,7 @@ import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.transcript_term.components.SubjectCode
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.toHourMinute
+import org.example.project.presentations.utils.toHourMinuteAmPm
 
 @Composable
 fun ClassDetailContent(
@@ -87,10 +88,10 @@ fun ClassDetailContent(
                 text = courseClass.subjectName,
                 style = MaterialTheme.typography.headlineSmall,
                 color = LocalExtendedColors.current.mainBlue,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.weight(1f))
-            SubjectCode(courseClass.subjectCode, modifier = Modifier.padding(start = 5.dp))
+            SubjectCode(courseClass.subjectCode, modifier = Modifier.padding(start = 8.dp))
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -111,7 +112,7 @@ fun ClassDetailContent(
                 modifier = Modifier.weight(1f),
                 icon = Icons.Outlined.AccessTime,
                 label = "THỜI GIAN",
-                primaryText = "${courseClass.startTime.toHourMinute()} - ${courseClass.endTime.toHourMinute()}",
+                primaryText = "${courseClass.startTime.toHourMinuteAmPm()} - ${courseClass.endTime.toHourMinuteAmPm()}",
                 secondaryText = "Ca ${courseClass.startPeriod} - ${courseClass.endPeriod}"
             )
         }

@@ -13,4 +13,5 @@ object Routes {
     const val Feedback = "feedback"
     const val FeedbackDetail = "feedback_detail"
     const val FeaturesScreen = "features_screen"
+    const val ExamSchedule = "exam_schedule"
 }

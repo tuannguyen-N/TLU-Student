@@ -26,22 +26,11 @@ class FeaturesViewModel(
     val event = _event.receiveAsFlow()
 
     val quickAccessList = featureRepository.getQuickAccessList()
-        .onStart { featureRepository.seedDefaultsIfNeeded() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
-    init {
-        initQuickAccessList()
-    }
-
-    private fun initQuickAccessList() {
-        viewModelScope.launch {
-            featureRepository.seedDefaultsIfNeeded()
-        }
-    }
 
     fun toggleEditMode() {
         _isEditing.value = !_isEditing.value
