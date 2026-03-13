@@ -1,5 +1,6 @@
 package org.example.project.domain.usecase
 
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -10,15 +11,12 @@ import kotlin.time.Clock
 class SemesterUseCase(
     private val semesterRepository: SemesterRepository
 ) {
-    val semesters = semesterRepository.semesters
+    val semesters = semesterRepository.semesters.map {
+        it.filter { semester -> checkingAvailableDate(semester.startDate) }
+    }
 
     suspend fun getSemesters(): Result<List<Semester>> {
         return semesterRepository.getSemesters()
-            .map { semesters ->
-                semesters.filter { semester ->
-                    checkingAvailableDate(semester.startDate)
-                }
-            }
     }
 
     private fun checkingAvailableDate(startDate: String): Boolean {

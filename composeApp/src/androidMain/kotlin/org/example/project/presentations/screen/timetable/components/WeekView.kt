@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.timetable.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +24,8 @@ fun WeekView(
     week: String = "Thứ 2",
     weekDate: String = "123123-123123",
     onClickPreviousWeek: () -> Unit = {},
-    onClickNextWeek: () -> Unit = {}
+    onClickNextWeek: () -> Unit = {},
+    onClickWeekLabel: () -> Unit = {},
 ) {
     Row(
         modifier = modifier
@@ -37,7 +39,12 @@ fun WeekView(
             }
         )
 
-        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .clickable { onClickWeekLabel() },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = week,
                 color = LocalExtendedColors.current.gray,

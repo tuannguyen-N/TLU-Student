@@ -203,7 +203,12 @@ fun AppNavGraph() {
             val container = LocalAppContainer.current
             val context = LocalContext.current
             val factory =
-                remember(container) { TimetableViewModelFactory(container.scheduleUseCase) }
+                remember(container) {
+                    TimetableViewModelFactory(
+                        container.scheduleUseCase,
+                        container.semesterUseCase
+                    )
+                }
             val timetableViewModel: TimetableViewModel = viewModel(factory = factory)
 
             TimetableScreen(
@@ -213,9 +218,9 @@ fun AppNavGraph() {
             )
         }
 
-        composable(Routes.ExamSchedule){
+        composable(Routes.ExamSchedule) {
             val container = LocalAppContainer.current
-            val factory = remember(container){
+            val factory = remember(container) {
                 ExamScheduleViewModelFactory(
                     container.examScheduleRepository,
                     container.semesterUseCase

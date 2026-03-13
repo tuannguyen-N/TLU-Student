@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
@@ -37,7 +36,7 @@ fun TopScreenBar(
     onBack: () -> Unit = {},
     justView: Boolean = false,
     schoolYears: List<String> = emptyList(),
-    onClickSchoolYear: (String) -> Unit = {},
+    onClicked: (String) -> Unit = {},
     yearValue: String,
     title: String
 ) {
@@ -87,7 +86,7 @@ fun TopScreenBar(
                 if (showTermYear && !justView) {
                     TermYearMenuView(
                         schoolYears = schoolYears,
-                        onClickSchoolYear = { onClickSchoolYear(it) },
+                        onClickSchoolYear = { if (it != yearValue) onClicked(it) },
                         onDismiss = { showTermYear = false }
                     )
                 }

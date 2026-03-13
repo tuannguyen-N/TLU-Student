@@ -42,6 +42,9 @@ fun TimetableScreen(
         onCopyPhoneNumber = copyToClipboard,
         onCopyEmail = copyToClipboard,
         onCopyLecturerCode = copyToClipboard,
-        onContact = { onOpenEmail(it) }
+        onContact = { onOpenEmail(it) },
+        onChangeSemester = viewModel::onChangeSemester,
+        onToggleDropDown = viewModel::onToggleDropDown,
+        onChangeWeek = viewModel::onChangeWeek
     )
 }

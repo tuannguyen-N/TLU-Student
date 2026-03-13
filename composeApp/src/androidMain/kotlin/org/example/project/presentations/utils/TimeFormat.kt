@@ -101,3 +101,7 @@ fun CourseClass.getStatusText(): String {
         }
     }
 }
+
+fun String.toSlashDate(): String {
+    return this.replace("-", "/")
+}
