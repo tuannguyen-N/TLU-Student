@@ -1,30 +1,41 @@
 package org.example.project.presentations.screen.exam_schedule.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.rememberCalendarState
+import com.kizitonwose.calendar.core.minusMonths
 import com.kizitonwose.calendar.core.plusMonths
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.number
+import kotlinx.datetime.plus
+import org.example.project.data.mapper.toLocalDateSafe
+import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamDay
 import org.example.project.domain.model.ExamScheduleState
@@ -36,11 +47,11 @@ import org.example.project.presentations.utils.today
 @Composable
 fun ExamScheduleContent(
     uiState: ExamScheduleState,
-    examDays: List<ExamDay>,
     onBack: () -> Unit,
     onTabSelected: (Int) -> Unit,
     onToggleDropdown: () -> Unit,
-    onSemesterChanged: (Semester)-> Unit
+    onSemesterChanged: (Semester) -> Unit,
+    onChangeDate: (LocalDate) -> Unit
 ) {
     val color = LocalExtendedColors.current
     val tabs = listOf(
@@ -48,14 +59,20 @@ fun ExamScheduleContent(
         "Danh sách" to Icons.AutoMirrored.Filled.List
     )
 
-    var selectedDate by remember { mutableStateOf(today) }
+    val selectedDate = uiState.selectedDate
+    val firstVisibleMonth = remember(uiState.selectedSemester) {
+        uiState.selectedSemester?.let {
+            val date = it.startDate.toLocalDateSafe()
+            YearMonth(date.year, date.month.number)
+        } ?: YearMonth(today.year, today.month.number)
+    }
+    val startMonth = remember(firstVisibleMonth) { firstVisibleMonth.minusMonths(12) }
+    val endMonth = remember(firstVisibleMonth) { firstVisibleMonth.plusMonths(12) }
 
-    val startMonth = remember { YearMonth(today.year, today.month.number) }
-    val endMonth = remember { startMonth.plusMonths(12) }
     val calendarState = rememberCalendarState(
         startMonth = startMonth,
         endMonth = endMonth,
-        firstVisibleMonth = startMonth,
+        firstVisibleMonth = firstVisibleMonth,
         firstDayOfWeek = DayOfWeek.MONDAY
     )
 
@@ -63,10 +80,14 @@ fun ExamScheduleContent(
         derivedStateOf { calendarState.firstVisibleMonth.yearMonth }
     }
 
-    val examDateSet = remember(examDays) { examDays.map { it.localExamDay }.toSet() }
-    val selectedExam = remember(selectedDate, examDays) {
-        examDays.find { it.localExamDay == selectedDate }
+    val examDateSet =
+        remember(uiState.examDays) { uiState.examDays.map { it.localExamDay }.toSet() }
+    val examDayMap = remember(uiState.examDays) {
+        uiState.examDays.associateBy { it.localExamDay }
     }
+
+    val selectedExam = examDayMap[selectedDate]
+    val exams = selectedExam?.exams ?: emptyList()
 
     Scaffold(
         containerColor = color.background,
@@ -88,7 +109,7 @@ fun ExamScheduleContent(
             TabRowView(
                 tabs = tabs,
                 selectedTab = uiState.selectedTab,
-                onTabSelected = {onTabSelected(it) }
+                onTabSelected = { tab -> onTabSelected(tab) }
             )
 
             Spacer(Modifier.height(12.dp))
@@ -100,7 +121,7 @@ fun ExamScheduleContent(
                     selectedDate = selectedDate,
                     today = today,
                     examDateSet = examDateSet,
-                    onDateSelected = { selectedDate = it }
+                    onDateSelected = { date -> onChangeDate(date) }
                 )
 
                 HorizontalDivider(color = color.grayButton)
@@ -109,10 +130,36 @@ fun ExamScheduleContent(
                     date = selectedDate,
                     examInfo = selectedExam
                 )
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                ) {
+                    if (exams.isNotEmpty()) {
+                        items(exams) { exam ->
+                            ExamCard(
+                                exam = exam,
+                                isPast = selectedExam!!.isPast,
+                                isToday = selectedExam.isToday
+                            )
+                            Spacer(Modifier.height(8.dp))
+                        }
+                    } else {
+                        item {
+                            Text(
+                                text = "Không có lịch thi",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = LocalExtendedColors.current.gray,
+                                fontStyle = FontStyle.Italic
+                            )
+                        }
+                    }
+                }
+
             } else {
                 ExamListView(
                     uiState = uiState,
-                    onSemesterChanged = { onSemesterChanged(it) },
+                    onSemesterChanged = { semester -> onSemesterChanged(semester) },
                     isDropdownExpanded = uiState.isDropdownExpanded,
                     onToggleDropdown = onToggleDropdown
                 )
@@ -124,7 +171,6 @@ fun ExamScheduleContent(
 @Preview(showBackground = true)
 @Composable
 fun ExamScheduleContentPreview() {
-
     val semester1 = Semester(
         semesterName = "HK1 2025-2026",
         startDate = "2025-09-01",
@@ -143,6 +189,68 @@ fun ExamScheduleContentPreview() {
         endDate = "2027-01-15"
     )
 
+    val today = today
+
+    val examDays = listOf(
+
+        ExamDay(
+            localExamDay = today,
+            exams = listOf(
+                ExamSchedule(
+                    attendanceStatus = "NOT_TAKEN",
+                    classCode = "INT2201",
+                    endTime = "10:00",
+                    examAttempt = 1,
+                    examDate = today.toString(),
+                    examFormat = "Tự luận",
+                    examLocation = "Tòa A",
+                    examRoom = "A305",
+                    examStatus = "SCHEDULED",
+                    examType = "Cuối kỳ",
+                    startTime = "08:00",
+                    subjectCode = "INT2201",
+                    subjectName = "Lập trình Android"
+                ),
+                ExamSchedule(
+                    attendanceStatus = "NOT_TAKEN",
+                    classCode = "INT2202",
+                    endTime = "15:30",
+                    examAttempt = 1,
+                    examDate = today.toString(),
+                    examFormat = "Trắc nghiệm",
+                    examLocation = "Tòa B",
+                    examRoom = "B201",
+                    examStatus = "SCHEDULED",
+                    examType = "Cuối kỳ",
+                    startTime = "13:30",
+                    subjectCode = "INT2202",
+                    subjectName = "Cấu trúc dữ liệu"
+                )
+            )
+        ),
+
+        ExamDay(
+            localExamDay = today.plus(1, DateTimeUnit.DAY),
+            exams = listOf(
+                ExamSchedule(
+                    attendanceStatus = "NOT_TAKEN",
+                    classCode = "INT3301",
+                    endTime = "09:30",
+                    examAttempt = 1,
+                    examDate = today.plus(1, DateTimeUnit.DAY).toString(),
+                    examFormat = "Tự luận",
+                    examLocation = "Tòa C",
+                    examRoom = "C402",
+                    examStatus = "SCHEDULED",
+                    examType = "Giữa kỳ",
+                    startTime = "07:30",
+                    subjectCode = "INT3301",
+                    subjectName = "Trí tuệ nhân tạo"
+                )
+            )
+        )
+    )
+
     ExamScheduleContent(
         uiState = ExamScheduleState(
             semesters = listOf(
@@ -150,17 +258,19 @@ fun ExamScheduleContentPreview() {
                 semester2,
                 semester3
             ),
-            selectedSemester = semester3,
+            selectedSemester = semester1,
             currentSemester = semester3,
-            selectedTab = 1,
+            selectedTab = 0,
             isDropdownExpanded = false,
             isLoading = false,
+            selectedDate = today,
+            examDays = examDays,
             error = null
         ),
-        examDays = emptyList(),
         onToggleDropdown = {},
         onSemesterChanged = {},
         onTabSelected = {},
-        onBack = {}
+        onBack = {},
+        onChangeDate = {}
     )
 }

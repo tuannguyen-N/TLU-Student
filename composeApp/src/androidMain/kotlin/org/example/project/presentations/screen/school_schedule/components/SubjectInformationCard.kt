@@ -48,7 +48,7 @@ fun SubjectInformationCard(
         ) {
 
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
                 Text(
                     text = courseClass.subjectName,
@@ -68,7 +68,7 @@ fun SubjectInformationCard(
             }
 
             Text(
-                text = courseClass.room,
+                text = "Phòng ${courseClass.room} - Toà ${courseClass.room.first()}",
                 color = secondaryTextColor,
                 style = MaterialTheme.typography.bodyMedium,
             )

@@ -14,10 +14,10 @@ fun ExamScheduleScreen(
 
     ExamScheduleContent(
         uiState = uiState,
-        examDays = uiState.examDays,
         onBack = onBack,
         onTabSelected =  viewModel::onTabSelected,
         onToggleDropdown = viewModel::onToggleDropdown,
-        onSemesterChanged = viewModel::onSemesterChanged
+        onSemesterChanged = viewModel::onSemesterChanged,
+        onChangeDate = viewModel::onChangeDate
     )
 }

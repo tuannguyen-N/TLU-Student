@@ -1,8 +1,10 @@
 package org.example.project.data.remote.dto.exam_schedule
 
-import com.kizitonwose.calendar.core.now
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
 
 @Serializable
 data class ExamSchedule(
@@ -22,10 +24,16 @@ data class ExamSchedule(
 ) {
     val localExamDate: LocalDate
         get() = LocalDate.parse(examDate)
+
+    val today: LocalDate
+        get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
     val isPast: Boolean
-        get() = localExamDate < LocalDate.now()
+        get() = localExamDate < today
+
     val isToday: Boolean
-        get() = localExamDate == LocalDate.now()
+        get() = localExamDate == today
+
     val isFuture: Boolean
-        get() = localExamDate > LocalDate.now()
+        get() = localExamDate > today
 }

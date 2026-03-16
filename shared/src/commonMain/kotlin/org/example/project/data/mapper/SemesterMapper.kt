@@ -2,6 +2,7 @@ package org.example.project.data.mapper
 
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.YearMonth
 import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.plus
@@ -35,7 +36,7 @@ fun Semester.toWeekDateList(): List<String> {
 
 fun Semester.toStartWeekDate(): String {
     val formatter = LocalDate.Format {
-        dayOfMonth()
+        day()
         char('/')
         monthNumber()
         char('/')
@@ -46,4 +47,20 @@ fun Semester.toStartWeekDate(): String {
     val weekEnd = start.plus(6, DateTimeUnit.DAY)
 
     return "${start.format(formatter)} - ${weekEnd.format(formatter)}"
+}
+
+fun Semester.toYearMonth(): YearMonth {
+    val date = startDate.toLocalDateSafe()
+    return YearMonth(date.year, date.monthNumber)
+}
+
+fun String.toLocalDateSafe(): LocalDate {
+    return if (contains("-")) {
+        LocalDate.parse(this)
+    } else {
+        val formatter = LocalDate.Format {
+            dayOfMonth(); char('/'); monthNumber(); char('/'); year()
+        }
+        LocalDate.parse(this, formatter) // dd/MM/yyyy
+    }
 }

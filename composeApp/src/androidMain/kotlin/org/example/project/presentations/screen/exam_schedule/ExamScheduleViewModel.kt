@@ -9,17 +9,19 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import org.example.project.data.mapper.toExamDays
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamScheduleState
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.usecase.SemesterUseCase
+import org.example.project.presentations.utils.today
 
 class ExamScheduleViewModel(
     private val semesterUseCase: SemesterUseCase,
     private val examScheduleRepository: ExamScheduleRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ExamScheduleState())
+    private val _uiState = MutableStateFlow(ExamScheduleState(selectedDate = today))
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -38,23 +40,24 @@ class ExamScheduleViewModel(
 
     private suspend fun getSemesters() {
         semesterUseCase.getSemesters().fold(
-            onSuccess = {
-                updateState { copy(selectedSemester = it.last()) }
-                getExamSchedule(it.last().semesterName)
+            onSuccess = { semesters ->
+                val latest = semesters.firstOrNull() ?: return@fold
+                updateState { copy(selectedSemester = latest, currentSemester = latest) }
+                getExamSchedule(latest.semesterName)
             },
             onFailure = {
                 Log.e("ExamViewModel", "getSemesters: Error $it")
+                updateState { copy(error = it.message) }
             }
         )
     }
 
     private suspend fun getExamSchedule(semester: String) {
         examScheduleRepository.getExamSchedules(semester).fold(
-            onSuccess = {
-                // TODO:  Update state
-            },
+            onSuccess = { /* data flows through observeExamSchedule */ },
             onFailure = {
                 Log.e("ExamViewModel", "getExamSchedule: Error $it")
+                updateState { copy(error = it.message) }
             }
         )
     }
@@ -84,6 +87,13 @@ class ExamScheduleViewModel(
             updateState { copy(selectedSemester = semester, isLoading = true) }
             getExamSchedule(semester.semesterName)
             updateState { copy(isLoading = false) }
+        }
+    }
+
+    fun onChangeDate(date: LocalDate) {
+        updateState {
+            val examDay = examDays.find { it.localExamDay == date }
+            copy(selectedDate = date, examDay = examDay)
         }
     }
 
