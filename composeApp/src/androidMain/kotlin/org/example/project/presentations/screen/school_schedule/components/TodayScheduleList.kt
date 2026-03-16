@@ -22,6 +22,8 @@ import org.example.project.presentations.screen.home.components.ScheduleEmptyCar
 fun TodayScheduleList(
     modifier: Modifier = Modifier,
     courseClasses: List<CourseClass> = emptyList(),
+    isToday: Boolean = false,
+    daysUntil: Int = 0,
     onOpenTimetable: () -> Unit = {},
     onOpenDetailCourseClass: (CourseClass) -> Unit = {},
     onClickViewTomorrow: () -> Unit = {}
@@ -37,8 +39,10 @@ fun TodayScheduleList(
             LazyColumn(modifier = Modifier) {
                 items(courseClasses) { courseClass ->
                     ScheduleItem(
-                        courseClass = courseClass,
                         modifier = Modifier,
+                        courseClass = courseClass,
+                        isToday = isToday,
+                        daysUntil = daysUntil,
                         onOpenDetailCourseClass = {onOpenDetailCourseClass(courseClass)}
                     )
                 }

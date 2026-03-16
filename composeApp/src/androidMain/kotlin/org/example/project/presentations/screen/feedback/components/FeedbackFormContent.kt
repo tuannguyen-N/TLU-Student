@@ -26,7 +26,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import org.example.project.R
-import org.example.project.domain.model.FeedBackState
+import org.example.project.presentations.screen.feedback.FeedBackState
 import org.example.project.domain.model.SubjectOption
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.LocalExtendedColors

@@ -59,21 +59,23 @@ fun String.toHourMinuteAmPm(): String {
     return "%02d:%02d %s".format(hour12, time.minute, amPm)
 }
 
-fun CourseClass.isGoing(): Boolean {
-    val now = Clock.System.now()
+fun CourseClass.isGoing(
+    currentTime: LocalTime = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
         .time
+): Boolean {
     val start = LocalTime.parse(startTime)
     val end = LocalTime.parse(endTime)
 
-    return now in start..end
+    return currentTime in start..end
 }
 
-fun CourseClass.getStatusText(): String {
-    val now = Clock.System.now()
+fun CourseClass.getStatusText(
+    currentTime: LocalTime = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
+        .time
+): String {
 
-    val currentTime = now.time
 
     val start = LocalTime.parse(startTime)
     val end = LocalTime.parse(endTime)

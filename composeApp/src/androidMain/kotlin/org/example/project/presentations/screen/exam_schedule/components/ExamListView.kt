@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,7 +24,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamDay
-import org.example.project.domain.model.ExamScheduleState
+import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -34,9 +35,11 @@ fun ExamListView(
     isDropdownExpanded: Boolean,
     onToggleDropdown: () -> Unit
 ) {
-    val targetExamDayIndex = uiState.examDays.indexOfFirst { it.isToday }
-        .takeIf { it != -1 } ?: uiState.examDays.indexOfFirst { !it.isPast }.takeIf { it != -1 }
-    ?: 0
+    val targetExamDayIndex = remember(uiState.examDays) {
+        uiState.examDays.indexOfFirst { it.isToday }
+            .takeIf { it != -1 } ?: uiState.examDays.indexOfFirst { !it.isPast }.takeIf { it != -1 }
+        ?: 0
+    }
     val listState = rememberLazyListState()
 
     LaunchedEffect(uiState.examDays) {

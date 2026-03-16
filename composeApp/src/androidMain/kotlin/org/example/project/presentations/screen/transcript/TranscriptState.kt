@@ -1,4 +1,6 @@
-package org.example.project.domain.model
+package org.example.project.presentations.screen.transcript
+
+import org.example.project.domain.model.TranscriptUiModel
 
 data class TranscriptState(
     val transcriptUiModel: TranscriptUiModel? = null,

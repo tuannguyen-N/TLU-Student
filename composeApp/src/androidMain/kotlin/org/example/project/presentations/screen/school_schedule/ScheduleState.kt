@@ -1,4 +1,4 @@
-package org.example.project.domain.model
+package org.example.project.presentations.screen.school_schedule
 
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 

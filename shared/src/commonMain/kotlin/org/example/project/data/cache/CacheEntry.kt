@@ -1,4 +1,4 @@
-package org.example.project.domain.model
+package org.example.project.data.cache
 
 import kotlin.time.Clock
 import kotlin.time.Duration

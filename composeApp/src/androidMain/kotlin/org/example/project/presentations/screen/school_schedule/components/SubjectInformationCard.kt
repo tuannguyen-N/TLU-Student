@@ -30,6 +30,7 @@ fun SubjectInformationCard(
     modifier: Modifier = Modifier,
     courseClass: CourseClass,
     isOngoing: Boolean = true,
+    daysUntil: Int = 0,
     onClick: () -> Unit = {}
 ) {
     val backgroundColor = if (isOngoing) LocalExtendedColors.current.mainBlue else Color.White
@@ -63,6 +64,7 @@ fun SubjectInformationCard(
 
                 CardState(
                     isOngoing = isOngoing,
+                    daysUntil = daysUntil,
                     modifier = Modifier.padding(start = 10.dp)
                 )
             }
@@ -122,6 +124,7 @@ fun InformationView(
 fun CardState(
     modifier: Modifier = Modifier,
     isOngoing: Boolean,
+    daysUntil: Int = 0,
 ) {
     Box(
         modifier = modifier
@@ -132,7 +135,11 @@ fun CardState(
             .padding(horizontal = 7.dp, vertical = 2.dp)
     ) {
         Text(
-            text = if (isOngoing) "Đang diễn ra" else "Sắp diễn ra",
+            text = when {
+                isOngoing -> "Đang diễn ra"
+                daysUntil > 0 -> "Sau $daysUntil ngày"
+                else -> "Sắp diễn ra"
+            },
             style = MaterialTheme.typography.labelSmall,
             color = if (isOngoing) Color(0xFF16A634) else Color(0xFF848484)
         )

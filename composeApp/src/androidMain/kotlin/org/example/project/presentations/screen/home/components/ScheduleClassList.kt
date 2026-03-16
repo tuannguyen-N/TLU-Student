@@ -21,6 +21,11 @@ import androidx.compose.ui.unit.dp
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.shimmerEffect
 import org.example.project.presentations.utils.isGoing
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 @Composable
 fun ScheduleClassList(
@@ -96,11 +101,16 @@ fun ScheduleClassList(
             }
 
             else -> {
+                val currentTime = remember {
+                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+                }
                 courseClasses.forEach { item ->
-                    if (item.isGoing()) {
-                        ScheduleCurrent(modifier = modifier, item = item)
-                    } else {
-                        ScheduleNext(modifier = modifier, item = item)
+                    key(item.hashCode()) {
+                        if (item.isGoing(currentTime)) {
+                            ScheduleCurrent(modifier = modifier, item = item)
+                        } else {
+                            ScheduleNext(modifier = modifier, item = item, currentTime = currentTime)
+                        }
                     }
                 }
             }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.domain.model.TranscriptTermState
+import org.example.project.presentations.screen.transcript_term.TranscriptTermState
 import org.example.project.domain.usecase.TranscriptUseCase
 
 class TranscriptTermViewModel(

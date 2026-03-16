@@ -15,7 +15,7 @@ import org.example.project.data.mapper.toWeekDateList
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
-import org.example.project.domain.model.TimetableUiState
+import org.example.project.presentations.screen.timetable.TimetableState
 import org.example.project.presentations.components.LoadingView
 import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.dialog.TeacherDetailInfoDialog
@@ -25,7 +25,7 @@ import org.example.project.presentations.utils.toSlashDate
 
 @Composable
 fun TimetableContent(
-    uiState: TimetableUiState,
+    uiState: TimetableState,
     onBack: () -> Unit,
     onNextWeekSchedule: () -> Unit,
     onPreviousWeekSchedule: () -> Unit,
@@ -128,7 +128,7 @@ fun TimetableContent(
 @Composable
 fun TimetableLoadingPreview() {
     TimetableContent(
-        uiState = TimetableUiState(
+        uiState = TimetableState(
             semesters = listOf(
                 Semester(
                     semesterName = "Học kỳ 1 - 2024-2025",

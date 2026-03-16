@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.example.project.data.remote.dto.week_schedule.CourseClass
-import org.example.project.domain.model.ScheduleState
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.presentations.utils.getTodayDayOfWeek
 
@@ -28,9 +28,15 @@ class ScheduleViewModel(
     }
 
     private fun observeDayOfWeekSchedule() {
-        scheduleUseCase.dayOfWeekSchedule.onEach {
-            updateState { copy(courseClasses = it?.courseClasses.orEmpty()) }
-        }.launchIn(viewModelScope)
+        scheduleUseCase.daySchedule
+            .map { cache ->
+                cache[_uiState.value.selectedDayOfWeek]
+            }
+            .onEach { data ->
+                data?.let {
+                    updateState { copy(courseClasses = data.courseClasses) }
+                }
+            }.launchIn(viewModelScope)
     }
 
     private fun loadData() {
@@ -53,7 +59,7 @@ class ScheduleViewModel(
     fun onChangeDayOfWeek(value: Int) {
         viewModelScope.launch {
             updateState { copy(selectedDayOfWeek = value) }
-            scheduleUseCase.getDayOfWeekSchedule(value)
+            scheduleUseCase.getDaySchedule(value)
         }
     }
 

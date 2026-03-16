@@ -68,10 +68,18 @@ fun ScheduleScreen(
                 }
             )
 
+            val daysUntil = if (uiState.selectedDayOfWeek > uiState.currentDay)
+                uiState.selectedDayOfWeek - uiState.currentDay
+            else if (uiState.selectedDayOfWeek < uiState.currentDay)
+                7 - uiState.currentDay + uiState.selectedDayOfWeek
+            else 0
+
             TodayScheduleList(
                 modifier = Modifier.padding(top = 20.dp),
                 onOpenTimetable = onOpenTimetable,
                 courseClasses = uiState.courseClasses ?: emptyList(),
+                isToday = uiState.currentDay == uiState.selectedDayOfWeek,
+                daysUntil = daysUntil,
                 onOpenDetailCourseClass = viewModel::onOpenDetailCourseClass,
                 onClickViewTomorrow = viewModel::onClickViewTomorrow
             )

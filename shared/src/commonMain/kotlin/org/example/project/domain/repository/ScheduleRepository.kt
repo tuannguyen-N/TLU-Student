@@ -2,65 +2,64 @@ package org.example.project.domain.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.dto.day_schedule.CourseClasses
-import org.example.project.data.remote.dto.day_schedule.DayOfWeekScheduleResponse
 import org.example.project.data.remote.dto.week_schedule.WeekSchedule
-import org.example.project.domain.model.CacheEntry
+import org.example.project.data.cache.CacheManager
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.ExperimentalTime
 
 class ScheduleRepository(
     private val scheduleApi: ScheduleApi
 ) {
-    companion object {
-        private val DAY_SCHEDULE_TTL = 5.minutes
-        private val WEEK_SCHEDULE_TTL = 10.minutes
-    }
 
-    private val _dayOfWeekSchedule = MutableStateFlow<CourseClasses?>(null)
-    val dayOfWeekSchedule = _dayOfWeekSchedule.asStateFlow()
+    private val dayScheduleCache = CacheManager<Int, CourseClasses>(5.minutes)
+    private val weekScheduleCache = CacheManager<String, WeekSchedule>(10.minutes)
 
-    private val _weekSchedule = MutableStateFlow<WeekSchedule?>(null)
-    val weekSchedule = _weekSchedule.asStateFlow()
+    private val _daySchedules = MutableStateFlow<Map<Int, CourseClasses>>(emptyMap())
+    val daySchedules = _daySchedules.asStateFlow()
 
-    private val dayScheduleCache = mutableMapOf<Int, CacheEntry<DayOfWeekScheduleResponse>>()
-    private val weekScheduleCache = mutableMapOf<String, CacheEntry<WeekSchedule>>()
+    private val _weekSchedules = MutableStateFlow<Map<String, WeekSchedule>>(emptyMap())
+    val weekSchedules = _weekSchedules.asStateFlow()
 
-    suspend fun getDayOfWeekSchedule(dayOfWeek: Int): Result<DayOfWeekScheduleResponse> {
-//        dayScheduleCache[dayOfWeek]
-//            ?.takeIf { !it.isExpired(DAY_SCHEDULE_TTL) }
-//            ?.let {
-//                _dayOfWeekSchedule.value = it.data.data
-//                return Result.success(Unit)
-//            }
-
-        return runCatching { scheduleApi.getDayOfWeekSchedule(dayOfWeek) }.onSuccess {
-//            val data = it.data ?: return@onSuccess
-//            dayScheduleCache[dayOfWeek] = CacheEntry(it)
-            _dayOfWeekSchedule.value = it.data
+    suspend fun getDaySchedule(
+        dayOfWeek: Int,
+        forceRefresh: Boolean = false
+    ): Result<CourseClasses> {
+        return runCatching {
+            val data = dayScheduleCache.getOrFetch(
+                key = dayOfWeek,
+                forceRefresh = forceRefresh
+            ) {
+                scheduleApi.getDayOfWeekSchedule(dayOfWeek).data!!
+            }
+            _daySchedules.update { it + (dayOfWeek to data) }
+            data
         }
     }
 
-    suspend fun getWeekSchedule(startDate: String, endDate: String): Result<Any> {
-        val cacheKey = "$startDate-$endDate"
-
-        weekScheduleCache[cacheKey]
-            ?.takeIf { !it.isExpired(WEEK_SCHEDULE_TTL) }
-            ?.let {
-                _weekSchedule.value = it.data
-                return Result.success(Unit)
+    suspend fun getWeekSchedule(
+        startDate: String,
+        endDate: String,
+        forceRefresh: Boolean = false
+    ): Result<WeekSchedule> {
+        val key = "$startDate-$endDate"
+        return runCatching {
+            val data = weekScheduleCache.getOrFetch(
+                key = key,
+                forceRefresh = forceRefresh
+            ) {
+                scheduleApi.getWeakSchedule(startDate, endDate).data!!
             }
-
-        return runCatching { scheduleApi.getWeakSchedule(startDate, endDate) }.onSuccess {
-            val data = it.data ?: return@onSuccess
-            weekScheduleCache[cacheKey] = CacheEntry(data)
-            _weekSchedule.value = data
+            _weekSchedules.update { it + (key to data) }
+            data
         }
     }
 
     fun clearCache() {
         dayScheduleCache.clear()
         weekScheduleCache.clear()
+        _daySchedules.value = emptyMap()
+        _weekSchedules.value = emptyMap()
     }
 }

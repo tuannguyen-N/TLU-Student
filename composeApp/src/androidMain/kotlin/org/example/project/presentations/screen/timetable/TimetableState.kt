@@ -1,10 +1,10 @@
-package org.example.project.domain.model
+package org.example.project.presentations.screen.timetable
 
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.WeekSchedule
 
-data class TimetableUiState(
+data class TimetableState(
     val weekSchedule: WeekSchedule? = null,
     val semesters: List<Semester> = emptyList(),
     val selectedSemester: Semester? = null,

@@ -5,14 +5,14 @@ import org.example.project.domain.repository.ScheduleRepository
 class ScheduleUseCase(
     private val repository: ScheduleRepository
 ) {
-    val dayOfWeekSchedule = repository.dayOfWeekSchedule
-    val weekSchedule = repository.weekSchedule
+    val daySchedule = repository.daySchedules
+    val weekSchedule = repository.weekSchedules
 
-    suspend fun getDayOfWeekSchedule(dayOfWeek: Int): Result<Any>{
+    suspend fun getDaySchedule(dayOfWeek: Int): Result<Any>{
         if (dayOfWeek !in 1..8) {
             return Result.failure(IllegalArgumentException("Ngày không hợp lệ"))
         }
-        return repository.getDayOfWeekSchedule(dayOfWeek)
+        return repository.getDaySchedule(dayOfWeek)
     }
 
     suspend fun getWeekSchedule(startDate: String, endDate: String): Result<Any>{

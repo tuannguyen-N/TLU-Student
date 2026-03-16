@@ -1,4 +1,6 @@
-package org.example.project.domain.model
+package org.example.project.presentations.screen.feedback
+
+import org.example.project.domain.model.SubjectOption
 
 data class FeedBackState(
     val title: String = "",

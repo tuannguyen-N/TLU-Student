@@ -33,6 +33,8 @@ import org.example.project.presentations.utils.toHourMinuteAmPm
 fun ScheduleItem(
     modifier: Modifier = Modifier,
     courseClass: CourseClass,
+    isToday: Boolean,
+    daysUntil: Int = 0,
     onOpenDetailCourseClass: () -> Unit
 ) {
     val isOngoing = courseClass.isGoing()
@@ -47,7 +49,8 @@ fun ScheduleItem(
         ScheduleDotLine(isOngoing = isOngoing, modifier = Modifier.padding(horizontal = 20.dp))
         SubjectInformationCard(
             courseClass = courseClass,
-            isOngoing = isOngoing,
+            isOngoing = isOngoing && isToday,
+            daysUntil = if (!isToday) daysUntil else 0,
             modifier = Modifier.padding(bottom = 25.dp),
             onClick = onOpenDetailCourseClass
         )

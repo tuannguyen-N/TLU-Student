@@ -33,10 +33,13 @@ import org.example.project.presentations.theme.Poppins
 import org.example.project.presentations.utils.getStatusText
 import org.example.project.presentations.utils.toHourMinuteAmPm
 
+import kotlinx.datetime.LocalTime
+
 @Composable
 fun ScheduleNext(
     modifier: Modifier = Modifier,
-    item: CourseClass
+    item: CourseClass,
+    currentTime: LocalTime
 ) {
     Row(
         modifier = modifier
@@ -105,7 +108,7 @@ fun ScheduleNext(
                         .padding(horizontal = 12.dp, vertical = 3.dp)
                 ) {
                     Text(
-                        text = item.getStatusText(),
+                        text = item.getStatusText(currentTime),
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodySmall,
                         color = LocalExtendedColors.current.red,

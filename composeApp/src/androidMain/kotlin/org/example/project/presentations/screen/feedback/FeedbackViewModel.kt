@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.domain.model.FeedBackState
+import org.example.project.presentations.screen.feedback.FeedBackState
 import org.example.project.domain.model.SubjectOption
 
 class FeedbackViewModel: ViewModel() {

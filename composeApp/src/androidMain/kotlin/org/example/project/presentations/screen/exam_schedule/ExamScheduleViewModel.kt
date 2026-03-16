@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import org.example.project.data.mapper.toExamDays
 import org.example.project.data.remote.dto.semester.Semester
-import org.example.project.domain.model.ExamScheduleState
+import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.presentations.utils.today

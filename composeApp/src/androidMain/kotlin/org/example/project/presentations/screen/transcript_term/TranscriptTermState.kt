@@ -1,4 +1,6 @@
-package org.example.project.domain.model
+package org.example.project.presentations.screen.transcript_term
+
+import org.example.project.domain.model.SubjectResultUiModel
 
 data class TranscriptTermState(
     val semesterLabel: String = "",

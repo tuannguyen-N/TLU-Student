@@ -38,7 +38,7 @@ import org.example.project.data.mapper.toLocalDateSafe
 import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamDay
-import org.example.project.domain.model.ExamScheduleState
+import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -258,9 +258,9 @@ fun ExamScheduleContentPreview() {
                 semester2,
                 semester3
             ),
-            selectedSemester = semester1,
+            selectedSemester = semester3,
             currentSemester = semester3,
-            selectedTab = 0,
+            selectedTab = 1,
             isDropdownExpanded = false,
             isLoading = false,
             selectedDate = today,

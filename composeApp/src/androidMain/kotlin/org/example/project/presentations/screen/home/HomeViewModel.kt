@@ -7,12 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.domain.model.HomeState
 import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.usecase.ScheduleUseCase
@@ -46,15 +46,20 @@ class HomeViewModel(
     }
 
     private fun observeCourseClasses() {
-        scheduleUseCase.dayOfWeekSchedule
-            .onEach {
-                it?.let { data ->
+        scheduleUseCase.daySchedule
+            .map { cache ->
+                cache[getTodayDayOfWeek()]
+            }
+            .onEach { data ->
+                data?.let {
                     updateState {
-                        copy(courseClasses = data.courseClasses, loadingScheduleClassList = false)
+                        copy(
+                            courseClasses = it.courseClasses,
+                            loadingScheduleClassList = false
+                        )
                     }
                 }
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     private fun observeStudentInfo() {
@@ -75,7 +80,7 @@ class HomeViewModel(
 
     private suspend fun loadCourseClasses() {
         updateState { copy(loadingScheduleClassList = true) }
-        scheduleUseCase.getDayOfWeekSchedule(getTodayDayOfWeek()).fold(
+        scheduleUseCase.getDaySchedule(getTodayDayOfWeek()).fold(
             onSuccess = { updateState { copy(loadingScheduleClassList = false) } },
             onFailure = { updateState { copy(loadingScheduleClassList = false) } }
         )

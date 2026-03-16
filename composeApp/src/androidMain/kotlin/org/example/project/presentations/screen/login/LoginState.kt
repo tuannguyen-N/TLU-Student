@@ -1,4 +1,4 @@
-package org.example.project.domain.model
+package org.example.project.presentations.screen.login
 
 data class LoginState(
     val showErrorSheet: Boolean = false,

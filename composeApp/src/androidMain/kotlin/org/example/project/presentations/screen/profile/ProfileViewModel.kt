@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.domain.model.ProfileState
+import org.example.project.presentations.screen.profile.ProfileState
 import org.example.project.domain.usecase.StudentUseCase
 
 class ProfileViewModel(

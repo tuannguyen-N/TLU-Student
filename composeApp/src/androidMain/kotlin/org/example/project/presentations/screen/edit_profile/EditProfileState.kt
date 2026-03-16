@@ -1,4 +1,4 @@
-package org.example.project.domain.model
+package org.example.project.presentations.screen.edit_profile
 
 data class EditProfileState(
     val email: String? = null,

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.domain.model.LoginState
+import org.example.project.presentations.screen.login.LoginState
 import org.example.project.domain.usecase.LoginUseCase
 import org.example.project.presentations.utils.MsalHelper
 
@@ -32,8 +32,8 @@ class LoginViewModel(
             MsalHelper.signIn(activity) { newToken ->
                 Log.e("123123", "onLoginClick: $newToken", )
                 if (newToken != null) onSignMsalSuccess(newToken)
+                updateState { copy(isLoading = false) }
             }
-            updateState { copy(isLoading = false) }
         }
     }
 

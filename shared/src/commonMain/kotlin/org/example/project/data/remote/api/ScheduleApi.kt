@@ -12,7 +12,7 @@ class ScheduleApi(
 ) {
     suspend fun getDayOfWeekSchedule(dayOfWeek: Int): DayOfWeekScheduleResponse {
         return client.get("/api/v1/student/schedules/day-of-week") {
-            parameter("day-of-week", dayOfWeek)
+            parameter("day_of_week", dayOfWeek)
         }.body()
     }
 

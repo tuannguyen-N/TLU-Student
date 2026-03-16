@@ -7,14 +7,14 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import org.example.project.data.mapper.toStartWeekDate
-import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.data.remote.dto.week_schedule.CourseClass
-import org.example.project.domain.model.TimetableUiState
+import org.example.project.presentations.screen.timetable.TimetableState
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.presentations.utils.getCurrentWeek
@@ -26,7 +26,7 @@ class TimetableViewModel(
     private val scheduleUseCase: ScheduleUseCase,
     private val semesterUseCase: SemesterUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(TimetableUiState())
+    private val _uiState = MutableStateFlow(TimetableState())
     val uiState = _uiState.asStateFlow()
 
     private val _events = Channel<TimetableUIEvent>()
@@ -58,9 +58,11 @@ class TimetableViewModel(
     }
 
     private fun observeWeekSchedule() {
-        scheduleUseCase.weekSchedule.onEach { data ->
-            data?.let { updateState { copy(weekSchedule = it) } }
-        }.launchIn(viewModelScope)
+        scheduleUseCase.weekSchedule
+            .map { cache -> cache[uiState.value.selectedWeek] }
+            .onEach { data ->
+                data?.let { updateState { copy(weekSchedule = it) } }
+            }.launchIn(viewModelScope)
     }
 
     private fun getWeekSchedule(startTime: String, endTime: String) {
@@ -124,7 +126,7 @@ class TimetableViewModel(
         updateState { copy(showWeekMenu = !showWeekMenu) }
     }
 
-    private fun updateState(newState: TimetableUiState.() -> TimetableUiState) {
+    private fun updateState(newState: TimetableState.() -> TimetableState) {
         _uiState.value = _uiState.value.newState()
     }
 }

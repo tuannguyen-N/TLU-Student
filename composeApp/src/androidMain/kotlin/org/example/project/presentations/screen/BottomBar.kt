@@ -124,7 +124,7 @@ fun BottomIcon(
             painter = painterResource(drawRes),
             contentDescription = "icon_bottom_bar",
             colorFilter = ColorFilter.tint(animatedIconColor),
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(20.dp)
         )
     }
 }
