@@ -33,7 +33,7 @@ fun InfoCard(
 ) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F7)),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -61,7 +61,7 @@ fun InfoCard(
                 text = primaryText,
                 style = MaterialTheme.typography.titleMedium,
                 color = LocalExtendedColors.current.mainBlue,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold
             )
 
             Text(

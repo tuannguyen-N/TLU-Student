@@ -14,5 +14,6 @@ data class StudentInformation(
     val gender: String,
     val identityCard: IdentityCard,
     val major: Major,
-    val studentCode: String
+    val studentCode: String,
+//    val trainingType : String
 )

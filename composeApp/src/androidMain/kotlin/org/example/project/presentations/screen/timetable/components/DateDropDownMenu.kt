@@ -28,27 +28,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import org.example.project.data.mapper.toDisplayWeekDate
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun DropDownPopup(
+    modifier: Modifier = Modifier,
     items: List<String>,
     selectedItem: String,
     onItemSelected: (String) -> Unit,
-    onDismiss: () -> Unit
+    alignment: Alignment,
+    width: Dp,
+    onDismiss: () -> Unit,
+    itemDisplay: (String) -> String = { it.toDisplayWeekDate() }
 ) {
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Box(modifier = modifier) {
         Popup(
-            alignment = Alignment.TopCenter,
+            alignment = alignment,
             onDismissRequest = onDismiss,
             properties = PopupProperties(focusable = true)
         ) {
             Card(
                 modifier = Modifier
-                    .width(220.dp)
+                    .width(width)
                     .wrapContentHeight(),
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
@@ -77,7 +83,7 @@ fun DropDownPopup(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = item,
+                                    text = itemDisplay(item),
                                     style = MaterialTheme.typography.bodyMedium.copy(
                                         fontWeight = if (isSelected) FontWeight.SemiBold
                                         else FontWeight.Normal,

@@ -23,9 +23,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.toHourMinuteAmPm
 
@@ -151,4 +153,29 @@ fun ScheduleCurrent(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ScheduleCurrentPreview() {
+    val sampleCourse = CourseClass(
+        classCode = "INT2204",
+        dayOfWeek = 2,
+        endPeriod = 5,
+        endTime = "10:30:00",
+        room = "A101",
+        startPeriod = 3,
+        startTime = "08:45:00",
+        subjectCode = "INT2204",
+        subjectName = "Lập trình Android",
+        lecturer = Lecturer(
+            fullName = "Nguyễn Văn A",
+            lecturerCode = "123",
+            phoneNumber = "",
+            email = "vana@example.com"
+        )
+    )
+    ScheduleCurrent(
+        item = sampleCourse
+    )
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -76,7 +77,8 @@ fun TermYearMenuView(
                                         itemHeightPx = it.size.height
                                     } else Modifier
                                 ),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
 

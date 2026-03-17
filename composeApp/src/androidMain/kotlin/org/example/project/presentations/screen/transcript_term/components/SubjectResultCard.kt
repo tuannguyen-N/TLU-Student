@@ -259,7 +259,7 @@ fun SubjectCode(
             .clip(
                 RoundedCornerShape(14.dp)
             )
-            .background(color.copy(alpha = 0.4f))
+            .background(color.copy(alpha = 0.2f))
             .padding(horizontal = 10.dp, vertical = 2.dp)
     ) {
         Text(

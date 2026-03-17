@@ -43,7 +43,7 @@ class ScheduleRepository(
         endDate: String,
         forceRefresh: Boolean = false
     ): Result<WeekSchedule> {
-        val key = "$startDate-$endDate"
+        val key = "$startDate - $endDate"
         return runCatching {
             val data = weekScheduleCache.getOrFetch(
                 key = key,

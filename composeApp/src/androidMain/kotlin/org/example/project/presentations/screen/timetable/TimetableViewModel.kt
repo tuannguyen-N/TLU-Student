@@ -3,9 +3,13 @@ package org.example.project.presentations.screen.timetable
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -21,6 +25,7 @@ import org.example.project.presentations.utils.getCurrentWeek
 import org.example.project.presentations.utils.getNextWeek
 import org.example.project.presentations.utils.getPreviousWeek
 import org.example.project.presentations.utils.today
+import org.example.project.presentations.utils.withDelayedLoading
 
 class TimetableViewModel(
     private val scheduleUseCase: ScheduleUseCase,
@@ -38,43 +43,64 @@ class TimetableViewModel(
         loadData()
     }
 
-    private fun loadData() {
-        val (startTime, endTime) = getCurrentWeek()
-        getWeekSchedule(startTime, endTime)
-    }
-
     private fun observeSemesters() {
         semesterUseCase.semesters.onEach { semesters ->
-            val current = uiState.value.selectedSemester
-            val selected = current ?: semesters.firstOrNull()
+            val selected = semesters?.lastOrNull()
             updateState {
                 copy(
-                    semesters = semesters,
+                    semesters = semesters.orEmpty(),
                     selectedSemester = selected,
-                    selectedWeek = selected?.toStartWeekDate() ?: ""
                 )
             }
         }.launchIn(viewModelScope)
     }
 
     private fun observeWeekSchedule() {
-        scheduleUseCase.weekSchedule
-            .map { cache -> cache[uiState.value.selectedWeek] }
+        combine(
+            scheduleUseCase.weekSchedule,
+            _uiState.map { it.selectedWeek }.distinctUntilChanged()
+        ) { cache, selectedWeek ->
+            cache[selectedWeek]
+        }
             .onEach { data ->
-                data?.let { updateState { copy(weekSchedule = it) } }
-            }.launchIn(viewModelScope)
+                data?.let {
+                    Log.e("TimetableViewModel", "observeWeekSchedule: $it")
+                    updateState { copy(weekSchedule = it) }
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun loadData() {
+        val (startTime, endTime) = getCurrentWeek()
+        getSemesters()
+        getWeekSchedule(startTime, endTime)
+    }
+
+    private fun getSemesters() {
+        viewModelScope.launch {
+            semesterUseCase.getSemesters().fold(
+                onSuccess = {
+                    // TODO:  
+                },
+                onFailure = {
+                    Log.e("ExamViewModel", "getSemesters: Error $it")
+                }
+            )
+        }
     }
 
     private fun getWeekSchedule(startTime: String, endTime: String) {
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
-            scheduleUseCase.getWeekSchedule(startTime, endTime).fold(
-                onSuccess = { updateState { copy(isLoading = false) } },
-                onFailure = {
-                    Log.e("TimetableViewModel", "getWeekSchedule error: $it")
-                    updateState { copy(isLoading = false) }
+            updateState { copy(selectedWeek = "$startTime - $endTime") }
+
+            withDelayedLoading(
+                onLoading = { isLoading ->
+                    updateState { copy(isLoading = isLoading) }
                 }
-            )
+            ){
+                scheduleUseCase.getWeekSchedule(startTime, endTime)
+            }
         }
     }
 

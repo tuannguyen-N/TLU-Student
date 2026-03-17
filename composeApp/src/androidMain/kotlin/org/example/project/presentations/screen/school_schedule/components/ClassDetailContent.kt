@@ -61,7 +61,7 @@ fun ClassDetailContent(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
+                            .size(6.dp)
                             .background(
                                 color = if (isGoing) LocalExtendedColors.current.green else LocalExtendedColors.current.gray,
                                 shape = CircleShape
@@ -72,7 +72,7 @@ fun ClassDetailContent(
                         text = if (isGoing) "Đang diễn ra" else "Chưa diễn ra",
                         style = MaterialTheme.typography.labelSmall,
                         color = if (isGoing) LocalExtendedColors.current.green else LocalExtendedColors.current.gray,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Medium,
                         letterSpacing = 0.5.sp
                     )
                 }
@@ -112,7 +112,7 @@ fun ClassDetailContent(
                 modifier = Modifier.weight(1f),
                 icon = Icons.Outlined.AccessTime,
                 label = "THỜI GIAN",
-                primaryText = "${courseClass.startTime.toHourMinuteAmPm()} - ${courseClass.endTime.toHourMinuteAmPm()}",
+                primaryText = "${courseClass.startTime} - ${courseClass.endTime}",
                 secondaryText = "Ca ${courseClass.startPeriod} - ${courseClass.endPeriod}"
             )
         }
@@ -129,9 +129,9 @@ fun ClassDetailContent(
 
         Text(
             text = "NỘI DUNG BÀI HỌC",
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = LocalExtendedColors.current.mainBlue,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             letterSpacing = 0.5.sp
         )
 

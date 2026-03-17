@@ -11,23 +11,23 @@ import org.example.project.data.remote.dto.semester.Semester
 fun List<Semester>.toSemesterStringList(): List<String> = map { it.semesterName }
 
 fun Semester.toWeekDateList(): List<String> {
-    val formatter = LocalDate.Format {
-        day()
-        char('/')
-        monthNumber()
-        char('/')
+    val apiFormatter = LocalDate.Format {
         year()
+        char('-')
+        monthNumber()
+        char('-')
+        dayOfMonth()
     }
 
-    val start = LocalDate.parse(startDate, formatter)
-    val end = LocalDate.parse(endDate, formatter)
+    val start = LocalDate.parse(startDate, apiFormatter)
+    val end = LocalDate.parse(endDate, apiFormatter)
 
     val weeks = mutableListOf<String>()
     var current = start
 
     while (current <= end) {
         val weekEnd = minOf(current.plus(6, DateTimeUnit.DAY), end)
-        weeks.add("${current.format(formatter)} - ${weekEnd.format(formatter)}")
+        weeks.add("$current - $weekEnd") // "yyyy-MM-dd - yyyy-MM-dd"
         current = current.plus(7, DateTimeUnit.DAY)
     }
 
@@ -35,18 +35,19 @@ fun Semester.toWeekDateList(): List<String> {
 }
 
 fun Semester.toStartWeekDate(): String {
-    val formatter = LocalDate.Format {
-        day()
-        char('/')
-        monthNumber()
-        char('/')
-        year()
-    }
-
-    val start = LocalDate.parse(startDate, formatter)
+    val start = LocalDate.parse(startDate) // yyyy-MM-dd (ISO default)
     val weekEnd = start.plus(6, DateTimeUnit.DAY)
+    return "$start - $weekEnd" // "yyyy-MM-dd - yyyy-MM-dd"
+}
 
-    return "${start.format(formatter)} - ${weekEnd.format(formatter)}"
+fun String.toDisplayWeekDate(): String {
+    val (start, end) = split(" - ")
+    val displayFormatter = LocalDate.Format {
+        day(); char('/'); monthNumber(); char('/'); year()
+    }
+    return "${LocalDate.parse(start).format(displayFormatter)} - ${
+        LocalDate.parse(end).format(displayFormatter)
+    }"
 }
 
 fun Semester.toYearMonth(): YearMonth {

@@ -106,7 +106,10 @@ fun AppNavGraph() {
             val loginViewModel: LoginViewModel = viewModel(factory = factory)
 
             LoginScreen(
-                onNavigateToHome = { navController.navigate(Routes.Main) },
+                onNavigateToHome = {
+                    navController.navigate(Routes.Main)
+                    navController.popBackStack()
+                },
                 loginViewModel = loginViewModel
             )
         }

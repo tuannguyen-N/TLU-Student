@@ -137,6 +137,7 @@ fun CardState(
         Text(
             text = when {
                 isOngoing -> "Đang diễn ra"
+                daysUntil == 1 -> "Ngày mai"
                 daysUntil > 0 -> "Sau $daysUntil ngày"
                 else -> "Sắp diễn ra"
             },

@@ -13,11 +13,16 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.presentations.utils.getTodayDayOfWeek
+import org.example.project.presentations.utils.nearestClasses
+import org.example.project.presentations.utils.withDelayedLoading
+import kotlin.time.Clock
 
 class HomeViewModel(
     private val studentUseCase: StudentUseCase,
@@ -50,16 +55,20 @@ class HomeViewModel(
             .map { cache ->
                 cache[getTodayDayOfWeek()]
             }
-            .onEach { data ->
-                data?.let {
+            .map { data ->
+                val currentTime = Clock.System.now()
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .time
+                data?.courseClasses?.nearestClasses(currentTime)
+            }
+            .onEach { filteredList ->
+                filteredList?.let {
                     updateState {
-                        copy(
-                            courseClasses = it.courseClasses,
-                            loadingScheduleClassList = false
-                        )
+                        copy(courseClasses = it, loadingScheduleClassList = false)
                     }
                 }
-            }.launchIn(viewModelScope)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeStudentInfo() {
@@ -87,11 +96,9 @@ class HomeViewModel(
     }
 
     private suspend fun loadStudentInfo() {
-        updateState { copy(loadingStudentInfo = true) }
-        studentUseCase.getStudentInfo().fold(
-            onSuccess = { updateState { copy(loadingStudentInfo = false) } },
-            onFailure = { updateState { copy(loadingStudentInfo = false) } }
-        )
+        withDelayedLoading(onLoading = { updateState { copy(loadingStudentInfo = it) } }) {
+            studentUseCase.getStudentInfo()
+        }
     }
 
     fun onAction(action: HomeAction) {

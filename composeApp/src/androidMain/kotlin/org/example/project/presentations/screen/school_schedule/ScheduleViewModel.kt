@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -28,15 +30,18 @@ class ScheduleViewModel(
     }
 
     private fun observeDayOfWeekSchedule() {
-        scheduleUseCase.daySchedule
-            .map { cache ->
-                cache[_uiState.value.selectedDayOfWeek]
-            }
+        combine(
+            scheduleUseCase.daySchedule,
+            _uiState.map { it.selectedDayOfWeek }.distinctUntilChanged()
+        ) { cache, selectedDay ->
+            cache[selectedDay]
+        }
             .onEach { data ->
                 data?.let {
-                    updateState { copy(courseClasses = data.courseClasses) }
+                    updateState { copy(courseClasses = it.courseClasses) }
                 }
-            }.launchIn(viewModelScope)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun loadData() {

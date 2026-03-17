@@ -21,10 +21,10 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun HomeScreen(
+    homeViewModel: HomeViewModel,
     onOpenProfileScreen: () -> Unit = {},
     onOpenNotificationScreen: () -> Unit = {},
-    onOpenFeatureScreen: () -> Unit,
-    homeViewModel: HomeViewModel
+    onOpenFeatureScreen: () -> Unit
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -67,7 +67,6 @@ fun HomeScreen(
 
             item(key = "feature_list", contentType = "FeatureList") {
                 FeatureList(
-                    modifier = Modifier.padding(top = 15.dp),
                     onClickItem = {},
                     onClickAll = onOpenFeatureScreen,
                     items = uiState.quickAccessList

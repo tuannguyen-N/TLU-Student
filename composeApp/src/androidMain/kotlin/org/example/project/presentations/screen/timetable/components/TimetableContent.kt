@@ -7,19 +7,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.example.project.data.mapper.toDisplayWeekDate
 import org.example.project.data.mapper.toSemesterStringList
 import org.example.project.data.mapper.toWeekDateList
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
-import org.example.project.presentations.screen.timetable.TimetableState
 import org.example.project.presentations.components.LoadingView
 import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.dialog.TeacherDetailInfoDialog
 import org.example.project.presentations.screen.school_schedule.components.ClassDetailBottomSheet
+import org.example.project.presentations.screen.timetable.TimetableState
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.toSlashDate
 
@@ -64,7 +66,7 @@ fun TimetableContent(
                 WeekView(
                     modifier = Modifier.padding(10.dp),
                     week = "Tuần ${uiState.weekSchedule?.week}",
-                    weekDate = "${uiState.weekSchedule?.startDate?.toSlashDate()} - ${uiState.weekSchedule?.endDate?.toSlashDate()}",
+                    weekDate = uiState.weekSchedule?.toDisplayWeekDate() ?: "",
                     onClickNextWeek = onNextWeekSchedule,
                     onClickPreviousWeek = onPreviousWeekSchedule,
                     onClickWeekLabel = onToggleDropDown
@@ -75,7 +77,10 @@ fun TimetableContent(
                         items = uiState.selectedSemester?.toWeekDateList() ?: emptyList(),
                         selectedItem = uiState.selectedWeek,
                         onItemSelected = { onChangeWeek(it) },
-                        onDismiss = onToggleDropDown
+                        onDismiss = onToggleDropDown,
+                        alignment = Alignment.TopCenter,
+                        width = 220.dp,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }

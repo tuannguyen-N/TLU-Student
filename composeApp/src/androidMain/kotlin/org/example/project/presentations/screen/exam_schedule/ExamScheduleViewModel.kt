@@ -70,7 +70,7 @@ class ExamScheduleViewModel(
 
     private fun observeSemesters() {
         semesterUseCase.semesters.onEach { semesters ->
-            updateState { copy(semesters = semesters) }
+            semesters?.let { updateState { copy(semesters = it) } }
         }.launchIn(viewModelScope)
     }
 

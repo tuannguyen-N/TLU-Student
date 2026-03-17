@@ -5,10 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +17,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,21 +26,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.R
 import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.theme.Poppins
 import org.example.project.presentations.utils.getStatusText
 import org.example.project.presentations.utils.toHourMinuteAmPm
-
-import kotlinx.datetime.LocalTime
+import kotlin.time.Clock
 
 @Composable
 fun ScheduleNext(
     modifier: Modifier = Modifier,
     item: CourseClass,
-    currentTime: LocalTime
+    currentTime: LocalTime,
+    isFirstItem: Boolean = false
 ) {
     Row(
         modifier = modifier
@@ -81,13 +87,21 @@ fun ScheduleNext(
                     val startX = -12.dp.toPx() - dotRadius
                     val cardTopOffsetOrig = -15.dp.toPx()
                     val dotTopOffsetOrig = cardTopOffsetOrig + 23.dp.toPx()
-
-                    drawLine(
-                        color = lineColor,
-                        start = androidx.compose.ui.geometry.Offset(startX, cardTopOffsetOrig),
-                        end = androidx.compose.ui.geometry.Offset(startX, size.height + 5.dp.toPx()),
-                        strokeWidth = 1.dp.toPx()
-                    )
+                    if (!isFirstItem) {
+                        drawLine(
+                            color = lineColor,
+                            start = androidx.compose.ui.geometry.Offset(startX, cardTopOffsetOrig),
+                            end = androidx.compose.ui.geometry.Offset(startX, size.height + 5.dp.toPx()),
+                            strokeWidth = 1.dp.toPx()
+                        )
+                    } else {
+                        drawLine(
+                            color = lineColor,
+                            start = androidx.compose.ui.geometry.Offset(startX, dotTopOffsetOrig + dotRadius * 2),
+                            end = androidx.compose.ui.geometry.Offset(startX, size.height + 5.dp.toPx()),
+                            strokeWidth = 1.dp.toPx()
+                        )
+                    }
                     drawCircle(
                         color = dotColor,
                         radius = dotRadius,
@@ -162,4 +176,34 @@ fun ScheduleNext(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ScheduleNextPreview() {
+    val sampleCourse = CourseClass(
+        classCode = "INT2204",
+        dayOfWeek = 2,
+        endPeriod = 5,
+        endTime = "10:30:00",
+        room = "A101",
+        startPeriod = 3,
+        startTime = "08:45:00",
+        subjectCode = "INT2204",
+        subjectName = "Lập trình Android",
+        lecturer = Lecturer(
+            fullName = "Nguyễn Văn A",
+            lecturerCode = "123",
+            phoneNumber = "",
+            email = "vana@example.com"
+        )
+    )
+    val currentTime = remember {
+        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+    }
+    ScheduleNext(
+        item = sampleCourse,
+        currentTime = currentTime,
+        isFirstItem = true
+    )
 }

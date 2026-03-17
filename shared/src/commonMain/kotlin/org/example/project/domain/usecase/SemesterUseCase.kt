@@ -12,7 +12,7 @@ class SemesterUseCase(
     private val semesterRepository: SemesterRepository
 ) {
     val semesters = semesterRepository.semesters.map {
-        it.filter { semester -> checkingAvailableDate(semester.startDate) }
+        it?.filter { semester -> checkingAvailableDate(semester.startDate) }
     }
 
     suspend fun getSemesters(): Result<List<Semester>> {

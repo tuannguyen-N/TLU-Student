@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
+import org.example.project.presentations.screen.timetable.components.DropDownPopup
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -84,10 +85,14 @@ fun TopScreenBar(
                 )
 
                 if (showTermYear && !justView) {
-                    TermYearMenuView(
-                        schoolYears = schoolYears,
-                        onClickSchoolYear = { if (it != yearValue) onClicked(it) },
-                        onDismiss = { showTermYear = false }
+                    DropDownPopup(
+                        items = schoolYears,
+                        selectedItem = yearValue,
+                        onItemSelected = onClicked,
+                        onDismiss = { showTermYear = false },
+                        alignment = Alignment.TopStart,
+                        width = 180.dp,
+                        itemDisplay = { it }
                     )
                 }
             }

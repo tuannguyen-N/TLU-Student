@@ -14,6 +14,7 @@ import org.example.project.domain.model.FeatureUiModel
 
 @Composable
 fun FeatureGrid(
+    modifier: Modifier = Modifier,
     items: List<FeatureUiModel>,
     isEditing: Boolean = false,
     editMode: FeatureEditMode = FeatureEditMode.ADD,
@@ -26,7 +27,7 @@ fun FeatureGrid(
     val columns = 4
     val rows = (items.size + columns - 1) / columns
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
         repeat(rows) { rowIndex ->
             Row(
                 modifier = Modifier.fillMaxWidth(),

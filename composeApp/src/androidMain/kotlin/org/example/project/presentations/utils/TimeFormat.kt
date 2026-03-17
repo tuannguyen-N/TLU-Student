@@ -75,8 +75,6 @@ fun CourseClass.getStatusText(
         .toLocalDateTime(TimeZone.currentSystemDefault())
         .time
 ): String {
-
-
     val start = LocalTime.parse(startTime)
     val end = LocalTime.parse(endTime)
 
@@ -99,7 +97,7 @@ fun CourseClass.getStatusText(
         }
 
         else -> {
-            ""
+            "Sắp diễn ra"
         }
     }
 }
