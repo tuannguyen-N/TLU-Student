@@ -107,8 +107,9 @@ fun AppNavGraph() {
 
             LoginScreen(
                 onNavigateToHome = {
-                    navController.navigate(Routes.Main)
-                    navController.popBackStack()
+                    navController.navigate(Routes.Main){
+                        popUpTo(Routes.Login) { inclusive = true }
+                    }
                 },
                 loginViewModel = loginViewModel
             )

@@ -88,6 +88,7 @@ fun FeatureType.toIconTintColor(): Color {
 fun FeatureType.toRoute(): String{
     return when (this) {
         FeatureType.FEEDBACK -> Routes.Feedback
+        FeatureType.EXAM_SCHEDULE -> Routes.ExamSchedule
         else -> "" // TODO:
     }
 }
