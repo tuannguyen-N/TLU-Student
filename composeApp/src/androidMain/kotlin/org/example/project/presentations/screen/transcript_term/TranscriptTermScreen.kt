@@ -28,11 +28,12 @@ fun TranscriptTermScreen(
         containerColor = LocalExtendedColors.current.background,
         contentWindowInsets = WindowInsets(0),
         topBar = {
-            TopScreenBar(
+            TopScreenBar<String>(
                 title = "Chi tiết ${uiState.semesterLabel}",
                 onBack = onBack,
                 justView = true,
-                yearValue = uiState.academicYear
+                value = uiState.academicYear,
+                itemDisplay = { it }
             )
         }
     ) { padding ->

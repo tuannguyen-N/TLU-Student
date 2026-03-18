@@ -3,6 +3,7 @@ package org.example.project.presentations.screen.exam_schedule
 import kotlinx.datetime.LocalDate
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamDay
+import org.example.project.presentations.utils.today
 
 data class ExamScheduleState(
     val semesters: List<Semester> = emptyList(),
@@ -11,7 +12,8 @@ data class ExamScheduleState(
 
     val examDays: List<ExamDay> = emptyList(),
     val examDay: ExamDay? = null,
-    val selectedDate: LocalDate,
+    val selectedDate: LocalDate = today,
+    val resetTrigger: Int = 0,
 
     val selectedTab: Int = 0,
     val isDropdownExpanded: Boolean = false,

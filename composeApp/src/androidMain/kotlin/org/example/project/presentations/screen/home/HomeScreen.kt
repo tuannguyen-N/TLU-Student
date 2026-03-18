@@ -24,7 +24,8 @@ fun HomeScreen(
     homeViewModel: HomeViewModel,
     onOpenProfileScreen: () -> Unit = {},
     onOpenNotificationScreen: () -> Unit = {},
-    onOpenFeatureScreen: () -> Unit
+    onOpenFeatureScreen: () -> Unit,
+    onOpenScheduleScreen: () -> Unit
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -61,7 +62,8 @@ fun HomeScreen(
                 ScheduleClassList(
                     isLoading = uiState.loadingScheduleClassList,
                     courseClasses = uiState.courseClasses,
-                    modifier = Modifier.padding(horizontal = 15.dp)
+                    modifier = Modifier.padding(horizontal = 15.dp),
+                    onClickViewTomorrow = onOpenScheduleScreen
                 )
             }
 

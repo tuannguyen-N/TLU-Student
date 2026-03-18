@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,14 +13,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
@@ -38,9 +43,9 @@ import org.example.project.data.mapper.toLocalDateSafe
 import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamDay
-import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopCenterScreenBar
+import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.today
 
@@ -51,7 +56,8 @@ fun ExamScheduleContent(
     onTabSelected: (Int) -> Unit,
     onToggleDropdown: () -> Unit,
     onSemesterChanged: (Semester) -> Unit,
-    onChangeDate: (LocalDate) -> Unit
+    onChangeDate: (LocalDate) -> Unit,
+    onResetData: () -> Unit
 ) {
     val color = LocalExtendedColors.current
     val tabs = listOf(
@@ -60,14 +66,32 @@ fun ExamScheduleContent(
     )
 
     val selectedDate = uiState.selectedDate
-    val firstVisibleMonth = remember(uiState.selectedSemester) {
-        uiState.selectedSemester?.let {
-            val date = it.startDate.toLocalDateSafe()
-            YearMonth(date.year, date.month.number)
-        } ?: YearMonth(today.year, today.month.number)
+    val (startMonth, endMonth) = remember(uiState.semesters, uiState.currentSemester) {
+        val startM = uiState.semesters.minOfOrNull { it.startDate.toLocalDateSafe() }
+            ?.let { YearMonth(it.year, it.month.number) }
+            ?: YearMonth(today.year, today.month.number).minusMonths(12)
+
+        val endM = uiState.currentSemester?.endDate?.toLocalDateSafe()?.let {
+            YearMonth(it.year, it.month.number)
+        } ?: YearMonth(today.year, today.month.number).plusMonths(12)
+
+        val safeStart = minOf(startM, endM)
+        val safeEnd = maxOf(startM, endM)
+        safeStart to safeEnd
     }
-    val startMonth = remember(firstVisibleMonth) { firstVisibleMonth.minusMonths(12) }
-    val endMonth = remember(firstVisibleMonth) { firstVisibleMonth.plusMonths(12) }
+
+    val firstVisibleMonth = remember(uiState.selectedSemester, startMonth, endMonth) {
+        val selectedYM = uiState.selectedSemester?.let { semester ->
+            val start = semester.startDate.toLocalDateSafe()
+            val end = semester.endDate.toLocalDateSafe()
+            val startYM = YearMonth(start.year, start.month.number)
+            val endYM = YearMonth(end.year, end.month.number)
+
+            YearMonth(today.year, today.month.number).coerceIn(startYM, endYM)
+        } ?: YearMonth(today.year, today.month.number)
+
+        selectedYM.coerceIn(startMonth, endMonth)
+    }
 
     val calendarState = rememberCalendarState(
         startMonth = startMonth,
@@ -76,8 +100,22 @@ fun ExamScheduleContent(
         firstDayOfWeek = DayOfWeek.MONDAY
     )
 
-    val visibleMonth by remember {
-        derivedStateOf { calendarState.firstVisibleMonth.yearMonth }
+    var visibleMonth by remember {
+        mutableStateOf(calendarState.firstVisibleMonth.yearMonth)
+    }
+
+    LaunchedEffect(calendarState) {
+        snapshotFlow { calendarState.isScrollInProgress }
+            .collect { isScrolling ->
+                if (!isScrolling) {
+                    visibleMonth = calendarState.firstVisibleMonth.yearMonth
+                }
+            }
+    }
+
+    LaunchedEffect(uiState.resetTrigger) {
+        val todayYM = YearMonth(today.year, today.month.number)
+        calendarState.animateScrollToMonth(todayYM)
     }
 
     val examDateSet =
@@ -96,10 +134,11 @@ fun ExamScheduleContent(
             TopCenterScreenBar(
                 onBack = onBack,
                 title = "Lịch thi",
-                enableActionButton = false,
-                onClickAction = {},
+                enableActionButton = true,
+                onClickAction = onResetData,
                 backgroundColor = Color.Transparent,
-                contentColor = Color.Black
+                contentColor = Color.Black,
+                icon = Icons.Outlined.RestartAlt
             )
         }
     ) {
@@ -113,6 +152,20 @@ fun ExamScheduleContent(
             )
 
             Spacer(Modifier.height(12.dp))
+
+            SemesterSelector(
+                semesters = uiState.semesters,
+                selectedSemester = uiState.selectedSemester,
+                onSemesterSelected = {
+                    onSemesterChanged(it)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onToggleDropdown = onToggleDropdown,
+                isDropdownExpanded = uiState.isDropdownExpanded,
+            )
+            Spacer(Modifier.height(16.dp))
 
             if (uiState.selectedTab == 0) {
                 CalendarSection(
@@ -159,9 +212,6 @@ fun ExamScheduleContent(
             } else {
                 ExamListView(
                     uiState = uiState,
-                    onSemesterChanged = { semester -> onSemesterChanged(semester) },
-                    isDropdownExpanded = uiState.isDropdownExpanded,
-                    onToggleDropdown = onToggleDropdown
                 )
             }
         }
@@ -205,7 +255,6 @@ fun ExamScheduleContentPreview() {
                     examFormat = "Tự luận",
                     examLocation = "Tòa A",
                     examRoom = "A305",
-                    examStatus = "SCHEDULED",
                     examType = "Cuối kỳ",
                     startTime = "08:00",
                     subjectCode = "INT2201",
@@ -220,7 +269,6 @@ fun ExamScheduleContentPreview() {
                     examFormat = "Trắc nghiệm",
                     examLocation = "Tòa B",
                     examRoom = "B201",
-                    examStatus = "SCHEDULED",
                     examType = "Cuối kỳ",
                     startTime = "13:30",
                     subjectCode = "INT2202",
@@ -241,7 +289,6 @@ fun ExamScheduleContentPreview() {
                     examFormat = "Tự luận",
                     examLocation = "Tòa C",
                     examRoom = "C402",
-                    examStatus = "SCHEDULED",
                     examType = "Giữa kỳ",
                     startTime = "07:30",
                     subjectCode = "INT3301",
@@ -260,7 +307,7 @@ fun ExamScheduleContentPreview() {
             ),
             selectedSemester = semester3,
             currentSemester = semester3,
-            selectedTab = 1,
+            selectedTab = 0,
             isDropdownExpanded = false,
             isLoading = false,
             selectedDate = today,
@@ -271,6 +318,7 @@ fun ExamScheduleContentPreview() {
         onSemesterChanged = {},
         onTabSelected = {},
         onBack = {},
-        onChangeDate = {}
+        onChangeDate = {},
+        onResetData = {}
     )
 }

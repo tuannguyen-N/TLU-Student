@@ -56,7 +56,12 @@ fun MainScreen(
                         homeViewModel = homeViewModel,
                         onOpenProfileScreen = onOpenProfileScreen,
                         onOpenNotificationScreen = onOpenNotificationScreen,
-                        onOpenFeatureScreen = onOpenFeatureScreen
+                        onOpenFeatureScreen = onOpenFeatureScreen,
+                        onOpenScheduleScreen = {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(2)
+                            }
+                        }
                     )
 
                     1 -> ScheduleScreen(
@@ -70,8 +75,8 @@ fun MainScreen(
                     3 -> TranscriptScreen(
                         viewModel = transcriptViewModel,
                         onOpenNotificationScreen = onOpenNotificationScreen,
-                        onOpenTranscriptTerm = { semester -> 
-                            onOpenTranscriptTerm(semester.semesterLabel, semester.academicYear) 
+                        onOpenTranscriptTerm = { semester ->
+                            onOpenTranscriptTerm(semester.semesterLabel, semester.academicYear)
                         }
                     )
                 }

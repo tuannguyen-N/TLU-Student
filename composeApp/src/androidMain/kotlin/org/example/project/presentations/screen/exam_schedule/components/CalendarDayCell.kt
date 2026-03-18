@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.exam_schedule.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +43,7 @@ fun CalendarDayCell(
     val textColor = when {
         !isCurrentMonth -> color.grayButton
         isSelected -> Color.White
+        isToday -> color.fontBlue
         isSunday -> color.red
         else -> Color(0xFF1A1A2E)
     }
@@ -51,9 +53,14 @@ fun CalendarDayCell(
             .aspectRatio(1f)
             .padding(2.dp)
             .clip(CircleShape)
-            .background(if (isSelected) LocalExtendedColors.current.fontBlue else Color.Transparent)
-            .clickable(enabled = isCurrentMonth) { onClick() },
-        contentAlignment = Alignment.Center
+            .background(
+                when {
+                    isSelected -> color.fontBlue
+                    isToday -> color.fontBlue.copy(alpha = 0.1f)
+                    else -> Color.Transparent
+                }
+            )
+            .clickable(enabled = isCurrentMonth) { onClick() }
     ) {
         Text(
             text = day.date.day.toString(),
@@ -73,14 +80,13 @@ fun CalendarDayCell(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(5.dp)
+                        .size(6.dp)
                         .clip(CircleShape)
                         .background(if (isSelected) Color.White else LocalExtendedColors.current.fontBlue)
                 )
 
-                Spacer(Modifier.height(5.dp))
+                Spacer(Modifier.height(6.dp))
             }
         }
     }
 }
-

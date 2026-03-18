@@ -31,9 +31,6 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun ExamListView(
     uiState: ExamScheduleState,
-    onSemesterChanged: (Semester) -> Unit,
-    isDropdownExpanded: Boolean,
-    onToggleDropdown: () -> Unit
 ) {
     val targetExamDayIndex = remember(uiState.examDays) {
         uiState.examDays.indexOfFirst { it.isToday }
@@ -53,20 +50,6 @@ fun ExamListView(
         contentPadding = PaddingValues(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-        item {
-            SemesterSelector(
-                semesters = uiState.semesters,
-                selectedSemester = uiState.selectedSemester,
-                onSemesterSelected = {
-                    onSemesterChanged(it)
-                },
-                modifier = Modifier.fillMaxWidth(),
-                onToggleDropdown = onToggleDropdown,
-                isDropdownExpanded = isDropdownExpanded
-            )
-            Spacer(Modifier.height(16.dp))
-        }
-
         uiState.examDays.forEach { examDay ->
             item {
                 ExamDayHeader(

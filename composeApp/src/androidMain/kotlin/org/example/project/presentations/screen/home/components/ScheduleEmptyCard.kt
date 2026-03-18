@@ -33,6 +33,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun ScheduleEmptyCard(
     modifier: Modifier = Modifier,
+    atHome: Boolean = false,
     onClickViewTomorrow: () -> Unit = {}
 ) {
     Column(
@@ -90,7 +91,7 @@ fun ScheduleEmptyCard(
                 .height(44.dp)
         ) {
             Text(
-                text = "Xem lịch ngày mai",
+                text = if (atHome) "Xem lịch chi tiết" else "Xem lịch ngày mai",
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold
             )

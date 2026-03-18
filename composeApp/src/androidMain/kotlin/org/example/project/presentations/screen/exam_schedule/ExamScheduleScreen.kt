@@ -18,6 +18,7 @@ fun ExamScheduleScreen(
         onTabSelected =  viewModel::onTabSelected,
         onToggleDropdown = viewModel::onToggleDropdown,
         onSemesterChanged = viewModel::onSemesterChanged,
-        onChangeDate = viewModel::onChangeDate
+        onChangeDate = viewModel::onChangeDate,
+        onResetData = viewModel::onResetData
     )
 }

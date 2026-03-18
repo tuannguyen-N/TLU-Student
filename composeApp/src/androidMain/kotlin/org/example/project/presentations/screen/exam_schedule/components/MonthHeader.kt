@@ -18,9 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.launch
 import kotlinx.datetime.YearMonth
-import kotlinx.datetime.minusMonth
 import kotlinx.datetime.number
-import kotlinx.datetime.plusMonth
+import com.kizitonwose.calendar.core.minusMonths
+import com.kizitonwose.calendar.core.plusMonths
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -36,7 +36,7 @@ fun MonthHeader(
     ) {
         IconButton(onClick = {
             scope.launch {
-                calendarState.animateScrollToMonth(yearMonth.minusMonth())
+                calendarState.animateScrollToMonth(yearMonth.minusMonths(1))
             }
         }) {
             Icon(
@@ -54,7 +54,7 @@ fun MonthHeader(
 
         IconButton(onClick = {
             scope.launch {
-                calendarState.animateScrollToMonth(yearMonth.plusMonth())
+                calendarState.animateScrollToMonth(yearMonth.plusMonths(1))
             }
         }) {
             Icon(

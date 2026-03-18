@@ -15,8 +15,10 @@ class SemesterUseCase(
         it?.filter { semester -> checkingAvailableDate(semester.startDate) }
     }
 
-    suspend fun getSemesters(): Result<List<Semester>> {
-        return semesterRepository.getSemesters()
+    suspend fun getSemesters(): Result<List<Semester>?> {
+        return semesterRepository.getSemesters().map { it.filter { semester ->
+            checkingAvailableDate(semester.startDate)
+        } }
     }
 
     private fun checkingAvailableDate(startDate: String): Boolean {

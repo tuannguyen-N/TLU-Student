@@ -94,7 +94,7 @@ fun SemesterSelector(
                 modifier = Modifier
                     .background(Color.White),
             ) {
-                semesters?.forEachIndexed { index, semester ->
+                semesters.forEachIndexed { index, semester ->
                     val isSelected = semester.semesterName == selectedSemester?.semesterName
 
                     DropdownMenuItem(

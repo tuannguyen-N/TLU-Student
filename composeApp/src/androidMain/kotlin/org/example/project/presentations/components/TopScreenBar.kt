@@ -33,19 +33,22 @@ import org.example.project.presentations.screen.timetable.components.DropDownPop
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
-fun TopScreenBar(
+fun <T> TopScreenBar(
     onBack: () -> Unit = {},
+    title: String,
+    values: List<T> = emptyList(),
+    value: String,
     justView: Boolean = false,
-    schoolYears: List<String> = emptyList(),
-    onClicked: (String) -> Unit = {},
-    yearValue: String,
-    title: String
+    backgroundColor: Color = LocalExtendedColors.current.mainRed,
+    contentColor: Color = Color.White,
+    onClickItem: (T) -> Unit = {},
+    itemDisplay: (T) -> String = { it.toString() }
 ) {
     var showTermYear by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
-            .background(LocalExtendedColors.current.mainRed)
+            .background(backgroundColor)
             .statusBarsPadding(),
     ) {
         Row(
@@ -60,7 +63,7 @@ fun TopScreenBar(
                 Icon(
                     painter = painterResource(R.drawable.icon_back),
                     contentDescription = null,
-                    tint = Color.White
+                    tint = contentColor
                 )
             }
 
@@ -71,14 +74,14 @@ fun TopScreenBar(
                 style = MaterialTheme.typography.titleLarge,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = contentColor
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             Box {
                 TermYear(
-                    academicYear = yearValue,
+                    academicYear = value,
                     onClick = { showTermYear = true },
                     modifier = Modifier.padding(end = 12.dp),
                     justView = justView
@@ -86,13 +89,13 @@ fun TopScreenBar(
 
                 if (showTermYear && !justView) {
                     DropDownPopup(
-                        items = schoolYears,
-                        selectedItem = yearValue,
-                        onItemSelected = onClicked,
+                        items = values,
+                        selectedItem = value,
+                        onClickItem = { onClickItem(it as T) },
                         onDismiss = { showTermYear = false },
                         alignment = Alignment.TopStart,
                         width = 180.dp,
-                        itemDisplay = { it }
+                        itemDisplay = itemDisplay as (Any?) -> String,
                     )
                 }
             }

@@ -16,7 +16,6 @@ data class ExamSchedule(
     val examFormat: String,
     val examLocation: String,
     val examRoom: String,
-    val examStatus: String,
     val examType: String,
     val startTime: String,
     val subjectCode: String,

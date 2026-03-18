@@ -57,7 +57,7 @@ fun FeatureItem(
                 onClick = { if (!isEditing) onClickFeature(feature) },
                 color = feature.type.toIconBackgroundColor(),
                 modifier = Modifier
-                    .size(65.dp)
+                    .size(60.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
                 Box(contentAlignment = Alignment.Center) {

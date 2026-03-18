@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ExampleScheduleResponse(
     val code: Int,
-    val examScheduleData: ExamScheduleData?,
+    val data: ExamScheduleData?,
     val message: String
 )

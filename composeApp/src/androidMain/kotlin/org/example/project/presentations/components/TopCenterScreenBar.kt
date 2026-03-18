@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,7 @@ fun TopCenterScreenBar(
     backgroundColor: Color = LocalExtendedColors.current.mainRed,
     onBack: () -> Unit = {},
     onClickAction: () -> Unit = {},
+    icon: ImageVector = Icons.Outlined.Done,
     contentColor: Color = Color.White
 ) {
 
@@ -70,7 +72,7 @@ fun TopCenterScreenBar(
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.Done,
+                        imageVector = icon,
                         contentDescription = null,
                         tint = contentColor
                     )

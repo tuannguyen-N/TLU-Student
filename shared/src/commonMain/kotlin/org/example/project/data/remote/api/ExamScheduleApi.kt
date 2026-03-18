@@ -10,7 +10,7 @@ class ExamScheduleApi(
     private val client: HttpClient
 ) {
     suspend fun getExamSchedules(semester: String): ExampleScheduleResponse{
-        return client.get("/api/v1/student/exams"){
+        return client.get("/api/v1/student/exam"){
             parameter("HocKy", semester)
         }.body()
     }

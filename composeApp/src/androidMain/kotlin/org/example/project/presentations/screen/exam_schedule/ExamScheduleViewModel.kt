@@ -12,16 +12,14 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import org.example.project.data.mapper.toExamDays
 import org.example.project.data.remote.dto.semester.Semester
-import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.usecase.SemesterUseCase
-import org.example.project.presentations.utils.today
 
 class ExamScheduleViewModel(
     private val semesterUseCase: SemesterUseCase,
     private val examScheduleRepository: ExamScheduleRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ExamScheduleState(selectedDate = today))
+    private val _uiState = MutableStateFlow(ExamScheduleState())
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -41,7 +39,7 @@ class ExamScheduleViewModel(
     private suspend fun getSemesters() {
         semesterUseCase.getSemesters().fold(
             onSuccess = { semesters ->
-                val latest = semesters.firstOrNull() ?: return@fold
+                val latest = semesters?.lastOrNull() ?: return@fold
                 updateState { copy(selectedSemester = latest, currentSemester = latest) }
                 getExamSchedule(latest.semesterName)
             },
@@ -70,7 +68,13 @@ class ExamScheduleViewModel(
 
     private fun observeSemesters() {
         semesterUseCase.semesters.onEach { semesters ->
-            semesters?.let { updateState { copy(semesters = it) } }
+            val selected = semesters?.lastOrNull()
+            updateState {
+                copy(
+                    semesters = semesters.orEmpty(),
+                    selectedSemester = selected,
+                )
+            }
         }.launchIn(viewModelScope)
     }
 
@@ -95,6 +99,11 @@ class ExamScheduleViewModel(
             val examDay = examDays.find { it.localExamDay == date }
             copy(selectedDate = date, examDay = examDay)
         }
+    }
+
+    fun onResetData(){
+        updateState { copy(resetTrigger = resetTrigger + 1) }
+        initData()
     }
 
     private fun updateState(newState: ExamScheduleState.() -> ExamScheduleState) {

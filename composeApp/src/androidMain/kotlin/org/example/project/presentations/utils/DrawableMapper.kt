@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material.icons.outlined.Pending
 import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material.icons.outlined.SupportAgent
 import androidx.compose.material.icons.outlined.Work
 import androidx.compose.ui.graphics.Color
@@ -27,7 +28,7 @@ import org.example.project.presentations.navigation.Routes
 
 fun FeatureType.toImageVector(): ImageVector {
     return when (this) {
-        FeatureType.VIEW_GRADES     -> Icons.Outlined.Grade
+        FeatureType.VIEW_GRADES     -> Icons.Outlined.StarBorder
         FeatureType.EXAM_SCHEDULE        -> Icons.Outlined.CalendarMonth
         FeatureType.COURSE_REGISTER -> Icons.Outlined.EditNote
         FeatureType.DOCUMENTS       -> Icons.AutoMirrored.Outlined.MenuBook

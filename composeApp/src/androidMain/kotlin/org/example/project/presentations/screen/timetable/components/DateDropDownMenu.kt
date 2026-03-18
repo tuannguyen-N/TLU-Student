@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -36,16 +35,16 @@ import org.example.project.data.mapper.toDisplayWeekDate
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
-fun DropDownPopup(
+fun <T> DropDownPopup(
     modifier: Modifier = Modifier,
-    items: List<String>,
-    selectedItem: String,
-    onItemSelected: (String) -> Unit,
+    items: List<T>,
+    selectedItem: T,
+    onClickItem: (T) -> Unit,
     alignment: Alignment,
     width: Dp,
     onDismiss: () -> Unit,
-    itemDisplay: (String) -> String = { it.toDisplayWeekDate() }
-) {
+    itemDisplay: (T) -> String,
+){
     Box(modifier = modifier) {
         Popup(
             alignment = alignment,
@@ -75,7 +74,7 @@ fun DropDownPopup(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        onItemSelected(item)
+                                        onClickItem(item)
                                         onDismiss()
                                     }
                                     .padding(horizontal = 16.dp, vertical = 14.dp),

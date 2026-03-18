@@ -23,7 +23,6 @@ import org.example.project.presentations.dialog.TeacherDetailInfoDialog
 import org.example.project.presentations.screen.school_schedule.components.ClassDetailBottomSheet
 import org.example.project.presentations.screen.timetable.TimetableState
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.toSlashDate
 
 @Composable
 fun TimetableContent(
@@ -49,11 +48,11 @@ fun TimetableContent(
             TopScreenBar(
                 title = "Thời khoá biểu",
                 onBack = onBack,
-                schoolYears = uiState.semesters.toSemesterStringList(),
-                onClicked = {
+                values = uiState.semesters.toSemesterStringList(),
+                onClickItem = {
                     onChangeSemester(it)
                 },
-                yearValue = uiState.selectedSemester?.semesterName ?: "2026"
+                value = uiState.selectedSemester?.semesterName ?: "2026"
             )
         }
     ) { padding ->
@@ -76,11 +75,12 @@ fun TimetableContent(
                     DropDownPopup(
                         items = uiState.selectedSemester?.toWeekDateList() ?: emptyList(),
                         selectedItem = uiState.selectedWeek,
-                        onItemSelected = { onChangeWeek(it) },
+                        onClickItem = { onChangeWeek(it) },
                         onDismiss = onToggleDropDown,
                         alignment = Alignment.TopCenter,
                         width = 220.dp,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        itemDisplay = { it.toDisplayWeekDate() }
                     )
                 }
             }
