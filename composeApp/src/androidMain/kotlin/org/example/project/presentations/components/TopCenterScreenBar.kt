@@ -35,7 +35,6 @@ fun TopCenterScreenBar(
     icon: ImageVector = Icons.Outlined.Done,
     contentColor: Color = Color.White
 ) {
-
     Box(
         modifier = Modifier
             .background(backgroundColor)

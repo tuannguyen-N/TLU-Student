@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.profile.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -22,29 +23,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.fontscaling.MathUtils.lerp
+import androidx.compose.ui.unit.lerp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
 
+@SuppressLint("RestrictedApi")
 @Composable
 fun HeaderProfile(
     studentName: String,
     majorName: String,
+    progress: Float,
     onClickBack: () -> Unit,
     onClickSetting: () -> Unit
 ) {
-    Box {
+    val height = lerp(160.dp, 70.dp, progress)
+    val backgroundHeight = lerp(250.dp, 70.dp, progress)
+    val scale = lerp(1f, 0.6f, progress)
+
+    Box(
+        modifier = Modifier.height(backgroundHeight)
+    ) {
         Image(
             painter = painterResource(R.drawable.image_background_profile),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(height)
         )
 
         Column(
@@ -54,8 +65,7 @@ fun HeaderProfile(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .statusBarsPadding()
-                    ,
+                    .statusBarsPadding(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = onClickBack) {
@@ -81,6 +91,10 @@ fun HeaderProfile(
                 painter = painterResource(R.drawable.ic_launcher_foreground),
                 contentDescription = null,
                 modifier = Modifier
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    }
                     .size(120.dp)
                     .clip(CircleShape)
                     .border(1.dp, Color.White, CircleShape)
@@ -91,13 +105,23 @@ fun HeaderProfile(
                 fontWeight = FontWeight.Bold,
                 color = LocalExtendedColors.current.mainBlue,
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 5.dp)
+                modifier = Modifier
+                    .padding(top = 5.dp)
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    }
+
             )
 
             Text(
                 text = majorName,
                 color = LocalExtendedColors.current.gray,
                 style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
             )
         }
     }
