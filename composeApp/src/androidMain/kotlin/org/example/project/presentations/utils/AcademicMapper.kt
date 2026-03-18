@@ -18,7 +18,7 @@ fun Double.toAcademicRank(): AcademicRank {
 fun AcademicRank.toColor(): Color = when (this) {
     AcademicRank.EXCELLENT -> LocalExtendedColors.current.green
     AcademicRank.GOOD -> LocalExtendedColors.current.yellowRanking
-    AcademicRank.AVERAGE -> LocalExtendedColors.current.orangeRanking
+    AcademicRank.AVERAGE -> LocalExtendedColors.current.orange
     AcademicRank.WEAK -> LocalExtendedColors.current.red
 }
 

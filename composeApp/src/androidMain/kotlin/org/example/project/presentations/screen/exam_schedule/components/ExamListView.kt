@@ -48,7 +48,6 @@ fun ExamListView(
         state = listState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         uiState.examDays.forEach { examDay ->
             item {
@@ -126,12 +125,6 @@ private fun ExamDayHeader(
                 text = "Hôm nay",
                 backgroundColor = LocalExtendedColors.current.green.copy(alpha = 0.1f),
                 textColor = LocalExtendedColors.current.green
-            )
-        } else {
-            LabelView(
-                text = "Sắp tới",
-                backgroundColor = LocalExtendedColors.current.fontBlue.copy(alpha = 0.1f),
-                textColor = LocalExtendedColors.current.fontBlue
             )
         }
     }

@@ -22,7 +22,7 @@ data class ExtendedColors (
     val grayButton: Color = Color(0xFFD9D9D9),
     val fontBlue: Color = Color(0xFF016DB7),
     val yellowRanking: Color = Color(0xFF9FA616),
-    val orangeRanking: Color = Color(0xFFA65916),
+    val orange: Color = Color(0xFFf97416),
     val seaSerpent: Color = Color(0xFF3AC2D8),
 )
 

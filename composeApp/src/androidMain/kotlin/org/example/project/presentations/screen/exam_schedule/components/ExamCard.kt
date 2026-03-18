@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
+import androidx.compose.material.icons.filled.AccessTimeFilled
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Card
@@ -25,8 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -66,14 +74,36 @@ fun ExamCard(
 
             Spacer(Modifier.width(14.dp))
 
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
                 Text(
-                    text = exam.subjectName,
+                    text = exam.examType,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = if(isToday)LocalExtendedColors.current.orange else LocalExtendedColors.current.gray
+                    )
+                )
+                Text(
+                    text = buildAnnotatedString {
+                        append(exam.subjectName)
+                        append(" - ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = LocalExtendedColors.current.gray,
+                                fontSize = 12.sp
+                            )
+                        ) {
+                            append(exam.subjectCode)
+                        }
+                    },
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = if (isPast) LocalExtendedColors.current.gray else Color.Black
                     )
                 )
+
+                Spacer(Modifier.height(5.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -84,9 +114,9 @@ fun ExamCard(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.AccessTime,
+                            imageVector = Icons.Filled.AccessTimeFilled,
                             contentDescription = null,
-                            tint = LocalExtendedColors.current.gray,
+                            tint = if (isToday) LocalExtendedColors.current.red else LocalExtendedColors.current.gray,
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
@@ -102,9 +132,9 @@ fun ExamCard(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.LocationOn,
+                            imageVector = Icons.Filled.LocationOn,
                             contentDescription = null,
-                            tint = LocalExtendedColors.current.gray,
+                            tint = if (isToday) LocalExtendedColors.current.red else LocalExtendedColors.current.gray,
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
@@ -115,6 +145,13 @@ fun ExamCard(
                         )
                     }
                 }
+            }
+
+            if (!isToday && !isPast) {
+                RemainingDay(
+                    contentColor = LocalExtendedColors.current.orange,
+                    dayLeft = 10,
+                )
             }
         }
     }
