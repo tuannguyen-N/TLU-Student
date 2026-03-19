@@ -1,5 +1,6 @@
 package org.example.project.domain.usecase
 
+import org.example.project.domain.model.SubjectItem
 import org.example.project.domain.repository.ScheduleRepository
 
 class ScheduleUseCase(
@@ -13,6 +14,10 @@ class ScheduleUseCase(
             return Result.failure(IllegalArgumentException("Ngày không hợp lệ"))
         }
         return repository.getDaySchedule(dayOfWeek)
+    }
+
+    suspend fun getSemesterSubjects(semester: String): Result<List<SubjectItem>>{
+        return repository.getSemesterSubjects(semester)
     }
 
     suspend fun getWeekSchedule(startDate: String, endDate: String): Result<Any>{

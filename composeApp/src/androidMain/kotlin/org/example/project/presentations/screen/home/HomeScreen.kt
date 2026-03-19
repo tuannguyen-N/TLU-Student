@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.domain.model.FeatureType
 import org.example.project.presentations.screen.home.components.AlertList
 import org.example.project.presentations.screen.home.components.FeatureList
 import org.example.project.presentations.screen.home.components.HomeHeader
@@ -24,6 +25,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel,
     onOpenProfileScreen: () -> Unit = {},
     onOpenNotificationScreen: () -> Unit = {},
+    onOpenFeature: (FeatureType) -> Unit,
     onOpenFeatureScreen: () -> Unit,
     onOpenScheduleScreen: () -> Unit
 ) {
@@ -69,7 +71,7 @@ fun HomeScreen(
 
             item(key = "feature_list", contentType = "FeatureList") {
                 FeatureList(
-                    onClickItem = {},
+                    onClickItem = onOpenFeature,
                     onClickAll = onOpenFeatureScreen,
                     items = uiState.quickAccessList
                 )

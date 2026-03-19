@@ -3,6 +3,7 @@ package org.example.project.presentations.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Apartment
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.EditNote
@@ -31,7 +32,7 @@ fun FeatureType.toImageVector(): ImageVector {
         FeatureType.VIEW_GRADES     -> Icons.Outlined.StarBorder
         FeatureType.EXAM_SCHEDULE        -> Icons.Outlined.CalendarMonth
         FeatureType.COURSE_REGISTER -> Icons.Outlined.EditNote
-        FeatureType.DOCUMENTS       -> Icons.AutoMirrored.Outlined.MenuBook
+        FeatureType.GPA_PREDICTION       -> Icons.Outlined.AutoAwesome
         FeatureType.DORMITORY       -> Icons.Outlined.Apartment
         FeatureType.MAP             -> Icons.Outlined.Map
         FeatureType.CLUB            -> Icons.Outlined.Favorite
@@ -51,7 +52,7 @@ fun FeatureType.toIconBackgroundColor(): Color {
         FeatureType.VIEW_GRADES      -> Color(0xFFDDE8FF)
         FeatureType.EXAM_SCHEDULE         -> Color(0xFFD6F5EC)
         FeatureType.COURSE_REGISTER  -> Color(0xFFEFE0FF)
-        FeatureType.DOCUMENTS        -> Color(0xFFFFEDD5)
+        FeatureType.GPA_PREDICTION        -> Color(0xFFFFEDD5)
         FeatureType.DORMITORY        -> Color(0xFFFFD6E7)
         FeatureType.MAP              -> Color(0xFFD6F5EC)
         FeatureType.CLUB             -> Color(0xFFFFE0EC)
@@ -71,7 +72,7 @@ fun FeatureType.toIconTintColor(): Color {
         FeatureType.VIEW_GRADES      -> Color(0xFF3D72E8)
         FeatureType.EXAM_SCHEDULE         -> Color(0xFF1AAF7A)
         FeatureType.COURSE_REGISTER  -> Color(0xFF9B4DCA)
-        FeatureType.DOCUMENTS        -> Color(0xFFE87D3D)
+        FeatureType.GPA_PREDICTION        -> Color(0xFFE87D3D)
         FeatureType.DORMITORY        -> Color(0xFFE8437A)
         FeatureType.MAP              -> Color(0xFF1AAF7A)
         FeatureType.CLUB             -> Color(0xFFE84368)
@@ -90,6 +91,7 @@ fun FeatureType.toRoute(): String{
     return when (this) {
         FeatureType.FEEDBACK -> Routes.Feedback
         FeatureType.EXAM_SCHEDULE -> Routes.ExamSchedule
+        FeatureType.GPA_PREDICTION -> Routes.GpaPredict
         else -> "" // TODO:
     }
 }

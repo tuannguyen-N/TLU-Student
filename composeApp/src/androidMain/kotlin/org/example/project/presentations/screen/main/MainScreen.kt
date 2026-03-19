@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.example.project.domain.model.FeatureType
 import org.example.project.presentations.screen.BottomBar
 import org.example.project.presentations.screen.home.HomeScreen
 import org.example.project.presentations.screen.home.HomeViewModel
@@ -33,7 +34,8 @@ fun MainScreen(
     onOpenTranscriptTerm: (String, String) -> Unit,
     onOpenTimetable: () -> Unit,
     onOpenFeatureScreen: () -> Unit,
-    onSendEmail: (String) -> Unit
+    onSendEmail: (String) -> Unit,
+    onOpenFeature: (FeatureType)-> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()
@@ -61,7 +63,8 @@ fun MainScreen(
                             coroutineScope.launch {
                                 pagerState.scrollToPage(2)
                             }
-                        }
+                        },
+                        onOpenFeature = onOpenFeature
                     )
 
                     1 -> ScheduleScreen(

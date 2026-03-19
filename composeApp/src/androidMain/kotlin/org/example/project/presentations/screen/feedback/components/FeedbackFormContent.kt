@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -24,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.screen.feedback.FeedBackState
@@ -53,6 +56,7 @@ fun FeedbackFormContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
             .clearFocusOnTap(),
     ) {
@@ -155,7 +159,9 @@ fun FeedbackFormContent(
             onOpenImagePicker = { launcher.launch("image/*") },
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        ImportantNoteFeedbackCard()
 
         ButtonView(
             text = "Gửi phản hồi",
@@ -187,5 +193,26 @@ fun FeedbackLabel(text: String, isNeedAsterisk: Boolean = false) {
         },
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.padding(top = 15.dp, bottom = 10.dp)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FeedbackFormContentPreview() {
+    FeedbackFormContent(
+        uiState = FeedBackState(
+            title = "Sample Title",
+            subject = SubjectOption.entries.first(),
+            content = "Sample content for preview",
+            attachedImages = emptyList(),
+            subjectExpanded = false
+        ),
+        onTitleChange = {},
+        onSubjectChange = {},
+        onContentChange = {},
+        onSubjectExpandedChange = {},
+        onAddImage = {},
+        onRemoveImage = {},
+        onSubmit = {}
     )
 }

@@ -9,14 +9,14 @@ data class FeatureUiModel(
             FeatureUiModel("Xem điểm",       FeatureType.VIEW_GRADES),
             FeatureUiModel("Lịch thi",        FeatureType.EXAM_SCHEDULE),
             FeatureUiModel("Đăng ký môn",     FeatureType.COURSE_REGISTER),
-            FeatureUiModel("Tài liệu",        FeatureType.DOCUMENTS),
+            FeatureUiModel("Dự đoán GPA",        FeatureType.GPA_PREDICTION),
         )
 
         fun getGeneralList() = listOf(
             FeatureUiModel("Xem điểm",        FeatureType.VIEW_GRADES),
             FeatureUiModel("Lịch thi",        FeatureType.EXAM_SCHEDULE),
             FeatureUiModel("Đăng ký môn",     FeatureType.COURSE_REGISTER),
-            FeatureUiModel("Tài liệu",        FeatureType.DOCUMENTS),
+            FeatureUiModel("Dự đoán GPA",        FeatureType.GPA_PREDICTION),
             FeatureUiModel("Ký túc xá",       FeatureType.DORMITORY),
             FeatureUiModel("Bản đồ",          FeatureType.MAP),
             FeatureUiModel("Câu lạc bộ",      FeatureType.CLUB),
@@ -37,7 +37,7 @@ enum class FeatureType {
     VIEW_GRADES,
     EXAM_SCHEDULE,
     COURSE_REGISTER,
-    DOCUMENTS,
+    GPA_PREDICTION,
     DORMITORY,
     MAP,
     CLUB,

@@ -24,6 +24,7 @@ data class ExtendedColors (
     val yellowRanking: Color = Color(0xFF9FA616),
     val orange: Color = Color(0xFFf97416),
     val seaSerpent: Color = Color(0xFF3AC2D8),
+    val grayNavy: Color = Color(0xFF64748B),
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {

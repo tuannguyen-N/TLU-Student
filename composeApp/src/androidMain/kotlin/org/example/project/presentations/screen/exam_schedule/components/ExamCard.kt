@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -80,10 +81,13 @@ fun ExamCard(
                 Text(
                     text = exam.examType,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         color = if(isToday)LocalExtendedColors.current.orange else LocalExtendedColors.current.gray
                     )
                 )
+
+                Spacer(Modifier.height(2.dp))
+
                 Text(
                     text = buildAnnotatedString {
                         append(exam.subjectName)
@@ -91,7 +95,8 @@ fun ExamCard(
                         withStyle(
                             style = SpanStyle(
                                 color = LocalExtendedColors.current.gray,
-                                fontSize = 12.sp
+                                fontSize = 12.sp,
+                                fontStyle = FontStyle.Normal
                             )
                         ) {
                             append(exam.subjectCode)
@@ -116,13 +121,13 @@ fun ExamCard(
                         Icon(
                             imageVector = Icons.Filled.AccessTimeFilled,
                             contentDescription = null,
-                            tint = if (isToday) LocalExtendedColors.current.red else LocalExtendedColors.current.gray,
+                            tint = if (isToday) LocalExtendedColors.current.red else LocalExtendedColors.current.grayNavy,
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
                             text = "${exam.startTime} - ${exam.endTime}",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = LocalExtendedColors.current.gray
+                                color = LocalExtendedColors.current.grayNavy
                             )
                         )
                     }
@@ -134,13 +139,13 @@ fun ExamCard(
                         Icon(
                             imageVector = Icons.Filled.LocationOn,
                             contentDescription = null,
-                            tint = if (isToday) LocalExtendedColors.current.red else LocalExtendedColors.current.gray,
+                            tint = if (isToday) LocalExtendedColors.current.red else LocalExtendedColors.current.grayNavy,
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
                             text = "Phòng: ${exam.examRoom}",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = LocalExtendedColors.current.gray
+                                color = LocalExtendedColors.current.grayNavy
                             )
                         )
                     }

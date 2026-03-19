@@ -5,6 +5,8 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import org.example.project.data.remote.dto.day_schedule.DayOfWeekScheduleResponse
+import org.example.project.data.remote.dto.semester_schedule.SemesterSchedule
+import org.example.project.data.remote.dto.semester_schedule.SemesterScheduleResponse
 import org.example.project.data.remote.dto.week_schedule.WeekScheduleResponse
 
 class ScheduleApi(
@@ -20,6 +22,12 @@ class ScheduleApi(
         return client.get("/api/v1/student/schedules/weekly") {
             parameter("start_date", startDate)
             parameter("end_date", endDate)
+        }.body()
+    }
+
+    suspend fun getSemesterSubjects(semester: String): SemesterScheduleResponse{
+        return client.get("/api/v1/student/schedules/semester"){
+            parameter("HocKy", semester)
         }.body()
     }
 }

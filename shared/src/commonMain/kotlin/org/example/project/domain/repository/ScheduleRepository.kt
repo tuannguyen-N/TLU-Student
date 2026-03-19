@@ -4,9 +4,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.example.project.data.cache.CacheManager
+import org.example.project.data.mapper.toSubjects
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.dto.day_schedule.CourseClasses
 import org.example.project.data.remote.dto.week_schedule.WeekSchedule
+import org.example.project.domain.model.SubjectItem
 import kotlin.time.Duration.Companion.minutes
 
 class ScheduleRepository(
@@ -52,6 +54,12 @@ class ScheduleRepository(
             }
             _weekSchedules.update { it + (key to data) }
             data
+        }
+    }
+
+    suspend fun getSemesterSubjects(semester: String): Result<List<SubjectItem>>{
+        return runCatching{
+            scheduleApi.getSemesterSubjects(semester).data?.toSubjects() ?: emptyList()
         }
     }
 

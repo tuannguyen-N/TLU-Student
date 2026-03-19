@@ -29,12 +29,12 @@ fun ButtonView(
     modifier: Modifier = Modifier,
     text: String = "Lưu",
     textSize: TextUnit = 16.sp,
-    backgroundColorRes: Color = Color.Black,
     textColorRes: Color = Color.White,
-    onClick: () -> Unit = {},
-    enabled: Boolean = false,
+    backgroundColorRes: Color = Color.Black,
     iconRes: Int? = null,
-    shape: RoundedCornerShape = RoundedCornerShape(12.dp)
+    shape: RoundedCornerShape = RoundedCornerShape(12.dp),
+    enabled: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     Button(
         onClick = onClick,

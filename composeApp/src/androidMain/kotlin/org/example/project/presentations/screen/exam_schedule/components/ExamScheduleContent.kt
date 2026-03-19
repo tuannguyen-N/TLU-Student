@@ -210,6 +210,7 @@ fun ExamScheduleContent(
                 }
 
             } else {
+
                 ExamListView(
                     uiState = uiState,
                 )

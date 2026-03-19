@@ -43,7 +43,7 @@ fun SelectedDaySummary(
 
         if (examInfo != null) {
             LabelView(
-                text = "Môn thi",
+                text = "${examInfo.exams.size} môn",
                 backgroundColor = LocalExtendedColors.current.fontBlue.copy(alpha = 0.15f),
                 textColor = LocalExtendedColors.current.fontBlue
             )

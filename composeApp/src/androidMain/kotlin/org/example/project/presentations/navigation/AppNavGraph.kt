@@ -3,6 +3,8 @@ package org.example.project.presentations.navigation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -14,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.example.project.domain.model.FeatureType
 import org.example.project.domain.model.FeatureUiModel
+import org.example.project.domain.usecase.GpaPredictUseCase
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModelFactory
@@ -25,6 +28,9 @@ import org.example.project.presentations.screen.features.FeaturesViewModel
 import org.example.project.presentations.screen.features.FeaturesViewModelFactory
 import org.example.project.presentations.screen.feedback.FeedbackScreen
 import org.example.project.presentations.screen.feedback_detail.FeedbackDetailScreen
+import org.example.project.presentations.screen.gpa_predict.GpaPredictScreen
+import org.example.project.presentations.screen.gpa_predict.GpaPredictViewModel
+import org.example.project.presentations.screen.gpa_predict.GpaPredictViewModelFactory
 import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.home.HomeViewModelFactory
 import org.example.project.presentations.screen.login.LoginScreen
@@ -55,45 +61,32 @@ import org.example.project.presentations.utils.toRoute
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
-
     NavHost(
         navController = navController,
         startDestination = Routes.Splash,
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            )
+                animationSpec = tween(300, easing = FastOutSlowInEasing)
+            ) + fadeIn(animationSpec = tween(300))
         },
         exitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            )
+                animationSpec = tween(300, easing = FastOutSlowInEasing)
+            ) + fadeOut(animationSpec = tween(300))
         },
         popEnterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            )
+                animationSpec = tween(300, easing = FastOutSlowInEasing)
+            ) + fadeIn(animationSpec = tween(300))
         },
         popExitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            )
+                animationSpec = tween(300, easing = FastOutSlowInEasing)
+            ) + fadeOut(animationSpec = tween(300))
         }
     ) {
         composable(Routes.Splash) {
@@ -107,7 +100,7 @@ fun AppNavGraph() {
 
             LoginScreen(
                 onNavigateToHome = {
-                    navController.navigate(Routes.Main){
+                    navController.navigate(Routes.Main) {
                         popUpTo(Routes.Login) { inclusive = true }
                     }
                 },
@@ -148,7 +141,8 @@ fun AppNavGraph() {
                 },
                 onOpenTimetable = { navController.navigate(Routes.TimetableScreen) },
                 onOpenFeatureScreen = { navController.navigate(Routes.FeaturesScreen) },
-                onSendEmail = { email -> context.openEmail(email) }
+                onSendEmail = { email -> context.openEmail(email) },
+                onOpenFeature = { navController.navigate(it.toRoute()) }
             )
         }
 
@@ -258,6 +252,24 @@ fun AppNavGraph() {
                 viewModel = featuresViewModel,
                 onBack = { navController.popBackStack() },
                 onNavigate = onNavigate
+            )
+        }
+
+        composable(Routes.GpaPredict) {
+            val container = LocalAppContainer.current
+            val gpaPredictUseCase = GpaPredictUseCase()
+            val factory = remember(container) {
+                GpaPredictViewModelFactory(
+                    container.semesterUseCase,
+                    container.transcriptUseCase,
+                    container.scheduleUseCase,
+                    gpaPredictUseCase
+                )
+            }
+            val gpaPredictViewModel: GpaPredictViewModel = viewModel(factory = factory)
+            GpaPredictScreen(
+                viewModel = gpaPredictViewModel,
+                onBack = { navController.popBackStack() }
             )
         }
 

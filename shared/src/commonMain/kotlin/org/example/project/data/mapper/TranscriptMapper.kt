@@ -15,7 +15,6 @@ object TranscriptMapper {
         val gpa = transcript.semesterResults
             .map { it.semesterSummary.semesterGpa }
             .average()
-
         return round(gpa * 100) / 100
     }
 

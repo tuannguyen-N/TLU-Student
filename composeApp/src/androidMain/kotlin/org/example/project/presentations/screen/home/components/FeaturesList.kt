@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.example.project.domain.model.FeatureType
 import org.example.project.domain.model.FeatureUiModel
 import org.example.project.presentations.screen.features.components.FeatureGrid
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -21,7 +22,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun FeatureList(
     modifier: Modifier = Modifier,
     items: List<FeatureUiModel>,
-    onClickItem: (FeatureUiModel) -> Unit = {},
+    onClickItem: (FeatureType) -> Unit = {},
     onClickAll: () -> Unit = {}
 ) {
     Column(modifier = modifier) {
@@ -52,7 +53,7 @@ fun FeatureList(
 
         FeatureGrid(
             items = items,
-            onClickFeature = onClickItem,
+            onClickFeature = {onClickItem(it.type)},
             modifier = Modifier.padding(horizontal = 15.dp)
         )
     }
