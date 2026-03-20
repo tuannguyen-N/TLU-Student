@@ -42,7 +42,7 @@ fun ButtonView(
         shape = shape,
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(50.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColorRes,
             disabledContainerColor = Color(0xFFE0E0E0),

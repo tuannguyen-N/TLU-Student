@@ -3,6 +3,7 @@ package org.example.project.presentations.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Apartment
+import androidx.compose.material.icons.outlined.AssignmentInd
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material.icons.outlined.CalendarMonth
@@ -29,7 +30,7 @@ import org.example.project.presentations.navigation.Routes
 
 fun FeatureType.toImageVector(): ImageVector {
     return when (this) {
-        FeatureType.VIEW_GRADES     -> Icons.Outlined.StarBorder
+        FeatureType.DIGITAL_STUDENT_CARD     -> Icons.Outlined.AssignmentInd
         FeatureType.EXAM_SCHEDULE        -> Icons.Outlined.CalendarMonth
         FeatureType.COURSE_REGISTER -> Icons.Outlined.EditNote
         FeatureType.GPA_PREDICTION       -> Icons.Outlined.AutoAwesome
@@ -49,7 +50,7 @@ fun FeatureType.toImageVector(): ImageVector {
 
 fun FeatureType.toIconBackgroundColor(): Color {
     return when (this) {
-        FeatureType.VIEW_GRADES      -> Color(0xFFDDE8FF)
+        FeatureType.DIGITAL_STUDENT_CARD      -> Color(0xFFDDE8FF)
         FeatureType.EXAM_SCHEDULE         -> Color(0xFFD6F5EC)
         FeatureType.COURSE_REGISTER  -> Color(0xFFEFE0FF)
         FeatureType.GPA_PREDICTION        -> Color(0xFFFFEDD5)
@@ -69,7 +70,7 @@ fun FeatureType.toIconBackgroundColor(): Color {
 
 fun FeatureType.toIconTintColor(): Color {
     return when (this) {
-        FeatureType.VIEW_GRADES      -> Color(0xFF3D72E8)
+        FeatureType.DIGITAL_STUDENT_CARD      -> Color(0xFF3D72E8)
         FeatureType.EXAM_SCHEDULE         -> Color(0xFF1AAF7A)
         FeatureType.COURSE_REGISTER  -> Color(0xFF9B4DCA)
         FeatureType.GPA_PREDICTION        -> Color(0xFFE87D3D)
@@ -92,6 +93,7 @@ fun FeatureType.toRoute(): String{
         FeatureType.FEEDBACK -> Routes.Feedback
         FeatureType.EXAM_SCHEDULE -> Routes.ExamSchedule
         FeatureType.GPA_PREDICTION -> Routes.GpaPredict
+        FeatureType.DIGITAL_STUDENT_CARD -> Routes.DigitalStudentCard
         else -> "" // TODO:
     }
 }

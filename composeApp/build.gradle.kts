@@ -34,6 +34,7 @@ kotlin {
             implementation("io.coil-kt:coil-compose:2.7.0")
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
             implementation("com.kizitonwose.calendar:compose-multiplatform:2.10.0")
+            implementation("com.google.zxing:core:3.5.2")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

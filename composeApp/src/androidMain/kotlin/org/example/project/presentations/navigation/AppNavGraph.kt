@@ -16,7 +16,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.example.project.domain.model.FeatureType
 import org.example.project.domain.model.FeatureUiModel
+import org.example.project.domain.usecase.CountdownTimerUseCase
+import org.example.project.domain.usecase.GenerateQrUseCase
 import org.example.project.domain.usecase.GpaPredictUseCase
+import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardScreen
+import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardViewModel
+import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardViewModelFactory
 import org.example.project.presentations.screen.edit_profile.EditProfileScreen
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModel
 import org.example.project.presentations.screen.edit_profile.EditProfileViewModelFactory
@@ -282,6 +287,22 @@ fun AppNavGraph() {
 
         composable(Routes.FeedbackDetail) {
             FeedbackDetailScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.DigitalStudentCard) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                DigitalStudentCardViewModelFactory(
+                    container.studentUseCase,
+                    CountdownTimerUseCase(),
+                    GenerateQrUseCase()
+                )
+            }
+            val digitalStudentCardViewModel: DigitalStudentCardViewModel =
+                viewModel(factory = factory)
+            DigitalStudentCardScreen(
+                digitalStudentCardViewModel,
+                onBack = { navController.popBackStack() })
         }
     }
 }

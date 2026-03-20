@@ -88,15 +88,17 @@ class HomeViewModel(
     }
 
     private suspend fun loadCourseClasses() {
-        updateState { copy(loadingScheduleClassList = true) }
-        scheduleUseCase.getDaySchedule(getTodayDayOfWeek()).fold(
-            onSuccess = { updateState { copy(loadingScheduleClassList = false) } },
-            onFailure = { updateState { copy(loadingScheduleClassList = false) } }
-        )
+        withDelayedLoading(
+            onLoading = { updateState { copy(loadingScheduleClassList = it) } }
+        ) {
+            scheduleUseCase.getDaySchedule(getTodayDayOfWeek())
+        }
     }
 
     private suspend fun loadStudentInfo() {
-        withDelayedLoading(onLoading = { updateState { copy(loadingStudentInfo = it) } }) {
+        withDelayedLoading(
+            onLoading = { updateState { copy(loadingStudentInfo = it) } }
+        ) {
             studentUseCase.getStudentInfo()
         }
     }

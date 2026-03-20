@@ -15,4 +15,5 @@ object Routes {
     const val FeaturesScreen = "features_screen"
     const val ExamSchedule = "exam_schedule"
     const val GpaPredict = "gpa_predict"
+    const val DigitalStudentCard = "digital_student_card"
 }

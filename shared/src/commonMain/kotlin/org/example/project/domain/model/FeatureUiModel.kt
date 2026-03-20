@@ -6,14 +6,14 @@ data class FeatureUiModel(
 ) {
     companion object {
         fun getQuickAccessList() = listOf(
-            FeatureUiModel("Xem điểm",       FeatureType.VIEW_GRADES),
+            FeatureUiModel("Thẻ sinh viên",       FeatureType.DIGITAL_STUDENT_CARD),
             FeatureUiModel("Lịch thi",        FeatureType.EXAM_SCHEDULE),
             FeatureUiModel("Đăng ký môn",     FeatureType.COURSE_REGISTER),
             FeatureUiModel("Dự đoán GPA",        FeatureType.GPA_PREDICTION),
         )
 
         fun getGeneralList() = listOf(
-            FeatureUiModel("Xem điểm",        FeatureType.VIEW_GRADES),
+            FeatureUiModel("Thẻ sinh viên",        FeatureType.DIGITAL_STUDENT_CARD),
             FeatureUiModel("Lịch thi",        FeatureType.EXAM_SCHEDULE),
             FeatureUiModel("Đăng ký môn",     FeatureType.COURSE_REGISTER),
             FeatureUiModel("Dự đoán GPA",        FeatureType.GPA_PREDICTION),
@@ -34,7 +34,7 @@ data class FeatureUiModel(
 }
 
 enum class FeatureType {
-    VIEW_GRADES,
+    DIGITAL_STUDENT_CARD,
     EXAM_SCHEDULE,
     COURSE_REGISTER,
     GPA_PREDICTION,
