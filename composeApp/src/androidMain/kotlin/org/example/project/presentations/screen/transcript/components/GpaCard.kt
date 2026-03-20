@@ -3,9 +3,15 @@ package org.example.project.presentations.screen.transcript.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,10 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,96 +35,113 @@ import org.example.project.presentations.utils.toTextRank
 @Composable
 fun GpaCard(
     modifier: Modifier = Modifier,
-    gpa: Double = 1.0,
-    credit: Int = 36
+    gpa: Double = 3.3,
+    credit: Int = 36,
+    totalCredit: Int = 136
 ) {
     val rank = gpa.toAcademicRank()
     val textColor = rank.toColor()
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(16.dp),
-                clip = false
+                elevation = 1.dp,
+                shape = RoundedCornerShape(14.dp)
             )
-            .clip(RoundedCornerShape(14.dp))
             .background(Color.White)
-            .padding(vertical = 18.dp, horizontal = 40.dp)
+            .padding(vertical = 20.dp, horizontal = 24.dp)
     ) {
+        RankAchievement(gpa = gpa)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         Text(
-            text = "GPA",
-            color = LocalExtendedColors.current.gray,
-            style = MaterialTheme.typography.titleMedium
+            text = "Điểm trung bình tích luỹ (GPA)",
+            color = LocalExtendedColors.current.grayNavy,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         )
 
-        Row(modifier = Modifier.padding(top = 5.dp, bottom = 10.dp)) {
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(verticalAlignment = Alignment.Bottom) {
             Text(
                 text = gpa.toString(),
                 fontWeight = FontWeight.Bold,
                 color = textColor,
-                style = MaterialTheme.typography.titleLarge,
-                fontSize = 30.sp
+                fontSize = 52.sp,
+                lineHeight = 56.sp
             )
-
             Text(
                 text = "/4.0",
                 color = LocalExtendedColors.current.gray,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .padding(start = 4.dp, bottom = 2.dp)
-                    .align(Alignment.Bottom)
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
             )
         }
 
-        RankAchievement(gpa = gpa)
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = buildAnnotatedString {
-                append("Đã tích luỹ: ")
-
-                withStyle(
-                    style = SpanStyle(
-                        color = Color.Black,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                ) {
-                    append("$credit")
-                }
-                append("/136 tín chỉ")
-            },
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 12.dp),
-            color = LocalExtendedColors.current.gray
+            text = "Tiến độ học tập",
+            color = LocalExtendedColors.current.grayNavy,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            LinearProgressIndicator(
+                progress = credit.toFloat() / totalCredit.toFloat(),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                color = textColor,
+                trackColor = LocalExtendedColors.current.gray.copy(alpha = 0.2f)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = "$credit/$totalCredit Tín chỉ",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black
+            )
+        }
     }
 }
 
 @Composable
 fun RankAchievement(
     gpa: Double
-){
+) {
     val color = gpa.toAcademicRank().toColor()
 
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(14.dp))
-            .background(color.copy(alpha = 0.4f))
-            .padding(horizontal = 10.dp, vertical = 4.dp),
+            .clip(RoundedCornerShape(20.dp))
+            .background(color.copy(alpha = 0.15f))
+            .padding(horizontal = 12.dp, vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(R.drawable.icon_ranking),
             contentDescription = null,
-            tint = color
+            tint = color,
+            modifier = Modifier.size(18.dp)
         )
+
+        Spacer(modifier = Modifier.width(6.dp))
 
         Text(
             text = "Sinh viên ${gpa.toTextRank()}",
             color = color,
             style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(start = 4.dp)
+            fontWeight = FontWeight.SemiBold
         )
     }
 }

@@ -1,17 +1,23 @@
 package org.example.project.presentations.screen.transcript.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,11 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import org.example.project.R
+import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.toAcademicRank
 import org.example.project.presentations.utils.toColor
@@ -33,100 +37,127 @@ import org.example.project.presentations.utils.toTextTermRank
 @Composable
 fun SubjectCard(
     modifier: Modifier = Modifier,
+    academicYear: String,
     termNumber: String,
-    subjects: List<String> ,
-    gpa: Double = 2.2,
-    credits: Int = 15,
+    subjects: List<String>,
+    gpa: Double,
+    credits: Int,
     onOpenTranscriptTerm: () -> Unit
 ) {
     val color = gpa.toAcademicRank().toColor()
     val rank = gpa.toTextTermRank()
+    val maxVisible = 3
+    val visibleSubjects = subjects.take(maxVisible)
+    val remaining = subjects.size - maxVisible
 
     Column(
         modifier = modifier
             .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(14.dp),
-                clip = false
+                elevation = 1.dp,
+                shape = RoundedCornerShape(14.dp)
             )
-            .clip(RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .background(Color.White)
-            .padding(12.dp)
+            .padding(16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
         ) {
-            Text(
-                text = "Học kỳ $termNumber",
-                color = LocalExtendedColors.current.mainBlue,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-            )
+            Column {
+                Text(
+                    text = "Học kỳ $termNumber",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "Năm học $academicYear",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
 
-            RankCard(color, rank)
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(LocalExtendedColors.current.gray.copy(alpha = 0.15f))
+                    .clickable(onClick = onOpenTranscriptTerm),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "Xem chi tiết",
+                    tint = LocalExtendedColors.current.gray,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
 
-        Spacer(Modifier.height(3.dp))
-
-        Text(
-            text = subjects.joinToString(", "),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF66778D)
-        )
+        Spacer(Modifier.height(16.dp))
 
         Row(
-            modifier = Modifier.padding(top = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
         ) {
             Information(
                 title = "GPA",
                 value = gpa.toString(),
-                modifier = modifier.padding(end = 25.dp),
-                color = color
+                color = color,
+                modifier = Modifier.weight(1f)
             )
 
             Information(
                 title = "TÍN CHỈ",
                 value = credits.toString(),
-                color = Color.Black
+                color = Color.Black,
+                modifier = Modifier.weight(1f)
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            IconButton(
-                onClick = onOpenTranscriptTerm
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.icon_go_button),
-                    contentDescription = null,
+            Column(modifier = Modifier.weight(1.5f)) {
+                Text(
+                    text = "XẾP LOẠI",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = LocalExtendedColors.current.grayNavy,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Spacer(Modifier.height(6.dp))
+                LabelView(
+                    text = rank,
+                    backgroundColor = color.copy(alpha = 0.15f),
+                    textColor = color
                 )
             }
         }
-    }
-}
 
-@Composable
-fun RankCard(
-    color: Color,
-    rank: String
-) {
-    Box(
-        modifier = Modifier
-            .clip(
-                RoundedCornerShape(14.dp)
-            )
-            .background(color.copy(alpha = 0.4f))
-            .padding(horizontal = 10.dp, vertical = 2.dp)
-    ) {
-        Text(
-            text = rank,
-            color = color,
-            style = MaterialTheme.typography.labelLarge,
+        Spacer(Modifier.height(8.dp))
+
+        HorizontalDivider(
+            thickness = 0.5.dp,
+            color = LocalExtendedColors.current.gray
         )
+
+        Spacer(Modifier.height(12.dp))
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            visibleSubjects.forEach { subject ->
+                LabelView(
+                    text = subject,
+                    backgroundColor = LocalExtendedColors.current.gray.copy(alpha = 0.15f),
+                    textColor = LocalExtendedColors.current.gray
+                )
+            }
+            if (remaining > 0) {
+                LabelView(
+                    text = "+$remaining môn khác",
+                    backgroundColor = LocalExtendedColors.current.gray.copy(alpha = 0.15f),
+                    textColor = LocalExtendedColors.current.gray
+                )
+            }
+        }
     }
 }
 
@@ -137,16 +168,14 @@ fun Information(
     color: Color,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = title,
             style = MaterialTheme.typography.labelMedium,
-            color = Color(0xFF66778D),
+            color = LocalExtendedColors.current.grayNavy,
             fontWeight = FontWeight.SemiBold,
         )
-
+        Spacer(Modifier.height(4.dp))
         Text(
             text = value,
             style = MaterialTheme.typography.titleLarge,

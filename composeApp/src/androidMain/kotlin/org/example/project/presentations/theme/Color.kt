@@ -4,7 +4,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 
-data class ExtendedColors (
+data class ExtendedColors(
     val background: Color = Background,
     val mainRed: Color = MainRed,
     val mainBlue: Color = MainBlue,
@@ -21,7 +21,9 @@ data class ExtendedColors (
     val gray: Color = Color(0xFF848484),
     val grayButton: Color = Color(0xFFD9D9D9),
     val fontBlue: Color = Color(0xFF016DB7),
-    val yellowRanking: Color = Color(0xFF9FA616),
+    val yellowRanking: Color = Color(0xFFEAB308),
+    val average: Color = Color(0xFFF97316),
+    val purple: Color = Color(0xFF7C3AED),
     val orange: Color = Color(0xFFf97416),
     val seaSerpent: Color = Color(0xFF3AC2D8),
     val grayNavy: Color = Color(0xFF64748B),

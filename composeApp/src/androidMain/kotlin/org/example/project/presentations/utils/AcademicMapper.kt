@@ -7,7 +7,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 fun Double.toAcademicRank(): AcademicRank {
     return when {
-        this >= 3.6 -> AcademicRank.EXCELLENT
+        this >= 3.8 -> AcademicRank.EXCELLENT
+        this >= 3.6 -> AcademicRank.VERY_GOOD
         this >= 2.5 -> AcademicRank.GOOD
         this >= 2.0 -> AcademicRank.AVERAGE
         else -> AcademicRank.WEAK
@@ -16,13 +17,15 @@ fun Double.toAcademicRank(): AcademicRank {
 
 @Composable
 fun AcademicRank.toColor(): Color = when (this) {
-    AcademicRank.EXCELLENT -> LocalExtendedColors.current.green
+    AcademicRank.EXCELLENT -> LocalExtendedColors.current.purple
+    AcademicRank.VERY_GOOD -> LocalExtendedColors.current.green
     AcademicRank.GOOD -> LocalExtendedColors.current.yellowRanking
-    AcademicRank.AVERAGE -> LocalExtendedColors.current.orange
+    AcademicRank.AVERAGE -> LocalExtendedColors.current.average
     AcademicRank.WEAK -> LocalExtendedColors.current.red
 }
 
 fun Double.toTextRank(): String = when {
+    this >= 3.8 -> "Xuất sắc"
     this >= 3.6 -> "Giỏi"
     this >= 2.5 -> "Khá"
     this >= 2.0 -> "Trung bình"
@@ -30,6 +33,7 @@ fun Double.toTextRank(): String = when {
 }
 
 fun Double.toTextTermRank(): String = when {
+    this >= 3.8 -> "Xuất sắc"
     this >= 3.6 -> "Giỏi"
     this >= 2.5 -> "Khá"
     this >= 2.0 -> "Đạt"
