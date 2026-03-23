@@ -40,8 +40,8 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
             )
         )
         delay(1000L)
-        navController.navigate(AppRoute.Login){
-            popUpTo(AppRoute.Splash){
+        navController.navigate(AppRoute.Login) {
+            popUpTo(AppRoute.Splash) {
                 inclusive = true
             }
         }

@@ -1,7 +1,5 @@
 package org.example.project.presentations.screen.edit_profile
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -175,9 +172,9 @@ fun EditProfileScreen(
         }
     }
 
-    if (uiState.isShowExitDialog){
+    if (uiState.isShowExitDialog) {
         ExitConfirmDialog(
-            onDismiss = {viewModel.onDismissExitDialog()},
+            onDismiss = { viewModel.onDismissExitDialog() },
             onConfirm = {
                 onBack()
             }

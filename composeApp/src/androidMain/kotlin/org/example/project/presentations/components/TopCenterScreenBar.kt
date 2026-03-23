@@ -65,7 +65,7 @@ fun TopCenterScreenBar(
                 modifier = Modifier.align(Alignment.Center)
             )
 
-            if (enableActionButton){
+            if (enableActionButton) {
                 IconButton(
                     onClick = onClickAction,
                     modifier = Modifier.align(Alignment.CenterEnd)

@@ -8,10 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.presentations.screen.feedback.FeedBackState
 import org.example.project.domain.model.SubjectOption
 
-class FeedbackViewModel: ViewModel() {
+class FeedbackViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(FeedBackState())
     val uiState: StateFlow<FeedBackState> = _uiState.asStateFlow()
 
@@ -31,11 +30,11 @@ class FeedbackViewModel: ViewModel() {
         _uiState.update { it.copy(subject = value) }
     }
 
-    fun onAddImage(image: Uri){
+    fun onAddImage(image: Uri) {
         _uiState.update { it.copy(attachedImages = it.attachedImages + image.toString()) }
     }
 
-    fun onRemoveImage(image: Uri){
+    fun onRemoveImage(image: Uri) {
         _uiState.update { it.copy(attachedImages = it.attachedImages - image.toString()) }
     }
 

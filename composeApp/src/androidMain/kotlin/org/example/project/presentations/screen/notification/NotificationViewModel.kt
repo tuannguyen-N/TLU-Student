@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.example.project.domain.model.Notification
-import org.example.project.presentations.screen.notification.NotificationState
 import org.example.project.domain.model.NotificationType
 
 class NotificationViewModel : ViewModel() {

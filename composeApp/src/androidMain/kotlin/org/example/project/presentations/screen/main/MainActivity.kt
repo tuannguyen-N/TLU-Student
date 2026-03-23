@@ -24,15 +24,15 @@ class MainActivity : ComponentActivity() {
         hideBottonNavigationBar()
     }
 
-    private fun initAppContainer(){
+    private fun initAppContainer() {
         val tokenStorage = AndroidTokenStorage(
             context = applicationContext
         )
         container = AppContainer(tokenStorage, applicationContext)
     }
 
-    private fun initMsal(){
-        MsalHelper.init(this){
+    private fun initMsal() {
+        MsalHelper.init(this) {
             setContent {
                 CompositionLocalProvider(
                     LocalAppContainer provides container
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun restartApp(){
+    private fun restartApp() {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -55,12 +55,12 @@ class MainActivity : ComponentActivity() {
         finish()
     }
 
-    private fun fitSystemWindow(){
+    private fun fitSystemWindow() {
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
-    private fun hideBottonNavigationBar(){
+    private fun hideBottonNavigationBar() {
         val controller = WindowInsetsControllerCompat(window, window.decorView)
         controller.hide(WindowInsetsCompat.Type.navigationBars())
         controller.systemBarsBehavior =

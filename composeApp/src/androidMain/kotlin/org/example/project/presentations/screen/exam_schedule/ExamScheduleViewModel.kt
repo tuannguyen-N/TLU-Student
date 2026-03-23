@@ -101,7 +101,7 @@ class ExamScheduleViewModel(
         }
     }
 
-    fun onResetData(){
+    fun onResetData() {
         updateState { copy(resetTrigger = resetTrigger + 1) }
         initData()
     }

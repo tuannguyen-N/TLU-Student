@@ -47,19 +47,19 @@ class FeaturesViewModel(
         }
     }
 
-    fun onBack(){
-        if (_isEditing.value){
+    fun onBack() {
+        if (_isEditing.value) {
             _showExitDialog.value = true
-        }else {
+        } else {
             sendUiEvent(FeatureUiEvent.OnBack)
         }
     }
 
-    fun onDismissExitDialog(){
+    fun onDismissExitDialog() {
         _showExitDialog.value = false
     }
 
-    private fun sendUiEvent(event: FeatureUiEvent){
+    private fun sendUiEvent(event: FeatureUiEvent) {
         viewModelScope.launch {
             _event.trySend(event)
         }

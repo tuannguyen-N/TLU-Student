@@ -94,7 +94,7 @@ fun GpaCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             LinearProgressIndicator(
-                progress = {credit.toFloat() / totalCredit.toFloat()},
+                progress = { credit.toFloat() / totalCredit.toFloat() },
                 modifier = Modifier
                     .weight(1f)
                     .height(8.dp)

@@ -28,7 +28,7 @@ import org.example.project.presentations.utils.CollectWithLifecycle
 fun FeaturesScreen(
     viewModel: FeaturesViewModel,
     onBack: () -> Unit = {},
-    onNavigate:(FeatureUiModel) -> Unit = {},
+    onNavigate: (FeatureUiModel) -> Unit = {},
 ) {
     val isEditing by viewModel.isEditing.collectAsState()
     val isExitDialog by viewModel.showExitDialog.collectAsState()
@@ -104,9 +104,9 @@ fun FeaturesScreen(
         }
     }
 
-    if(isExitDialog){
+    if (isExitDialog) {
         ExitConfirmDialog(
-            onDismiss = {viewModel.onDismissExitDialog()},
+            onDismiss = { viewModel.onDismissExitDialog() },
             onConfirm = {
                 onBack()
             }

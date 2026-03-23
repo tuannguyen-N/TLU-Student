@@ -49,7 +49,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Preview
 @Composable
 fun TeacherDetailInfoDialog(
-    lecturer: Lecturer = Lecturer("123123", "Nguyễn Văn A", "0987654321","asdfasdfasdf@adsfasdf"),
+    lecturer: Lecturer = Lecturer("123123", "Nguyễn Văn A", "0987654321", "asdfasdfasdf@adsfasdf"),
     onContact: () -> Unit = {},
     onDismiss: () -> Unit = {},
     onCopyLecturerCode: () -> Unit = {},
@@ -63,7 +63,7 @@ fun TeacherDetailInfoDialog(
             dismissOnBackPress = true,
             dismissOnClickOutside = false
         )
-    ){
+    ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -78,7 +78,8 @@ fun TeacherDetailInfoDialog(
             ) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {

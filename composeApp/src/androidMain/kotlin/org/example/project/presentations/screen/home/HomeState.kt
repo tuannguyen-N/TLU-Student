@@ -8,7 +8,7 @@ import org.example.project.domain.model.NewAndEventUiModel
 
 data class HomeState(
     val studentInfo: StudentInformation? = null,
-    val courseClasses: List<CourseClass> ? = null,
+    val courseClasses: List<CourseClass>? = null,
     val quickAccessList: List<FeatureUiModel> = emptyList(),
     val alerts: List<AlertUiModel> = AlertUiModel.Companion.getDemoList(),
     val newsAndEvents: List<NewAndEventUiModel> = NewAndEventUiModel.Companion.getDataDemo(),

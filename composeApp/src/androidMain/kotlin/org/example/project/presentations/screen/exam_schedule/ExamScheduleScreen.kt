@@ -15,7 +15,7 @@ fun ExamScheduleScreen(
     ExamScheduleContent(
         uiState = uiState,
         onBack = onBack,
-        onTabSelected =  viewModel::onTabSelected,
+        onTabSelected = viewModel::onTabSelected,
         onToggleDropdown = viewModel::onToggleDropdown,
         onSemesterChanged = viewModel::onSemesterChanged,
         onChangeDate = viewModel::onChangeDate,

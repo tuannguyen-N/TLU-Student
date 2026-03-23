@@ -53,7 +53,7 @@ fun FeatureList(
 
         FeatureGrid(
             items = items,
-            onClickFeature = {onClickItem(it.type)},
+            onClickFeature = { onClickItem(it.type) },
             modifier = Modifier.padding(horizontal = 15.dp)
         )
     }

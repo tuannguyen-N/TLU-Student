@@ -84,6 +84,7 @@ class DigitalStudentCardViewModel(
                                 copy(qrState = state.copy(timeLeft = remaining))
                             }
                         }
+
                         else -> this
                     }
                 }

@@ -15,16 +15,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.screen.feedback.components.FeedbackFormContent
 import org.example.project.presentations.screen.feedback.components.FeedbackHistoryContent
-import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun FeedbackScreen(
     viewModel: FeedbackViewModel,
-    onBack: () -> Unit ={}
+    onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val tabs = listOf(

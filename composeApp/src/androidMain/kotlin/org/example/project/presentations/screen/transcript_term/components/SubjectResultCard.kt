@@ -6,7 +6,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +40,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.isPass
 import org.example.project.presentations.utils.toAcademicRank
 import org.example.project.presentations.utils.toColor
 
@@ -56,7 +54,7 @@ fun SubjectResultCard(
     finalScore: Double = 8.5,
     score10: Double = 8.5,
     score4: Double = 3.5,
-    letterGrade: String ="B"
+    letterGrade: String = "B"
 ) {
     val color = score4.toAcademicRank().toColor()
 
@@ -78,14 +76,21 @@ fun SubjectResultCard(
             .padding(12.dp)
     ) {
 
-        Image(
-            painterResource(
-                if (score4.isPass())
-                    R.drawable.icon_pass else R.drawable.icon_fail
-            ),
-            contentDescription = null,
-            modifier = Modifier.align(Alignment.TopEnd)
-        )
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(color.copy(alpha = 0.1f))
+                .size(30.dp)
+                .align(Alignment.TopEnd),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = letterGrade,
+                fontWeight = FontWeight.Bold,
+                color = color,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -117,12 +122,6 @@ fun SubjectResultCard(
                 Information(
                     title = "ĐIỂM HỆ 10",
                     value = score10.toString(),
-                    color = color,
-                )
-
-                Information(
-                    title = "ĐIỂM CHỮ",
-                    value = letterGrade,
                     color = color,
                 )
 

@@ -69,7 +69,10 @@ fun AcademicAdvisorItem(
 
         if (!isLasItem) {
             Spacer(
-                modifier = Modifier.background(LocalExtendedColors.current.gray).fillMaxWidth().height(1.dp)
+                modifier = Modifier
+                    .background(LocalExtendedColors.current.gray)
+                    .fillMaxWidth()
+                    .height(1.dp)
             )
         }
     }

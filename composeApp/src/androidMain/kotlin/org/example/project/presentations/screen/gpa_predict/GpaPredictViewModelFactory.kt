@@ -12,14 +12,14 @@ class GpaPredictViewModelFactory(
     private val transcriptUseCase: TranscriptUseCase,
     private val scheduleUseCase: ScheduleUseCase,
     private val gpaPredictUseCase: GpaPredictUseCase
-): ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (modelClass.isAssignableFrom(GpaPredictViewModel::class.java)) {
             return GpaPredictViewModel(
                 semesterUseCase = semesterUseCase,
                 transcriptUseCase = transcriptUseCase,
-                scheduleUseCase =scheduleUseCase,
+                scheduleUseCase = scheduleUseCase,
                 gpaPredictUseCase = gpaPredictUseCase
             ) as T
         }

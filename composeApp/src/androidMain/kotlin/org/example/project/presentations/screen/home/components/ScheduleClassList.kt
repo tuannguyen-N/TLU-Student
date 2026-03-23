@@ -13,18 +13,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.shimmerEffect
 import org.example.project.presentations.utils.isGoing
-import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 @Composable
@@ -109,7 +109,11 @@ fun ScheduleClassList(
                         if (item.isGoing(currentTime)) {
                             ScheduleCurrent(modifier = modifier, item = item)
                         } else {
-                            ScheduleNext(modifier = modifier, item = item, currentTime = currentTime)
+                            ScheduleNext(
+                                modifier = modifier,
+                                item = item,
+                                currentTime = currentTime
+                            )
                         }
                     }
                 }

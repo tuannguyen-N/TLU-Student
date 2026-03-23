@@ -22,10 +22,9 @@ import androidx.compose.ui.unit.sp
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
-import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamDay
-import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.presentations.components.LabelView
+import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable

@@ -56,21 +56,23 @@ fun NotificationScreen(
 
             NotificationList(
                 notifications = state.notifications,
-                modifier = Modifier.fillMaxHeight().background(LocalExtendedColors.current.background),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .background(LocalExtendedColors.current.background),
                 onShowBottomSheet = {
                     showBottomSheet = true
                 }
             )
         }
 
-        if (showBottomSheet){
+        if (showBottomSheet) {
             ModalBottomSheet(
-                onDismissRequest = {showBottomSheet  = false},
+                onDismissRequest = { showBottomSheet = false },
                 dragHandle = null,
-                shape = RoundedCornerShape(0,0,0,0),
+                shape = RoundedCornerShape(0, 0, 0, 0),
             ) {
                 NotificationBottomSheetContent(
-                    onDismiss = {showBottomSheet = false}
+                    onDismiss = { showBottomSheet = false }
                 )
             }
         }

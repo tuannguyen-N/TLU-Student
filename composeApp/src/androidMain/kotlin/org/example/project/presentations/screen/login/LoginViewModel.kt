@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.presentations.screen.login.LoginState
 import org.example.project.domain.usecase.LoginUseCase
 import org.example.project.presentations.utils.MsalHelper
 
@@ -30,7 +29,7 @@ class LoginViewModel(
             MsalHelper.signOut {}//todo
             delay(1000L)
             MsalHelper.signIn(activity) { newToken ->
-                Log.e("123123", "onLoginClick: $newToken", )
+                Log.e("123123", "onLoginClick: $newToken")
                 if (newToken != null) onSignMsalSuccess(newToken)
                 updateState { copy(isLoading = false) }
             }
@@ -44,7 +43,7 @@ class LoginViewModel(
                     sendUiEvent(LoginUiEvent.OnNavigateToHome)
                 },
                 onFailure = {
-                    Log.e("123123", "onSignMsalSuccess: $it", )
+                    Log.e("123123", "onSignMsalSuccess: $it")
                     updateState { copy(showErrorSheet = true) }
                 }
             )

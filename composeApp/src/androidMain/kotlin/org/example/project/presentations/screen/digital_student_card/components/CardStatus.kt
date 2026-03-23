@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,17 +33,26 @@ fun CardStatus(
 ) {
     val color = LocalExtendedColors.current
     Row(
-        modifier = modifier.clip(shape = RoundedCornerShape(16.dp)).background(Color(0xFF2BFF58).copy(alpha = 0.15f)).fillMaxWidth().padding(12.dp),
+        modifier = modifier
+            .clip(shape = RoundedCornerShape(16.dp))
+            .background(Color(0xFF2BFF58).copy(alpha = 0.15f))
+            .fillMaxWidth()
+            .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = Modifier.size(30.dp).clip(CircleShape).background(color.green)
-        ){
+            modifier = Modifier
+                .size(30.dp)
+                .clip(CircleShape)
+                .background(color.green)
+        ) {
             Icon(
                 imageVector = Icons.Filled.Done,
                 contentDescription = null,
-                modifier = Modifier.size(20.dp).align(Alignment.Center),
+                modifier = Modifier
+                    .size(20.dp)
+                    .align(Alignment.Center),
                 tint = color.white
             )
         }

@@ -11,7 +11,7 @@ fun Context.openDialer(phone: String = "123123123") {
     startActivity(intent)
 }
 
-fun Context.openEmail(email: String){
+fun Context.openEmail(email: String) {
     val intent = Intent(Intent.ACTION_SENDTO).apply {
         data = "mailto:$email".toUri()
     }

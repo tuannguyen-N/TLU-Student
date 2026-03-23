@@ -28,7 +28,7 @@ fun LoadingView(modifier: Modifier = Modifier) {
             .background(Color.Black.copy(alpha = 0.4f))
             .clickable(enabled = false) {},
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

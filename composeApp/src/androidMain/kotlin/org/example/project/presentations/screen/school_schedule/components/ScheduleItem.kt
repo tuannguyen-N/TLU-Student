@@ -26,7 +26,6 @@ import org.example.project.R
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.isGoing
-import org.example.project.presentations.utils.toHourMinute
 import org.example.project.presentations.utils.toHourMinuteAmPm
 
 @Composable

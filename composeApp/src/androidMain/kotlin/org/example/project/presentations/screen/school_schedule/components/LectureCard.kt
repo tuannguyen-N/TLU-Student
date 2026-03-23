@@ -41,8 +41,8 @@ fun LecturerCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F7)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        colors = CardDefaults.cardColors(containerColor = LocalExtendedColors.current.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column {
             Row(
@@ -105,7 +105,9 @@ fun LecturerCard(
 
                 IconButton(
                     onClick = onOpenDetailLecturerInfo,
-                    modifier = Modifier.size(18.dp).align(Alignment.Top)
+                    modifier = Modifier
+                        .size(18.dp)
+                        .align(Alignment.Top)
                 ) {
                     Icon(
                         painter = painterResource(org.example.project.R.drawable.icon_more_information),

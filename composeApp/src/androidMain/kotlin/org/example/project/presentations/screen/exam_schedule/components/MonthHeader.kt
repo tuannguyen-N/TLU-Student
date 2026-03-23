@@ -16,11 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import com.kizitonwose.calendar.core.minusMonths
+import com.kizitonwose.calendar.core.plusMonths
 import kotlinx.coroutines.launch
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.number
-import com.kizitonwose.calendar.core.minusMonths
-import com.kizitonwose.calendar.core.plusMonths
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable

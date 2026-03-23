@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.presentations.screen.profile.ProfileState
 import org.example.project.domain.usecase.StudentUseCase
 
 class ProfileViewModel(
@@ -24,7 +23,7 @@ class ProfileViewModel(
         observeStudentInfo()
     }
 
-    private fun observeStudentInfo(){
+    private fun observeStudentInfo() {
         viewModelScope.launch {
             studentUseCase.studentInfo.collect { studentInformation ->
                 updateState { copy(studentInfo = studentInformation) }

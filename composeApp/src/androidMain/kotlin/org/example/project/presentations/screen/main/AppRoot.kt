@@ -14,7 +14,7 @@ val LocalAppContainer = staticCompositionLocalOf<AppContainer> {
 
 @Composable
 fun AppRoot(
-    resetAppData: ()-> Unit
+    resetAppData: () -> Unit
 ) {
     AppTheme {
         Surface(color = MaterialTheme.colorScheme.background) {

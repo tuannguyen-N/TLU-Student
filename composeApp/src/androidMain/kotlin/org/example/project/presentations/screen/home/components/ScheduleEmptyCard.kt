@@ -47,7 +47,10 @@ fun ScheduleEmptyCard(
         Box(
             modifier = Modifier
                 .size(80.dp)
-                .background(color = LocalExtendedColors.current.seaSerpent.copy(alpha = 0.2f), shape = CircleShape),
+                .background(
+                    color = LocalExtendedColors.current.seaSerpent.copy(alpha = 0.2f),
+                    shape = CircleShape
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(

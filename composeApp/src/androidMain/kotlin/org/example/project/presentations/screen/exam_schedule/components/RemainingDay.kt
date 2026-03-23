@@ -26,7 +26,7 @@ fun RemainingDay(
             .clip(RoundedCornerShape(8.dp))
             .background(contentColor.copy(alpha = 0.15f))
             .padding(vertical = 5.dp, horizontal = 8.dp)
-    ){
+    ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

@@ -35,7 +35,7 @@ fun TodayScheduleList(
     ) {
         TitleView(onOpenTimetable)
 
-        if(courseClasses.isNotEmpty()){
+        if (courseClasses.isNotEmpty()) {
             LazyColumn(modifier = Modifier) {
                 items(courseClasses) { courseClass ->
                     ScheduleItem(
@@ -43,11 +43,11 @@ fun TodayScheduleList(
                         courseClass = courseClass,
                         isToday = isToday,
                         daysUntil = daysUntil,
-                        onOpenDetailCourseClass = {onOpenDetailCourseClass(courseClass)}
+                        onOpenDetailCourseClass = { onOpenDetailCourseClass(courseClass) }
                     )
                 }
             }
-        }else {
+        } else {
             ScheduleEmptyCard(
                 onClickViewTomorrow = onClickViewTomorrow,
             )

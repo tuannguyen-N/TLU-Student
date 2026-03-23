@@ -38,7 +38,7 @@ import org.example.project.presentations.utils.CollectWithLifecycle
 @Composable
 fun SettingScreen(
     viewModel: SettingViewModel,
-    resetAppData:() -> Unit,
+    resetAppData: () -> Unit,
     onBack: () -> Unit = {}
 ) {
     viewModel.event.CollectWithLifecycle { event ->

@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.presentations.theme.LocalExtendedColors
+
 @Preview(showBackground = true)
 @Composable
 fun ImportantNoteCard(

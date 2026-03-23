@@ -9,7 +9,7 @@ import org.example.project.presentations.screen.digital_student_card.components.
 fun DigitalStudentCardScreen(
     viewModel: DigitalStudentCardViewModel,
     onBack: () -> Unit
-){
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     DigitalStudentCardContent(

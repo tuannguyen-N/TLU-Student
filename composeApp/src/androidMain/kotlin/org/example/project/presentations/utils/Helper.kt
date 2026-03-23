@@ -1,16 +1,15 @@
 package org.example.project.presentations.utils
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.set
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import kotlinx.coroutines.CoroutineScope
@@ -18,8 +17,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.set
 import java.io.ByteArrayOutputStream
 
 val vietnameseDayLabels = listOf("Th 2", "Th 3", "Th 4", "Th 5", "Th 6", "Th 7", "CN")
@@ -33,7 +30,7 @@ fun rememberSafeClick(
     return remember(onClick) {
         {
             val currentTime = System.currentTimeMillis()
-            if (currentTime - lastClickTime > debounceTime){
+            if (currentTime - lastClickTime > debounceTime) {
                 lastClickTime = currentTime
                 onClick()
             }

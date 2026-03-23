@@ -26,7 +26,10 @@ fun NotificationBottomSheetContent(
     onDeleteNotification: () -> Unit = {}
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().background(Color.White).padding(top = 5.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(top = 5.dp)
     ) {
 
         ActionItem(
@@ -57,17 +60,19 @@ fun ActionItem(
     color: Color,
     title: String,
     onClickAction: () -> Unit
-){
+) {
     Surface(
         onClick = onClickAction,
         color = Color.White
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp)
-        ){
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 15.dp)
+        ) {
             Icon(
                 painter = painterResource(iconRes),
-                contentDescription =  null,
+                contentDescription = null,
                 tint = color,
             )
 

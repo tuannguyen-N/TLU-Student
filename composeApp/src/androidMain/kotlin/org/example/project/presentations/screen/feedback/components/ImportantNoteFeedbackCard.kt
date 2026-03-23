@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -85,10 +84,12 @@ private fun DotText(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(Modifier
-            .size(4.dp)
-            .clip(CircleShape)
-            .background(color.grayNavy))
+        Box(
+            Modifier
+                .size(4.dp)
+                .clip(CircleShape)
+                .background(color.grayNavy)
+        )
         Spacer(Modifier.width(8.dp))
         Text(
             text = text,

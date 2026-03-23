@@ -41,7 +41,7 @@ fun FrontCard(
     course: String,
     avatarUrl: String?,
     onCreateQr: () -> Unit
-){
+) {
     val color = LocalExtendedColors.current
 
     Column {

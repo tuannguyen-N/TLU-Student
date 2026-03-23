@@ -61,7 +61,9 @@ fun EditTextView(
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = if (error != null) Color.Red else LocalExtendedColors.current.mainBlue,
-                unfocusedBorderColor = if (error != null) Color.Red else LocalExtendedColors.current.gray.copy(alpha = 0.5f),
+                unfocusedBorderColor = if (error != null) Color.Red else LocalExtendedColors.current.gray.copy(
+                    alpha = 0.5f
+                ),
 
                 cursorColor = MaterialTheme.colorScheme.primary,
 

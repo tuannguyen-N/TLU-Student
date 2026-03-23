@@ -36,7 +36,9 @@ fun FeatureSectionHeader(
         if (showEditIcon) {
             IconButton(
                 onClick = onChangeEditMode,
-                modifier = Modifier.size(25.dp).align(Alignment.CenterVertically)
+                modifier = Modifier
+                    .size(25.dp)
+                    .align(Alignment.CenterVertically)
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Edit,

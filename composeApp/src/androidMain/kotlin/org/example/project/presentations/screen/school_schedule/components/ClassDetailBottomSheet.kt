@@ -12,6 +12,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
@@ -54,4 +55,33 @@ fun ClassDetailBottomSheet(
             onOpenDetailLecturerInfo = onOpenDetailLecturerInfo
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ClassDetailBottomSheetPreview() {
+    val mockClass = CourseClass(
+        classCode = "CS101.1",
+        dayOfWeek = 2,
+        startPeriod = 1,
+        endPeriod = 3,
+        startTime = "07:00",
+        endTime = "09:30",
+        room = "A101",
+        subjectCode = "CS101",
+        subjectName = "Lập trình hướng đối tượng",
+        lecturer = Lecturer(
+            lecturerCode = "GV001",
+            fullName = "Nguyễn Văn A",
+            phoneNumber = "0123456789",
+            email = "nguyenvana@thanglong.edu.vn"
+        )
+    )
+
+    ClassDetailBottomSheet(
+        courseClass = mockClass,
+        onDismiss = {},
+        onViewMaterials = {},
+        onOpenDetailLecturerInfo = {}
+    )
 }

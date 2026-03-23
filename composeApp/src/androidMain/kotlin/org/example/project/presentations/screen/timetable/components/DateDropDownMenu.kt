@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import org.example.project.data.mapper.toDisplayWeekDate
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -44,7 +43,7 @@ fun <T> DropDownPopup(
     width: Dp,
     onDismiss: () -> Unit,
     itemDisplay: (T) -> String,
-){
+) {
     Box(modifier = modifier) {
         Popup(
             alignment = alignment,

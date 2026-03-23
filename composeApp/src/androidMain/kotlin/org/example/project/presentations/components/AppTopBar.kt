@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -30,7 +29,7 @@ fun AppTopBar(
         modifier = Modifier
             .statusBarsPadding()
             .fillMaxWidth()
-            .padding(start = 20.dp, top = 10.dp, end =10.dp, bottom = 10.dp),
+            .padding(start = 20.dp, top = 10.dp, end = 10.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

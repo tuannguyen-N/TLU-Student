@@ -10,7 +10,7 @@ class HomeViewModelFactory(
     private val studentUseCase: StudentUseCase,
     private val scheduleUseCase: ScheduleUseCase,
     private val featureRepository: FeatureRepository
-): ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {

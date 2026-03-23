@@ -20,11 +20,13 @@ fun FeedbackStatusBadge(status: FeedbackStatus) {
             Color(0xFFFFF3E0),
             Color(0xFFE65100)
         )
+
         FeedbackStatus.PROCESSING -> Triple(
             "Đang xử lý",
             Color(0xFFE3F2FD),
             Color(0xFF1565C0)
         )
+
         FeedbackStatus.RESOLVED -> Triple(
             "Đã xử lý",
             Color(0xFFE8F5E9),

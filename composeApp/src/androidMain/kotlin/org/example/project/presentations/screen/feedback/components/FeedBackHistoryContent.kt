@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.example.project.domain.model.FeedbackItem
 import org.example.project.domain.model.FeedbackStatus
 import org.example.project.presentations.theme.LocalExtendedColors

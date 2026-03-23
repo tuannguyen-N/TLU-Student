@@ -10,7 +10,7 @@ class DigitalStudentCardViewModelFactory(
     private val studentUseCase: StudentUseCase,
     private val timerUseCase: CountdownTimerUseCase,
     private val generateQrUseCase: GenerateQrUseCase
-): ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (modelClass.isAssignableFrom(DigitalStudentCardViewModel::class.java)) {

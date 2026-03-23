@@ -91,21 +91,33 @@ fun ScheduleNext(
                         drawLine(
                             color = lineColor,
                             start = androidx.compose.ui.geometry.Offset(startX, cardTopOffsetOrig),
-                            end = androidx.compose.ui.geometry.Offset(startX, size.height + 5.dp.toPx()),
+                            end = androidx.compose.ui.geometry.Offset(
+                                startX,
+                                size.height + 5.dp.toPx()
+                            ),
                             strokeWidth = 1.dp.toPx()
                         )
                     } else {
                         drawLine(
                             color = lineColor,
-                            start = androidx.compose.ui.geometry.Offset(startX, dotTopOffsetOrig + dotRadius * 2),
-                            end = androidx.compose.ui.geometry.Offset(startX, size.height + 5.dp.toPx()),
+                            start = androidx.compose.ui.geometry.Offset(
+                                startX,
+                                dotTopOffsetOrig + dotRadius * 2
+                            ),
+                            end = androidx.compose.ui.geometry.Offset(
+                                startX,
+                                size.height + 5.dp.toPx()
+                            ),
                             strokeWidth = 1.dp.toPx()
                         )
                     }
                     drawCircle(
                         color = dotColor,
                         radius = dotRadius,
-                        center = androidx.compose.ui.geometry.Offset(startX, dotTopOffsetOrig + dotRadius)
+                        center = androidx.compose.ui.geometry.Offset(
+                            startX,
+                            dotTopOffsetOrig + dotRadius
+                        )
                     )
                 }
         ) {

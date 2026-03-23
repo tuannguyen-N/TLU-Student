@@ -26,65 +26,65 @@ import org.example.project.presentations.navigation.AppRoute
 
 fun FeatureType.toImageVector(): ImageVector {
     return when (this) {
-        FeatureType.DIGITAL_STUDENT_CARD     -> Icons.Outlined.AssignmentInd
-        FeatureType.EXAM_SCHEDULE        -> Icons.Outlined.CalendarMonth
+        FeatureType.DIGITAL_STUDENT_CARD -> Icons.Outlined.AssignmentInd
+        FeatureType.EXAM_SCHEDULE -> Icons.Outlined.CalendarMonth
         FeatureType.COURSE_REGISTER -> Icons.Outlined.EditNote
-        FeatureType.GPA_PREDICTION       -> Icons.Outlined.AutoAwesome
-        FeatureType.DORMITORY       -> Icons.Outlined.Apartment
-        FeatureType.MAP             -> Icons.Outlined.Map
-        FeatureType.CLUB            -> Icons.Outlined.Favorite
-        FeatureType.JOBS            -> Icons.Outlined.Work
-        FeatureType.DIGITAL_FORM    -> Icons.Outlined.Email
-        FeatureType.PAYMENT         -> Icons.Outlined.Payment
-        FeatureType.STUDENT_CARD    -> Icons.Outlined.Badge
-        FeatureType.FEEDBACK        -> Icons.Outlined.Feedback
+        FeatureType.GPA_PREDICTION -> Icons.Outlined.AutoAwesome
+        FeatureType.DORMITORY -> Icons.Outlined.Apartment
+        FeatureType.MAP -> Icons.Outlined.Map
+        FeatureType.CLUB -> Icons.Outlined.Favorite
+        FeatureType.JOBS -> Icons.Outlined.Work
+        FeatureType.DIGITAL_FORM -> Icons.Outlined.Email
+        FeatureType.PAYMENT -> Icons.Outlined.Payment
+        FeatureType.STUDENT_CARD -> Icons.Outlined.Badge
+        FeatureType.FEEDBACK -> Icons.Outlined.Feedback
         FeatureType.TRAINING_OFFICE -> Icons.Outlined.Phone
-        FeatureType.ACADEMIC_ADVISOR-> Icons.Outlined.SupportAgent
-        FeatureType.UPCOMING        -> Icons.Outlined.Pending
+        FeatureType.ACADEMIC_ADVISOR -> Icons.Outlined.SupportAgent
+        FeatureType.UPCOMING -> Icons.Outlined.Pending
     }
 }
 
 fun FeatureType.toIconBackgroundColor(): Color {
     return when (this) {
-        FeatureType.DIGITAL_STUDENT_CARD      -> Color(0xFFDDE8FF)
-        FeatureType.EXAM_SCHEDULE         -> Color(0xFFD6F5EC)
-        FeatureType.COURSE_REGISTER  -> Color(0xFFEFE0FF)
-        FeatureType.GPA_PREDICTION        -> Color(0xFFFFEDD5)
-        FeatureType.DORMITORY        -> Color(0xFFFFD6E7)
-        FeatureType.MAP              -> Color(0xFFD6F5EC)
-        FeatureType.CLUB             -> Color(0xFFFFE0EC)
-        FeatureType.JOBS             -> Color(0xFFDCEEFF)
-        FeatureType.DIGITAL_FORM     -> Color(0xFFE0E8FF)
-        FeatureType.PAYMENT          -> Color(0xFFFFDDD5)
-        FeatureType.STUDENT_CARD     -> Color(0xFFFFF8D0)
-        FeatureType.FEEDBACK         -> Color(0xFFE8E8E8)
-        FeatureType.TRAINING_OFFICE  -> Color(0xFFE8E8E8)
+        FeatureType.DIGITAL_STUDENT_CARD -> Color(0xFFDDE8FF)
+        FeatureType.EXAM_SCHEDULE -> Color(0xFFD6F5EC)
+        FeatureType.COURSE_REGISTER -> Color(0xFFEFE0FF)
+        FeatureType.GPA_PREDICTION -> Color(0xFFFFEDD5)
+        FeatureType.DORMITORY -> Color(0xFFFFD6E7)
+        FeatureType.MAP -> Color(0xFFD6F5EC)
+        FeatureType.CLUB -> Color(0xFFFFE0EC)
+        FeatureType.JOBS -> Color(0xFFDCEEFF)
+        FeatureType.DIGITAL_FORM -> Color(0xFFE0E8FF)
+        FeatureType.PAYMENT -> Color(0xFFFFDDD5)
+        FeatureType.STUDENT_CARD -> Color(0xFFFFF8D0)
+        FeatureType.FEEDBACK -> Color(0xFFE8E8E8)
+        FeatureType.TRAINING_OFFICE -> Color(0xFFE8E8E8)
         FeatureType.ACADEMIC_ADVISOR -> Color(0xFFE8E8E8)
-        FeatureType.UPCOMING         -> Color(0xFFE8E8E8)
+        FeatureType.UPCOMING -> Color(0xFFE8E8E8)
     }
 }
 
 fun FeatureType.toIconTintColor(): Color {
     return when (this) {
-        FeatureType.DIGITAL_STUDENT_CARD      -> Color(0xFF3D72E8)
-        FeatureType.EXAM_SCHEDULE         -> Color(0xFF1AAF7A)
-        FeatureType.COURSE_REGISTER  -> Color(0xFF9B4DCA)
-        FeatureType.GPA_PREDICTION        -> Color(0xFFE87D3D)
-        FeatureType.DORMITORY        -> Color(0xFFE8437A)
-        FeatureType.MAP              -> Color(0xFF1AAF7A)
-        FeatureType.CLUB             -> Color(0xFFE84368)
-        FeatureType.JOBS             -> Color(0xFF3D88E8)
-        FeatureType.DIGITAL_FORM     -> Color(0xFF5B7AE8)
-        FeatureType.PAYMENT          -> Color(0xFFE85A3D)
-        FeatureType.STUDENT_CARD     -> Color(0xFFB8960C)
-        FeatureType.FEEDBACK         -> Color(0xFF757575)
-        FeatureType.TRAINING_OFFICE  -> Color(0xFF757575)
+        FeatureType.DIGITAL_STUDENT_CARD -> Color(0xFF3D72E8)
+        FeatureType.EXAM_SCHEDULE -> Color(0xFF1AAF7A)
+        FeatureType.COURSE_REGISTER -> Color(0xFF9B4DCA)
+        FeatureType.GPA_PREDICTION -> Color(0xFFE87D3D)
+        FeatureType.DORMITORY -> Color(0xFFE8437A)
+        FeatureType.MAP -> Color(0xFF1AAF7A)
+        FeatureType.CLUB -> Color(0xFFE84368)
+        FeatureType.JOBS -> Color(0xFF3D88E8)
+        FeatureType.DIGITAL_FORM -> Color(0xFF5B7AE8)
+        FeatureType.PAYMENT -> Color(0xFFE85A3D)
+        FeatureType.STUDENT_CARD -> Color(0xFFB8960C)
+        FeatureType.FEEDBACK -> Color(0xFF757575)
+        FeatureType.TRAINING_OFFICE -> Color(0xFF757575)
         FeatureType.ACADEMIC_ADVISOR -> Color(0xFF757575)
-        FeatureType.UPCOMING         -> Color(0xFF757575)
+        FeatureType.UPCOMING -> Color(0xFF757575)
     }
 }
 
-fun FeatureType.toRoute(): String{
+fun FeatureType.toRoute(): String {
     return when (this) {
         FeatureType.FEEDBACK -> AppRoute.Feedback
         FeatureType.EXAM_SCHEDULE -> AppRoute.ExamSchedule

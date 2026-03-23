@@ -32,7 +32,8 @@ fun SelectedDaySummary(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp).padding(top = 14.dp, bottom = 7.dp),
+            .padding(horizontal = 16.dp)
+            .padding(top = 14.dp, bottom = 7.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

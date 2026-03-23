@@ -16,7 +16,7 @@ fun NotificationList(
     onShowBottomSheet: () -> Unit,
     notifications: List<Notification>,
     modifier: Modifier = Modifier
-){
+) {
     LazyColumn(
         modifier = modifier
     ) {

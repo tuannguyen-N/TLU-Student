@@ -35,7 +35,7 @@ fun MainScreen(
     onOpenTimetable: () -> Unit,
     onOpenFeatureScreen: () -> Unit,
     onSendEmail: (String) -> Unit,
-    onOpenFeature: (FeatureType)-> Unit
+    onOpenFeature: (FeatureType) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()

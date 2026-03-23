@@ -28,7 +28,7 @@ fun ScheduleScreen(
     viewModel: ScheduleViewModel,
     onOpenNotificationScreen: () -> Unit,
     onOpenTimetable: () -> Unit,
-    onSendEmail: (String)-> Unit
+    onSendEmail: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
