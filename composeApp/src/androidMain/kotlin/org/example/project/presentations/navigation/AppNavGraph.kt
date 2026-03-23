@@ -50,6 +50,8 @@ import org.example.project.presentations.screen.profile.ProfileViewModelFactory
 import org.example.project.presentations.screen.school_schedule.ScheduleViewModel
 import org.example.project.presentations.screen.school_schedule.ScheduleViewModelFactory
 import org.example.project.presentations.screen.setting.SettingScreen
+import org.example.project.presentations.screen.setting.SettingViewModel
+import org.example.project.presentations.screen.setting.SettingViewModelFactory
 import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.timetable.TimetableScreen
 import org.example.project.presentations.screen.timetable.TimetableViewModel
@@ -64,7 +66,9 @@ import org.example.project.presentations.utils.openEmail
 import org.example.project.presentations.utils.toRoute
 
 @Composable
-fun AppNavGraph() {
+fun AppNavGraph(
+    resetAppData: () -> Unit
+) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
@@ -165,7 +169,13 @@ fun AppNavGraph() {
         }
 
         composable(AppRoute.Setting) {
-            SettingScreen(onBack = { navController.popBackStack() })
+            val container = LocalAppContainer.current
+            val factory = remember(container) { SettingViewModelFactory(container.logoutUseCase) }
+            val settingViewModel: SettingViewModel = viewModel(factory = factory)
+            SettingScreen(
+                viewModel = settingViewModel,
+                resetAppData = resetAppData,
+                onBack = { navController.popBackStack() })
         }
 
         composable(AppRoute.EditProfile) {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,17 +28,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
+import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.CollectWithLifecycle
 
-@Preview
 @Composable
 fun SettingScreen(
+    viewModel: SettingViewModel,
+    resetAppData:() -> Unit,
     onBack: () -> Unit = {}
 ) {
+    viewModel.event.CollectWithLifecycle { event ->
+        when (event) {
+            is SettingUiEvent.LogoutSuccessful -> {
+                resetAppData()
+            }
+        }
+    }
+
+
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
         contentWindowInsets = WindowInsets(0),
@@ -92,17 +104,16 @@ fun SettingScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(R.drawable.icon_logout),
-                    contentDescription = null
-                )
-
-                Text(
+                ButtonView(
+                    enabled = true,
+                    backgroundColorRes = Color.Transparent,
+                    textColorRes = LocalExtendedColors.current.red,
                     text = "Đăng xuất",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Normal,
-                    color = LocalExtendedColors.current.red,
-                    modifier = Modifier.padding(start = 5.dp)
+                    iconRes = R.drawable.icon_logout,
+                    modifier = Modifier.width(200.dp),
+                    onClick = {
+                        viewModel.logout()
+                    }
                 )
             }
         }

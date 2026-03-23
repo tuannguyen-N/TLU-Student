@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,10 +37,22 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(
                     LocalAppContainer provides container
                 ) {
-                    AppRoot()
+                    AppRoot(
+                        resetAppData = {
+                            restartApp()
+                        }
+                    )
                 }
             }
         }
+    }
+
+    private fun restartApp(){
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(intent)
+        finish()
     }
 
     private fun fitSystemWindow(){

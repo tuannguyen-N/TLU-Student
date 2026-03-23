@@ -19,6 +19,7 @@ import org.example.project.domain.repository.SemesterRepository
 import org.example.project.domain.repository.StudentRepository
 import org.example.project.domain.repository.TranscriptRepository
 import org.example.project.domain.usecase.LoginUseCase
+import org.example.project.domain.usecase.LogoutUseCase
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.StudentUseCase
@@ -67,4 +68,7 @@ class AppContainer(
     private val examScheduleApi = ExamScheduleApi(httpClient)
     val semesterUseCase = SemesterUseCase(semesterResponse)
     val examScheduleRepository = ExamScheduleRepository(examScheduleApi)
+
+    //for setting
+    val logoutUseCase = LogoutUseCase(authRepository)
 }
