@@ -68,7 +68,7 @@ fun AppNavGraph() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Routes.Splash,
+        startDestination = AppRoute.Splash,
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
@@ -94,26 +94,26 @@ fun AppNavGraph() {
             ) + fadeOut(animationSpec = tween(300))
         }
     ) {
-        composable(Routes.Splash) {
+        composable(AppRoute.Splash) {
             SplashScreen(navController)
         }
 
-        composable(Routes.Login) {
+        composable(AppRoute.Login) {
             val container = LocalAppContainer.current
             val factory = remember(container) { LoginViewModelFactory(container.loginUseCase) }
             val loginViewModel: LoginViewModel = viewModel(factory = factory)
 
             LoginScreen(
                 onNavigateToHome = {
-                    navController.navigate(Routes.Main) {
-                        popUpTo(Routes.Login) { inclusive = true }
+                    navController.navigate(AppRoute.Main) {
+                        popUpTo(AppRoute.Login) { inclusive = true }
                     }
                 },
                 loginViewModel = loginViewModel
             )
         }
 
-        composable(Routes.Main) {
+        composable(AppRoute.Main) {
             val container = LocalAppContainer.current
             val context = LocalContext.current
 
@@ -139,36 +139,36 @@ fun AppNavGraph() {
                 homeViewModel = homeViewModel,
                 scheduleViewModel = scheduleViewModel,
                 transcriptViewModel = transcriptViewModel,
-                onOpenProfileScreen = { navController.navigate(Routes.Profile) },
-                onOpenNotificationScreen = { navController.navigate(Routes.Notification) },
+                onOpenProfileScreen = { navController.navigate(AppRoute.Profile) },
+                onOpenNotificationScreen = { navController.navigate(AppRoute.Notification) },
                 onOpenTranscriptTerm = { semesterLabel, academicYear ->
-                    navController.navigate("${Routes.TranscriptTerm}/$academicYear/$semesterLabel")
+                    navController.navigate("${AppRoute.TranscriptTerm}/$academicYear/$semesterLabel")
                 },
-                onOpenTimetable = { navController.navigate(Routes.TimetableScreen) },
-                onOpenFeatureScreen = { navController.navigate(Routes.FeaturesScreen) },
+                onOpenTimetable = { navController.navigate(AppRoute.TimetableScreen) },
+                onOpenFeatureScreen = { navController.navigate(AppRoute.FeaturesScreen) },
                 onSendEmail = { email -> context.openEmail(email) },
                 onOpenFeature = { navController.navigate(it.toRoute()) }
             )
         }
 
-        composable(Routes.Profile) {
+        composable(AppRoute.Profile) {
             val container = LocalAppContainer.current
             val factory = remember(container) { ProfileViewModelFactory(container.studentUseCase) }
             val profileViewModel: ProfileViewModel = viewModel(factory = factory)
 
             ProfileScreen(
                 onBack = { navController.popBackStack() },
-                onOpenSetting = { navController.navigate(Routes.Setting) },
-                onOpenEditProfile = { navController.navigate(Routes.EditProfile) },
+                onOpenSetting = { navController.navigate(AppRoute.Setting) },
+                onOpenEditProfile = { navController.navigate(AppRoute.EditProfile) },
                 viewModel = profileViewModel,
             )
         }
 
-        composable(Routes.Setting) {
+        composable(AppRoute.Setting) {
             SettingScreen(onBack = { navController.popBackStack() })
         }
 
-        composable(Routes.EditProfile) {
+        composable(AppRoute.EditProfile) {
             val container = LocalAppContainer.current
             val factory =
                 remember(container) { EditProfileViewModelFactory(container.studentUseCase) }
@@ -180,12 +180,12 @@ fun AppNavGraph() {
             )
         }
 
-        composable(Routes.Notification) {
+        composable(AppRoute.Notification) {
             NotificationScreen(onBack = { navController.popBackStack() })
         }
 
         composable(
-            route = "${Routes.TranscriptTerm}/{academicYear}/{semesterLabel}",
+            route = "${AppRoute.TranscriptTerm}/{academicYear}/{semesterLabel}",
             arguments = listOf(
                 navArgument("academicYear") { type = NavType.StringType },
                 navArgument("semesterLabel") { type = NavType.StringType }
@@ -202,7 +202,7 @@ fun AppNavGraph() {
             )
         }
 
-        composable(Routes.TimetableScreen) {
+        composable(AppRoute.TimetableScreen) {
             val container = LocalAppContainer.current
             val context = LocalContext.current
             val factory =
@@ -221,7 +221,7 @@ fun AppNavGraph() {
             )
         }
 
-        composable(Routes.ExamSchedule) {
+        composable(AppRoute.ExamSchedule) {
             val container = LocalAppContainer.current
             val factory = remember(container) {
                 ExamScheduleViewModelFactory(
@@ -237,7 +237,7 @@ fun AppNavGraph() {
             )
         }
 
-        composable(Routes.FeaturesScreen) {
+        composable(AppRoute.FeaturesScreen) {
             val container = LocalAppContainer.current
             val context = LocalContext.current
             val factory =
@@ -260,7 +260,7 @@ fun AppNavGraph() {
             )
         }
 
-        composable(Routes.GpaPredict) {
+        composable(AppRoute.GpaPredict) {
             val container = LocalAppContainer.current
             val gpaPredictUseCase = GpaPredictUseCase()
             val factory = remember(container) {
@@ -278,18 +278,18 @@ fun AppNavGraph() {
             )
         }
 
-        composable(Routes.Feedback) {
+        composable(AppRoute.Feedback) {
             FeedbackScreen(
                 viewModel = viewModel(), // TODO:
                 onBack = { navController.popBackStack() }
             )
         }
 
-        composable(Routes.FeedbackDetail) {
+        composable(AppRoute.FeedbackDetail) {
             FeedbackDetailScreen(onBack = { navController.popBackStack() })
         }
 
-        composable(Routes.DigitalStudentCard) {
+        composable(AppRoute.DigitalStudentCard) {
             val container = LocalAppContainer.current
             val factory = remember(container) {
                 DigitalStudentCardViewModelFactory(

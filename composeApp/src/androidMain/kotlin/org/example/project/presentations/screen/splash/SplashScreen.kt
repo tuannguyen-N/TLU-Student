@@ -20,7 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import org.example.project.R
-import org.example.project.presentations.navigation.Routes
+import org.example.project.presentations.navigation.AppRoute
 
 @Preview
 @Composable
@@ -40,8 +40,8 @@ fun SplashScreen(navController: NavController = rememberNavController()) {
             )
         )
         delay(1000L)
-        navController.navigate(Routes.Login){
-            popUpTo(Routes.Splash){
+        navController.navigate(AppRoute.Login){
+            popUpTo(AppRoute.Splash){
                 inclusive = true
             }
         }

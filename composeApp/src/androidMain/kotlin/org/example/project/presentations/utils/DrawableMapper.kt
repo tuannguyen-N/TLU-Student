@@ -1,7 +1,6 @@
 package org.example.project.presentations.utils
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Apartment
 import androidx.compose.material.icons.outlined.AssignmentInd
 import androidx.compose.material.icons.outlined.AutoAwesome
@@ -11,13 +10,10 @@ import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Feedback
-import androidx.compose.material.icons.outlined.Grade
 import androidx.compose.material.icons.outlined.Map
-import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material.icons.outlined.Pending
 import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material.icons.outlined.SupportAgent
 import androidx.compose.material.icons.outlined.Work
 import androidx.compose.ui.graphics.Color
@@ -26,7 +22,7 @@ import org.example.project.R
 import org.example.project.domain.model.FeatureType
 import org.example.project.domain.model.Notification
 import org.example.project.domain.model.NotificationType
-import org.example.project.presentations.navigation.Routes
+import org.example.project.presentations.navigation.AppRoute
 
 fun FeatureType.toImageVector(): ImageVector {
     return when (this) {
@@ -90,10 +86,10 @@ fun FeatureType.toIconTintColor(): Color {
 
 fun FeatureType.toRoute(): String{
     return when (this) {
-        FeatureType.FEEDBACK -> Routes.Feedback
-        FeatureType.EXAM_SCHEDULE -> Routes.ExamSchedule
-        FeatureType.GPA_PREDICTION -> Routes.GpaPredict
-        FeatureType.DIGITAL_STUDENT_CARD -> Routes.DigitalStudentCard
+        FeatureType.FEEDBACK -> AppRoute.Feedback
+        FeatureType.EXAM_SCHEDULE -> AppRoute.ExamSchedule
+        FeatureType.GPA_PREDICTION -> AppRoute.GpaPredict
+        FeatureType.DIGITAL_STUDENT_CARD -> AppRoute.DigitalStudentCard
         else -> "" // TODO:
     }
 }

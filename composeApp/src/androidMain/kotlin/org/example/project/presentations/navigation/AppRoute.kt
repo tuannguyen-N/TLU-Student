@@ -1,6 +1,6 @@
 package org.example.project.presentations.navigation
 
-object Routes {
+object AppRoute {
     const val Splash = "splash_screen"
     const val Login = "login_screen"
     const val Main = "main_screen"
