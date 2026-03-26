@@ -54,7 +54,7 @@ fun MediumAlertCard(
                     modifier = Modifier
                         .padding(bottom = 5.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .background(LocalExtendedColors.current.yellowLight)
+                        .background(LocalExtendedColors.current.lightYellow)
                         .padding(horizontal = 6.dp, vertical = 3.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

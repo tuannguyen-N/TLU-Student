@@ -36,8 +36,8 @@ fun ImportantNoteCard(
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = color.fontBlue.copy(alpha = 0.05f)),
-        border = BorderStroke(1.dp, color.fontBlue.copy(alpha = 0.1f))
+        colors = CardDefaults.cardColors(containerColor = color.lightBlue.copy(alpha = 0.05f)),
+        border = BorderStroke(1.dp, color.lightBlue.copy(alpha = 0.1f))
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -48,7 +48,7 @@ fun ImportantNoteCard(
                 Icon(
                     imageVector = Icons.Filled.Info,
                     contentDescription = null,
-                    tint = color.mainBlue,
+                    tint = color.lightBlue,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -62,7 +62,7 @@ fun ImportantNoteCard(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp
                     ),
-                    color = color.mainBlue
+                    color = color.lightBlue
                 )
 
                 Text(

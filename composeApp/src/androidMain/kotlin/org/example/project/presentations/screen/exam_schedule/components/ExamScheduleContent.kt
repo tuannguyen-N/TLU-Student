@@ -308,7 +308,7 @@ fun ExamScheduleContentPreview() {
             ),
             selectedSemester = semester3,
             currentSemester = semester3,
-            selectedTab = 1,
+            selectedTab = 0,
             isDropdownExpanded = false,
             isLoading = false,
             selectedDate = today,

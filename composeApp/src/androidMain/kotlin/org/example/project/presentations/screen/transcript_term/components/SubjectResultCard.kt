@@ -43,18 +43,17 @@ import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.toAcademicRank
 import org.example.project.presentations.utils.toColor
 
-@Preview
 @Composable
 fun SubjectResultCard(
     modifier: Modifier = Modifier,
-    subjectCode: String = "IT2110",
-    subjectName: String = "Lập trình Android",
-    attendanceScore: Double = 8.5,
-    midtermScore: Double = 8.5,
-    finalScore: Double = 8.5,
-    score10: Double = 8.5,
-    score4: Double = 3.5,
-    letterGrade: String = "B"
+    subjectCode: String ,
+    subjectName: String,
+    attendanceScore: Double,
+    midtermScore: Double,
+    finalScore: Double,
+    score10: Double,
+    score4: Double,
+    letterGrade: String
 ) {
     val color = score4.toAcademicRank().toColor()
 
@@ -95,7 +94,7 @@ fun SubjectResultCard(
         Column(
             modifier = Modifier
         ) {
-            SubjectCode(subjectCode)
+            SubjectCode(name = subjectCode)
 
             Text(
                 text = subjectName,
@@ -247,18 +246,19 @@ fun Information(
     }
 }
 
+@Preview
 @Composable
 fun SubjectCode(
-    name: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    name: String = "demo",
+    color: Color = LocalExtendedColors.current.gray
 ) {
-    val color = LocalExtendedColors.current.gray
     Box(
         modifier = modifier
             .clip(
                 RoundedCornerShape(14.dp)
             )
-            .background(color.copy(alpha = 0.2f))
+            .background(color.copy(alpha = 0.1f))
             .padding(horizontal = 10.dp, vertical = 2.dp)
     ) {
         Text(

@@ -49,7 +49,6 @@ fun SettingScreen(
         }
     }
 
-
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
         contentWindowInsets = WindowInsets(0),

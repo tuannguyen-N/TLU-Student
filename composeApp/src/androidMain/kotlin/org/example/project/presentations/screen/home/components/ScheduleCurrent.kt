@@ -97,7 +97,7 @@ fun ScheduleCurrent(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(LocalExtendedColors.current.greenLight)
+                        .background(LocalExtendedColors.current.lightGreen)
                         .padding(horizontal = 12.dp, vertical = 3.dp)
                 ) {
                     Text(

@@ -11,13 +11,15 @@ data class ExtendedColors(
     val red: Color = Red,
     val redLight: Color = Color(0xFFFFD9D4),
     val textPrimary: Color = TextPrimary,
+    val blackBackground: Color = Color(0xFF0C0F10),
     val primary: Color = Primary,
+    val lightBlue: Color = Color(0xFF0044ff),
     val onPrimary: Color = OnPrimary,
     val white: Color = Color.White,
     val yellow: Color = Color(0xFFFFA400),
-    val yellowLight: Color = Color(0xFFFFF0D6),
+    val lightYellow: Color = Color(0xFFFFF0D6),
     val green: Color = Color(0xFF16A634),
-    val greenLight: Color = Color(0xFFDAFFE2),
+    val lightGreen: Color = Color(0xFFDAFFE2),
     val gray: Color = Color(0xFF848484),
     val grayButton: Color = Color(0xFFD9D9D9),
     val fontBlue: Color = Color(0xFF016DB7),
@@ -27,6 +29,7 @@ data class ExtendedColors(
     val orange: Color = Color(0xFFf97416),
     val seaSerpent: Color = Color(0xFF3AC2D8),
     val grayNavy: Color = Color(0xFF64748B),
+    val cardBackground: Color = Color(0xFFF1F4F5)
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {

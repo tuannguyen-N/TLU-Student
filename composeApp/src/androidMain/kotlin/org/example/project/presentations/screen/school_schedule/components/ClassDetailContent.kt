@@ -49,7 +49,7 @@ fun ClassDetailContent(
             Box(
                 modifier = Modifier
                     .background(
-                        color = if (isGoing) LocalExtendedColors.current.greenLight else LocalExtendedColors.current.gray.copy(
+                        color = if (isGoing) LocalExtendedColors.current.lightGreen else LocalExtendedColors.current.gray.copy(
                             alpha = 0.3f
                         ),
                         shape = RoundedCornerShape(20.dp)
@@ -89,7 +89,7 @@ fun ClassDetailContent(
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.weight(1f))
-            SubjectCode(courseClass.subjectCode, modifier = Modifier.padding(start = 8.dp))
+            SubjectCode(name = courseClass.subjectCode, modifier = Modifier.padding(start = 8.dp))
         }
 
         Spacer(modifier = Modifier.height(20.dp))

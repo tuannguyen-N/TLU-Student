@@ -34,13 +34,14 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun <T> TopScreenBar(
-    onBack: () -> Unit = {},
     title: String,
     values: List<T> = emptyList(),
-    value: String,
+    value: String = "",
     justView: Boolean = false,
+    enableListItem: Boolean = false,
     backgroundColor: Color = LocalExtendedColors.current.mainRed,
     contentColor: Color = Color.White,
+    onBack: () -> Unit = {},
     onClickItem: (T) -> Unit = {},
     itemDisplay: (T) -> String = { it.toString() }
 ) {
@@ -79,24 +80,26 @@ fun <T> TopScreenBar(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Box {
-                TermYear(
-                    academicYear = value,
-                    onClick = { showTermYear = true },
-                    modifier = Modifier.padding(end = 12.dp),
-                    justView = justView
-                )
-
-                if (showTermYear && !justView) {
-                    DropDownPopup(
-                        items = values,
-                        selectedItem = value,
-                        onClickItem = { onClickItem(it as T) },
-                        onDismiss = { showTermYear = false },
-                        alignment = Alignment.TopStart,
-                        width = 180.dp,
-                        itemDisplay = itemDisplay as (Any?) -> String,
+            if (enableListItem) {
+                Box {
+                    TermYear(
+                        academicYear = value,
+                        onClick = { showTermYear = true },
+                        modifier = Modifier.padding(end = 12.dp),
+                        justView = justView
                     )
+
+                    if (showTermYear && !justView) {
+                        DropDownPopup(
+                            items = values,
+                            selectedItem = value,
+                            onClickItem = { onClickItem(it as T) },
+                            onDismiss = { showTermYear = false },
+                            alignment = Alignment.TopStart,
+                            width = 180.dp,
+                            itemDisplay = itemDisplay as (Any?) -> String,
+                        )
+                    }
                 }
             }
         }
