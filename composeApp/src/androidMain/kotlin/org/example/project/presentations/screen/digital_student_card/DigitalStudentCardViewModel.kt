@@ -47,7 +47,7 @@ class DigitalStudentCardViewModel(
     }
 
     fun onCreateQr() {
-        val studentId = _uiState.value.studentInfo?.studentCode ?: return
+        _uiState.value.studentInfo?.studentCode ?: return
 
         viewModelScope.launch {
             updateState { copy(qrState = QrState.Generating) }

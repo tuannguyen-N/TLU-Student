@@ -10,8 +10,8 @@ data class HomeState(
     val studentInfo: StudentInformation? = null,
     val courseClasses: List<CourseClass>? = null,
     val quickAccessList: List<FeatureUiModel> = emptyList(),
-    val alerts: List<AlertUiModel> = AlertUiModel.Companion.getDemoList(),
-    val newsAndEvents: List<NewAndEventUiModel> = NewAndEventUiModel.Companion.getDataDemo(),
+    val alerts: List<AlertUiModel> = AlertUiModel.getDemoList(),
+    val newsAndEvents: List<NewAndEventUiModel> = NewAndEventUiModel.getDataDemo(),
 
     val loadingStudentInfo: Boolean = false,
     val loadingAlertList: Boolean = false,

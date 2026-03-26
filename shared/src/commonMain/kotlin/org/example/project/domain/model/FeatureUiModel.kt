@@ -22,7 +22,7 @@ data class FeatureUiModel(
             FeatureUiModel("Câu lạc bộ",      FeatureType.CLUB),
             FeatureUiModel("Việc làm",        FeatureType.JOBS),
             FeatureUiModel("Đơn từ điện tử",  FeatureType.DIGITAL_FORM),
-            FeatureUiModel("Thanh toán",      FeatureType.PAYMENT),
+            FeatureUiModel("Học phí",      FeatureType.TUITION_PAYMENT),
         )
 
         fun getSupportList() = listOf(
@@ -43,7 +43,7 @@ enum class FeatureType {
     CLUB,
     JOBS,
     DIGITAL_FORM,
-    PAYMENT,
+    TUITION_PAYMENT,
     STUDENT_CARD,
     FEEDBACK,
     TRAINING_OFFICE,

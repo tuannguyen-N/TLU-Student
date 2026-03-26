@@ -35,8 +35,7 @@ fun SubjectInformationCard(
             .background(Color(0xFFFFEBE9))
             .padding(5.dp)
     ) {
-        Row(
-        ) {
+        Row {
             Text(
                 color = LocalExtendedColors.current.red,
                 text = room,

@@ -28,9 +28,7 @@ fun AcademicAdvisorItem(
     teacherCode: String = "123123",
     isLasItem: Boolean = false
 ) {
-    Column(
-
-    ) {
+    Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

@@ -1,6 +1,5 @@
 package org.example.project.presentations.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -33,6 +33,7 @@ fun ButtonView(
     textColorRes: Color = Color.White,
     backgroundColorRes: Color = Color.Black,
     iconRes: Int? = null,
+    endIconRes: ImageVector? = null,
     shape: RoundedCornerShape = RoundedCornerShape(12.dp),
     enabled: Boolean = false,
     onClick: () -> Unit = {}
@@ -70,6 +71,16 @@ fun ButtonView(
                 color = textColorRes,
                 fontSize = textSize
             )
+
+            if(endIconRes != null){
+                Spacer(Modifier.width(10.dp))
+                Icon(
+                    imageVector = endIconRes,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = textColorRes
+                )
+            }
         }
     }
 }
