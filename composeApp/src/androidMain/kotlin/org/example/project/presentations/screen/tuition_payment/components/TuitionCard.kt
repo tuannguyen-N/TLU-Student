@@ -18,13 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.toFormatAmount
-import java.text.NumberFormat
-import java.util.Locale
 
 
 @Composable
@@ -53,7 +50,7 @@ fun TuitionCard(
                 Text(
                     text = "$semester",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = color.grayButton,
+                    color = color.lightGray,
                     fontWeight = FontWeight.Normal
                 )
 

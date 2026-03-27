@@ -1,17 +1,21 @@
 package org.example.project.local
 
 import org.example.project.data.local.TokenStorage
+import platform.Foundation.NSUserDefaults
 
 class IosTokenStorage : TokenStorage {
+    private val userDefaults = NSUserDefaults.standardUserDefaults
+    private val KEY = "access_token"
+
     override fun saveAccessToken(token: String) {
-        TODO("Not yet implemented")
+        userDefaults.setObject(token, forKey = KEY)
     }
 
     override fun getAccessToken(): String {
-        TODO("Not yet implemented")
+        return userDefaults.stringForKey(KEY) ?: ""
     }
 
     override fun clearAccessToken() {
-        TODO("Not yet implemented")
+        userDefaults.removeObjectForKey(KEY)
     }
 }

@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.data.remote.api.StudentApi
 import org.example.project.data.remote.dto.me.StudentInformation
-import org.example.project.data.remote.dto.me.StudentInformationResponse
+import org.example.project.domain.model.ApiResult
 
 class StudentRepository(
     private val studentApi: StudentApi
@@ -12,8 +12,14 @@ class StudentRepository(
     private val _studentInfo = MutableStateFlow<StudentInformation?>(null)
     val studentInfo = _studentInfo.asStateFlow()
 
-    suspend fun getStudentInfo(): Result<StudentInformationResponse> {
-        return runCatching { studentApi.getStudentInfo() }
-            .onSuccess { _studentInfo.value = it.data }
+    suspend fun getStudentInfo(): ApiResult<StudentInformation> {
+        return try {
+            val data = studentApi.getStudentInfo().data
+                ?: return ApiResult.Failure(message = "Không có dữ liệu sinh viên")
+            _studentInfo.value = data
+            ApiResult.Success(data = data)
+        } catch (e: Exception) {
+            ApiResult.Failure(message = e.message, cause = e)
+        }
     }
 }

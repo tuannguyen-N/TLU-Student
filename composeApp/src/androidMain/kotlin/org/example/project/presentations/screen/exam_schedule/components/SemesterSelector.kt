@@ -60,7 +60,7 @@ fun SemesterSelector(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 color = Color.White,
-                border = BorderStroke(1.dp, LocalExtendedColors.current.grayButton)
+                border = BorderStroke(1.dp, LocalExtendedColors.current.lightGray)
             ) {
                 Row(
                     modifier = Modifier

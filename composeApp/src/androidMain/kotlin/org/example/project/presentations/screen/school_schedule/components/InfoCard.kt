@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.school_schedule.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +35,8 @@ fun InfoCard(
         modifier = modifier,
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = LocalExtendedColors.current.background),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, LocalExtendedColors.current.gray.copy(alpha = 0.1f))
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -59,7 +61,6 @@ fun InfoCard(
             Text(
                 text = primaryText,
                 style = MaterialTheme.typography.titleMedium,
-                color = LocalExtendedColors.current.mainBlue,
                 fontWeight = FontWeight.SemiBold
             )
 

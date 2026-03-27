@@ -85,7 +85,7 @@ fun ExitConfirmDialog(
                     Button(
                         onClick = onDismiss,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = LocalExtendedColors.current.grayButton
+                            containerColor = LocalExtendedColors.current.lightGray
                         ),
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp)

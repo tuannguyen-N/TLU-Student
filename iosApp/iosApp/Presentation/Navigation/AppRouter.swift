@@ -7,26 +7,26 @@
 
 import Foundation
 import SwiftUI
+import Shared
 
-@MainActor
-class AppRouter: ObservableObject{
-    @Published var path = NavigationPath()
-    @Published var root: AppRoute = .splash
+class AppRouter: ObservableObject {
+    @Published var route: AppRoute = .splash
     
-    func push(_ route: AppRoute){
-        path.append(route)
+    func resetTo(_ newRoute: AppRoute) {
+        route = newRoute
     }
     
-    func pop(){
-        path.removeLast()
-    }
-    
-    func popToRoot(){
-        path.removeLast(path.count)
-    }
-    
-    func setRoot(_ route: AppRoute){
-        path = NavigationPath()
-        root = route
+    @ViewBuilder
+    func currentView(appContainer: AppContainer?) -> some View {
+        switch route {
+        case .splash:
+            SplashView()
+        case .login:
+            if let useCase = appContainer?.loginUseCase {
+                LoginView(loginUseCase: useCase)
+            } else {
+                Text("Error: AppContainer missing")
+            }
+        }
     }
 }

@@ -2,7 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>msauth.org.example.project.TLUStudent</string>
+            </array>
+        </dict>
+    </array>
+
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>msauthv2</string>
+        <string>msauthv3</string>
+    </array>
 </dict>
 </plist>

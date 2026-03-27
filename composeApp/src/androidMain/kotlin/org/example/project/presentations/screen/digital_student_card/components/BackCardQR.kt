@@ -114,7 +114,7 @@ fun BackCardQR(
                 enabled = true,
                 iconRes = R.drawable.icon_refresh,
                 onClick = onRegenerateQr,
-                backgroundColorRes = color.fontBlue
+                backgroundColorRes = color.lightBlue
             )
         } else {
             Text(
@@ -155,7 +155,7 @@ fun BackCardQR(
                     .fillMaxWidth()
                     .height(6.dp)
                     .clip(RoundedCornerShape(50)),
-                color = color.fontBlue,
+                color = color.lightBlue,
                 trackColor = color.gray.copy(alpha = 0.2f)
             )
 

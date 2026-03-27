@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.api.TranscriptApi
 import org.example.project.data.remote.dto.transcript.Transcript
+import org.example.project.domain.model.ApiResult
 
 class TranscriptRepository(
     private val transcriptApi: TranscriptApi,
@@ -13,22 +14,22 @@ class TranscriptRepository(
     private val _transcriptCached = MutableStateFlow<Transcript?>(null)
     val transcriptCached = _transcriptCached.asStateFlow()
 
-    suspend fun getTranscript(): Result<Transcript> {
+    suspend fun getTranscript(): ApiResult<Transcript> {
         return try {
             val studyProgram = studyProgramApi
                 .getStudyPrograms()
                 .data
                 ?.firstOrNull()
-                ?: return Result.failure(Exception("Study program not found"))
+                ?: return ApiResult.Failure(message = "Study program not found")
 
             val transcript = transcriptApi
                 .getTranscript(studyProgram.studyProgramCode)
-                .data ?: return Result.failure(Exception("Transcript empty"))
+                .data ?: return ApiResult.Failure(message = "Transcript empty")
             _transcriptCached.value = transcript
-            Result.success(transcript)
+            ApiResult.Success(transcript)
 
         } catch (e: Exception) {
-            Result.failure(e)
+            ApiResult.Failure(message = e.message, cause = e)
         }
     }
 }

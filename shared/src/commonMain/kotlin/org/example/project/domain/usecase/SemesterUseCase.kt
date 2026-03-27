@@ -5,6 +5,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.remote.dto.semester.Semester
+import org.example.project.domain.model.ApiResult
 import org.example.project.domain.repository.SemesterRepository
 import kotlin.time.Clock
 
@@ -15,10 +16,12 @@ class SemesterUseCase(
         it?.filter { semester -> checkingAvailableDate(semester.startDate) }
     }
 
-    suspend fun getSemesters(): Result<List<Semester>?> {
-        return semesterRepository.getSemesters().map { it.filter { semester ->
-            checkingAvailableDate(semester.startDate)
-        } }
+    suspend fun getSemesters(): ApiResult<List<Semester>?> {
+        return semesterRepository.getSemesters().map {
+            it.filter { semester ->
+                checkingAvailableDate(semester.startDate)
+            }
+        }
     }
 
     private fun checkingAvailableDate(startDate: String): Boolean {

@@ -177,7 +177,7 @@ fun ExamScheduleContent(
                     onDateSelected = { date -> onChangeDate(date) }
                 )
 
-                HorizontalDivider(color = color.grayButton)
+                HorizontalDivider(color = color.lightGray)
 
                 SelectedDaySummary(
                     date = selectedDate,

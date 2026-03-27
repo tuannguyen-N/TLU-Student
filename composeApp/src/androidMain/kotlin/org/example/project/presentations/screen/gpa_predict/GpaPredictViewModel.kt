@@ -35,12 +35,14 @@ class GpaPredictViewModel(
         semesterUseCase.getSemesters().fold(
             onSuccess = { semesters ->
                 val latest = semesters?.lastOrNull() ?: return@fold
-                scheduleUseCase.getSemesterSubjects(latest.semesterName)
-                    .onSuccess {
+                scheduleUseCase.getSemesterSubjects(latest.semesterName).fold(
+                    onSuccess = {
                         updateState { copy(subjects = it) }
-                    }.onFailure {
+                    },
+                    onFailure = {
                         Log.e("GPA Predict", "getSemesters: $it")
                     }
+                )
             },
             onFailure = {
                 Log.e("ExamViewModel", "getSemesters: Error $it")

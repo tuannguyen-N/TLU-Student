@@ -8,6 +8,7 @@ import org.example.project.data.mapper.toSubjects
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.dto.day_schedule.CourseClasses
 import org.example.project.data.remote.dto.week_schedule.WeekSchedule
+import org.example.project.domain.model.ApiResult
 import org.example.project.domain.model.SubjectItem
 import kotlin.time.Duration.Companion.minutes
 
@@ -26,16 +27,20 @@ class ScheduleRepository(
     suspend fun getDaySchedule(
         dayOfWeek: Int,
         forceRefresh: Boolean = false
-    ): Result<CourseClasses> {
-        return runCatching {
+    ): ApiResult<CourseClasses> {
+        return try {
             val data = dayScheduleCache.getOrFetch(
                 key = dayOfWeek,
                 forceRefresh = forceRefresh
             ) {
-                scheduleApi.getDayOfWeekSchedule(dayOfWeek).data!!
+                scheduleApi.getDayOfWeekSchedule(dayOfWeek).data
+                    ?: throw Exception("Không có dữ liệu lịch học")
             }
             _daySchedules.update { it + (dayOfWeek to data) }
-            data
+            ApiResult.Success(data)
+
+        } catch (e: Exception) {
+            ApiResult.Failure(message = e.message, cause = e)
         }
     }
 
@@ -43,23 +48,33 @@ class ScheduleRepository(
         startDate: String,
         endDate: String,
         forceRefresh: Boolean = false
-    ): Result<WeekSchedule> {
+    ): ApiResult<WeekSchedule> {
         val key = "$startDate - $endDate"
-        return runCatching {
+        return try {
             val data = weekScheduleCache.getOrFetch(
                 key = key,
                 forceRefresh = forceRefresh
             ) {
-                scheduleApi.getWeakSchedule(startDate, endDate).data!!
+                scheduleApi.getWeakSchedule(startDate, endDate).data
+                    ?: throw Exception("Không có dữ liệu lịch tuần")
             }
             _weekSchedules.update { it + (key to data) }
-            data
+            ApiResult.Success(data)
+
+        } catch (e: Exception) {
+            ApiResult.Failure(message = e.message, cause = e)
         }
     }
 
-    suspend fun getSemesterSubjects(semester: String): Result<List<SubjectItem>>{
-        return runCatching{
-            scheduleApi.getSemesterSubjects(semester).data?.toSubjects() ?: emptyList()
+    suspend fun getSemesterSubjects(semester: String): ApiResult<List<SubjectItem>> {
+        return try {
+            val data = scheduleApi.getSemesterSubjects(semester).data
+                ?.toSubjects()
+                ?: emptyList()
+            ApiResult.Success(data)
+
+        } catch (e: Exception) {
+            ApiResult.Failure(message = e.message, cause = e)
         }
     }
 

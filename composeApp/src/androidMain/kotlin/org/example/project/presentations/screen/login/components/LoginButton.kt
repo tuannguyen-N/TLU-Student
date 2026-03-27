@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.sp
 import org.example.project.R
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.rememberSafeClick
 
 @Composable
 fun LoginButton(
@@ -20,6 +21,8 @@ fun LoginButton(
         text = "Đăng nhập bằng microsoft",
         modifier = Modifier.padding(horizontal = 40.dp),
         textSize = 16.sp,
-        onClick = onLogin
+        onClick = rememberSafeClick {
+            onLogin()
+        }
     )
 }

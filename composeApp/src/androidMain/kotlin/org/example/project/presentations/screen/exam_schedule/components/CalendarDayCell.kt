@@ -38,7 +38,7 @@ fun CalendarDayCell(
     val isSunday = day.date.dayOfWeek == DayOfWeek.SUNDAY
 
     val textColor = when {
-        !isCurrentMonth -> color.grayButton
+        !isCurrentMonth -> color.lightGray
         isSelected -> Color.White
         isToday -> color.fontBlue
         isSunday -> color.red

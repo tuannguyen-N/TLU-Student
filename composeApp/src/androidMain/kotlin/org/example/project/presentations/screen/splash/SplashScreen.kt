@@ -22,7 +22,6 @@ import kotlinx.coroutines.delay
 import org.example.project.R
 import org.example.project.presentations.navigation.AppRoute
 
-@Preview
 @Composable
 fun SplashScreen(navController: NavController = rememberNavController()) {
     val scale = remember {

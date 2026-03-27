@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.rememberSafeClick
 
 @Composable
 fun ButtonView(
@@ -39,7 +40,9 @@ fun ButtonView(
     onClick: () -> Unit = {}
 ) {
     Button(
-        onClick = onClick,
+        onClick = rememberSafeClick {
+            onClick()
+        },
         enabled = enabled,
         shape = shape,
         modifier = modifier
@@ -72,7 +75,7 @@ fun ButtonView(
                 fontSize = textSize
             )
 
-            if(endIconRes != null){
+            if (endIconRes != null) {
                 Spacer(Modifier.width(10.dp))
                 Icon(
                     imageVector = endIconRes,

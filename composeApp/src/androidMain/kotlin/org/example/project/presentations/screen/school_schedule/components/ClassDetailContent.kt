@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.MeetingRoom
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,7 +55,7 @@ fun ClassDetailContent(
                         ),
                         shape = RoundedCornerShape(20.dp)
                     )
-                    .padding(horizontal = 12.dp, vertical = 5.dp)
+                    .padding(horizontal = 12.dp, vertical = 3.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
@@ -96,7 +97,7 @@ fun ClassDetailContent(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             InfoCard(
                 modifier = Modifier.weight(1f),
@@ -115,7 +116,7 @@ fun ClassDetailContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         LecturerCard(
             lecturerName = courseClass.lecturer.fullName,
@@ -128,7 +129,6 @@ fun ClassDetailContent(
         Text(
             text = "NỘI DUNG BÀI HỌC",
             style = MaterialTheme.typography.titleMedium,
-            color = LocalExtendedColors.current.mainBlue,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = 0.5.sp
         )
@@ -142,7 +142,11 @@ fun ClassDetailContent(
             lineHeight = 22.sp
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HorizontalDivider(thickness = 0.5.dp, color = LocalExtendedColors.current.lightGray)
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         ButtonView(
             text = "Xem tài liệu học tập",
@@ -150,6 +154,7 @@ fun ClassDetailContent(
             textColorRes = LocalExtendedColors.current.mainBlue,
             onClick = onViewMaterials,
             enabled = true,
+            modifier = Modifier.padding(horizontal = 20.dp),
             iconRes = R.drawable.icon_adress,
         )
 

@@ -5,13 +5,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 
-private val LightColorScheme = lightColorScheme(
-    primary = Primary,
-    onPrimary = OnPrimary,
-    background = Background,
-    surface = Background,
-    onBackground = TextPrimary,
-)
+private val LightColorScheme = lightColorScheme()
 
 @Composable
 fun AppTheme(

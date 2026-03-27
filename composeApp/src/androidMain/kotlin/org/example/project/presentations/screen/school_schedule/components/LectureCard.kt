@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.school_schedule.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,8 @@ fun LecturerCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = LocalExtendedColors.current.background),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, LocalExtendedColors.current.gray.copy(alpha = 0.1f))
     ) {
         Column {
             Row(
@@ -81,7 +83,6 @@ fun LecturerCard(
                     Text(
                         text = lecturerName,
                         style = MaterialTheme.typography.titleMedium,
-                        color = LocalExtendedColors.current.mainBlue,
                         fontWeight = FontWeight.SemiBold
                     )
                     Spacer(modifier = Modifier.height(4.dp))

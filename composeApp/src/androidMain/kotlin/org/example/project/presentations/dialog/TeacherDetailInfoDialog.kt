@@ -149,7 +149,7 @@ fun TeacherDetailInfoDialog(
                                 Icon(
                                     imageVector = Icons.Default.ContentCopy,
                                     contentDescription = null,
-                                    tint = colors.mainRed,
+                                    tint = colors.gray,
                                     modifier = Modifier.size(14.dp)
                                 )
                             }
@@ -169,7 +169,7 @@ fun TeacherDetailInfoDialog(
                                 Icon(
                                     imageVector = Icons.Default.ContentCopy,
                                     contentDescription = null,
-                                    tint = colors.mainRed,
+                                    tint = colors.gray,
                                     modifier = Modifier.size(14.dp)
                                 )
                             }
@@ -189,7 +189,7 @@ fun TeacherDetailInfoDialog(
                                 Icon(
                                     imageVector = Icons.Default.ContentCopy,
                                     contentDescription = null,
-                                    tint = colors.mainRed,
+                                    tint = colors.gray,
                                     modifier = Modifier.size(14.dp)
                                 )
                             }
@@ -230,7 +230,7 @@ fun TeacherDetailInfoDialog(
                             .height(40.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colors.mainRed,
+                            containerColor = colors.mainBlue,
                             contentColor = Color.White
                         ),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
@@ -259,8 +259,7 @@ private fun LecturerInfoCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        color = colors.mainRed.copy(alpha = 0.05f),
-        tonalElevation = 0.dp
+        color = colors.background,
     ) {
         Row(
             modifier = Modifier
@@ -272,13 +271,13 @@ private fun LecturerInfoCard(
                 modifier = Modifier
                     .size(30.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(colors.mainRed.copy(alpha = 0.12f)),
+                    .background(colors.mainBlue.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = colors.mainRed,
+                    tint = colors.mainBlue,
                     modifier = Modifier.size(15.dp)
                 )
             }

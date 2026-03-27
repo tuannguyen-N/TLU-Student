@@ -29,7 +29,6 @@ import org.example.project.domain.model.CourseItem
 import org.example.project.domain.model.CourseStatus
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.theme.MainBlue
 
 @Preview(showBackground = true)
 @Composable
