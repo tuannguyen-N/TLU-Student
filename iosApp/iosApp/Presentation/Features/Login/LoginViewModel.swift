@@ -12,7 +12,7 @@ import Shared
 @MainActor
 class LoginViewModel: ObservableObject {
     @Published var uiState = LoginState()
-    @Published var event: LoginUiEvent? = nil
+    @Published var event: LoginUiEvent?
 
     private let loginUseCase: LoginUseCase
 

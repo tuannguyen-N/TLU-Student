@@ -26,7 +26,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun TabRowView(
-    tabs: List<Pair<String, ImageVector>>,
+    tabs: List<Pair<String, ImageVector?>>,
     selectedTab: Int,
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -52,14 +52,16 @@ fun TabRowView(
                 contentAlignment = Alignment.Center
             ) {
                 Row {
-                    Icon(
-                        imageVector = tab.second,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = if (isSelected) LocalExtendedColors.current.fontBlue else LocalExtendedColors.current.gray
-                    )
+                    tab.second?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            tint = if (isSelected) LocalExtendedColors.current.fontBlue else LocalExtendedColors.current.gray
+                        )
 
-                    Spacer(Modifier.width(5.dp))
+                        Spacer(Modifier.width(5.dp))
+                    }
 
                     Text(
                         text = tab.first,

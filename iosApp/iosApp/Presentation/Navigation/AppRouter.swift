@@ -27,6 +27,8 @@ class AppRouter: ObservableObject {
             } else {
                 Text("Error: AppContainer missing")
             }
+        case .home:
+            HomeView()
         }
     }
 }

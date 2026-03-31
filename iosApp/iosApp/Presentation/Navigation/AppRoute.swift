@@ -10,4 +10,5 @@ import Foundation
 enum AppRoute: Hashable {
     case splash
     case login
+    case home
 }

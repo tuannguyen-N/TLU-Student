@@ -9,7 +9,7 @@ import SwiftUI
 import Shared
 
 struct LoginView: View {
-    
+    @EnvironmentObject var router: AppRouter
     @StateObject var viewModel: LoginViewModel
     
     init(loginUseCase: LoginUseCase) {
@@ -48,19 +48,17 @@ struct LoginView: View {
                             // TODO
                         }
                 }
-                
+            }
+            .overlay {
                 if viewModel.uiState.isLoading {
                     LoadingView()
                 }
             }
-            .onChange(of: viewModel.event) { oldValue, newValue in
-                guard let event = newValue else {return}
-                
+            .onReceive(viewModel.$event.compactMap { $0 }) { event in
                 switch event {
                 case .navigateToHome:
-                    print("Navigate to Home")
+                    router.resetTo(.home)
                 }
-//                viewModel.event = nil
             }
             .sheet(isPresented: $viewModel.uiState.showErrorSheet) {
                 AuthenticationErrorBottomSheet(
