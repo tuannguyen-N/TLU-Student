@@ -35,7 +35,7 @@ fun Semester.toWeekDateList(): List<String> {
 }
 
 fun Semester.toStartWeekDate(): String {
-    val start = LocalDate.parse(startDate) // yyyy-MM-dd (ISO default)
+    val start = startDate.toLocalDateSafe() // fallbacks to dd/MM/yyyy if not ISO
     val weekEnd = start.plus(6, DateTimeUnit.DAY)
     return "$start - $weekEnd" // "yyyy-MM-dd - yyyy-MM-dd"
 }

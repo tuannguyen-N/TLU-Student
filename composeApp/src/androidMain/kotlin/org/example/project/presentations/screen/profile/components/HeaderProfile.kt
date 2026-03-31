@@ -61,7 +61,6 @@ fun HeaderProfile(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -84,8 +83,6 @@ fun HeaderProfile(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             Image(
                 painter = painterResource(R.drawable.ic_launcher_foreground),

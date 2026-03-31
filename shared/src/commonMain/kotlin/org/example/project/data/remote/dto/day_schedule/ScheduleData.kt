@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 
 @Serializable
-data class CourseClasses(
+data class ScheduleData(
     val courseClasses: List<CourseClass>
 )

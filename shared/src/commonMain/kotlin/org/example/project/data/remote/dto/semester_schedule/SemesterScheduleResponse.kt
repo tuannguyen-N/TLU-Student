@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SemesterScheduleResponse(
     val code: Int,
-    val data: SemesterSchedule?,
+    val data: SemesterScheduleData?,
     val message: String
 )

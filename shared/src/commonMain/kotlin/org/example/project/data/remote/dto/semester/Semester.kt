@@ -4,7 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Semester(
-    val endDate: String,
+    val id: Int,
     val semesterName: String,
-    val startDate: String
+    val semesterCode: String,
+    val academicYears: String,
+    val semesterNumber: Int,
+    val startDate: String,
+    val endDate: String,
+    val isActive: Boolean
 )

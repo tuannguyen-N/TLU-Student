@@ -4,14 +4,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SubjectResult(
+    val subjectCode: String,
+    val subjectName: String,
     val credits: Int,
-    val isPass: Boolean,
-    val letterGrade: String,
     val attendanceScore: Double,
     val midtermScore: Double,
     val finalScore: Double,
     val score10: Double,
     val score4: Double,
-    val subjectCode: String,
-    val subjectName: String
+    val letterGrade: String,
+    val isPass: Boolean
 )

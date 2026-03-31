@@ -35,8 +35,8 @@ class EditProfileViewModel(
 
     private fun observeStudentInfo() {
         viewModelScope.launch {
-            studentUseCase.studentInfo.collect { studentInformation ->
-                studentInformation?.let {
+            studentUseCase.studentInfo.collect { StudentData ->
+                StudentData?.let {
                     updateState {
                         copy(
                             email = email,

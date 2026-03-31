@@ -3,8 +3,8 @@ package org.example.project.data.remote.dto.week_schedule
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class WeekScheduleResponse(
+data class WeeklyScheduleResponse(
     val code: Int,
-    val data: WeekSchedule?,
+    val data: WeeklyScheduleData?,
     val message: String
 )

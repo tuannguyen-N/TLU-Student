@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Major(
-    val faculty: String,
     val majorCode: String,
-    val majorName: String
+    val majorName: String,
+//    val faculty: String
 )

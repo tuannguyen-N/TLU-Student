@@ -4,7 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EmergencyContact(
-    val address: String,
     val name: String,
-    val phoneNumber: String
+    val phoneNumber: String,
+    val address: String,
+    val relationship: String?
 )

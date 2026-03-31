@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StudyProgram(
-    val id: Int?,
-    val isPrimary: Boolean,
     val studentCode: String,
     val studyProgramCode: String,
-    val studyProgramName: String
+    val studyProgramName: String,
+    val isPrimary: Boolean,
+    val startYear: Int
 )

@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -99,7 +100,12 @@ class HomeViewModel(
         withDelayedLoading(
             onLoading = { updateState { copy(loadingStudentInfo = it) } }
         ) {
-            studentUseCase.getStudentInfo()
+            studentUseCase.getStudentInfo().fold(
+                onSuccess = {},
+                onFailure = {
+                    Log.e("123123", "loadStudentInfo: $it", )
+                }
+            )
         }
     }
 

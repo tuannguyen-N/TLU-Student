@@ -3,7 +3,7 @@ package org.example.project.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.example.project.data.mapper.TranscriptMapper.toUiModel
-import org.example.project.data.remote.dto.transcript.Transcript
+import org.example.project.data.remote.dto.transcript.AcademicResultData
 import org.example.project.domain.model.ApiResult
 import org.example.project.domain.model.TranscriptUiModel
 import org.example.project.domain.repository.TranscriptRepository
@@ -15,7 +15,7 @@ class TranscriptUseCase(
         it?.toUiModel()
     }
 
-    suspend fun getTranscript(): ApiResult<Transcript> {
+    suspend fun getTranscript(): ApiResult<AcademicResultData> {
         return transcriptRepository.getTranscript()
     }
 }

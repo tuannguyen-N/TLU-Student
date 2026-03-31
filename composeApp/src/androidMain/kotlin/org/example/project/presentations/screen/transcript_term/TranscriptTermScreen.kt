@@ -58,6 +58,7 @@ fun TranscriptTermScreen(
                     finalScore = subject.finalScore,
                     score10 = subject.score10,
                     score4 = subject.score4,
+                    credits = subject.credits,
                     letterGrade = subject.letterGrade
                 )
             }

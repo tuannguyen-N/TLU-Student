@@ -7,6 +7,6 @@ data class LoginDataResponse(
     val microsoftId: String,
     val email: String,
     val name: String,
-    val avatar: String,
+    val avatar: String?,
     val token: String
 )

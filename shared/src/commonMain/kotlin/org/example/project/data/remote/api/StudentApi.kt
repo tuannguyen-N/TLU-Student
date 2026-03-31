@@ -9,6 +9,6 @@ class StudentApi(
     private val client: HttpClient
 ) {
     suspend fun getStudentInfo(): StudentInformationResponse{
-        return client.get("/api/v1/student/me").body()
+        return client.get("/api/v1/students/me").body()
     }
 }

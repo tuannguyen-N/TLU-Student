@@ -73,8 +73,8 @@ fun <T> DropDownPopup(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable {
-                                        onClickItem(item)
                                         onDismiss()
+                                        onClickItem(item)
                                     }
                                     .padding(horizontal = 16.dp, vertical = 14.dp),
                                 verticalAlignment = Alignment.CenterVertically,

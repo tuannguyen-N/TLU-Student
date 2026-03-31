@@ -62,7 +62,7 @@ fun FeaturesScreen(
                 .padding(paddingValues)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 10.dp)
+                .padding(horizontal = 16.dp, vertical = 15.dp)
         ) {
             FeatureSectionHeader(
                 title = "Truy cập nhanh",

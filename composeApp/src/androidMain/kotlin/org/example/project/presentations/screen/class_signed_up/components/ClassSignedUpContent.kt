@@ -41,7 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
-import org.example.project.data.remote.dto.day_schedule.CourseClasses
+import org.example.project.data.remote.dto.day_schedule.ScheduleData
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.components.ButtonView
@@ -148,7 +148,7 @@ fun PreviewClassSignedUpContent() {
 
 
     ClassSignedUpContent(
-        uiState = ClassSignedUpState(CourseClasses(listOf(sampleCourse)))
+        uiState = ClassSignedUpState(ScheduleData(listOf(sampleCourse)))
     )
 }
 

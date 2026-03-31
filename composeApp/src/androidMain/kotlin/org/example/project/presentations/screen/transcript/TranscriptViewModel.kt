@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.example.project.data.mapper.TranscriptMapper
 import org.example.project.domain.usecase.TranscriptUseCase
+import org.example.project.presentations.utils.withDelayedLoading
 
 class TranscriptViewModel(
     private val transcriptUseCase: TranscriptUseCase
@@ -35,22 +36,24 @@ class TranscriptViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true, error = null) }
-            transcriptUseCase.getTranscript().fold(
-                onSuccess = {
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            gpa = TranscriptMapper.getGpa(it),
-                            totalCredit = TranscriptMapper.getTotalCredit(it)
-                        )
+            withDelayedLoading(onLoading = {
+                updateState { copy(isLoading = it) }
+            }){
+                transcriptUseCase.getTranscript().fold(
+                    onSuccess = {
+                        updateState {
+                            copy(
+                                gpa = TranscriptMapper.getGpa(it),
+                                totalCredit = TranscriptMapper.getTotalCredit(it)
+                            )
+                        }
+                    },
+                    onFailure = { error ->
+                        Log.e("123123", "loadData: $error")
+                        updateState { copy(error = error.message) }
                     }
-                },
-                onFailure = { error ->
-                    Log.e("123123", "loadData: $error")
-                    updateState { copy(isLoading = false, error = error.message) }
-                }
-            )
+                )
+            }
         }
     }
 

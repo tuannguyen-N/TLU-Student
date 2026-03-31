@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,6 +53,7 @@ fun TimetableContent(
                 onClickItem = {
                     onChangeSemester(it)
                 },
+                enableListItem = true,
                 value = uiState.selectedSemester?.semesterName ?: "2026"
             )
         }
@@ -84,6 +86,8 @@ fun TimetableContent(
                     )
                 }
             }
+
+            HorizontalDivider(thickness = 0.5.dp, color = LocalExtendedColors.current.gray)
 
             TimetableScrollableArea(
                 dailySchedules = uiState.weekSchedule?.dailySchedules ?: emptyList(),
@@ -127,70 +131,4 @@ fun TimetableContent(
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TimetableLoadingPreview() {
-    TimetableContent(
-        uiState = TimetableState(
-            semesters = listOf(
-                Semester(
-                    semesterName = "Học kỳ 1 - 2024-2025",
-                    startDate = "02/09/2024",
-                    endDate = "05/01/2025"
-                ),
-                Semester(
-                    semesterName = "Học kỳ 2 - 2024-2025",
-                    startDate = "06/01/2025",
-                    endDate = "01/06/2025"
-                ),
-                Semester(
-                    semesterName = "Học kỳ 1 - 2023-2024",
-                    startDate = "04/09/2023",
-                    endDate = "07/01/2024"
-                )
-            ),
-            selectedSemester = Semester(
-                semesterName = "Học kỳ 1 - 2024-2025",
-                startDate = "02/09/2024",
-                endDate = "05/01/2025"
-            ),
-            weekSchedule = null,
-            showDetailCourseClass = false,
-            showDetailLecturerInfo = false,
-            showWeekMenu = true,
-            selectedCourseClass = CourseClass(
-                classCode = "CNTT001",
-                dayOfWeek = 2,
-                endPeriod = 5,
-                endTime = "11:30",
-                room = "A1.01",
-                startPeriod = 3,
-                startTime = "09:00",
-                subjectCode = "IT001",
-                subjectName = "Lập trình hướng đối tượng",
-                lecturer = Lecturer(
-                    lecturerCode = "GV12345",
-                    fullName = "ThS. Nguyễn Văn Tây",
-                    phoneNumber = "0901 234 567",
-                    email = "tay.nv@university.edu.vn"
-                )
-            )
-        ),
-        onBack = {},
-        onNextWeekSchedule = {},
-        onPreviousWeekSchedule = {},
-        onShowSubjectDetail = {},
-        onContact = {},
-        onOpenDetailLecturerInfo = {},
-        onDismissDetailCourseClass = {},
-        onDismissDetailLecturerInfo = {},
-        onCopyLecturerCode = { _, _ -> },
-        onCopyPhoneNumber = { _, _ -> },
-        onCopyEmail = { _, _ -> },
-        onChangeSemester = {},
-        onToggleDropDown = {},
-        onChangeWeek = {}
-    )
 }

@@ -43,6 +43,7 @@ class FeaturesViewModel(
 
     fun addToQuickAccess(feature: FeatureUiModel) {
         viewModelScope.launch {
+            if (quickAccessList.value.size == 4) return@launch
             featureRepository.addToQuickAccess(feature, quickAccessList.value.size)
         }
     }

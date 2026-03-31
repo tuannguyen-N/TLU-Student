@@ -31,7 +31,6 @@ class LoginViewModel(
             MsalHelper.signIn(activity) { newToken ->
                 Log.e("123123", "onLoginClick: $newToken")
                 if (newToken != null) onSignMsalSuccess(newToken)
-                updateState { copy(isLoading = false) }
             }
         }
     }
@@ -43,10 +42,10 @@ class LoginViewModel(
                     sendUiEvent(LoginUiEvent.OnNavigateToHome)
                 },
                 onFailure = {
-                    Log.e("123123", "onSignMsalSuccess: $it")
                     updateState { copy(showErrorSheet = true) }
                 }
             )
+            updateState { copy(isLoading = false) }
         }
     }
 

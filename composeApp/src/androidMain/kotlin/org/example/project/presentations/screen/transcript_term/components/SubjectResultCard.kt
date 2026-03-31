@@ -53,6 +53,7 @@ fun SubjectResultCard(
     finalScore: Double,
     score10: Double,
     score4: Double,
+    credits: Int,
     letterGrade: String
 ) {
     val color = score4.toAcademicRank().toColor()
@@ -126,7 +127,7 @@ fun SubjectResultCard(
 
                 Information(
                     title = "SỐ TÍN",
-                    value = "02",
+                    value = credits.toString(),
                     color = Color.Black,
                 )
 
@@ -246,7 +247,6 @@ fun Information(
     }
 }
 
-@Preview
 @Composable
 fun SubjectCode(
     modifier: Modifier = Modifier,

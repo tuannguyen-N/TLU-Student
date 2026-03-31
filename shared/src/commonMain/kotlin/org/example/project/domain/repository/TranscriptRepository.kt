@@ -4,17 +4,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.api.TranscriptApi
-import org.example.project.data.remote.dto.transcript.Transcript
+import org.example.project.data.remote.dto.transcript.AcademicResultData
 import org.example.project.domain.model.ApiResult
 
 class TranscriptRepository(
     private val transcriptApi: TranscriptApi,
     private val studyProgramApi: StudyProgramApi
 ) {
-    private val _transcriptCached = MutableStateFlow<Transcript?>(null)
+    private val _transcriptCached = MutableStateFlow<AcademicResultData?>(null)
     val transcriptCached = _transcriptCached.asStateFlow()
 
-    suspend fun getTranscript(): ApiResult<Transcript> {
+    suspend fun getTranscript(): ApiResult<AcademicResultData> {
         return try {
             val studyProgram = studyProgramApi
                 .getStudyPrograms()

@@ -1,5 +1,6 @@
 package org.example.project.presentations.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -60,11 +61,10 @@ fun ButtonView(
             horizontalArrangement = Arrangement.Center,
         ) {
             if (iconRes != null) {
-                Icon(
+                Image(
                     painter = painterResource(id = iconRes),
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = textColorRes
+                    modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
             }

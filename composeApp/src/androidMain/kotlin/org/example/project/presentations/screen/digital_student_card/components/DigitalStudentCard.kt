@@ -15,13 +15,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import org.example.project.data.remote.dto.me.StudentInformation
+import org.example.project.data.remote.dto.me.StudentData
 import org.example.project.domain.model.QrState
 
 @Composable
 fun DigitalStudentCard(
     modifier: Modifier = Modifier,
-    studentInfo: StudentInformation,
+    studentInfo: StudentData,
     qrState: QrState,
     onCreateQr: () -> Unit,
     onRegenerateQr: () -> Unit,

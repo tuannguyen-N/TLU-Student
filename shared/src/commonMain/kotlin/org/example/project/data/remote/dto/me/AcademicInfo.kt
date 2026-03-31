@@ -5,6 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AcademicInfo(
     val cohort: String,
-    val educationMode: String, //todo
     val position: String
 )

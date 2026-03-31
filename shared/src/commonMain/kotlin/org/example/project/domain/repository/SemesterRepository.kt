@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.data.remote.api.SemesterApi
 import org.example.project.data.remote.dto.semester.Semester
-import org.example.project.data.remote.dto.semester.SemesterResponse
 import org.example.project.domain.model.ApiResult
 
 class SemesterRepository(

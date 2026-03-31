@@ -25,8 +25,8 @@ class ProfileViewModel(
 
     private fun observeStudentInfo() {
         viewModelScope.launch {
-            studentUseCase.studentInfo.collect { studentInformation ->
-                updateState { copy(studentInfo = studentInformation) }
+            studentUseCase.studentInfo.collect { StudentData ->
+                updateState { copy(studentInfo = StudentData) }
             }
         }
     }

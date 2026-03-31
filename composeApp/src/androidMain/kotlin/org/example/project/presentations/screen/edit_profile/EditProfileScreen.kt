@@ -30,6 +30,7 @@ import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.dialog.ExitConfirmDialog
 import org.example.project.presentations.screen.edit_profile.components.EditTextView
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.CollectWithLifecycle
 
 @Composable
 fun EditProfileScreen(
@@ -43,6 +44,14 @@ fun EditProfileScreen(
 //    ) {uri ->
 //        // TODO:
 //    }
+
+    viewModel.events.CollectWithLifecycle { event ->
+        when (event) {
+            EditProfileUIEvent.OnNavigateBack -> {
+                onBack()
+            }
+        }
+    }
 
     LazyColumn(
         modifier = Modifier.statusBarsPadding(),

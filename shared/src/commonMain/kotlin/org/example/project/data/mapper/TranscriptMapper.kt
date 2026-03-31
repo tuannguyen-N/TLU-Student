@@ -2,7 +2,7 @@ package org.example.project.data.mapper
 
 import org.example.project.data.remote.dto.transcript.SemesterResult
 import org.example.project.data.remote.dto.transcript.SubjectResult
-import org.example.project.data.remote.dto.transcript.Transcript
+import org.example.project.data.remote.dto.transcript.AcademicResultData
 import org.example.project.domain.model.AcademicYearGroup
 import org.example.project.domain.model.SemesterUiModel
 import org.example.project.domain.model.SubjectResultUiModel
@@ -11,20 +11,20 @@ import kotlin.math.round
 
 object TranscriptMapper {
 
-    fun getGpa(transcript: Transcript): Double {
+    fun getGpa(transcript: AcademicResultData): Double {
         val gpa = transcript.semesterResults
             .map { it.semesterSummary.semesterGpa }
             .average()
         return round(gpa * 100) / 100
     }
 
-    fun getTotalCredit(transcript: Transcript): Int{
+    fun getTotalCredit(transcript: AcademicResultData): Int{
         return transcript.semesterResults.sumOf { semesterResult ->
             semesterResult.semesterSummary.creditsPassed
         }
     }
 
-    fun Transcript.toUiModel(): TranscriptUiModel {
+    fun AcademicResultData.toUiModel(): TranscriptUiModel {
         val sorted = semesterResults.sortedWith(
             compareByDescending<SemesterResult> { it.extractYear() }
                 .thenByDescending { it.extractSemesterNumber() }

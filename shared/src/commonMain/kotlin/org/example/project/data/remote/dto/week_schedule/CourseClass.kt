@@ -6,12 +6,12 @@ import kotlinx.serialization.Serializable
 data class CourseClass(
     val classCode: String,
     val dayOfWeek: Int,
+    val subjectName: String,
+    val subjectCode: String,
+    val startPeriod: Int,
     val endPeriod: Int,
+    val startTime: String,
     val endTime: String,
     val room: String,
-    val startPeriod: Int,
-    val startTime: String,
-    val subjectCode: String,
-    val subjectName: String,
     val lecturer: Lecturer
 )

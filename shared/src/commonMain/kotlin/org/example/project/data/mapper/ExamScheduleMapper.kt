@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
-import org.example.project.data.remote.dto.week_schedule.WeekSchedule
+import org.example.project.data.remote.dto.week_schedule.WeeklyScheduleData
 import org.example.project.domain.model.ExamDay
 
 fun List<ExamSchedule>.toExamDays(): List<ExamDay> {
@@ -14,7 +14,7 @@ fun List<ExamSchedule>.toExamDays(): List<ExamDay> {
         .sortedBy { it.localExamDay }
 }
 
-fun WeekSchedule.toDisplayWeekDate(): String {
+fun WeeklyScheduleData.toDisplayWeekDate(): String {
     val apiFormatter = LocalDate.Format {
         year(); char('-'); monthNumber(); char('-'); dayOfMonth()
     }

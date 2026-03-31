@@ -42,6 +42,7 @@ class TimetableViewModel(
 
     private fun observeSemesters() {
         semesterUseCase.semesters.onEach { semesters ->
+            Log.e("123123", "observeSemesters: $semesters", )
             val selected = semesters?.lastOrNull()
             updateState {
                 copy(
@@ -96,7 +97,12 @@ class TimetableViewModel(
                     updateState { copy(isLoading = isLoading) }
                 }
             ) {
-                scheduleUseCase.getWeekSchedule(startTime, endTime)
+                scheduleUseCase.getWeekSchedule(startTime, endTime).fold(
+                    {
+
+                    },
+                    { Log.e("123123", "getWeekSchedule: $it", )}
+                )
             }
         }
     }
@@ -142,7 +148,7 @@ class TimetableViewModel(
     fun onChangeWeek(week: String) {
         val (start, end) = week.split(" - ")
         getWeekSchedule(start, end)
-        updateState { copy(selectedWeek = week, showWeekMenu = false) }
+        updateState { copy(selectedWeek = week) }
     }
 
     fun onToggleDropDown() {

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class StudentInformationResponse(
     val code: Int,
     val message: String,
-    val data: StudentInformation?
+    val data: StudentData?
 )
