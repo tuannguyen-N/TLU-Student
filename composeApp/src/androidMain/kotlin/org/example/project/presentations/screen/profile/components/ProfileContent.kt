@@ -62,6 +62,7 @@ fun ProfileContent(
                     studentCode = student?.studentCode.orEmpty(),
                     fullName = student?.fullName.orEmpty(),
                     gender = student?.gender.orEmpty(),
+                    birthDay = student?.dateOfBirth.orEmpty(),
                     cardNumber = student?.identityCard?.cardNumber.orEmpty(),
                     phoneNumber = student?.contact?.phoneNumber.orEmpty(),
                     email = student?.contact?.email.orEmpty(),

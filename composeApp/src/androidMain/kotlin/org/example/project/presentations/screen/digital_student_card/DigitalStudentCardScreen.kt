@@ -3,6 +3,7 @@ package org.example.project.presentations.screen.digital_student_card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.screen.digital_student_card.components.DigitalStudentCardContent
 
 @Composable
@@ -11,6 +12,8 @@ fun DigitalStudentCardScreen(
     onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    StatusBarStyle(darkIcons = true)
 
     DigitalStudentCardContent(
         uiState = uiState,

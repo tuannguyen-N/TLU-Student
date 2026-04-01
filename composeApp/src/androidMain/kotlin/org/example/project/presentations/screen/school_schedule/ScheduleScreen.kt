@@ -1,7 +1,6 @@
 package org.example.project.presentations.screen.school_schedule
 
 import android.content.ClipData
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -11,7 +10,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
@@ -31,7 +29,6 @@ fun ScheduleScreen(
     onSendEmail: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
 
@@ -42,7 +39,6 @@ fun ScheduleScreen(
                     ClipData.newPlainText(label, text)
                 )
             )
-            Toast.makeText(context, "Đã sao chép $label", Toast.LENGTH_SHORT).show()
         }
     }
 

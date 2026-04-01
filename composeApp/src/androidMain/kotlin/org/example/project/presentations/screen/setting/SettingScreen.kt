@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
 import org.example.project.presentations.components.ButtonView
+import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.CollectWithLifecycle
 
@@ -48,6 +49,8 @@ fun SettingScreen(
             }
         }
     }
+
+    StatusBarStyle(darkIcons = true)
 
     Scaffold(
         containerColor = LocalExtendedColors.current.background,

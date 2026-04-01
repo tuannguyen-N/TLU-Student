@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.main
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -17,7 +16,7 @@ fun AppRoot(
     resetAppData: () -> Unit
 ) {
     AppTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+        Surface {
             AppNavGraph(
                 resetAppData = resetAppData
             )

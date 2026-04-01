@@ -6,12 +6,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.example.project.presentations.theme.ExtendedColors
 
 @Composable
-fun SemesterInformation(gray: Color) {
+fun SemesterInformation(color: ExtendedColors) {
     Spacer(Modifier.height(16.dp))
     Text(
         text = "Học kỳ 1 - 2024",
@@ -23,6 +23,6 @@ fun SemesterInformation(gray: Color) {
     Text(
         text = "THỜI GIAN ĐĂNG KÝ CÒN LẠI: 4 NGÀY",
         style = MaterialTheme.typography.labelMedium,
-        color = gray
+        color = color.gray
     )
 }

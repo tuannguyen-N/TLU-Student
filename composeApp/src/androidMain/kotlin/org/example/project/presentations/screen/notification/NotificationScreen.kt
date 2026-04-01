@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.screen.notification.components.HeaderContainer
 import org.example.project.presentations.screen.notification.components.NotificationBottomSheetContent
 import org.example.project.presentations.screen.notification.components.NotificationList
@@ -36,6 +37,8 @@ fun NotificationScreen(
     val state by viewModel.uiState.collectAsState()
 
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    StatusBarStyle(darkIcons = true)
 
     Scaffold(
         contentWindowInsets = WindowInsets(0),

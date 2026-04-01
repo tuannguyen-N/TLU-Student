@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
+import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.screen.timetable.components.TimetableContent
 
 @Composable
@@ -29,6 +30,8 @@ fun TimetableScreen(
             Toast.makeText(context, "Đã sao chép $label", Toast.LENGTH_SHORT).show()
         }
     }
+
+    StatusBarStyle(darkIcons = false)
 
     TimetableContent(
         uiState = uiState,

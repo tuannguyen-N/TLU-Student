@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.screen.feedback.components.FeedbackFormContent
@@ -31,6 +32,8 @@ fun FeedbackScreen(
         "Tạo phản hồi" to Icons.Filled.Edit,
         "Lịch sử" to Icons.Filled.History
     )
+
+    StatusBarStyle(darkIcons = false)
 
     Scaffold(
         containerColor = LocalExtendedColors.current.background,

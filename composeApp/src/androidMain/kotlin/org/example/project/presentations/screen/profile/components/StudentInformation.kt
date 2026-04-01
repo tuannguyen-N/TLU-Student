@@ -21,12 +21,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.toDisplayDate
 
 @Composable
 fun PersonalInformation(
     studentCode: String,
     fullName: String,
     gender: String,
+    birthDay: String,
     cardNumber: String,
     phoneNumber: String,
     email: String,
@@ -71,6 +73,7 @@ fun PersonalInformation(
             InformationItem(R.drawable.icon_student_code, "Mã sinh viên", studentCode)
             InformationItem(R.drawable.icon_name, "Họ và tên", fullName)
             InformationItem(R.drawable.icon_gender, "Giới tính", gender)
+            InformationItem(R.drawable.icon_birthday, "Ngày sinh", birthDay.toDisplayDate())
             InformationItem(R.drawable.icon_cmnd, "CMND/CCCD", cardNumber)
             InformationItem(R.drawable.icon_phone_number, "Số điện thoại", phoneNumber)
             InformationItem(R.drawable.icon_mail, "Email", email)

@@ -2,6 +2,7 @@ package org.example.project.presentations.screen.edit_profile
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +55,7 @@ fun EditProfileScreen(
     }
 
     LazyColumn(
-        modifier = Modifier.statusBarsPadding(),
+        modifier = Modifier.statusBarsPadding().background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {

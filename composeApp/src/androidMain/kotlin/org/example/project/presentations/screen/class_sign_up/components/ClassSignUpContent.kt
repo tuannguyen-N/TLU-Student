@@ -30,6 +30,7 @@ import org.example.project.domain.model.CourseFilter
 import org.example.project.domain.model.CourseItem
 import org.example.project.domain.model.CourseStatus
 import org.example.project.presentations.components.TopScreenBar
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Preview
@@ -78,11 +79,7 @@ fun ClassSignUpContent(
                 course.code.contains(searchQuery, ignoreCase = true)
         matchFilter && matchSearch
     }
-
-    val mainBlue = LocalExtendedColors.current.mainBlue
-    val fontBlue = LocalExtendedColors.current.fontBlue
-    val gray = LocalExtendedColors.current.gray
-
+    val color = LocalExtendedColors.current
     Scaffold(
         modifier = modifier,
         containerColor = LocalExtendedColors.current.background,
@@ -98,7 +95,7 @@ fun ClassSignUpContent(
         }
     ) { innerPadding ->
 
-        Box(modifier = Modifier.padding(innerPadding)){
+        Box(modifier = Modifier.padding(innerPadding)) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -107,36 +104,39 @@ fun ClassSignUpContent(
             ) {
 
                 item {
-                    SemesterInformation(gray)
+                    SemesterInformation(color)
                 }
 
                 item {
                     CourseNameInputField(
                         searchQuery = searchQuery,
+                        hint = "Tìm kiếm môn học...",
                         onSearchQueryChange = { searchQuery = it },
-                        mainBlue = mainBlue,
-                        gray = gray
+                        color = LocalExtendedColors.current
                     )
                 }
 
                 item {
-                    selectedFilter = courseFilter(selectedFilter, fontBlue)
+                    selectedFilter = courseFilter(selectedFilter, color)
                 }
 
                 items(filtered) { course ->
                     CourseCard(
                         course = course,
-                        mainBlue = mainBlue,
-                        gray = gray,
-                        white = LocalExtendedColors.current.white
+                        color = color,
+                        onSignUp = {
+                            // TODO:
+                        }
                     )
                 }
 
-                item { Spacer(Modifier.height(24.dp)) }
+                item { Spacer(Modifier.height(60.dp)) }
             }
 
             ClassSelectedInformationCard(
-                modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
             )
         }
     }
@@ -145,7 +145,7 @@ fun ClassSignUpContent(
 @Composable
 private fun courseFilter(
     selectedFilter: CourseFilter,
-    fontBlue: Color
+    color: ExtendedColors
 ): CourseFilter {
     var selectedFilter1 = selectedFilter
     val chips = listOf(
@@ -161,7 +161,7 @@ private fun courseFilter(
                 onClick = { selectedFilter1 = filter },
                 label = { Text(label, style = MaterialTheme.typography.labelMedium) },
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = fontBlue,
+                    selectedContainerColor = color.fontBlue,
                     selectedLabelColor = Color.White,
                     containerColor = LocalExtendedColors.current.white,
                     labelColor = Color.Black

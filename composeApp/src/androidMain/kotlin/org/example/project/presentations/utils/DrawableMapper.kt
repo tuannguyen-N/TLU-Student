@@ -6,6 +6,7 @@ import androidx.compose.material.icons.outlined.AssignmentInd
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Class
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Favorite
@@ -30,7 +31,7 @@ fun FeatureType.toImageVector(): ImageVector {
         FeatureType.EXAM_SCHEDULE -> Icons.Outlined.CalendarMonth
         FeatureType.COURSE_REGISTER -> Icons.Outlined.EditNote
         FeatureType.GPA_PREDICTION -> Icons.Outlined.AutoAwesome
-        FeatureType.DORMITORY -> Icons.Outlined.Apartment
+        FeatureType.STUDENT_CLASS -> Icons.Outlined.Class
         FeatureType.MAP -> Icons.Outlined.Map
         FeatureType.CLUB -> Icons.Outlined.Favorite
         FeatureType.JOBS -> Icons.Outlined.Work
@@ -50,7 +51,7 @@ fun FeatureType.toIconBackgroundColor(): Color {
         FeatureType.EXAM_SCHEDULE -> Color(0xFFD6F5EC)
         FeatureType.COURSE_REGISTER -> Color(0xFFEFE0FF)
         FeatureType.GPA_PREDICTION -> Color(0xFFFFEDD5)
-        FeatureType.DORMITORY -> Color(0xFFFFD6E7)
+        FeatureType.STUDENT_CLASS -> Color(0xFFFFD6E7)
         FeatureType.MAP -> Color(0xFFD6F5EC)
         FeatureType.CLUB -> Color(0xFFFFE0EC)
         FeatureType.JOBS -> Color(0xFFDCEEFF)
@@ -70,7 +71,7 @@ fun FeatureType.toIconTintColor(): Color {
         FeatureType.EXAM_SCHEDULE -> Color(0xFF1AAF7A)
         FeatureType.COURSE_REGISTER -> Color(0xFF9B4DCA)
         FeatureType.GPA_PREDICTION -> Color(0xFFE87D3D)
-        FeatureType.DORMITORY -> Color(0xFFE8437A)
+        FeatureType.STUDENT_CLASS -> Color(0xFFE8437A)
         FeatureType.MAP -> Color(0xFF1AAF7A)
         FeatureType.CLUB -> Color(0xFFE84368)
         FeatureType.JOBS -> Color(0xFF3D88E8)
@@ -90,6 +91,8 @@ fun FeatureType.toRoute(): String {
         FeatureType.EXAM_SCHEDULE -> AppRoute.ExamSchedule
         FeatureType.GPA_PREDICTION -> AppRoute.GpaPredict
         FeatureType.DIGITAL_STUDENT_CARD -> AppRoute.DigitalStudentCard
+        FeatureType.STUDENT_CLASS -> AppRoute.StudentClass
+        FeatureType.COURSE_REGISTER -> AppRoute.ClassSignUp
         else -> "" // TODO:
     }
 }

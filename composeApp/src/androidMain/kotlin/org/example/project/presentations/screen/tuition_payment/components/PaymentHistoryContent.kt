@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.example.project.presentations.components.LabelHeader
 import org.example.project.presentations.theme.ExtendedColors
 
 enum class PaymentStatus { SUCCESS, FAILED }
@@ -90,7 +91,7 @@ fun PaymentHistoryContent(color: ExtendedColors) {
 
     LazyColumn {
         semesters.forEach { semester ->
-            item { SemesterHeader(label = semester.semesterLabel) }
+            item { LabelHeader(label = semester.semesterLabel) }
 
             items(semester.items) { payment ->
                 PaymentCard(item = payment, color = color)
@@ -98,21 +99,6 @@ fun PaymentHistoryContent(color: ExtendedColors) {
 
             item { Spacer(Modifier.height(8.dp)) }
         }
-    }
-}
-
-@Composable
-private fun SemesterHeader(label: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Spacer(Modifier.height(8.dp))
     }
 }
 

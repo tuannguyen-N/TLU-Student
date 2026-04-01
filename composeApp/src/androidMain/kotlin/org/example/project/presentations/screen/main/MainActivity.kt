@@ -3,6 +3,7 @@ package org.example.project.presentations.screen.main
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
@@ -56,7 +57,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun fitSystemWindow() {
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(
+                android.graphics.Color.TRANSPARENT,
+                android.graphics.Color.TRANSPARENT
+            )
+        )
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 

@@ -11,14 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun CourseNameInputField(
     searchQuery: String,
+    hint: String,
     onSearchQueryChange: (String) -> Unit,
-    mainBlue: Color,
-    gray: Color
+    color: ExtendedColors
 ) {
     OutlinedTextField(
         value = searchQuery,
@@ -26,7 +27,7 @@ fun CourseNameInputField(
         modifier = Modifier.fillMaxWidth(),
         placeholder = {
             Text(
-                text = "Tìm kiếm môn học...",
+                text = hint,
                 style = MaterialTheme.typography.bodyMedium
             )
         },
@@ -42,9 +43,9 @@ fun CourseNameInputField(
             unfocusedContainerColor = LocalExtendedColors.current.white,
             focusedContainerColor = LocalExtendedColors.current.white,
             unfocusedBorderColor = Color.Transparent,
-            focusedBorderColor = mainBlue,
-            unfocusedLeadingIconColor = gray,
-            focusedLeadingIconColor = mainBlue
+            focusedBorderColor = color.midBlue,
+            unfocusedLeadingIconColor = color.gray,
+            focusedLeadingIconColor = color.mainBlue
         )
     )
 }

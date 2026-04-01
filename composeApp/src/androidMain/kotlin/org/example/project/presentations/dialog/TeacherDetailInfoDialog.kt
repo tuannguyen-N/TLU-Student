@@ -46,15 +46,14 @@ import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun TeacherDetailInfoDialog(
-    lecturer: Lecturer = Lecturer("123123", "Nguyễn Văn A", "0987654321", "asdfasdfasdf@adsfasdf"),
-    onContact: () -> Unit = {},
-    onDismiss: () -> Unit = {},
-    onCopyLecturerCode: () -> Unit = {},
-    onCopyPhoneNumber: () -> Unit = {},
-    onCopyEmail: () -> Unit = {}
+    lecturer: Lecturer,
+    onContact: () -> Unit,
+    onDismiss: () -> Unit,
+    onCopyLecturerCode: () -> Unit,
+    onCopyPhoneNumber: () -> Unit,
+    onCopyEmail: () -> Unit
 ) {
     val colors = LocalExtendedColors.current
 

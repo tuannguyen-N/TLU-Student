@@ -22,27 +22,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.CourseFilter
 import org.example.project.domain.model.CourseItem
 import org.example.project.domain.model.CourseStatus
 import org.example.project.presentations.components.LabelView
-import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.theme.ExtendedColors
 
-@Preview(showBackground = true)
 @Composable
 fun CourseCard(
-    course: CourseItem = CourseItem(
-        "EN101",
-        2,
-        "Tiếng Anh 1",
-        CourseStatus.FULL,
-        CourseFilter.ELECTIVE
-    ),
-    mainBlue: Color = LocalExtendedColors.current.mainBlue,
-    gray: Color = LocalExtendedColors.current.gray,
-    white: Color = Color.White
+    course: CourseItem,
+    color: ExtendedColors,
+    onSignUp: () -> Unit
 ) {
     val isFull = course.status == CourseStatus.FULL
 
@@ -68,7 +58,7 @@ fun CourseCard(
             },
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = if (isFull) Color.Transparent else white
+            containerColor = if (isFull) Color.Transparent else color.white
         ),
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = if (isFull) 0.dp else 1.dp
@@ -83,15 +73,15 @@ fun CourseCard(
                 Text(
                     text = "${course.code} • ${course.credits} TÍN CHỈ",
                     style = MaterialTheme.typography.labelMedium,
-                    color = gray,
+                    color = color.gray,
                     modifier = Modifier.weight(1f)
                 )
 
                 if (isFull) {
                     LabelView(
                         text = "Đã đầy",
-                        backgroundColor = gray.copy(alpha = 0.1f),
-                        textColor = gray
+                        backgroundColor = color.gray.copy(alpha = 0.1f),
+                        textColor = color.gray
                     )
                 }
             }
@@ -102,17 +92,17 @@ fun CourseCard(
                 text = course.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = if (isFull) gray else Color.Black,
+                color = if (isFull) color.gray else Color.Black,
             )
 
             if (!isFull) {
                 Spacer(Modifier.height(6.dp))
                 Button(
                     onClick = {
-                        // TODO:
+                        onSignUp()
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = mainBlue,
+                        containerColor = color.mainBlue,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(12.dp),

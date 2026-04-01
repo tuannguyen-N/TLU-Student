@@ -16,4 +16,7 @@ object AppRoute {
     const val ExamSchedule = "exam_schedule"
     const val GpaPredict = "gpa_predict"
     const val DigitalStudentCard = "digital_student_card"
+    const val StudentClass = "student_class"
+    const val ClassSignUp = "class_sign_up"
+    const val ClassSignUpDetail = "class_sign_up_detail"
 }

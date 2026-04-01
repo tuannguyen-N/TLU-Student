@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.home
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -8,10 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.example.project.domain.model.FeatureType
 import org.example.project.presentations.screen.home.components.AlertList
 import org.example.project.presentations.screen.home.components.FeatureList
@@ -30,6 +36,13 @@ fun HomeScreen(
     onOpenScheduleScreen: () -> Unit
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val view = LocalView.current
+
+    SideEffect {
+        val window = (view.context as Activity).window
+        window.statusBarColor = android.graphics.Color.BLACK
+        WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = false
+    }
 
     Scaffold(
         containerColor = LocalExtendedColors.current.background,

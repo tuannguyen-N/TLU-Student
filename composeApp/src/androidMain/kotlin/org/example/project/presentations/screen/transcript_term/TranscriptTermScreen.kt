@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.screen.transcript_term.components.SubjectResultCard
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -23,6 +24,8 @@ fun TranscriptTermScreen(
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    StatusBarStyle(darkIcons = false)
 
     Scaffold(
         containerColor = LocalExtendedColors.current.background,

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.FeatureEditMode
 import org.example.project.domain.model.FeatureUiModel
+import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.dialog.ExitConfirmDialog
 import org.example.project.presentations.screen.features.components.FeatureGrid
@@ -40,6 +41,8 @@ fun FeaturesScreen(
             is FeatureUiEvent.OnBack -> onBack()
         }
     }
+
+    StatusBarStyle(darkIcons = false)
 
     Scaffold(
         containerColor = LocalExtendedColors.current.background,

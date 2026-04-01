@@ -19,6 +19,7 @@ import org.example.project.domain.model.FeatureUiModel
 import org.example.project.domain.usecase.CountdownTimerUseCase
 import org.example.project.domain.usecase.GenerateQrUseCase
 import org.example.project.domain.usecase.GpaPredictUseCase
+import org.example.project.presentations.screen.class_sign_up.ClassSignUpScreen
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardScreen
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardViewModel
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardViewModelFactory
@@ -53,6 +54,9 @@ import org.example.project.presentations.screen.setting.SettingScreen
 import org.example.project.presentations.screen.setting.SettingViewModel
 import org.example.project.presentations.screen.setting.SettingViewModelFactory
 import org.example.project.presentations.screen.splash.SplashScreen
+import org.example.project.presentations.screen.student_class.StudentClassScreen
+import org.example.project.presentations.screen.student_class.StudentClassViewModel
+import org.example.project.presentations.screen.student_class.StudentClassViewModelFactory
 import org.example.project.presentations.screen.timetable.TimetableScreen
 import org.example.project.presentations.screen.timetable.TimetableViewModel
 import org.example.project.presentations.screen.timetable.TimetableViewModelFactory
@@ -76,26 +80,26 @@ fun AppNavGraph(
         enterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(300, easing = FastOutSlowInEasing)
-            ) + fadeIn(animationSpec = tween(300))
+                animationSpec = tween(400, easing = FastOutSlowInEasing)
+            ) + fadeIn(animationSpec = tween(400))
         },
         exitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(300, easing = FastOutSlowInEasing)
-            ) + fadeOut(animationSpec = tween(300))
+                animationSpec = tween(400, easing = FastOutSlowInEasing)
+            ) + fadeOut(animationSpec = tween(400))
         },
         popEnterTransition = {
             slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(300, easing = FastOutSlowInEasing)
-            ) + fadeIn(animationSpec = tween(300))
+                animationSpec = tween(400, easing = FastOutSlowInEasing)
+            ) + fadeIn(animationSpec = tween(400))
         },
         popExitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(300, easing = FastOutSlowInEasing)
-            ) + fadeOut(animationSpec = tween(300))
+                animationSpec = tween(400, easing = FastOutSlowInEasing)
+            ) + fadeOut(animationSpec = tween(400))
         }
     ) {
         composable(AppRoute.Splash) {
@@ -313,6 +317,27 @@ fun AppNavGraph(
             DigitalStudentCardScreen(
                 digitalStudentCardViewModel,
                 onBack = { navController.popBackStack() })
+        }
+
+        composable(AppRoute.StudentClass) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                StudentClassViewModelFactory(
+                    container.studentClassRepository
+                )
+            }
+            val studentClassViewModel: StudentClassViewModel = viewModel(factory = factory)
+
+            StudentClassScreen(
+                viewModel = studentClassViewModel,
+                onBack = { navController.popBackStack() })
+        }
+
+        composable(AppRoute.ClassSignUp){
+            val container = LocalAppContainer.current
+            ClassSignUpScreen(
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
