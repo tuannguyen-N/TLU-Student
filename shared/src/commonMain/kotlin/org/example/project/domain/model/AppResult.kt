@@ -1,10 +1,10 @@
 package org.example.project.domain.model
 
-sealed interface ApiResult<out T> {
-    data class Success<T>(val data: T) : ApiResult<T>
-    data class Failure(val message: String?, val cause: Throwable? = null) : ApiResult<Nothing>
+sealed interface AppResult<out T> {
+    data class Success<T>(val data: T) : AppResult<T>
+    data class Failure(val message: String?, val cause: Throwable? = null) : AppResult<Nothing>
 
-    fun <R> map(transform: (T) -> R): ApiResult<R> = when (this) {
+    fun <R> map(transform: (T) -> R): AppResult<R> = when (this) {
         is Success -> Success(transform(data))
         is Failure -> this
     }
@@ -17,12 +17,12 @@ sealed interface ApiResult<out T> {
         is Failure -> onFailure(this)
     }
 
-    fun onSuccess(action: (T) -> Unit): ApiResult<T> {
+    fun onSuccess(action: (T) -> Unit): AppResult<T> {
         if (this is Success) action(data)
         return this
     }
 
-    fun onFailure(action: (Failure) -> Unit): ApiResult<T> {
+    fun onFailure(action: (Failure) -> Unit): AppResult<T> {
         if (this is Failure) action(this)
         return this
     }

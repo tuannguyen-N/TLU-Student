@@ -4,23 +4,43 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.data.remote.api.SemesterApi
 import org.example.project.data.remote.dto.semester.Semester
-import org.example.project.domain.model.ApiResult
+import org.example.project.domain.model.AppResult
+
+import org.example.project.data.local.dao.SemesterDao
+import org.example.project.data.mapper.toEntity
+import org.example.project.data.mapper.toSemester
 
 class SemesterRepository(
-    private val semesterApi: SemesterApi
+    private val semesterApi: SemesterApi,
+    private val semesterDao: SemesterDao
 ) {
     private val _semesters = MutableStateFlow<List<Semester>?>(null)
     val semesters = _semesters.asStateFlow()
 
-    suspend fun getSemesters(): ApiResult<List<Semester>> {
+    suspend fun getSemesters(): AppResult<List<Semester>> {
         return try {
             val data = semesterApi.getSemesters().data
-                ?: return ApiResult.Failure(message = "Không có dữ liệu học kỳ")
+                ?: return AppResult.Failure(message = "Không có dữ liệu học kỳ")
+
+            semesterDao.insertSemesters(data.map { it.toEntity() })
 
             _semesters.value = data
-            ApiResult.Success(data)
+            AppResult.Success(data)
         } catch (e: Exception) {
-            ApiResult.Failure(message = e.message, cause = e)
+            AppResult.Failure(message = e.message, cause = e)
+        }
+    }
+
+    suspend fun getSemestersOffline(): AppResult<List<Semester>> {
+        return try {
+            val data = semesterDao.getAllSemesters().map { it.toSemester() }
+            if (data.isEmpty()) {
+                AppResult.Failure(message = "Không có dữ liệu học kỳ offline")
+            } else {
+                AppResult.Success(data)
+            }
+        } catch (e: Exception) {
+            AppResult.Failure(message = e.message, cause = e)
         }
     }
 }

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.CourseFilter
 import org.example.project.domain.model.CourseItem
 import org.example.project.domain.model.CourseStatus
+import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -85,10 +86,9 @@ fun ClassSignUpContent(
         containerColor = LocalExtendedColors.current.background,
         contentWindowInsets = WindowInsets(0),
         topBar = {
-            TopScreenBar<String>(
+            TopCenterScreenBar(
                 title = "Đăng ký học",
                 onBack = onBack,
-                enableListItem = true,
                 backgroundColor = LocalExtendedColors.current.white,
                 contentColor = Color.Black
             )

@@ -10,6 +10,7 @@ import com.microsoft.identity.client.IPublicClientApplication
 import com.microsoft.identity.client.ISingleAccountPublicClientApplication
 import com.microsoft.identity.client.PublicClientApplication
 import com.microsoft.identity.client.SilentAuthenticationCallback
+import com.microsoft.identity.client.exception.MsalClientException
 import com.microsoft.identity.client.exception.MsalException
 import org.example.project.R
 
@@ -34,27 +35,21 @@ object MsalHelper {
         )
     }
 
-    fun signIn(activity: Activity, onResult: (String?) -> Unit) {
-        Log.d("MSAL", "msalApp = $msalApp")
-        val app = msalApp ?: return onResult(null)
+    fun signIn(activity: Activity, onResult: (String?, Boolean) -> Unit) {
+        val app = msalApp ?: return onResult(null, false)
 
         app.signIn(activity, null, SCOPES, object : AuthenticationCallback {
             override fun onSuccess(result: IAuthenticationResult) {
-                val accessToken = result.accessToken
-                accessToken.chunked(200).forEachIndexed { _, chunk ->
-                    Log.d("MSAL", chunk)
-                }
-                onResult(accessToken)
+                onResult(result.accessToken, false)
             }
 
             override fun onError(exception: MsalException) {
                 Log.e("MSAL", "Lỗi đăng nhập: ${exception.message}")
-                onResult(null)
+                onResult(null, exception.isNoInternetError())
             }
 
             override fun onCancel() {
-                Log.d("MSAL", "Người dùng đã hủy")
-                onResult(null)
+                onResult(null, false)
             }
         })
     }
@@ -103,5 +98,16 @@ object MsalHelper {
                 onResult(false)
             }
         })
+    }
+
+    fun MsalException.isNoInternetError(): Boolean {
+        val noInternetKeywords = listOf(
+            "ERR_INTERNET_DISCONNECTED",
+            "ERR_NAME_NOT_RESOLVED",
+            "Unable to resolve host",
+            "Network is unreachable"
+        )
+        return noInternetKeywords.any { message?.contains(it) == true }
+                || errorCode == MsalClientException.DEVICE_NETWORK_NOT_AVAILABLE
     }
 }

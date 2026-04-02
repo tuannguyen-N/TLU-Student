@@ -8,6 +8,34 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.plus
 import org.example.project.data.remote.dto.semester.Semester
 
+import org.example.project.data.local.entity.SemesterEntity
+
+fun Semester.toEntity(): SemesterEntity {
+    return SemesterEntity(
+        id = id,
+        semesterName = semesterName,
+        semesterCode = semesterCode,
+        academicYears = academicYears,
+        semesterNumber = semesterNumber,
+        startDate = startDate,
+        endDate = endDate,
+        isActive = isActive
+    )
+}
+
+fun SemesterEntity.toSemester(): Semester {
+    return Semester(
+        id = id,
+        semesterName = semesterName,
+        semesterCode = semesterCode,
+        academicYears = academicYears,
+        semesterNumber = semesterNumber,
+        startDate = startDate,
+        endDate = endDate,
+        isActive = isActive
+    )
+}
+
 fun List<Semester>.toSemesterStringList(): List<String> = map { it.semesterName }
 
 fun Semester.toWeekDateList(): List<String> {

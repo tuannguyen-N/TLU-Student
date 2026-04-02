@@ -5,16 +5,26 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarViewMonth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,26 +32,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.example.project.presentations.components.LoadingView
+import org.example.project.presentations.components.NoConnectionDialog
 import org.example.project.presentations.screen.login.components.AuthenticationErrorBottomSheet
 import org.example.project.presentations.screen.login.components.CenterContent
 import org.example.project.presentations.screen.login.components.LoginButton
+import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.CollectWithLifecycle
+import org.example.project.presentations.utils.rememberSafeClick
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel,
     onNavigateToHome: () -> Unit = {},
+    onNavigateToOfflineTimetable: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val activity = context as? Activity ?: return
 
     val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState()
+    var showNoInternetDialog by remember { mutableStateOf(false) }
 
     loginViewModel.event.CollectWithLifecycle { event ->
         when (event) {
             LoginUiEvent.OnNavigateToHome -> onNavigateToHome()
+            LoginUiEvent.ShowNoInternetDialog -> showNoInternetDialog = true
         }
     }
 
@@ -66,16 +82,31 @@ fun LoginScreen(
                     .padding(horizontal = 40.dp)
             )
 
-            Text(
-                text = "Hướng dẫn sử dụng",
-                style = MaterialTheme.typography.titleSmall,
-                color = Color.Black,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .padding(bottom = 30.dp)
-                    .clickable {
-                        // TODO:
-                    }
-            )
+                    .clickable(
+                        onClick = rememberSafeClick{
+                            onNavigateToOfflineTimetable()
+                        }
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CalendarViewMonth,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = LocalExtendedColors.current.midBlue
+                )
+
+                Spacer(Modifier.width(8.dp))
+
+                Text(
+                    text = "Xem thời khoá biểu",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.Black,
+                )
+            }
         }
 
         if (uiState.isLoading) {
@@ -92,6 +123,16 @@ fun LoginScreen(
                     onRetry = loginViewModel::onDismissErrorSheet
                 )
             }
+        }
+
+        if (showNoInternetDialog) {
+            NoConnectionDialog(
+                onRetry = {
+                    showNoInternetDialog = false
+                    loginViewModel.onLoginClick(activity)
+                },
+                onDismiss = { showNoInternetDialog = false }
+            )
         }
     }
 }

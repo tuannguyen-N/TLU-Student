@@ -50,8 +50,9 @@ class AppContainer(
     val studentUseCase = StudentUseCase(studentRepository)
 
     //for schedule
+    private val scheduleDao = database.scheduleDao()
     private val scheduleApi = ScheduleApi(httpClient)
-    private val scheduleRepository = ScheduleRepository(scheduleApi)
+    private val scheduleRepository = ScheduleRepository(scheduleApi, scheduleDao)
     val scheduleUseCase = ScheduleUseCase(scheduleRepository)
 
     //for features
@@ -65,10 +66,11 @@ class AppContainer(
     val transcriptUseCase = TranscriptUseCase(transcriptRepository)
 
     //for exam schedule
+    private val semesterDao = database.semesterDao()
     private val semesterApi = SemesterApi(httpClient)
-    private val semesterResponse = SemesterRepository(semesterApi)
+    private val semesterRepository = SemesterRepository(semesterApi, semesterDao)
     private val examScheduleApi = ExamScheduleApi(httpClient)
-    val semesterUseCase = SemesterUseCase(semesterResponse)
+    val semesterUseCase = SemesterUseCase(semesterRepository)
     val examScheduleRepository = ExamScheduleRepository(examScheduleApi)
 
     //for setting

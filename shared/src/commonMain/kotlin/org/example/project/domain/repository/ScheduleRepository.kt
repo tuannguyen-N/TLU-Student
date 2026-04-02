@@ -4,16 +4,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.example.project.data.cache.CacheManager
+import org.example.project.data.local.dao.ScheduleDao
 import org.example.project.data.mapper.toSubjects
+import org.example.project.data.mapper.toWeeklyScheduleData
+import org.example.project.data.mapper.toWeeklyScheduleEntity
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.dto.day_schedule.ScheduleData
 import org.example.project.data.remote.dto.week_schedule.WeeklyScheduleData
-import org.example.project.domain.model.ApiResult
+import org.example.project.domain.model.AppResult
 import org.example.project.domain.model.SubjectItem
 import kotlin.time.Duration.Companion.minutes
 
 class ScheduleRepository(
-    private val scheduleApi: ScheduleApi
+    private val scheduleApi: ScheduleApi,
+    private val scheduleDao: ScheduleDao
 ) {
     private val dayScheduleCache = CacheManager<Int, ScheduleData>(5.minutes)
     private val weekScheduleCache = CacheManager<String, WeeklyScheduleData>(10.minutes)
@@ -27,7 +31,7 @@ class ScheduleRepository(
     suspend fun getDaySchedule(
         dayOfWeek: Int,
         forceRefresh: Boolean = false
-    ): ApiResult<ScheduleData> {
+    ): AppResult<ScheduleData> {
         return try {
             val data = dayScheduleCache.getOrFetch(
                 key = dayOfWeek,
@@ -37,10 +41,9 @@ class ScheduleRepository(
                     ?: throw Exception("Không có dữ liệu lịch học")
             }
             _daySchedules.update { it + (dayOfWeek to data) }
-            ApiResult.Success(data)
-
+            AppResult.Success(data)
         } catch (e: Exception) {
-            ApiResult.Failure(message = e.message, cause = e)
+            AppResult.Failure(message = e.message, cause = e)
         }
     }
 
@@ -48,7 +51,7 @@ class ScheduleRepository(
         startDate: String,
         endDate: String,
         forceRefresh: Boolean = false
-    ): ApiResult<WeeklyScheduleData> {
+    ): AppResult<WeeklyScheduleData> {
         val key = "$startDate - $endDate"
         return try {
             val data = weekScheduleCache.getOrFetch(
@@ -58,24 +61,38 @@ class ScheduleRepository(
                 scheduleApi.getWeakSchedule(startDate, endDate).data
                     ?: throw Exception("Không có dữ liệu lịch tuần")
             }
+            scheduleDao.insertDaySchedule(data.toWeeklyScheduleEntity())
             _weekSchedules.update { it + (key to data) }
-            ApiResult.Success(data)
+            AppResult.Success(data)
 
         } catch (e: Exception) {
-            ApiResult.Failure(message = e.message, cause = e)
+            AppResult.Failure(message = e.message, cause = e)
         }
     }
 
-    suspend fun getSemesterSubjects(semester: String): ApiResult<List<SubjectItem>> {
+    suspend fun getSemesterSubjects(semester: String): AppResult<List<SubjectItem>> {
         return try {
             val data = scheduleApi.getSemesterSubjects(semester).data
                 ?.toSubjects()
                 ?: emptyList()
-            ApiResult.Success(data)
+            AppResult.Success(data)
 
         } catch (e: Exception) {
-            ApiResult.Failure(message = e.message, cause = e)
+            AppResult.Failure(message = e.message, cause = e)
         }
+    }
+
+    suspend fun getWeekScheduleOffLine(
+        startDate: String,
+        endDate: String
+    ): AppResult<WeeklyScheduleData?> {
+        return try {
+            val data = scheduleDao.getWeeklySchedule(startDate, endDate)?.toWeeklyScheduleData()
+            AppResult.Success(data)
+        } catch (e: Exception) {
+            AppResult.Failure(message = e.message, cause = e)
+        }
+
     }
 
     fun clearCache() {

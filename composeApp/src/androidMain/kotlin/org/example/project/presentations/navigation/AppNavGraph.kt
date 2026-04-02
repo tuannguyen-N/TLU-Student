@@ -57,6 +57,9 @@ import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.student_class.StudentClassScreen
 import org.example.project.presentations.screen.student_class.StudentClassViewModel
 import org.example.project.presentations.screen.student_class.StudentClassViewModelFactory
+import org.example.project.presentations.screen.timetable_offline.OfflineTimetableScreen
+import org.example.project.presentations.screen.timetable_offline.OfflineTimetableViewModel
+import org.example.project.presentations.screen.timetable_offline.OfflineTimetableViewModelFactory
 import org.example.project.presentations.screen.timetable.TimetableScreen
 import org.example.project.presentations.screen.timetable.TimetableViewModel
 import org.example.project.presentations.screen.timetable.TimetableViewModelFactory
@@ -116,6 +119,9 @@ fun AppNavGraph(
                     navController.navigate(AppRoute.Main) {
                         popUpTo(AppRoute.Login) { inclusive = true }
                     }
+                },
+                onNavigateToOfflineTimetable = {
+                    navController.navigate(AppRoute.OfflineTimetableScreen)
                 },
                 loginViewModel = loginViewModel
             )
@@ -230,6 +236,25 @@ fun AppNavGraph(
 
             TimetableScreen(
                 viewModel = timetableViewModel,
+                onBack = { navController.popBackStack() },
+                onOpenEmail = { email -> context.openEmail(email) }
+            )
+        }
+
+        composable(AppRoute.OfflineTimetableScreen) {
+            val container = LocalAppContainer.current
+            val context = LocalContext.current
+            val factory =
+                remember(container) {
+                    OfflineTimetableViewModelFactory(
+                        container.scheduleUseCase,
+                        container.semesterUseCase
+                    )
+                }
+            val offlineTimetableViewModel: OfflineTimetableViewModel = viewModel(factory = factory)
+
+            OfflineTimetableScreen(
+                viewModel = offlineTimetableViewModel,
                 onBack = { navController.popBackStack() },
                 onOpenEmail = { email -> context.openEmail(email) }
             )

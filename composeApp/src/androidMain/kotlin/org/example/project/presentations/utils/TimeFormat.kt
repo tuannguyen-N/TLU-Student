@@ -108,6 +108,6 @@ fun String.toSlashDate(): String {
 
 //date
 fun String.toDisplayDate(): String {
-    val date = kotlinx.datetime.LocalDate.parse(this)
-    return "%02d-%02d-%04d".format(date.dayOfMonth, date.monthNumber, date.year)
+    val date = LocalDate.parse(this)
+    return "%02d/%02d/%04d".format(date.dayOfMonth, date.monthNumber, date.year)
 } // "21-01-2022"

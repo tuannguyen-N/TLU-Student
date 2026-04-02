@@ -30,6 +30,7 @@ import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.transcript_term.components.SubjectCode
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.toHourMinute
 
 @Composable
 fun ClassDetailContent(
@@ -111,7 +112,7 @@ fun ClassDetailContent(
                 modifier = Modifier.weight(1f),
                 icon = Icons.Outlined.AccessTime,
                 label = "THỜI GIAN",
-                primaryText = "${courseClass.startTime} - ${courseClass.endTime}",
+                primaryText = "${courseClass.startTime.toHourMinute()} - ${courseClass.endTime.toHourMinute()}",
                 secondaryText = "Ca ${courseClass.startPeriod} - ${courseClass.endPeriod}"
             )
         }

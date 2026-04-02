@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import org.example.project.data.mapper.toLocalDateSafe
 import org.example.project.data.mapper.toStartWeekDate
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.usecase.ScheduleUseCase
@@ -30,9 +31,6 @@ class TimetableViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(TimetableState())
     val uiState = _uiState.asStateFlow()
-
-    private val _events = Channel<TimetableUIEvent>()
-    val events = _events.receiveAsFlow()
 
     init {
         observeWeekSchedule()
@@ -77,14 +75,7 @@ class TimetableViewModel(
 
     private fun getSemesters() {
         viewModelScope.launch {
-            semesterUseCase.getSemesters().fold(
-                onSuccess = {
-                    // TODO:  
-                },
-                onFailure = {
-                    Log.e("ExamViewModel", "getSemesters: Error $it")
-                }
-            )
+            semesterUseCase.getSemesters()
         }
     }
 
@@ -139,10 +130,23 @@ class TimetableViewModel(
 
     fun onChangeSemester(semesterName: String) {
         val semester = _uiState.value.semesters.find { it.semesterName == semesterName } ?: return
-        val firstWeek = semester.toStartWeekDate()
-        val (start, end) = firstWeek.split(" - ")
+        val startDate = semester.startDate.toLocalDateSafe()
+        val endDate = semester.endDate.toLocalDateSafe()
+
+        val (start, end) = if (today in startDate..endDate) {
+            getCurrentWeek()
+        } else {
+            val firstWeek = semester.toStartWeekDate()
+            val (s, e) = firstWeek.split(" - ")
+            s to e
+        }
         getWeekSchedule(start, end)
-        updateState { copy(selectedSemester = semester, selectedWeek = firstWeek) }
+        updateState {
+            copy(
+                selectedSemester = semester,
+                selectedWeek = "$start - $end"
+            )
+        }
     }
 
     fun onChangeWeek(week: String) {

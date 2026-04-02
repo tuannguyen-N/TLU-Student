@@ -7,7 +7,7 @@ import org.example.project.data.cache.CacheManager
 import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.data.remote.dto.exam_schedule.ExamScheduleData
-import org.example.project.domain.model.ApiResult
+import org.example.project.domain.model.AppResult
 import kotlin.time.Duration.Companion.minutes
 
 class ExamScheduleRepository(
@@ -21,7 +21,7 @@ class ExamScheduleRepository(
     suspend fun getExamSchedules(
         semester: String,
         forceReset: Boolean = false
-    ): ApiResult<ExamScheduleData> {
+    ): AppResult<ExamScheduleData> {
         return try {
             val data = examScheduleCache.getOrFetch(
                 key = semester,
@@ -31,10 +31,10 @@ class ExamScheduleRepository(
                     ?: throw Exception("Không có dữ liệu lịch thi")
             }
             _examSchedules.update { data.examSchedules }
-            ApiResult.Success(data)
+            AppResult.Success(data)
 
         } catch (e: Exception) {
-            ApiResult.Failure(message = e.message, cause = e)
+            AppResult.Failure(message = e.message, cause = e)
         }
     }
 }
