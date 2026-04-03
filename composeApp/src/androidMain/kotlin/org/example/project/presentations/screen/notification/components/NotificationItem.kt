@@ -26,7 +26,7 @@ import org.example.project.domain.model.NotificationType
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.avatarRes
 import org.example.project.presentations.utils.iconRes
-import org.example.project.presentations.utils.toFormatTime
+import org.example.project.data.mapper.toFormatTime
 
 @Preview
 @Composable

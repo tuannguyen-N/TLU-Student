@@ -36,8 +36,8 @@ import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.theme.Poppins
-import org.example.project.presentations.utils.getStatusText
-import org.example.project.presentations.utils.toHourMinuteAmPm
+import org.example.project.data.mapper.getStatusText
+import org.example.project.data.mapper.toHourMinuteAmPm
 import kotlin.time.Clock
 
 @Composable

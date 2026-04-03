@@ -11,6 +11,7 @@ import org.example.project.data.remote.api.StudentApi
 import org.example.project.data.remote.api.StudentClassApi
 import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.api.TranscriptApi
+import org.example.project.data.remote.api.TuitionApi
 import org.example.project.data.remote.createHttpClient
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.ExamScheduleRepository
@@ -20,6 +21,7 @@ import org.example.project.domain.repository.SemesterRepository
 import org.example.project.domain.repository.StudentClassRepository
 import org.example.project.domain.repository.StudentRepository
 import org.example.project.domain.repository.TranscriptRepository
+import org.example.project.domain.repository.TuitionRepository
 import org.example.project.domain.usecase.LoginUseCase
 import org.example.project.domain.usecase.LogoutUseCase
 import org.example.project.domain.usecase.ScheduleUseCase
@@ -79,4 +81,8 @@ class AppContainer(
     //for studentClass
     private val studentClassApi = StudentClassApi(httpClient)
     val studentClassRepository = StudentClassRepository(studentClassApi)
+
+    //for tuition
+    private val tuitionApi = TuitionApi(httpClient)
+    val tuitionRepository = TuitionRepository(tuitionApi)
 }

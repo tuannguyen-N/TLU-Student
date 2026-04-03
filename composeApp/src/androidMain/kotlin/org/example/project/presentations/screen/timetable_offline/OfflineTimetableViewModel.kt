@@ -14,10 +14,10 @@ import org.example.project.data.remote.dto.week_schedule.WeeklyScheduleData
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.presentations.screen.timetable.TimetableState
-import org.example.project.presentations.utils.getCurrentWeek
-import org.example.project.presentations.utils.getNextWeek
-import org.example.project.presentations.utils.getPreviousWeek
-import org.example.project.presentations.utils.today
+import org.example.project.data.mapper.getCurrentWeek
+import org.example.project.data.mapper.getNextWeek
+import org.example.project.data.mapper.getPreviousWeek
+import org.example.project.data.mapper.today
 import org.example.project.presentations.utils.withDelayedLoading
 
 class OfflineTimetableViewModel(
@@ -33,20 +33,20 @@ class OfflineTimetableViewModel(
 
     private fun fetchSemesters() {
         viewModelScope.launch {
-            withDelayedLoading(onLoading = { updateState { TimetableState(isLoading = it) } }) {
+            withDelayedLoading(onLoading = { updateState { copy(isLoading = it) } }) {
                 semesterUseCase.getSemesters(true).fold(
                     onSuccess = { result ->
                         val semesters = result as? List<Semester>
                         val selected = semesters?.lastOrNull()
                         updateState {
-                            TimetableState(
+                            copy(
                                 semesters = semesters ?: emptyList(),
                                 selectedSemester = selected
                             )
                         }
                     },
                     onFailure = {
-                        updateState { TimetableState(semesters = emptyList()) }
+                        updateState { copy(semesters = emptyList()) }
                     }
                 )
             }
@@ -55,17 +55,17 @@ class OfflineTimetableViewModel(
 
     private fun fetchWeekScheduleOffline(startTime: String, endTime: String) {
         viewModelScope.launch {
-            updateState { TimetableState(selectedWeek = "$startTime - $endTime") }
-            withDelayedLoading(onLoading = { updateState { TimetableState(isLoading = it) } }) {
+            updateState { copy(selectedWeek = "$startTime - $endTime") }
+            withDelayedLoading(onLoading = { updateState { copy(isLoading = it) } }) {
                 scheduleUseCase.getWeekSchedule(startTime, endTime, true).fold(
                     onSuccess = { result ->
                         val data = result as? WeeklyScheduleData?
                         data?.let {
-                            updateState { TimetableState(weekSchedule = it) }
+                            updateState { copy(weekSchedule = it) }
                         }
                     },
                     onFailure = {
-                        updateState { TimetableState(weekSchedule = null) }
+                        updateState { copy(weekSchedule = null) }
                     }
                 )
             }
@@ -94,7 +94,7 @@ class OfflineTimetableViewModel(
 
     fun onOpenDetailCourseClass(courseClass: CourseClass) {
         updateState {
-            TimetableState(
+            copy(
                 showDetailCourseClass = true,
                 selectedCourseClass = courseClass
             )
@@ -102,15 +102,15 @@ class OfflineTimetableViewModel(
     }
 
     fun onDismissDetailCourseClass() {
-        updateState { TimetableState(showDetailCourseClass = false) }
+        updateState { copy(showDetailCourseClass = false) }
     }
 
     fun onOpenDetailLecturerInfo() {
-        updateState { TimetableState(showDetailLecturerInfo = true) }
+        updateState { copy(showDetailLecturerInfo = true) }
     }
 
     fun onDismissDetailLecturerInfo() {
-        updateState { TimetableState(showDetailLecturerInfo = false) }
+        updateState { copy(showDetailLecturerInfo = false) }
     }
 
     fun onChangeSemester(semesterName: String) {
@@ -125,18 +125,18 @@ class OfflineTimetableViewModel(
             val (s, e) = firstWeek.split(" - ")
             s to e
         }
-        updateState { TimetableState(selectedSemester = semester) }
+        updateState { copy(selectedSemester = semester) }
         fetchWeekScheduleOffline(start, end)
     }
 
     fun onChangeWeek(week: String) {
         val (start, end) = week.split(" - ")
         fetchWeekScheduleOffline(start, end)
-        updateState { TimetableState(selectedWeek = week) }
+        updateState { copy(selectedWeek = week) }
     }
 
     fun onToggleDropDown() {
-        updateState { TimetableState(showWeekMenu = !showWeekMenu) }
+        updateState { copy(showWeekMenu = !showWeekMenu) }
     }
 
     private fun updateState(newState: TimetableState.() -> TimetableState) {

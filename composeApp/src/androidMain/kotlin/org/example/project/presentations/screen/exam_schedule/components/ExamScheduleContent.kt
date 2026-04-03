@@ -28,26 +28,21 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.minusMonths
 import com.kizitonwose.calendar.core.plusMonths
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.number
-import kotlinx.datetime.plus
 import org.example.project.data.mapper.toLocalDateSafe
-import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.data.remote.dto.semester.Semester
-import org.example.project.domain.model.ExamDay
 import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.today
+import org.example.project.data.mapper.today
 
 @Composable
 fun ExamScheduleContent(
@@ -210,7 +205,6 @@ fun ExamScheduleContent(
                 }
 
             } else {
-
                 ExamListView(
                     uiState = uiState,
                 )

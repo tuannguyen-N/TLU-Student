@@ -20,4 +20,5 @@ object AppRoute {
     const val ClassSignUp = "class_sign_up"
     const val ClassSignUpDetail = "class_sign_up_detail"
     const val OfflineTimetableScreen = "offline_timetable_screen"
+    const val TuitionPayment = "tuition_payment"
 }

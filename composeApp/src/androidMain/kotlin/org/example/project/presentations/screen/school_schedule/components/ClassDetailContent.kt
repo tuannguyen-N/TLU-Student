@@ -30,7 +30,7 @@ import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.transcript_term.components.SubjectCode
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.toHourMinute
+import org.example.project.data.mapper.toHourMinute
 
 @Composable
 fun ClassDetailContent(

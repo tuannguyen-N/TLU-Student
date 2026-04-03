@@ -68,6 +68,9 @@ import org.example.project.presentations.screen.transcript.TranscriptViewModelFa
 import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
 import org.example.project.presentations.screen.transcript_term.TranscriptTermViewModel
 import org.example.project.presentations.screen.transcript_term.TranscriptTermViewModelFactory
+import org.example.project.presentations.screen.tuition_payment.TuitionPaymentScreen
+import org.example.project.presentations.screen.tuition_payment.TuitionPaymentViewModel
+import org.example.project.presentations.screen.tuition_payment.TuitionPaymentViewModelFactory
 import org.example.project.presentations.utils.openDialer
 import org.example.project.presentations.utils.openEmail
 import org.example.project.presentations.utils.toRoute
@@ -364,5 +367,20 @@ fun AppNavGraph(
                 onBack = { navController.popBackStack() }
             )
         }
+
+        composable(AppRoute.TuitionPayment){
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                TuitionPaymentViewModelFactory(
+                    container.tuitionRepository
+                )
+            }
+            val tuitionPaymentViewModel: TuitionPaymentViewModel = viewModel(factory = factory)
+            TuitionPaymentScreen(
+                viewModel = tuitionPaymentViewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
     }
 }

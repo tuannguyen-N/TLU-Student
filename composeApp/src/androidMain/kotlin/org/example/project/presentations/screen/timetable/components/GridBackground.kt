@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.getTodayDayOfWeek
+import org.example.project.data.mapper.getTodayDayOfWeek
 
 @Preview(showBackground = true)
 @Composable

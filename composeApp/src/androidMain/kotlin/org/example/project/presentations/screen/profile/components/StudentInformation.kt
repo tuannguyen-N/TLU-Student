@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.toDisplayDate
+import org.example.project.data.mapper.toDisplayDate
 
 @Composable
 fun PersonalInformation(

@@ -24,7 +24,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.shimmerEffect
-import org.example.project.presentations.utils.isGoing
+import org.example.project.data.mapper.isGoing
 import kotlin.time.Clock
 
 @Composable

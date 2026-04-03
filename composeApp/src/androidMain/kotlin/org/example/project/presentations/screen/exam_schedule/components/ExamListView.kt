@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.datetime.DayOfWeek
@@ -48,21 +49,33 @@ fun ExamListView(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp),
     ) {
-        uiState.examDays.forEach { examDay ->
+        if (uiState.examDays.isEmpty()) {
             item {
-                ExamDayHeader(
-                    date = examDay.localExamDay,
-                    isPast = examDay.isPast,
-                    isToday = examDay.isToday
+                Text(
+                    text = "Không có lịch thi kỳ này",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = LocalExtendedColors.current.gray,
+                    fontStyle = FontStyle.Italic
                 )
-                Spacer(Modifier.height(8.dp))
             }
+        } else {
+            uiState.examDays.forEach { examDay ->
+                item {
+                    ExamDayHeader(
+                        date = examDay.localExamDay,
+                        isPast = examDay.isPast,
+                        isToday = examDay.isToday
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
 
-            items(examDay.exams) { exam ->
-                ExamCard(exam = exam, isPast = examDay.isPast, isToday = examDay.isToday)
-                Spacer(Modifier.height(8.dp))
+                items(examDay.exams) { exam ->
+                    ExamCard(exam = exam, isPast = examDay.isPast, isToday = examDay.isToday)
+                    Spacer(Modifier.height(8.dp))
+                }
+
+                item { Spacer(Modifier.height(8.dp)) }
             }
-            item { Spacer(Modifier.height(8.dp)) }
         }
     }
 }

@@ -20,8 +20,8 @@ import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.StudentUseCase
-import org.example.project.presentations.utils.getTodayDayOfWeek
-import org.example.project.presentations.utils.nearestClasses
+import org.example.project.data.mapper.getTodayDayOfWeek
+import org.example.project.data.mapper.nearestClasses
 import org.example.project.presentations.utils.withDelayedLoading
 import kotlin.time.Clock
 

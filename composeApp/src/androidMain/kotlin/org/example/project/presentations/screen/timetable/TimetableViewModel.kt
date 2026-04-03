@@ -3,7 +3,6 @@ package org.example.project.presentations.screen.timetable
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import org.example.project.data.mapper.toLocalDateSafe
@@ -19,10 +17,10 @@ import org.example.project.data.mapper.toStartWeekDate
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
-import org.example.project.presentations.utils.getCurrentWeek
-import org.example.project.presentations.utils.getNextWeek
-import org.example.project.presentations.utils.getPreviousWeek
-import org.example.project.presentations.utils.today
+import org.example.project.data.mapper.getCurrentWeek
+import org.example.project.data.mapper.getNextWeek
+import org.example.project.data.mapper.getPreviousWeek
+import org.example.project.data.mapper.today
 import org.example.project.presentations.utils.withDelayedLoading
 
 class TimetableViewModel(
@@ -40,7 +38,6 @@ class TimetableViewModel(
 
     private fun observeSemesters() {
         semesterUseCase.semesters.onEach { semesters ->
-            Log.e("123123", "observeSemesters: $semesters", )
             val selected = semesters?.lastOrNull()
             updateState {
                 copy(
@@ -88,12 +85,7 @@ class TimetableViewModel(
                     updateState { copy(isLoading = isLoading) }
                 }
             ) {
-                scheduleUseCase.getWeekSchedule(startTime, endTime).fold(
-                    {
-
-                    },
-                    { Log.e("123123", "getWeekSchedule: $it", )}
-                )
+                scheduleUseCase.getWeekSchedule(startTime, endTime)
             }
         }
     }

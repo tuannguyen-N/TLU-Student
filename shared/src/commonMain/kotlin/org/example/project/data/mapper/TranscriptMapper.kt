@@ -43,7 +43,7 @@ object TranscriptMapper {
         val totalCreditsPassed = semesterResults.sumOf { it.semesterSummary.creditsPassed }
 
         return TranscriptUiModel(
-            cumulativeGpa = lastSummary?.cumulativeGpa ?: 0.0,
+            cumulativeGpa = getGpa(this),
             totalCreditsPassed = totalCreditsPassed,
             academicYearGroups = grouped
         )

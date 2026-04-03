@@ -1,4 +1,4 @@
-package org.example.project.presentations.utils
+package org.example.project.data.mapper
 
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -6,13 +6,10 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
+import kotlinx.datetime.number
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.remote.dto.week_schedule.CourseClass
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import kotlin.time.Clock
 
 val today: LocalDate
@@ -20,11 +17,14 @@ val today: LocalDate
         .toLocalDateTime(TimeZone.currentSystemDefault()).date
 
 fun Long.toFormatTime(): String {
-    val formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.getDefault())
+    val time = kotlinx.datetime.Instant
+        .fromEpochMilliseconds(this)
+        .toLocalDateTime(kotlinx.datetime.TimeZone.currentSystemDefault())
 
-    return Instant.ofEpochMilli(this)
-        .atZone(ZoneId.systemDefault())
-        .format(formatter)
+    val hour12 = (time.hour % 12).let { if (it == 0) 12 else it }
+    val amPm = if (time.hour < 12) "AM" else "PM"
+
+    return "${hour12.twoDigits()}:${time.minute.twoDigits()} $amPm"
 }
 
 fun getTodayDayOfWeek(): Int = today.dayOfWeek.isoDayNumber
@@ -42,21 +42,19 @@ fun getPreviousWeek(date: LocalDate) = getWeekOf(date.minus(7, DateTimeUnit.DAY)
 
 fun String.toHourMinute(): String {
     val time = LocalTime.parse(this)
-    return "%02d:%02d".format(time.hour, time.minute)
+    return "${time.hour.twoDigits()}:${time.minute.twoDigits()}"
 }
 
 fun String.toHourMinuteAmPm(): String {
     val time = LocalTime.parse(this)
-
     val hour12 = when {
         time.hour == 0 -> 12
         time.hour > 12 -> time.hour - 12
         else -> time.hour
     }
-
     val amPm = if (time.hour < 12) "AM" else "PM"
 
-    return "%02d:%02d %s".format(hour12, time.minute, amPm)
+    return "${hour12.twoDigits()}:${time.minute.twoDigits()} $amPm"
 }
 
 fun CourseClass.isGoing(
@@ -106,8 +104,10 @@ fun String.toSlashDate(): String {
     return this.replace("-", "/")
 }
 
+fun Int.twoDigits(): String = this.toString().padStart(2, '0')
+
 //date
 fun String.toDisplayDate(): String {
     val date = LocalDate.parse(this)
-    return "%02d/%02d/%04d".format(date.dayOfMonth, date.monthNumber, date.year)
-} // "21-01-2022"
+    return "${date.day.twoDigits()}/${date.month.number.twoDigits()}/${date.year}"
+} // "21/01/2022"

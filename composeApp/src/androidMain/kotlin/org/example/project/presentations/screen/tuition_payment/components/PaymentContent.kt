@@ -12,20 +12,28 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.example.project.domain.model.PaymentStatus
+import org.example.project.domain.model.TuitionDetailUiModel
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.ExtendedColors
 
-
 @Composable
-fun PaymentContent(color: ExtendedColors) {
+fun PaymentContent(color: ExtendedColors, tuitionDetail: TuitionDetailUiModel) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
-        item { TuitionCard() }
+        item {
+            TuitionCard(
+                color = color,
+                semester = tuitionDetail.semester,
+                totalAmount = if (tuitionDetail.status == PaymentStatus.UNPAID) tuitionDetail.totalAmount else "0đ",
+                deadline = tuitionDetail.dueDate
+            )
+        }
 
-        item { DetailTuitionCourse(color = color) }
+        item { DetailTuitionCourse(color = color, items = tuitionDetail.items) }
 
         item { PaymentMethodList() }
 
@@ -37,7 +45,10 @@ fun PaymentContent(color: ExtendedColors) {
                 backgroundColorRes = color.red,
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.padding(horizontal = 20.dp),
-                endIconRes = Icons.AutoMirrored.Filled.ArrowForward
+                endIconRes = Icons.AutoMirrored.Filled.ArrowForward,
+                onClick = {
+                    // TODO:  
+                }
             )
         }
 

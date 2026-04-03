@@ -7,6 +7,5 @@ data class SemesterSummary(
     val creditsRegistered: Int?,
     val creditsPassed: Int,
     val semesterGpa: Double,
-    val conductScore: Int,
-    val cumulativeGpa: Double
+    val conductScore: Int
 )

@@ -7,25 +7,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopScreenBar
-import org.example.project.presentations.theme.ExtendedColors
+import org.example.project.presentations.screen.tuition_payment.TuitionStatus
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun TuitionPaymentContent(
-    color: ExtendedColors = LocalExtendedColors.current,
-    onBack: () -> Unit
+    uiState: TuitionStatus,
+    onBack: () -> Unit,
+    onChangeTab: (Int) -> Unit
 ) {
+    val color = LocalExtendedColors.current
     val tabs = listOf("Thanh Toán" to null, "Lịch sử" to null)
-    var selectedTab by remember { mutableIntStateOf(1) }
 
     Scaffold(
         containerColor = color.background,
@@ -50,25 +46,22 @@ fun TuitionPaymentContent(
 
             TabRowView(
                 tabs = tabs,
-                selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it }
+                selectedTab = uiState.selectedTab,
+                onTabSelected = onChangeTab
             )
 
             Spacer(Modifier.height(20.dp))
 
-            if (selectedTab == 0) {
-                PaymentContent(color)
+            if (uiState.selectedTab == 0) {
+                uiState.currentTuitionDetail?.let {
+                    PaymentContent(
+                        color,
+                        tuitionDetail = it
+                    )
+                }
             } else {
                 PaymentHistoryContent(color)
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewPM() {
-    TuitionPaymentContent(
-        onBack = {}
-    )
 }

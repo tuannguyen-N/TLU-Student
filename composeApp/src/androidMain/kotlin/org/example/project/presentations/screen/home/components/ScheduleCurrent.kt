@@ -29,7 +29,7 @@ import org.example.project.R
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.toHourMinuteAmPm
+import org.example.project.data.mapper.toHourMinuteAmPm
 
 @Composable
 fun ScheduleCurrent(

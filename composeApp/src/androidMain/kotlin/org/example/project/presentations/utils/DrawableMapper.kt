@@ -1,6 +1,7 @@
 package org.example.project.presentations.utils
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountBalance
 import androidx.compose.material.icons.outlined.Apartment
 import androidx.compose.material.icons.outlined.AssignmentInd
 import androidx.compose.material.icons.outlined.AutoAwesome
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material.icons.outlined.Pending
 import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.icons.outlined.QrCode
 import androidx.compose.material.icons.outlined.SupportAgent
 import androidx.compose.material.icons.outlined.Work
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,7 @@ import org.example.project.R
 import org.example.project.domain.model.FeatureType
 import org.example.project.domain.model.Notification
 import org.example.project.domain.model.NotificationType
+import org.example.project.domain.model.PaymentType
 import org.example.project.presentations.navigation.AppRoute
 
 fun FeatureType.toImageVector(): ImageVector {
@@ -93,6 +96,7 @@ fun FeatureType.toRoute(): String {
         FeatureType.DIGITAL_STUDENT_CARD -> AppRoute.DigitalStudentCard
         FeatureType.STUDENT_CLASS -> AppRoute.StudentClass
         FeatureType.COURSE_REGISTER -> AppRoute.ClassSignUp
+        FeatureType.TUITION_PAYMENT -> AppRoute.TuitionPayment
         else -> "" // TODO:
     }
 }
@@ -110,4 +114,10 @@ fun Notification.iconRes(): Int {
         NotificationType.DEPARTMENT -> R.drawable.icon_deparment_notification
         else -> R.drawable.icon_teacher_notification
     }
+}
+
+
+fun PaymentType.icon(): ImageVector = when (this) {
+    PaymentType.QR_BANK -> Icons.Outlined.QrCode
+    PaymentType.QR_BANK_DEMO -> Icons.Outlined.AccountBalance
 }

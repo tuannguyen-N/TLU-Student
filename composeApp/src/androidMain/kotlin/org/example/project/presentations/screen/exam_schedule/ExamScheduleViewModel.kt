@@ -41,7 +41,7 @@ class ExamScheduleViewModel(
             onSuccess = { semesters ->
                 val latest = semesters?.lastOrNull() ?: return@fold
                 updateState { copy(selectedSemester = latest, currentSemester = latest) }
-                getExamSchedule(latest.semesterName)
+                getExamSchedule(latest.semesterCode)
             },
             onFailure = {
                 Log.e("ExamViewModel", "getSemesters: Error $it")
@@ -89,7 +89,7 @@ class ExamScheduleViewModel(
     fun onSemesterChanged(semester: Semester) {
         viewModelScope.launch {
             updateState { copy(selectedSemester = semester, isLoading = true) }
-            getExamSchedule(semester.semesterName)
+            getExamSchedule(semester.semesterCode)
             updateState { copy(isLoading = false) }
         }
     }

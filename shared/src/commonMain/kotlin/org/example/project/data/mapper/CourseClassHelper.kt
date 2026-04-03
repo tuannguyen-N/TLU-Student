@@ -1,4 +1,4 @@
-package org.example.project.presentations.utils
+package org.example.project.data.mapper
 
 import kotlinx.datetime.LocalTime
 import org.example.project.data.remote.dto.week_schedule.CourseClass

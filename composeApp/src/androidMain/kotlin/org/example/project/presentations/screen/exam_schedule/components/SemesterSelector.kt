@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.today
+import org.example.project.data.mapper.today
 
 @Composable
 fun SemesterSelector(
@@ -53,7 +53,7 @@ fun SemesterSelector(
             )
         )
 
-        Spacer(Modifier.height(5.dp))
+        Spacer(Modifier.height(8.dp))
 
         Box {
             Surface(

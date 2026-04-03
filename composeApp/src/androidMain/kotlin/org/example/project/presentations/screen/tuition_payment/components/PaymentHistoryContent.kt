@@ -25,9 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.presentations.components.LabelHeader
 import org.example.project.presentations.theme.ExtendedColors
+import org.example.project.presentations.theme.LocalExtendedColors
 
 enum class PaymentStatus { SUCCESS, FAILED }
 
@@ -43,9 +45,9 @@ data class SemesterGroup(
     val items: List<PaymentItem>
 )
 
+@Preview
 @Composable
-fun PaymentHistoryContent(color: ExtendedColors) {
-
+fun PaymentHistoryContent(color: ExtendedColors = LocalExtendedColors.current) {
     val semesters = listOf(
         SemesterGroup(
             semesterLabel = "Học kỳ II (2023 - 2024)",

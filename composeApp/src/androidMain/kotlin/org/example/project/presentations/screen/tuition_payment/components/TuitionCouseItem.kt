@@ -17,11 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.example.project.data.mapper.toFormatAmountAndD
+import org.example.project.data.remote.dto.tuition_detail.TuitionItem
 import org.example.project.presentations.theme.ExtendedColors
-import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.toFormatAmountAndD
 
 @Composable
 fun TuitionCourseItem(
@@ -30,9 +29,14 @@ fun TuitionCourseItem(
     courseCode: String,
     courseName: String,
     credits: Int,
-    amount: Long,
+    isLastItem: Boolean,
+    amount: String,
 ) {
-    Column(modifier = modifier.fillMaxWidth().background(color.white)) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color.white)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -40,7 +44,10 @@ fun TuitionCourseItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
                 Text(
                     text = courseCode,
                     style = MaterialTheme.typography.labelMedium,
@@ -60,7 +67,7 @@ fun TuitionCourseItem(
                     Spacer(Modifier.width(10.dp))
 
                     Text(
-                        text = amount.toFormatAmountAndD(),
+                        text = amount,
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.ExtraBold,
                         color = color.mainBlue,
@@ -76,10 +83,12 @@ fun TuitionCourseItem(
             }
         }
 
-        HorizontalDivider(
-            thickness = 0.5.dp,
-            color = color.gray
-        )
+        if (!isLastItem) {
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                color = color.gray
+            )
+        }
     }
 }
 
@@ -87,7 +96,7 @@ fun TuitionCourseItem(
 fun TuitionCourseList(
     modifier: Modifier = Modifier,
     color: ExtendedColors,
-    courses: List<TuitionCourse>
+    courses: List<TuitionItem>
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -97,34 +106,14 @@ fun TuitionCourseList(
         Column(modifier = Modifier.fillMaxWidth()) {
             courses.forEach { course ->
                 TuitionCourseItem(
-                    courseCode = course.code,
-                    courseName = course.name,
+                    courseCode = "course.code", // TODO:
+                    courseName = course.subjectName,
                     credits = course.credits,
-                    amount = course.amount,
-                    color = color
+                    amount = course.amount.toLong().toFormatAmountAndD(),
+                    color = color,
+                    isLastItem = courses.last() == course
                 )
             }
         }
     }
-}
-
-data class TuitionCourse(
-    val code: String,
-    val name: String,
-    val credits: Int,
-    val amount: Long
-)
-
-@Preview(showBackground = true, backgroundColor = 0xFFF0F0F5)
-@Composable
-private fun TuitionCourseListPreview() {
-        TuitionCourseList(
-            modifier = Modifier.padding(16.dp),
-            courses = listOf(
-                TuitionCourse("CS201", "Cơ sở dữ liệu nâng cao", 4, 5_200_000L),
-                TuitionCourse("IT302", "Lập trình hướng đối tượng", 3, 4_500_000L),
-                TuitionCourse("CS405", "Phân tích thuật toán", 4, 5_200_000L),
-            ),
-            color = LocalExtendedColors.current
-        )
 }

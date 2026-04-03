@@ -21,16 +21,16 @@ import androidx.compose.ui.unit.dp
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.toFormatAmount
+import org.example.project.data.mapper.toFormatAmount
 
 
 @Composable
 fun TuitionCard(
     modifier: Modifier = Modifier,
-    color: ExtendedColors = LocalExtendedColors.current,
-    semester: String = "HK1 - 2024",
-    totalAmount: Long = 24_500_000L,
-    deadline: String = "03/06/2026",
+    color: ExtendedColors,
+    semester: String,
+    totalAmount: String,
+    deadline: String,
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -77,7 +77,7 @@ fun TuitionCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = totalAmount.toFormatAmount(),
+                    text = totalAmount,
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.ExtraBold
                     ),
@@ -94,15 +94,4 @@ fun TuitionCard(
             }
         }
     }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFEEEEEE)
-@Composable
-private fun TuitionCardPreview() {
-    TuitionCard(
-        modifier = Modifier.padding(16.dp),
-        semester = "HK1 - 2024",
-        totalAmount = 24_500_000L,
-        deadline = "03/06/2026"
-    )
 }
