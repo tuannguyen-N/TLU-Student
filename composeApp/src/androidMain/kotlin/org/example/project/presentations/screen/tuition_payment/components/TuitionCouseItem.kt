@@ -35,7 +35,6 @@ fun TuitionCourseItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(color.white)
     ) {
         Row(
             modifier = Modifier
@@ -88,32 +87,6 @@ fun TuitionCourseItem(
                 thickness = 0.5.dp,
                 color = color.gray
             )
-        }
-    }
-}
-
-@Composable
-fun TuitionCourseList(
-    modifier: Modifier = Modifier,
-    color: ExtendedColors,
-    courses: List<TuitionItem>
-) {
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            courses.forEach { course ->
-                TuitionCourseItem(
-                    courseCode = "course.code", // TODO:
-                    courseName = course.subjectName,
-                    credits = course.credits,
-                    amount = course.amount.toLong().toFormatAmountAndD(),
-                    color = color,
-                    isLastItem = courses.last() == course
-                )
-            }
         }
     }
 }

@@ -2,9 +2,13 @@ package org.example.project.presentations.screen.tuition_payment
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.screen.tuition_payment.components.TuitionPaymentContent
+import org.example.project.presentations.utils.CollectWithLifecycle
 
 @Composable
 fun TuitionPaymentScreen(
@@ -18,6 +22,8 @@ fun TuitionPaymentScreen(
     TuitionPaymentContent(
         uiState = uiState,
         onBack = onBack,
-        onChangeTab = viewModel::onChangeTab
+        onChangeTab = viewModel::onChangeTab,
+        onViewDetailTuition = viewModel::onViewDetailTuition,
+        onDismissDialog = viewModel::onDismissDialog,
     )
 }

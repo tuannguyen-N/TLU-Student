@@ -6,7 +6,9 @@ import org.example.project.domain.model.TuitionUiModel
 data class TuitionStatus(
     val allTuition: List<TuitionUiModel>? = null,
     val currentTuitionDetail: TuitionDetailUiModel? = null,
+    val selectedTuitionDetail: TuitionDetailUiModel? = null,
 
     val selectedTab: Int = 0,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isShowDetailTuitionCourseDialog: Boolean = false
 )

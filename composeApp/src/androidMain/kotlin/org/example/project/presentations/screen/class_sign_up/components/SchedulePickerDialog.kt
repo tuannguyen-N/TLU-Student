@@ -38,7 +38,6 @@ import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
-
 data class ScheduleSession(
     val dayLabel: String,      // e.g. "Thứ 2 (Tiết 1-3)"
     val room: String           // e.g. "Phòng B204"
@@ -52,6 +51,7 @@ data class ClassGroup(
     val sessions: List<ScheduleSession>
 )
 
+@Preview
 @Composable
 fun SchedulePickerDialog(
     courseTitle: String = "Cấu trúc dữ liệu & Giải thuật (CS202)",
@@ -184,7 +184,7 @@ fun ClassGroupCard(
                     color = badgeBackground
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(

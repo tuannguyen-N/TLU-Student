@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.example.project.domain.model.TuitionUiModel
 import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.screen.tuition_payment.TuitionStatus
@@ -18,7 +19,9 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun TuitionPaymentContent(
     uiState: TuitionStatus,
     onBack: () -> Unit,
-    onChangeTab: (Int) -> Unit
+    onChangeTab: (Int) -> Unit,
+    onViewDetailTuition: (TuitionUiModel) -> Unit,
+    onDismissDialog: () -> Unit
 ) {
     val color = LocalExtendedColors.current
     val tabs = listOf("Thanh Toán" to null, "Lịch sử" to null)
@@ -60,8 +63,18 @@ fun TuitionPaymentContent(
                     )
                 }
             } else {
-                PaymentHistoryContent(color)
+                PaymentHistoryContent(
+                    tuitionList = uiState.allTuition, color,
+                    onViewDetailTuition = onViewDetailTuition
+                )
             }
         }
+    }
+
+    if (uiState.isShowDetailTuitionCourseDialog){
+        DetailTuitionCourseDialog(
+            courses = uiState.selectedTuitionDetail?.items ?: emptyList(),
+            onDismiss = onDismissDialog
+        )
     }
 }

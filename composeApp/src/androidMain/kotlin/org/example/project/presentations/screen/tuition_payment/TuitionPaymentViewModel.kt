@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.example.project.domain.model.TuitionUiModel
 import org.example.project.domain.repository.TuitionRepository
 import org.example.project.presentations.utils.withDelayedLoading
 
 class TuitionPaymentViewModel(
     private val tuitionRepository: TuitionRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(TuitionStatus())
     val uiState = _uiState.asStateFlow()
 
@@ -50,6 +50,18 @@ class TuitionPaymentViewModel(
 
     fun onChangeTab(value: Int) {
         updateState { copy(selectedTab = value) }
+    }
+
+    fun onViewDetailTuition(tuition: TuitionUiModel) {
+        viewModelScope.launch {
+            tuitionRepository.getDetailTuition(tuition.invoiceId).onSuccess {
+                updateState { copy(selectedTuitionDetail = it,isShowDetailTuitionCourseDialog = true) }
+            }
+        }
+    }
+
+    fun onDismissDialog() {
+        updateState { copy(isShowDetailTuitionCourseDialog = false) }
     }
 
     private fun updateState(block: TuitionStatus.() -> TuitionStatus) {

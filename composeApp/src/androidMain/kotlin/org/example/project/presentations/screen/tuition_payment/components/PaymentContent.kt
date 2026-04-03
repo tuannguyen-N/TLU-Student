@@ -29,27 +29,30 @@ fun PaymentContent(color: ExtendedColors, tuitionDetail: TuitionDetailUiModel) {
                 color = color,
                 semester = tuitionDetail.semester,
                 totalAmount = if (tuitionDetail.status == PaymentStatus.UNPAID) tuitionDetail.totalAmount else "0đ",
-                deadline = tuitionDetail.dueDate
+                deadline = tuitionDetail.dueDate,
+                status = tuitionDetail.status
             )
         }
 
         item { DetailTuitionCourse(color = color, items = tuitionDetail.items) }
 
-        item { PaymentMethodList() }
+        if (tuitionDetail.status == PaymentStatus.UNPAID){
+            item { PaymentMethodList() }
 
-        item {
-            ButtonView(
-                text = "Thanh toán ngay",
-                enabled = true,
-                textColorRes = color.white,
-                backgroundColorRes = color.red,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.padding(horizontal = 20.dp),
-                endIconRes = Icons.AutoMirrored.Filled.ArrowForward,
-                onClick = {
-                    // TODO:  
-                }
-            )
+            item {
+                ButtonView(
+                    text = "Thanh toán ngay",
+                    enabled = true,
+                    textColorRes = color.white,
+                    backgroundColorRes = color.red,
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    endIconRes = Icons.AutoMirrored.Filled.ArrowForward,
+                    onClick = {
+                        // TODO:
+                    }
+                )
+            }
         }
 
         item {

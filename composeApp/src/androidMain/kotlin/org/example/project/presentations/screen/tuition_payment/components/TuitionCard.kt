@@ -16,12 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.example.project.domain.model.PaymentStatus
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.ExtendedColors
-import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.data.mapper.toFormatAmount
 
 
 @Composable
@@ -31,6 +29,7 @@ fun TuitionCard(
     semester: String,
     totalAmount: String,
     deadline: String,
+    status: PaymentStatus
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -50,18 +49,26 @@ fun TuitionCard(
                 Text(
                     text = "$semester",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = color.lightGray,
+                    color = color.grayNavy,
                     fontWeight = FontWeight.Normal
                 )
 
-                LabelView(
-                    text = "Hạn: $deadline",
-                    backgroundColor = color.red,
-                    textColor = color.white
-                )
+                if(status == PaymentStatus.PAID){
+                    LabelView(
+                        text = "Đã thanh toán",
+                        backgroundColor = color.green,
+                        textColor = color.white
+                    )
+                }else {
+                    LabelView(
+                        text = "Hạn: $deadline",
+                        backgroundColor = color.red,
+                        textColor = color.white
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = "Tổng học phí cần đóng",
