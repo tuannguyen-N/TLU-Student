@@ -10,11 +10,11 @@ class ScheduleUseCase(
     val daySchedule = repository.daySchedules
     val weekSchedule = repository.weekSchedules
 
-    suspend fun getDaySchedule(dayOfWeek: Int): AppResult<Any> {
+    suspend fun getDaySchedule(dayOfWeek: Int, isRefresh: Boolean = false): AppResult<Any> {
         if (dayOfWeek !in 1..8) {
             return AppResult.Failure("Ngày không hợp lệ")
         }
-        return repository.getDaySchedule(dayOfWeek)
+        return repository.getDaySchedule(dayOfWeek,isRefresh)
     }
 
     suspend fun getSemesterSubjects(semester: String): AppResult<List<SubjectItem>> {

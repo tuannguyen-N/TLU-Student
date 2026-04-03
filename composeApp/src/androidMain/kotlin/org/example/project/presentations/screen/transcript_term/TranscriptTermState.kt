@@ -7,5 +7,7 @@ data class TranscriptTermState(
     val semesterGpa: Double = 0.0,
     val creditsPassed: Int = 0,
     val academicYear: String = "",
-    val subjects: List<SubjectResultUiModel> = emptyList()
+    val subjects: List<SubjectResultUiModel> = emptyList(),
+
+    val isRefreshing: Boolean = false
 )

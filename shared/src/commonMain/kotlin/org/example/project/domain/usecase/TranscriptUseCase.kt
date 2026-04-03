@@ -15,7 +15,7 @@ class TranscriptUseCase(
         it?.toUiModel()
     }
 
-    suspend fun getTranscript(): AppResult<AcademicResultData> {
-        return transcriptRepository.getTranscript()
+    suspend fun getTranscript(forceRefresh: Boolean = false): AppResult<AcademicResultData> {
+        return transcriptRepository.getTranscript(forceRefresh)
     }
 }

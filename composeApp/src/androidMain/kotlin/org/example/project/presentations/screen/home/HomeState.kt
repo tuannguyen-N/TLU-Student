@@ -16,5 +16,6 @@ data class HomeState(
     val loadingStudentInfo: Boolean = false,
     val loadingAlertList: Boolean = false,
     val loadingScheduleClassList: Boolean = false,
-    val loadingEventList: Boolean = false
+    val loadingEventList: Boolean = false,
+    val isRefreshing: Boolean = false
 ) 

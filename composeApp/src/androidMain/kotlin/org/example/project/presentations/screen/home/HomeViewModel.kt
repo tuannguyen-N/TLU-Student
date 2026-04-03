@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -88,11 +89,11 @@ class HomeViewModel(
         viewModelScope.launch { loadCourseClasses() }
     }
 
-    private suspend fun loadCourseClasses() {
+    private suspend fun loadCourseClasses(isRefresh: Boolean = false) {
         withDelayedLoading(
             onLoading = { updateState { copy(loadingScheduleClassList = it) } }
         ) {
-            scheduleUseCase.getDaySchedule(getTodayDayOfWeek())
+            scheduleUseCase.getDaySchedule(getTodayDayOfWeek(),isRefresh)
         }
     }
 
@@ -111,7 +112,19 @@ class HomeViewModel(
 
     fun onAction(action: HomeAction) {
         when (action) {
-            else -> Unit
+            is HomeAction.RefreshData -> refreshData()
+        }
+    }
+
+    private fun refreshData() {
+        viewModelScope.launch {
+            updateState { copy(isRefreshing = true) }
+            try {
+                loadCourseClasses(true)
+            } finally {
+                delay(1000L)
+                updateState { copy(isRefreshing = false) }
+            }
         }
     }
 

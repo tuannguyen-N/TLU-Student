@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,7 +26,7 @@ fun TranscriptTermScreen(
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+    val pullRefreshState = rememberPullToRefreshState()
     StatusBarStyle(darkIcons = false)
 
     Scaffold(
@@ -39,31 +41,37 @@ fun TranscriptTermScreen(
                 itemDisplay = { it }
             )
         }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(horizontal = 20.dp),
-            contentPadding = PaddingValues(top = 15.dp, bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
+    ) { paddingValues ->
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = viewModel::refreshData,
+            state = pullRefreshState,
+            modifier = Modifier.padding(paddingValues)
         ) {
-            items(
-                items = uiState.subjects,
-                key = { subject -> subject.subjectCode },
-                contentType = { "SubjectResultCard" }
-            ) { subject ->
-                SubjectResultCard(
-                    subjectCode = subject.subjectCode,
-                    subjectName = subject.subjectName,
-                    attendanceScore = subject.attendanceScore,
-                    midtermScore = subject.midtermScore,
-                    finalScore = subject.finalScore,
-                    score10 = subject.score10,
-                    score4 = subject.score4,
-                    credits = subject.credits,
-                    letterGrade = subject.letterGrade
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                contentPadding = PaddingValues(top = 15.dp, bottom = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                items(
+                    items = uiState.subjects,
+                    key = { subject -> subject.subjectCode },
+                    contentType = { "SubjectResultCard" }
+                ) { subject ->
+                    SubjectResultCard(
+                        subjectCode = subject.subjectCode,
+                        subjectName = subject.subjectName,
+                        attendanceScore = subject.attendanceScore,
+                        midtermScore = subject.midtermScore,
+                        finalScore = subject.finalScore,
+                        score10 = subject.score10,
+                        score4 = subject.score4,
+                        credits = subject.credits,
+                        letterGrade = subject.letterGrade
+                    )
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
+import org.example.project.R
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -35,6 +40,10 @@ fun AuthenticationErrorBottomSheet(
     modifier: Modifier = Modifier,
     onRetry: () -> Unit = {}
 ) {
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.error)
+    )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -50,37 +59,38 @@ fun AuthenticationErrorBottomSheet(
                 .background(Color.LightGray, RoundedCornerShape(10.dp))
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    color = Color(0xFFFBE9E9),
-                    shape = RoundedCornerShape(16.dp)
-                )
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .background(
-                        Color(0xFFFFD6D6),
-                        CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = null,
-                    tint = LocalExtendedColors.current.red,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
+//            Box(
+//                modifier = Modifier
+//                    .size(56.dp)
+//                    .background(
+//                        Color(0xFFFFD6D6),
+//                        CircleShape
+//                    ),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Warning,
+//                    contentDescription = null,
+//                    tint = LocalExtendedColors.current.red,
+//                    modifier = Modifier.size(28.dp)
+//                )
+//            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            LottieAnimation(
+                composition = composition,
+                modifier = Modifier.size(120.dp)
+            )
+
+            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
                 text = "Authentication Error !",

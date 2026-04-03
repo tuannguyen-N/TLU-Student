@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.home
 
-import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -8,16 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.example.project.domain.model.FeatureType
 import org.example.project.presentations.screen.home.components.AlertList
 import org.example.project.presentations.screen.home.components.FeatureList
@@ -36,13 +32,7 @@ fun HomeScreen(
     onOpenScheduleScreen: () -> Unit
 ) {
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
-    val view = LocalView.current
-
-    SideEffect {
-        val window = (view.context as Activity).window
-        window.statusBarColor = android.graphics.Color.BLACK
-        WindowInsetsControllerCompat(window, view).isAppearanceLightStatusBars = false
-    }
+    val pullRefreshState = rememberPullToRefreshState()
 
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
@@ -57,45 +47,52 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(15.dp),
-            contentPadding = PaddingValues(bottom = 200.dp)
+        PullToRefreshBox(
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = {
+                homeViewModel.onAction(HomeAction.RefreshData)
+            },
+            state = pullRefreshState,
+            modifier = Modifier.padding(paddingValues)
         ) {
-            item(key = "alert_list", contentType = "AlertList") {
-                AlertList(
-                    items = uiState.alerts,
-                    isLoading = uiState.loadingAlertList,
-                    onClickAction = {},
-                    modifier = Modifier.padding(top = 15.dp),
-                )
-            }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                contentPadding = PaddingValues(bottom = 200.dp)
+            ) {
+                item(key = "alert_list", contentType = "AlertList") {
+                    AlertList(
+                        items = uiState.alerts,
+                        isLoading = uiState.loadingAlertList,
+                        onClickAction = {},
+                        modifier = Modifier.padding(top = 15.dp),
+                    )
+                }
 
-            item(key = "schedule_list", contentType = "ScheduleList") {
-                ScheduleClassList(
-                    isLoading = uiState.loadingScheduleClassList,
-                    courseClasses = uiState.courseClasses,
-                    modifier = Modifier.padding(horizontal = 15.dp),
-                    onClickViewTomorrow = onOpenScheduleScreen
-                )
-            }
+                item(key = "schedule_list", contentType = "ScheduleList") {
+                    ScheduleClassList(
+                        isLoading = uiState.loadingScheduleClassList,
+                        courseClasses = uiState.courseClasses,
+                        modifier = Modifier.padding(horizontal = 15.dp),
+                        onClickViewTomorrow = onOpenScheduleScreen
+                    )
+                }
 
-            item(key = "feature_list", contentType = "FeatureList") {
-                FeatureList(
-                    onClickItem = onOpenFeature,
-                    onClickAll = onOpenFeatureScreen,
-                    items = uiState.quickAccessList
-                )
-            }
+                item(key = "feature_list", contentType = "FeatureList") {
+                    FeatureList(
+                        onClickItem = onOpenFeature,
+                        onClickAll = onOpenFeatureScreen,
+                        items = uiState.quickAccessList
+                    )
+                }
 
-            item(key = "news_events", contentType = "NewsEvents") {
-                NewsAndEventsList(
-                    items = uiState.newsAndEvents,
-                    isLoading = uiState.loadingEventList,
-                    modifier = Modifier.padding(top = 15.dp)
-                )
+                item(key = "news_events", contentType = "NewsEvents") {
+                    NewsAndEventsList(
+                        items = uiState.newsAndEvents,
+                        isLoading = uiState.loadingEventList,
+                        modifier = Modifier.padding(top = 15.dp)
+                    )
+                }
             }
         }
     }
