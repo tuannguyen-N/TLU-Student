@@ -22,6 +22,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun ProfileContent(
     student: StudentData?,
+    avatar: String?,
     onOpenEditProfile: () -> Unit = {},
     onOpenSetting: () -> Unit = {},
     onBack: () -> Unit = {}
@@ -44,7 +45,8 @@ fun ProfileContent(
                 studentName = student?.fullName.orEmpty(),
                 majorName = student?.major?.majorName.orEmpty(),
                 onClickSetting = onOpenSetting,
-                onClickBack = onBack
+                onClickBack = onBack,
+                avatarBase64 = avatar
             )
         }
     ) { paddingValues ->

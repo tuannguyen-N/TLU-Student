@@ -17,19 +17,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.example.project.data.mapper.getTodayDayOfWeek
+import org.example.project.data.mapper.nearestClasses
+import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.StudentUseCase
-import org.example.project.data.mapper.getTodayDayOfWeek
-import org.example.project.data.mapper.nearestClasses
 import org.example.project.presentations.utils.withDelayedLoading
 import kotlin.time.Clock
 
 class HomeViewModel(
     private val studentUseCase: StudentUseCase,
     private val scheduleUseCase: ScheduleUseCase,
-    private val featureRepository: FeatureRepository
+    private val featureRepository: FeatureRepository,
+    private val authPluginConfig: AuthPluginConfig
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState = combine(
@@ -87,13 +89,19 @@ class HomeViewModel(
         viewModelScope.launch { featureRepository.seedDefaultsIfNeeded() }
         viewModelScope.launch { loadStudentInfo() }
         viewModelScope.launch { loadCourseClasses() }
+        loadImage()
+    }
+
+    fun loadImage() {
+        val imageBase64 = authPluginConfig.imageStorage.getImageBase64()
+        updateState { copy(imageBase64 = imageBase64) }
     }
 
     private suspend fun loadCourseClasses(isRefresh: Boolean = false) {
         withDelayedLoading(
             onLoading = { updateState { copy(loadingScheduleClassList = it) } }
         ) {
-            scheduleUseCase.getDaySchedule(getTodayDayOfWeek(),isRefresh)
+            scheduleUseCase.getDaySchedule(getTodayDayOfWeek(), isRefresh)
         }
     }
 
@@ -104,7 +112,7 @@ class HomeViewModel(
             studentUseCase.getStudentInfo().fold(
                 onSuccess = {},
                 onFailure = {
-                    Log.e("123123", "loadStudentInfo: $it", )
+                    Log.e("123123", "loadStudentInfo: $it")
                 }
             )
         }

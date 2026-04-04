@@ -15,6 +15,8 @@ data class EditProfileState(
     val phoneContactError: String? = null,
     val addressContactError: String? = null,
 
+    val avatarBase64: String? = null,
+
     val isLoading: Boolean = false,
     val isShowExitDialog: Boolean = false
 )

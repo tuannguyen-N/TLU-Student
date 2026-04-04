@@ -15,11 +15,13 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val student = uiState.studentInfo
+    val avatar = uiState.avatarBase64
 
     StatusBarStyle(darkIcons = false)
 
     ProfileContent(
         student = student,
+        avatar = avatar,
         onOpenEditProfile = onOpenEditProfile,
         onOpenSetting = onOpenSetting,
         onBack = onBack

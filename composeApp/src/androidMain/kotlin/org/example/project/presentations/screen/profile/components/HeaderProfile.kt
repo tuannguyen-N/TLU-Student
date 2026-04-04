@@ -2,18 +2,20 @@ package org.example.project.presentations.screen.profile.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,11 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.fontscaling.MathUtils.lerp
 import androidx.compose.ui.unit.lerp
 import org.example.project.R
+import org.example.project.presentations.components.Base64Image
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @SuppressLint("RestrictedApi")
 @Composable
 fun HeaderProfile(
+    avatarBase64: String?,
     studentName: String,
     majorName: String,
     progress: Float,
@@ -84,18 +88,35 @@ fun HeaderProfile(
                 }
             }
 
-            Image(
-                painter = painterResource(R.drawable.ic_launcher_foreground),
-                contentDescription = null,
-                modifier = Modifier
-                    .graphicsLayer {
-                        scaleX = scale
-                        scaleY = scale
-                    }
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .border(1.dp, Color.White, CircleShape)
-            )
+            if (avatarBase64 != null) {
+                Base64Image(
+                    base64String = avatarBase64,
+                    modifier = Modifier
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .border(1.dp, Color.White, CircleShape)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(LocalExtendedColors.current.gray)
+                        .padding(20.dp)
+                        .border(1.dp, Color.White, CircleShape)
+                )
+            }
 
             Text(
                 text = studentName,

@@ -1,5 +1,6 @@
 package org.example.project.domain.repository
 
+import org.example.project.data.local.ImageBase64Storage
 import org.example.project.data.local.TokenStorage
 import org.example.project.data.remote.api.AuthApi
 import org.example.project.domain.model.AppResult
@@ -7,14 +8,16 @@ import org.example.project.domain.model.AppResult
 class AuthRepository(
     private val authApi: AuthApi,
     private val tokenStorage: TokenStorage,
+    private val imageStorage: ImageBase64Storage,
 ) {
     suspend fun login(microsoftAccessToken: String): AppResult<Unit> {
         return try {
             val response = authApi.login(microsoftAccessToken)
             val token = response.data?.token
                 ?: return AppResult.Failure(message = response.message)
-
+            val imageBase64 = response.data.avatar
             tokenStorage.saveAccessToken(token)
+            imageStorage.saveImageBase64(imageBase64)
             AppResult.Success(Unit)
 
         } catch (e: Exception) {
@@ -24,5 +27,6 @@ class AuthRepository(
 
     suspend fun signOut() {
         tokenStorage.clearAccessToken()
+        imageStorage.clearImageBase64()
     }
 }

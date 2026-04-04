@@ -8,11 +8,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.presentations.utils.ValidationUtils
 
 class EditProfileViewModel(
-    private val studentUseCase: StudentUseCase
+    private val studentUseCase: StudentUseCase,
+    private val authPluginConfig: AuthPluginConfig
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditProfileState())
     val uiState = _uiState.asStateFlow()
@@ -31,12 +33,20 @@ class EditProfileViewModel(
 
     init {
         observeStudentInfo()
+        loadImage()
+    }
+
+    private fun loadImage() {
+        val avatarBase64 = authPluginConfig.imageStorage.getImageBase64()
+        updateState {
+            copy(avatarBase64 = avatarBase64)
+        }
     }
 
     private fun observeStudentInfo() {
         viewModelScope.launch {
-            studentUseCase.studentInfo.collect { StudentData ->
-                StudentData?.let {
+            studentUseCase.studentInfo.collect { studentData ->
+                studentData?.let {
                     updateState {
                         copy(
                             email = email,

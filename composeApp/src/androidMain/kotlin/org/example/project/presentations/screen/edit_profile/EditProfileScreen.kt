@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,7 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.presentations.components.Base64Image
 import org.example.project.presentations.components.ButtonView
+import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.dialog.ExitConfirmDialog
 import org.example.project.presentations.screen.edit_profile.components.EditTextView
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -39,7 +44,7 @@ fun EditProfileScreen(
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+    val imageBase64 = uiState.avatarBase64
 //    val launcher = rememberLauncherForActivityResult(
 //        ActivityResultContracts.GetContent()
 //    ) {uri ->
@@ -53,6 +58,8 @@ fun EditProfileScreen(
             }
         }
     }
+
+    StatusBarStyle(darkIcons = true)
 
     LazyColumn(
         modifier = Modifier.statusBarsPadding().background(Color.White),
@@ -82,16 +89,31 @@ fun EditProfileScreen(
                 Box(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_foreground),
-                        contentDescription = "avatar",
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(CircleShape)
-                            .border(
-                                BorderStroke(1.dp, Color.White), CircleShape
-                            )
-                    )
+                    if (imageBase64 != null){
+                        Base64Image(
+                            base64String = imageBase64,
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    BorderStroke(1.dp, Color.White), CircleShape
+                                )
+                        )
+                    }else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape)
+                                .background(LocalExtendedColors.current.gray)
+                                .border(
+                                    BorderStroke(1.dp, Color.White), CircleShape
+                                )
+                                .padding(20.dp)
+                        )
+                    }
 //
 //                    IconButton(
 //                        onClick = {

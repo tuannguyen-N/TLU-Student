@@ -43,7 +43,8 @@ fun HomeScreen(
                 studentCode = uiState.studentInfo?.studentCode ?: "",
                 onOpenProfile = onOpenProfileScreen,
                 onOpenNotification = onOpenNotificationScreen,
-                isProfileReady = !uiState.loadingStudentInfo && uiState.studentInfo != null
+                isProfileReady = !uiState.loadingStudentInfo && uiState.studentInfo != null,
+                imageBase64 = uiState.imageBase64
             )
         }
     ) { paddingValues ->

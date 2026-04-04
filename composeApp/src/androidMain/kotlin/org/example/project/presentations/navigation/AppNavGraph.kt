@@ -57,12 +57,12 @@ import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.student_class.StudentClassScreen
 import org.example.project.presentations.screen.student_class.StudentClassViewModel
 import org.example.project.presentations.screen.student_class.StudentClassViewModelFactory
-import org.example.project.presentations.screen.timetable_offline.OfflineTimetableScreen
-import org.example.project.presentations.screen.timetable_offline.OfflineTimetableViewModel
-import org.example.project.presentations.screen.timetable_offline.OfflineTimetableViewModelFactory
 import org.example.project.presentations.screen.timetable.TimetableScreen
 import org.example.project.presentations.screen.timetable.TimetableViewModel
 import org.example.project.presentations.screen.timetable.TimetableViewModelFactory
+import org.example.project.presentations.screen.timetable_offline.OfflineTimetableScreen
+import org.example.project.presentations.screen.timetable_offline.OfflineTimetableViewModel
+import org.example.project.presentations.screen.timetable_offline.OfflineTimetableViewModelFactory
 import org.example.project.presentations.screen.transcript.TranscriptViewModel
 import org.example.project.presentations.screen.transcript.TranscriptViewModelFactory
 import org.example.project.presentations.screen.transcript_term.TranscriptTermScreen
@@ -138,7 +138,8 @@ fun AppNavGraph(
                 HomeViewModelFactory(
                     container.studentUseCase,
                     container.scheduleUseCase,
-                    container.featureRepository
+                    container.featureRepository,
+                    container.authPluginConfig
                 )
             }
             val scheduleFactory = remember(container) {
@@ -170,7 +171,12 @@ fun AppNavGraph(
 
         composable(AppRoute.Profile) {
             val container = LocalAppContainer.current
-            val factory = remember(container) { ProfileViewModelFactory(container.studentUseCase) }
+            val factory = remember(container) {
+                ProfileViewModelFactory(
+                    container.studentUseCase,
+                    container.authPluginConfig
+                )
+            }
             val profileViewModel: ProfileViewModel = viewModel(factory = factory)
 
             ProfileScreen(
@@ -194,7 +200,7 @@ fun AppNavGraph(
         composable(AppRoute.EditProfile) {
             val container = LocalAppContainer.current
             val factory =
-                remember(container) { EditProfileViewModelFactory(container.studentUseCase) }
+                remember(container) { EditProfileViewModelFactory(container.studentUseCase, container.authPluginConfig) }
             val editProfileViewModel: EditProfileViewModel = viewModel(factory = factory)
 
             EditProfileScreen(
@@ -361,14 +367,14 @@ fun AppNavGraph(
                 onBack = { navController.popBackStack() })
         }
 
-        composable(AppRoute.ClassSignUp){
+        composable(AppRoute.ClassSignUp) {
             val container = LocalAppContainer.current
             ClassSignUpScreen(
                 onBack = { navController.popBackStack() }
             )
         }
 
-        composable(AppRoute.TuitionPayment){
+        composable(AppRoute.TuitionPayment) {
             val container = LocalAppContainer.current
             val factory = remember(container) {
                 TuitionPaymentViewModelFactory(

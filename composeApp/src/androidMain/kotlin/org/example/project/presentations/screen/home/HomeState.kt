@@ -12,6 +12,7 @@ data class HomeState(
     val quickAccessList: List<FeatureUiModel> = emptyList(),
     val alerts: List<AlertUiModel> = AlertUiModel.getDemoList(),
     val newsAndEvents: List<NewAndEventUiModel> = NewAndEventUiModel.getDataDemo(),
+    val imageBase64: String? = null,
 
     val loadingStudentInfo: Boolean = false,
     val loadingAlertList: Boolean = false,

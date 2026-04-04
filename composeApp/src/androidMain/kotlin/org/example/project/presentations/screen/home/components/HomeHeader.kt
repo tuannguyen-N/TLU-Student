@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.presentations.components.Base64Image
 import org.example.project.presentations.components.shimmerEffect
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -37,6 +41,7 @@ fun HomeHeader(
     studentCode: String,
     onOpenProfile: () -> Unit,
     onOpenNotification: () -> Unit,
+    imageBase64: String?,
     isProfileReady: Boolean
 ) {
     Row(
@@ -56,20 +61,33 @@ fun HomeHeader(
                 enabled = isProfileReady
             ) {
                 if (isProfileReady) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_background),
-                        contentDescription = "avatar",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .border(
-                                BorderStroke(1.dp, Color.White),
-                                CircleShape
-                            )
-                            .clickable {
-                                onOpenProfile()
-                            }
-                    )
+                    if (imageBase64 != null) {
+                        Base64Image(
+                            base64String = imageBase64,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    BorderStroke(1.dp, Color.White),
+                                    CircleShape
+                                )
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Default Avatar",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    BorderStroke(1.dp, Color.White),
+                                    CircleShape
+                                )
+                                .background(LocalExtendedColors.current.gray)
+                                .padding(6.dp)
+                        )
+                    }
                 } else {
                     Box(
                         modifier = Modifier
@@ -129,6 +147,7 @@ fun PreviewComp() {
         studentCode = "123456789",
         {},
         {},
+        "",
         false
     )
 }

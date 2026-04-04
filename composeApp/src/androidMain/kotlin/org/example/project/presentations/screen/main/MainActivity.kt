@@ -11,11 +11,13 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import org.example.project.di.AppContainer
+import org.example.project.local.AndroidAppContainer
 import org.example.project.local.AndroidTokenStorage
 import org.example.project.presentations.utils.MsalHelper
 
 class MainActivity : ComponentActivity() {
     lateinit var container: AppContainer
+    lateinit var androidAppContainer: AndroidAppContainer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,10 +28,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun initAppContainer() {
-        val tokenStorage = AndroidTokenStorage(
-            context = applicationContext
+        androidAppContainer = AndroidAppContainer(applicationContext)
+        container = AppContainer(
+            androidAppContainer.tokenStorage,
+            androidAppContainer.imageStorage,
+            applicationContext
         )
-        container = AppContainer(tokenStorage, applicationContext)
     }
 
     private fun initMsal() {

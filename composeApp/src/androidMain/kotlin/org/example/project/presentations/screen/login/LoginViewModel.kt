@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.login
 
 import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -30,12 +31,13 @@ class LoginViewModel(
             MsalHelper.signIn(activity) { newToken, isNoInternet ->
                 if (newToken != null)
                     onSignMsalSuccess(newToken)
-                else if (isNoInternet){
+                else if (isNoInternet) {
                     updateState { copy(isLoading = false, error = "Không có kết nối internet") }
                     sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
-                }
-                else
+                } else
                     updateState { copy(isLoading = false, error = "Đăng nhập thất bại") }
+
+                Log.e("123123", "onLoginClick: $newToken")
             }
         }
     }

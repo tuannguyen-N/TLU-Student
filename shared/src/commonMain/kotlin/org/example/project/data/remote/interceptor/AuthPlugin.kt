@@ -1,10 +1,12 @@
 package org.example.project.data.remote.interceptor
 
 import io.ktor.client.plugins.api.createClientPlugin
+import org.example.project.data.local.ImageBase64Storage
 import org.example.project.data.local.TokenStorage
 
 class AuthPluginConfig {
     lateinit var tokenStorage: TokenStorage
+    lateinit var imageStorage: ImageBase64Storage
 }
 
 val AuthPlugin = createClientPlugin(

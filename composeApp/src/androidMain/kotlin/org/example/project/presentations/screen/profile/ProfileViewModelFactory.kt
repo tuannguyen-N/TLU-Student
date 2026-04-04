@@ -2,16 +2,19 @@ package org.example.project.presentations.screen.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.usecase.StudentUseCase
 
 class ProfileViewModelFactory(
     private val studentUseCase: StudentUseCase,
+    private val authPluginConfig: AuthPluginConfig
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
             return ProfileViewModel(
                 studentUseCase,
+                authPluginConfig
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
