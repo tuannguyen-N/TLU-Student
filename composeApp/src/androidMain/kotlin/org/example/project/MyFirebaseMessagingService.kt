@@ -1,0 +1,38 @@
+package org.example.project
+
+import android.app.NotificationManager
+import android.util.Log
+import androidx.core.app.NotificationCompat
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
+
+class MyFirebaseMessagingService : FirebaseMessagingService() {
+
+    override fun onMessageReceived(message: RemoteMessage) {
+        super.onMessageReceived(message)
+        Log.e("FCM", "onMessageReceived: go here", )
+        val title = message.notification?.title
+        val body = message.notification?.body
+        showNotification(title, body)
+    }
+
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+        Log.d("FCM", "Token: $token")
+    }
+
+    fun showNotification(title: String?, message: String?) {
+        val channelId = "default_channel"
+
+        val notificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setSmallIcon(R.drawable.icon_notification)
+            .build()
+
+        notificationManager.notify(0, notification)
+    }
+}

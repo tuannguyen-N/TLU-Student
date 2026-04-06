@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.DeviceProvider
 import org.example.project.domain.usecase.LoginUseCase
 import org.example.project.presentations.utils.MsalHelper
 
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val deviceProvider: DeviceProvider
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginState())
     val uiState = _uiState.asStateFlow()
@@ -29,22 +31,21 @@ class LoginViewModel(
             MsalHelper.signOut {}
             delay(1000L)
             MsalHelper.signIn(activity) { newToken, isNoInternet ->
-                if (newToken != null)
-                    onSignMsalSuccess(newToken)
+                if (newToken != null){
+                    onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
+                }
                 else if (isNoInternet) {
-                    updateState { copy(isLoading = false, error = "Không có kết nối internet") }
                     sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
                 } else
                     updateState { copy(isLoading = false, error = "Đăng nhập thất bại") }
-
                 Log.e("123123", "onLoginClick: $newToken")
             }
         }
     }
 
-    fun onSignMsalSuccess(token: String) {
+    fun onSignMsalSuccess(token: String, deviceId: String) {
         viewModelScope.launch {
-            loginUseCase(token).fold(
+            loginUseCase(token, deviceId).fold(
                 onSuccess = {
                     sendUiEvent(LoginUiEvent.OnNavigateToHome)
                 },

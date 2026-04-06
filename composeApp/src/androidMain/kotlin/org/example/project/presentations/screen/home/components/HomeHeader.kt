@@ -61,7 +61,7 @@ fun HomeHeader(
                 enabled = isProfileReady
             ) {
                 if (isProfileReady) {
-                    if (imageBase64 != null) {
+                    if (imageBase64 != null && imageBase64 != "") {
                         Base64Image(
                             base64String = imageBase64,
                             modifier = Modifier

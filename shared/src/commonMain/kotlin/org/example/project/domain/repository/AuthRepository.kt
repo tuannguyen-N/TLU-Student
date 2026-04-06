@@ -10,9 +10,9 @@ class AuthRepository(
     private val tokenStorage: TokenStorage,
     private val imageStorage: ImageBase64Storage,
 ) {
-    suspend fun login(microsoftAccessToken: String): AppResult<Unit> {
+    suspend fun login(microsoftAccessToken: String, firebaseToken: String, deviceId: String): AppResult<Unit> {
         return try {
-            val response = authApi.login(microsoftAccessToken)
+            val response = authApi.login(microsoftAccessToken,firebaseToken , deviceId)
             val token = response.data?.token
                 ?: return AppResult.Failure(message = response.message)
             val imageBase64 = response.data.avatar

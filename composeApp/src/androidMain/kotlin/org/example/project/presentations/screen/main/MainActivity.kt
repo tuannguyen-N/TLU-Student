@@ -1,19 +1,23 @@
 package org.example.project.presentations.screen.main
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.google.firebase.messaging.FirebaseMessaging
 import org.example.project.di.AppContainer
 import org.example.project.local.AndroidAppContainer
-import org.example.project.local.AndroidTokenStorage
 import org.example.project.presentations.utils.MsalHelper
+import org.example.project.presentations.utils.createNotificationChannel
 
 class MainActivity : ComponentActivity() {
     lateinit var container: AppContainer
@@ -23,8 +27,27 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         initAppContainer()
         initMsal()
+        handleFirebaseToken()
         fitSystemWindow()
         hideBottonNavigationBar()
+        createNotificationChannel(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                1001
+            )
+        }
+    }
+
+    private fun handleFirebaseToken() {
+        val oldToken = androidAppContainer.firebaseStorage.getFirebaseToken()
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { newToken ->
+            Log.d("FCM", "Current Token: $newToken")
+            if (newToken != oldToken) {
+                androidAppContainer.firebaseStorage.saveFirebaseToken(newToken)
+            }
+        }
     }
 
     private fun initAppContainer() {
@@ -32,6 +55,8 @@ class MainActivity : ComponentActivity() {
         container = AppContainer(
             androidAppContainer.tokenStorage,
             androidAppContainer.imageStorage,
+            androidAppContainer.firebaseStorage,
+            androidAppContainer.deviceProvider,
             applicationContext
         )
     }

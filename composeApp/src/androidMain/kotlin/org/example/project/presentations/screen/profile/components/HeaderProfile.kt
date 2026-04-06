@@ -88,7 +88,7 @@ fun HeaderProfile(
                 }
             }
 
-            if (avatarBase64 != null) {
+            if (avatarBase64 != null && avatarBase64 != "") {
                 Base64Image(
                     base64String = avatarBase64,
                     modifier = Modifier

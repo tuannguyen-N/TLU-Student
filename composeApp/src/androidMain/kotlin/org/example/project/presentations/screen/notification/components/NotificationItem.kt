@@ -19,27 +19,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.Notification
-import org.example.project.domain.model.NotificationType
+import org.example.project.domain.model.NotificationUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.avatarRes
 import org.example.project.presentations.utils.iconRes
-import org.example.project.data.mapper.toFormatTime
 
-@Preview
 @Composable
 fun NotificationItem(
     modifier: Modifier = Modifier,
     onHoldItem: () -> Unit = {},
-    notification: Notification = Notification(
-        "Demo1231232@",
-        "Demo",
-        "Demo",
-        NotificationType.SCHOOL,
-        1620972800
-    )
+    notification: NotificationUiModel
 ) {
     val backgroundColor = if (notification.isRead)
         LocalExtendedColors.current.background
@@ -74,20 +64,21 @@ fun NotificationItem(
             )
 
             Text(
-                text = notification.actor,
+                text = notification.sender.value,
                 style = MaterialTheme.typography.bodyMedium,
                 color = LocalExtendedColors.current.gray,
             )
         }
 
         Text(
-            text = notification.notificationTime.toFormatTime(),
+            text = notification.createdAgo,
             style = MaterialTheme.typography.bodyMedium,
             color = LocalExtendedColors.current.gray,
         )
     }
 }
 
+// TODO: Change icon
 @Composable
 fun AvatarNotification(
     modifier: Modifier,

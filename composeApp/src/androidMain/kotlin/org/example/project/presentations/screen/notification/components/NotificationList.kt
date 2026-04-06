@@ -8,20 +8,19 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.Notification
+import org.example.project.domain.model.NotificationUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun NotificationList(
     onShowBottomSheet: () -> Unit,
-    notifications: List<Notification>,
+    notifications: List<NotificationUiModel>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier
     ) {
         itemsIndexed(notifications) { index, item ->
-
             NotificationItem(
                 notification = item,
                 modifier = Modifier.combinedClickable(

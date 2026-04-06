@@ -35,6 +35,9 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.compose.multiplatform) // for calendar
+
+            // Firebase BOM
+            implementation("dev.gitlive:firebase-messaging:2.1.0")
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.android)

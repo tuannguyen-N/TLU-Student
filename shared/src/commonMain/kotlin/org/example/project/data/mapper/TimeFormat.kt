@@ -111,3 +111,49 @@ fun String.toDisplayDate(): String {
     val date = LocalDate.parse(this)
     return "${date.day.twoDigits()}/${date.month.number.twoDigits()}/${date.year}"
 } // "21/01/2022"
+
+fun String.toCreatedTime(): String {
+    val dateTimePart = this.substringBefore(".")  // "2026-04-02T16:34:06"
+    val time = LocalTime.parse(dateTimePart.substringAfter("T"))  // "16:34:06"
+    val hour12 = when {
+        time.hour == 0 -> 12
+        time.hour > 12 -> time.hour - 12
+        else -> time.hour
+    }
+    val amPm = if (time.hour < 12) "AM" else "PM"
+    return "${hour12.twoDigits()}:${time.minute.twoDigits()} $amPm"
+}  // "04:34 PM"
+
+fun String.toCreatedDate(): String {
+    val datePart = this.substringBefore("T")  // "2026-04-02"
+    val date = LocalDate.parse(datePart)
+    return "${date.day.twoDigits()}/${date.month.number.twoDigits()}/${date.year}"
+}  // "02/04/2026"
+
+fun String.toCreatedAgo(): String {
+    val dateTimePart = this.substringBefore(".")         // "2026-04-02T16:34:06"
+    val datePart = dateTimePart.substringBefore("T")     // "2026-04-02"
+    val timePart = dateTimePart.substringAfter("T")      // "16:34:06"
+
+    val createdDate = LocalDate.parse(datePart)
+    val createdTime = LocalTime.parse(timePart)
+
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    val nowDate = now.date
+    val nowTime = now.time
+
+    val createdTotalMinutes = createdDate.toEpochDays() * 24 * 60 +
+            createdTime.hour * 60 + createdTime.minute
+    val nowTotalMinutes = nowDate.toEpochDays() * 24 * 60 +
+            nowTime.hour * 60 + nowTime.minute
+
+    val diffMinutes = nowTotalMinutes - createdTotalMinutes
+
+    return when {
+        diffMinutes < 1    -> "Vừa xong"
+        diffMinutes < 60   -> "${diffMinutes} phút trước"
+        diffMinutes < 1440 -> "${diffMinutes / 60} giờ trước"       // < 24 giờ
+        diffMinutes < 43200 -> "${diffMinutes / 1440} ngày trước"   // < 30 ngày
+        else               -> "${diffMinutes / 43200} tháng trước"
+    }
+}

@@ -45,6 +45,8 @@ import org.example.project.presentations.screen.login.LoginViewModelFactory
 import org.example.project.presentations.screen.main.LocalAppContainer
 import org.example.project.presentations.screen.main.MainScreen
 import org.example.project.presentations.screen.notification.NotificationScreen
+import org.example.project.presentations.screen.notification.NotificationViewModel
+import org.example.project.presentations.screen.notification.NotificationViewModelFactory
 import org.example.project.presentations.screen.profile.ProfileScreen
 import org.example.project.presentations.screen.profile.ProfileViewModel
 import org.example.project.presentations.screen.profile.ProfileViewModelFactory
@@ -114,7 +116,12 @@ fun AppNavGraph(
 
         composable(AppRoute.Login) {
             val container = LocalAppContainer.current
-            val factory = remember(container) { LoginViewModelFactory(container.loginUseCase) }
+            val factory = remember(container) {
+                LoginViewModelFactory(
+                    container.loginUseCase,
+                    container.deviceProvider
+                )
+            }
             val loginViewModel: LoginViewModel = viewModel(factory = factory)
 
             LoginScreen(
@@ -200,7 +207,12 @@ fun AppNavGraph(
         composable(AppRoute.EditProfile) {
             val container = LocalAppContainer.current
             val factory =
-                remember(container) { EditProfileViewModelFactory(container.studentUseCase, container.authPluginConfig) }
+                remember(container) {
+                    EditProfileViewModelFactory(
+                        container.studentUseCase,
+                        container.authPluginConfig
+                    )
+                }
             val editProfileViewModel: EditProfileViewModel = viewModel(factory = factory)
 
             EditProfileScreen(
@@ -210,7 +222,13 @@ fun AppNavGraph(
         }
 
         composable(AppRoute.Notification) {
-            NotificationScreen(onBack = { navController.popBackStack() })
+            val container = LocalAppContainer.current
+            val factory =
+                remember(container) { NotificationViewModelFactory(container.notificationRepository) }
+            val notificationViewModel: NotificationViewModel = viewModel(factory = factory)
+            NotificationScreen(
+                viewModel = notificationViewModel,
+                onBack = { navController.popBackStack() })
         }
 
         composable(

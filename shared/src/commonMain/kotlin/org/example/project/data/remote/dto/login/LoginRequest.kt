@@ -4,5 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LoginRequest(
-    val accessToken: String
+    val accessToken: String,
+    val deviceId: String,
+    val fcmToken: String
 )

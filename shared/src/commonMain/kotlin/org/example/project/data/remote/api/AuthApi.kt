@@ -12,9 +12,19 @@ import org.example.project.data.remote.dto.login.LoginResponse
 class AuthApi(
     private val client: HttpClient
 ) {
-    suspend fun login(microsoftAccessToken: String): LoginResponse =
-        client.post("/api/v1/oauth2/login"){
+    suspend fun login(
+        microsoftAccessToken: String,
+        firebaseToken: String,
+        deviceId: String
+    ): LoginResponse =
+        client.post("/api/v1/oauth2/login") {
             contentType(ContentType.Application.Json)
-            setBody(LoginRequest(accessToken = microsoftAccessToken))
+            setBody(
+                LoginRequest(
+                    accessToken = microsoftAccessToken,
+                    deviceId = deviceId,
+                    fcmToken = firebaseToken
+                )
+            )
         }.body()
 }

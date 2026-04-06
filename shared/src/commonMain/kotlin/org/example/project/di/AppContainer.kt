@@ -1,11 +1,14 @@
 package org.example.project.di
 
+import org.example.project.DeviceProvider
+import org.example.project.data.local.FirebaseStorage
 import org.example.project.data.local.ImageBase64Storage
 import org.example.project.data.local.TokenStorage
 import org.example.project.data.local.createDatabase
 import org.example.project.data.local.getDatabaseBuilder
 import org.example.project.data.remote.api.AuthApi
 import org.example.project.data.remote.api.ExamScheduleApi
+import org.example.project.data.remote.api.NotificationApi
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.api.SemesterApi
 import org.example.project.data.remote.api.StudentApi
@@ -18,6 +21,7 @@ import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
+import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.ScheduleRepository
 import org.example.project.domain.repository.SemesterRepository
 import org.example.project.domain.repository.StudentClassRepository
@@ -34,6 +38,9 @@ import org.example.project.domain.usecase.TranscriptUseCase
 class AppContainer(
     tokenStorage: TokenStorage,
     imageStorage: ImageBase64Storage,
+    firebaseStorage: FirebaseStorage,
+    //for deviceId
+    val deviceProvider: DeviceProvider,
     context: Any? = null
 ) {
     private val httpClient = createHttpClient(tokenStorage)
@@ -45,7 +52,7 @@ class AppContainer(
         tokenStorage = tokenStorage,
         imageStorage = imageStorage
     )
-    val loginUseCase = LoginUseCase(authRepository)
+    val loginUseCase = LoginUseCase(authRepository, firebaseStorage)
 
     val authPluginConfig = AuthPluginConfig().apply {
         this.imageStorage = imageStorage
@@ -93,4 +100,8 @@ class AppContainer(
     //for tuition
     private val tuitionApi = TuitionApi(httpClient)
     val tuitionRepository = TuitionRepository(tuitionApi)
+
+    //for notification
+    private val notificationApi = NotificationApi(httpClient)
+    val notificationRepository = NotificationRepository(notificationApi)
 }

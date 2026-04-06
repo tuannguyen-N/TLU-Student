@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -153,10 +154,11 @@ fun ScheduleNext(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
+                    Icon(
                         painter = painterResource(R.drawable.icon_location),
                         contentDescription = "location",
-                        colorFilter = ColorFilter.tint(LocalExtendedColors.current.gray)
+                        tint = LocalExtendedColors.current.gray,
+                        modifier = Modifier.size(12.dp)
                     )
 
                     Text(

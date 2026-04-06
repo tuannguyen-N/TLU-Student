@@ -23,8 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.example.project.R
 import org.example.project.domain.model.FeatureType
-import org.example.project.domain.model.Notification
+import org.example.project.domain.model.NotificationSender
 import org.example.project.domain.model.NotificationType
+import org.example.project.domain.model.NotificationUiModel
 import org.example.project.domain.model.PaymentType
 import org.example.project.presentations.navigation.AppRoute
 
@@ -101,17 +102,17 @@ fun FeatureType.toRoute(): String {
     }
 }
 
-fun Notification.avatarRes(): Int {
-    return when (this.type) {
-        NotificationType.SCHOOL -> R.drawable.icon_avatar_school
+fun NotificationUiModel.avatarRes(): Int {
+    return when (this.sender) {
+        NotificationSender.SYSTEM -> R.drawable.icon_avatar_school
         else -> R.drawable.ic_launcher_background
     }
 }
 
-fun Notification.iconRes(): Int {
-    return when (this.type) {
-        NotificationType.SCHOOL -> R.drawable.icon_school_notification
-        NotificationType.DEPARTMENT -> R.drawable.icon_deparment_notification
+fun NotificationUiModel.iconRes(): Int {
+    return when (this.sender) {
+        NotificationSender.SYSTEM -> R.drawable.icon_school_notification
+        NotificationSender.FACULTY -> R.drawable.icon_deparment_notification
         else -> R.drawable.icon_teacher_notification
     }
 }

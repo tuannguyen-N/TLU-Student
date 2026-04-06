@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    id("com.google.gms.google-services")
 }
 
 room {
@@ -36,6 +37,7 @@ kotlin {
             implementation(libs.compose.multiplatform.v2101)
             implementation(libs.core)
             implementation(libs.accompanist.systemuicontroller)
+            implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
