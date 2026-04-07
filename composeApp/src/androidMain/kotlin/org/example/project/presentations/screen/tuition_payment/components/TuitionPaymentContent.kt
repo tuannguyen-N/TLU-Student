@@ -71,7 +71,7 @@ fun TuitionPaymentContent(
         }
     }
 
-    if (uiState.isShowDetailTuitionCourseDialog){
+    if (uiState.isShowDetailTuitionCourseDialog) {
         DetailTuitionCourseDialog(
             courses = uiState.selectedTuitionDetail?.items ?: emptyList(),
             onDismiss = onDismissDialog

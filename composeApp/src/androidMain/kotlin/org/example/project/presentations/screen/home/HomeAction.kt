@@ -1,5 +1,5 @@
 package org.example.project.presentations.screen.home
 
 sealed interface HomeAction {
-    object RefreshData: HomeAction
+    object RefreshData : HomeAction
 }

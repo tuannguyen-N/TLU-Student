@@ -22,10 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.PaymentType
-import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.data.mapper.displayName
 import org.example.project.data.mapper.subtitle
+import org.example.project.domain.model.PaymentType
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.utils.icon
 
 

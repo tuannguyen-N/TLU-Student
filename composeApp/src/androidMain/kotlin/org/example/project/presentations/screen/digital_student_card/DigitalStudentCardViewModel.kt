@@ -3,7 +3,6 @@ package org.example.project.presentations.screen.digital_student_card
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -16,7 +15,6 @@ import org.example.project.domain.usecase.GenerateQrUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.presentations.utils.generateQrBitmap
 import org.example.project.presentations.utils.toByteArray
-import org.example.project.presentations.utils.withDelayedLoading
 
 class DigitalStudentCardViewModel(
     private val studentUseCase: StudentUseCase,

@@ -35,7 +35,7 @@ enum class StudentRole(val label: String) {
 }
 
 @Composable
-private fun roleBadgeColors(role: StudentRole):  Color = when (role) {
+private fun roleBadgeColors(role: StudentRole): Color = when (role) {
     StudentRole.CLASS_PRESIDENT -> LocalExtendedColors.current.red
     StudentRole.CLASS_VICE -> LocalExtendedColors.current.purple
     StudentRole.SECRETARY -> LocalExtendedColors.current.lightBlue

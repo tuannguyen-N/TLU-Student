@@ -26,7 +26,7 @@ class ProfileViewModel(
         loadImage()
     }
 
-    private fun loadImage(){
+    private fun loadImage() {
         val image = authPluginConfig.imageStorage.getImageBase64()
         updateState { copy(avatarBase64 = image) }
     }

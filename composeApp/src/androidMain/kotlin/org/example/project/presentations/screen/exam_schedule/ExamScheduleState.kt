@@ -1,9 +1,9 @@
 package org.example.project.presentations.screen.exam_schedule
 
 import kotlinx.datetime.LocalDate
+import org.example.project.data.mapper.today
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.ExamDay
-import org.example.project.data.mapper.today
 
 data class ExamScheduleState(
     val semesters: List<Semester> = emptyList(),

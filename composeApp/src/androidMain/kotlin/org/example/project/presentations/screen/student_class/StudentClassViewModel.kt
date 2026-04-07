@@ -11,7 +11,7 @@ import org.example.project.presentations.utils.withDelayedLoading
 
 class StudentClassViewModel(
     private val studentClassRepository: StudentClassRepository
-): ViewModel() {
+) : ViewModel() {
     private val _uiState = MutableStateFlow(StudentClassState())
     val uiState = _uiState.asStateFlow()
 
@@ -19,9 +19,9 @@ class StudentClassViewModel(
         loadingData()
     }
 
-    private fun loadingData(){
+    private fun loadingData() {
         viewModelScope.launch {
-            withDelayedLoading(onLoading = {updateState { copy(isLoading = it) }}){
+            withDelayedLoading(onLoading = { updateState { copy(isLoading = it) } }) {
                 studentClassRepository.getStudentClassInfo().fold(
                     onSuccess = {
                         updateState { copy(studentClassInfoData = it) }

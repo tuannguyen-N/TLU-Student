@@ -78,7 +78,7 @@ fun DetailTuitionCourseDialog(
                 }
             }
 
-            LazyColumn{
+            LazyColumn {
                 items(courses) { course ->
                     TuitionCourseItem(
                         courseCode = "course.code", // TODO:

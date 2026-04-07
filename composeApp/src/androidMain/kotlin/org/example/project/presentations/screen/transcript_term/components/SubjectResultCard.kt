@@ -36,7 +36,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -46,7 +45,7 @@ import org.example.project.presentations.utils.toColor
 @Composable
 fun SubjectResultCard(
     modifier: Modifier = Modifier,
-    subjectCode: String ,
+    subjectCode: String,
     subjectName: String,
     attendanceScore: Double,
     midtermScore: Double,

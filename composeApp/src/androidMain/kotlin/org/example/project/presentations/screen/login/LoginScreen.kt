@@ -1,7 +1,6 @@
 package org.example.project.presentations.screen.login
 
 import android.app.Activity
-import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -60,6 +59,7 @@ fun LoginScreen(
             LoginUiEvent.OnLoginSuccess -> {
                 onNavigateToHome()
             }
+
             LoginUiEvent.ShowNoInternetDialog -> showNoInternetDialog = true
         }
     }

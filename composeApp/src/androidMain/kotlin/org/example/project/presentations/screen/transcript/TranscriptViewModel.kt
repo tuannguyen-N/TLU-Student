@@ -38,7 +38,7 @@ class TranscriptViewModel(
         viewModelScope.launch {
             withDelayedLoading(onLoading = {
                 updateState { copy(isLoading = it) }
-            }){
+            }) {
                 transcriptUseCase.getTranscript().fold(
                     onSuccess = {
                         updateState {

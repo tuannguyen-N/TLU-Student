@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import org.example.project.di.AppContainer
 import org.example.project.presentations.navigation.AppNavGraph
 import org.example.project.presentations.theme.AppTheme
-import org.example.project.presentations.theme.LocalExtendedColors
 
 val LocalAppContainer = staticCompositionLocalOf<AppContainer> {
     error("No AppContainer provided")

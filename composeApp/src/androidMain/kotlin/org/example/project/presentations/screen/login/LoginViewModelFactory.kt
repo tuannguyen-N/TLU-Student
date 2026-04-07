@@ -3,7 +3,6 @@ package org.example.project.presentations.screen.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.example.project.DeviceProvider
-import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.usecase.HandleLoginSuccessUseCase
 
 class LoginViewModelFactory(

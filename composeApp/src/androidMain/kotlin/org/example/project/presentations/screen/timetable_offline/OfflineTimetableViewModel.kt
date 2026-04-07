@@ -6,18 +6,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import org.example.project.data.mapper.getCurrentWeek
+import org.example.project.data.mapper.getNextWeek
+import org.example.project.data.mapper.getPreviousWeek
 import org.example.project.data.mapper.toLocalDateSafe
 import org.example.project.data.mapper.toStartWeekDate
+import org.example.project.data.mapper.today
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.WeeklyScheduleData
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.presentations.screen.timetable.TimetableState
-import org.example.project.data.mapper.getCurrentWeek
-import org.example.project.data.mapper.getNextWeek
-import org.example.project.data.mapper.getPreviousWeek
-import org.example.project.data.mapper.today
 import org.example.project.presentations.utils.withDelayedLoading
 
 class OfflineTimetableViewModel(

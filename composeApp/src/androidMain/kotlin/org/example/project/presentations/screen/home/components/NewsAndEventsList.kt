@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.data.remote.dto.news.EventOrNew
 import org.example.project.domain.model.EventAndNewUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -46,7 +45,7 @@ fun NewsAndEventsList(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = LocalExtendedColors.current.fontBlue,
-                modifier = Modifier.clickable{
+                modifier = Modifier.clickable {
                     onClickAll()
                 }
             )

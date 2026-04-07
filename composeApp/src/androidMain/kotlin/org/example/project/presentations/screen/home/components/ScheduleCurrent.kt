@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.home.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,13 +23,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
-import org.example.project.data.remote.dto.week_schedule.CourseClass
-import org.example.project.data.remote.dto.week_schedule.Lecturer
-import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.data.mapper.toHourMinuteAmPm
+import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.ExtendedColors
 
 @Composable

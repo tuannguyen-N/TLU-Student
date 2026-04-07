@@ -47,7 +47,7 @@ fun AlertList(
                 contentType = { _, item -> if (item.isHighAlert) "HighAlert" else "MediumAlert" }
             ) { _, item ->
                 if (item.isHighAlert) {
-                    HighAlertCard(item = item,  onClickAction = onClickAction, color = color)
+                    HighAlertCard(item = item, onClickAction = onClickAction, color = color)
                 } else {
                     MediumAlertCard(item = item, onClickAction = onClickAction, color = color)
                 }

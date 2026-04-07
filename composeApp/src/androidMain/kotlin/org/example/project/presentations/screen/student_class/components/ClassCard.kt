@@ -37,7 +37,7 @@ import org.example.project.presentations.theme.ExtendedColors
 @Composable
 fun ClassCard(
     modifier: Modifier = Modifier,
-    className: String ,
+    className: String,
     major: String,
     color: ExtendedColors
 ) {

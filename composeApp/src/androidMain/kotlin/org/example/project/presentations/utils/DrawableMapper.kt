@@ -2,7 +2,6 @@ package org.example.project.presentations.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalance
-import androidx.compose.material.icons.outlined.Apartment
 import androidx.compose.material.icons.outlined.AssignmentInd
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Badge
@@ -24,7 +23,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import org.example.project.R
 import org.example.project.domain.model.FeatureType
 import org.example.project.domain.model.NotificationSender
-import org.example.project.domain.model.NotificationType
 import org.example.project.domain.model.NotificationUiModel
 import org.example.project.domain.model.PaymentType
 import org.example.project.presentations.navigation.AppRoute

@@ -35,7 +35,7 @@ fun SmallNewsCard(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = {onClick(item.newsUrl)})
+            .clickable(onClick = { onClick(item.newsUrl) })
     ) {
         AsyncImage(
             model = item.imageUrl,

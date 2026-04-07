@@ -30,7 +30,6 @@ import org.example.project.domain.model.CourseFilter
 import org.example.project.domain.model.CourseItem
 import org.example.project.domain.model.CourseStatus
 import org.example.project.presentations.components.TopCenterScreenBar
-import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 

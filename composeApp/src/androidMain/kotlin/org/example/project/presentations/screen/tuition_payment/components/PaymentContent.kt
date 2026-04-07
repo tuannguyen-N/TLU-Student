@@ -36,7 +36,7 @@ fun PaymentContent(color: ExtendedColors, tuitionDetail: TuitionDetailUiModel) {
 
         item { DetailTuitionCourse(color = color, items = tuitionDetail.items) }
 
-        if (tuitionDetail.status == PaymentStatus.UNPAID){
+        if (tuitionDetail.status == PaymentStatus.UNPAID) {
             item { PaymentMethodList() }
 
             item {

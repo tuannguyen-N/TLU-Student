@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.NotificationUiModel
 import org.example.project.presentations.theme.ExtendedColors
-import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.avatarRes
 import org.example.project.presentations.utils.iconRes
 

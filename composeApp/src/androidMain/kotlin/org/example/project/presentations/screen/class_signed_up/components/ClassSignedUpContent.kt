@@ -299,7 +299,12 @@ private fun CourseItem(
                         text = buildAnnotatedString {
                             append(courseClass.subjectName)
                             append(" ")
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Normal, fontSize = 15.sp),) {
+                            withStyle(
+                                style = SpanStyle(
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 15.sp
+                                ),
+                            ) {
                                 append("(${courseClass.classCode})")
                             }
                         },

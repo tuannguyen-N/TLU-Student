@@ -18,7 +18,7 @@ fun NotificationScreen(
     StatusBarStyle(darkIcons = true)
 
     NotificationContent(
-       uiState = uiState,
+        uiState = uiState,
         onBack = onBack,
         onRead = viewModel::onRead,
         onShowBottomSheet = viewModel::onShowBottomSheet,

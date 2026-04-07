@@ -1,7 +1,6 @@
 package org.example.project.presentations.screen.edit_profile
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -27,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.components.Base64Image
@@ -62,7 +60,9 @@ fun EditProfileScreen(
     StatusBarStyle(darkIcons = true)
 
     LazyColumn(
-        modifier = Modifier.statusBarsPadding().background(Color.White),
+        modifier = Modifier
+            .statusBarsPadding()
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
@@ -89,7 +89,7 @@ fun EditProfileScreen(
                 Box(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    if (imageBase64 != null && imageBase64 != ""){
+                    if (imageBase64 != null && imageBase64 != "") {
                         Base64Image(
                             base64String = imageBase64,
                             modifier = Modifier
@@ -99,7 +99,7 @@ fun EditProfileScreen(
                                     BorderStroke(1.dp, Color.White), CircleShape
                                 )
                         )
-                    }else {
+                    } else {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = null,

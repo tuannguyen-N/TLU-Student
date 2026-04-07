@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.data.mapper.toDisplayDate
 import org.example.project.domain.model.PaymentStatus
 import org.example.project.domain.model.TuitionUiModel
 import org.example.project.presentations.components.LabelHeader

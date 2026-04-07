@@ -53,13 +53,13 @@ fun TuitionCard(
                     fontWeight = FontWeight.Normal
                 )
 
-                if(status == PaymentStatus.PAID){
+                if (status == PaymentStatus.PAID) {
                     LabelView(
                         text = "Đã thanh toán",
                         backgroundColor = color.green,
                         textColor = color.white
                     )
-                }else {
+                } else {
                     LabelView(
                         text = "Hạn: $deadline",
                         backgroundColor = color.red,

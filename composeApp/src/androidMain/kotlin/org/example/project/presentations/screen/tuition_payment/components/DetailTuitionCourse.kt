@@ -19,7 +19,11 @@ import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
-fun DetailTuitionCourse(modifier: Modifier = Modifier, color: ExtendedColors, items: List<TuitionItem> ) {
+fun DetailTuitionCourse(
+    modifier: Modifier = Modifier,
+    color: ExtendedColors,
+    items: List<TuitionItem>
+) {
     LocalExtendedColors.current
     Column(
         modifier = modifier

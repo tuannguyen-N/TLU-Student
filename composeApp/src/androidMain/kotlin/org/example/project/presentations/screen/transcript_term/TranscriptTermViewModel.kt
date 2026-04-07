@@ -40,7 +40,7 @@ class TranscriptTermViewModel(
                     }
 
                 semester?.let {
-                    _uiState.update {transcriptTermState ->
+                    _uiState.update { transcriptTermState ->
                         transcriptTermState.copy(
                             semesterLabel = it.semesterLabel,
                             semesterGpa = it.semesterGpa,

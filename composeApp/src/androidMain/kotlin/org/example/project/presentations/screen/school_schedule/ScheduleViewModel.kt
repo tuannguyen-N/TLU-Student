@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.example.project.data.mapper.getTodayDayOfWeek
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.usecase.ScheduleUseCase
-import org.example.project.data.mapper.getTodayDayOfWeek
 
 class ScheduleViewModel(
     private val scheduleUseCase: ScheduleUseCase

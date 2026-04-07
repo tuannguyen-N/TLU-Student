@@ -39,7 +39,7 @@ fun FeaturedNewsCard(
             .fillMaxWidth()
             .height(200.dp)
             .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = {onClick(item.newsUrl)})
+            .clickable(onClick = { onClick(item.newsUrl) })
     ) {
         AsyncImage(
             model = item.imageUrl,

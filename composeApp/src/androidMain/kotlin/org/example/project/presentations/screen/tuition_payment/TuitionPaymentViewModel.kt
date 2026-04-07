@@ -55,7 +55,12 @@ class TuitionPaymentViewModel(
     fun onViewDetailTuition(tuition: TuitionUiModel) {
         viewModelScope.launch {
             tuitionRepository.getDetailTuition(tuition.invoiceId).onSuccess {
-                updateState { copy(selectedTuitionDetail = it,isShowDetailTuitionCourseDialog = true) }
+                updateState {
+                    copy(
+                        selectedTuitionDetail = it,
+                        isShowDetailTuitionCourseDialog = true
+                    )
+                }
             }
         }
     }

@@ -21,9 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.data.mapper.toHourMinuteAmPm
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.data.mapper.toHourMinuteAmPm
 
 @Composable
 fun SubjectInformationCard(

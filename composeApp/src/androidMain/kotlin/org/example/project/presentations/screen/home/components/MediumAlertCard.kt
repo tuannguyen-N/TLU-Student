@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.presentations.theme.ExtendedColors
-import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun MediumAlertCard(

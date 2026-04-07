@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
     private val appContainer by lazy {
         (application as MyApplication).appContainer
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initMsal()
@@ -35,6 +36,7 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
+
     private fun initMsal() {
         MsalHelper.init(this) {
             setContent {

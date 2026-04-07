@@ -37,12 +37,12 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.number
 import org.example.project.data.mapper.toLocalDateSafe
+import org.example.project.data.mapper.today
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.screen.exam_schedule.ExamScheduleState
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.data.mapper.today
 
 @Composable
 fun ExamScheduleContent(
