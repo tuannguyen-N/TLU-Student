@@ -37,7 +37,8 @@ fun MainScreen(
     onOpenFeatureScreen: () -> Unit,
     onSendEmail: (String) -> Unit,
     onOpenFeature: (FeatureType) -> Unit,
-    onOpenNewsScreen: () -> Unit
+    onOpenNewsScreen: () -> Unit,
+    onOpenNews: (String) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()
@@ -69,7 +70,8 @@ fun MainScreen(
                             }
                         },
                         onOpenFeature = onOpenFeature,
-                        onOpenNewsScreen = onOpenNewsScreen
+                        onOpenNewsScreen = onOpenNewsScreen,
+                        onOpenNews = onOpenNews
                     )
 
                     1 -> ScheduleScreen(

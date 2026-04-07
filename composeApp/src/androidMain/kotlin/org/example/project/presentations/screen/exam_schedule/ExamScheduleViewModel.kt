@@ -31,7 +31,7 @@ class ExamScheduleViewModel(
 
     private fun initData() {
         viewModelScope.launch {
-            delay(200L)
+            delay(400L)
             getSemesters()
         }
     }

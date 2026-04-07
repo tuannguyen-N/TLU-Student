@@ -179,7 +179,11 @@ fun AppNavGraph(
                 onOpenFeatureScreen = { navController.navigate(AppRoute.FeaturesScreen) },
                 onSendEmail = { email -> context.openEmail(email) },
                 onOpenFeature = { navController.navigate(it.toRoute()) },
-                onOpenNewsScreen = { navController.navigate(AppRoute.NewsScreen) }
+                onOpenNewsScreen = { navController.navigate(AppRoute.NewsScreen) },
+                onOpenNews = { url ->
+                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                    context.startActivity(intent)
+                }
             )
         }
 

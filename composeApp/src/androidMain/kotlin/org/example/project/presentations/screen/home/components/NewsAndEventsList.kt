@@ -24,7 +24,8 @@ fun NewsAndEventsList(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     items: List<EventAndNewUiModel>,
-    onClickAll: () -> Unit
+    onClickAll: () -> Unit,
+    onOpenNews: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -66,7 +67,7 @@ fun NewsAndEventsList(
                     key = { index, item -> "${index}_${item.title}" },
                     contentType = { _, _ -> "NewsAndEvent" }
                 ) { _, item ->
-                    NewAndEventCard(item)
+                    NewAndEventCard(item, onOpenNews = onOpenNews)
                 }
             }
         }

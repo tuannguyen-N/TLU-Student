@@ -3,6 +3,7 @@ package org.example.project.presentations.screen.timetable
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -72,6 +73,7 @@ class TimetableViewModel(
 
     private fun getSemesters() {
         viewModelScope.launch {
+            delay(400L)
             semesterUseCase.getSemesters()
         }
     }
