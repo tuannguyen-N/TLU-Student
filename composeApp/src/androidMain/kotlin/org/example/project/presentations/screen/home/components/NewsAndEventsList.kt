@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.home.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +24,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun NewsAndEventsList(
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
-    items: List<EventAndNewUiModel>
+    items: List<EventAndNewUiModel>,
+    onClickAll: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -43,7 +45,10 @@ fun NewsAndEventsList(
                 text = "Tất cả",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = LocalExtendedColors.current.fontBlue
+                color = LocalExtendedColors.current.fontBlue,
+                modifier = Modifier.clickable{
+                    onClickAll()
+                }
             )
         }
 

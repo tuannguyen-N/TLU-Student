@@ -3,6 +3,7 @@ package org.example.project.presentations.screen.digital_student_card
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -29,21 +30,12 @@ class DigitalStudentCardViewModel(
 
     init {
         observeStudentInfo()
-        loadData()
     }
 
     private fun observeStudentInfo() {
         studentUseCase.studentInfo.onEach {
             it?.let { updateState { copy(studentInfo = it) } }
         }.launchIn(viewModelScope)
-    }
-
-    private fun loadData() {
-        viewModelScope.launch {
-            withDelayedLoading(onLoading = { updateState { copy(isLoading = it) } }) {
-                studentUseCase.getStudentInfo()
-            }
-        }
     }
 
     fun onCreateQr() {

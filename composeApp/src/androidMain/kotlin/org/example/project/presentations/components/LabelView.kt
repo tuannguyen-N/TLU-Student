@@ -19,11 +19,12 @@ fun LabelView(
 ) {
     Surface(
         shape = RoundedCornerShape(50),
-        color = backgroundColor
+        color = backgroundColor,
+        modifier = modifier
     ) {
         Text(
             text = text,
-            modifier = modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelMedium.copy(
                 color = textColor
             ),

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EventOrNew(
     val excerpt: String,
-    val imageUrl: String,
+    val imageUrl: String?,
     val newsUrl: String,
     val publishDate: String,
     val source: String,

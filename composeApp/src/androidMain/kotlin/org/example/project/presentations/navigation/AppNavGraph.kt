@@ -1,5 +1,6 @@
 package org.example.project.presentations.navigation
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -8,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -44,6 +46,9 @@ import org.example.project.presentations.screen.login.LoginViewModel
 import org.example.project.presentations.screen.login.LoginViewModelFactory
 import org.example.project.presentations.screen.main.LocalAppContainer
 import org.example.project.presentations.screen.main.MainScreen
+import org.example.project.presentations.screen.news.NewsScreen
+import org.example.project.presentations.screen.news.NewsViewModel
+import org.example.project.presentations.screen.news.NewsViewModelFactory
 import org.example.project.presentations.screen.notification.NotificationScreen
 import org.example.project.presentations.screen.notification.NotificationViewModel
 import org.example.project.presentations.screen.notification.NotificationViewModelFactory
@@ -173,7 +178,8 @@ fun AppNavGraph(
                 onOpenTimetable = { navController.navigate(AppRoute.TimetableScreen) },
                 onOpenFeatureScreen = { navController.navigate(AppRoute.FeaturesScreen) },
                 onSendEmail = { email -> context.openEmail(email) },
-                onOpenFeature = { navController.navigate(it.toRoute()) }
+                onOpenFeature = { navController.navigate(it.toRoute()) },
+                onOpenNewsScreen = { navController.navigate(AppRoute.NewsScreen) }
             )
         }
 
@@ -387,7 +393,6 @@ fun AppNavGraph(
         }
 
         composable(AppRoute.ClassSignUp) {
-            val container = LocalAppContainer.current
             ClassSignUpScreen(
                 onBack = { navController.popBackStack() }
             )
@@ -407,5 +412,23 @@ fun AppNavGraph(
             )
         }
 
+        composable(AppRoute.NewsScreen) {
+            val container = LocalAppContainer.current
+            val context = LocalContext.current
+            val factory = remember(container) {
+                NewsViewModelFactory(
+                    container.newsRepository
+                )
+            }
+            val newsViewModel: NewsViewModel = viewModel(factory = factory)
+            NewsScreen(
+                viewModel = newsViewModel,
+                onBack = { navController.popBackStack() },
+                onOpenNews = { url ->
+                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                    context.startActivity(intent)
+                }
+            )
+        }
     }
 }

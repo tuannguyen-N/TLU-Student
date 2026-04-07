@@ -29,7 +29,8 @@ fun HomeScreen(
     onOpenNotificationScreen: () -> Unit = {},
     onOpenFeature: (FeatureType) -> Unit,
     onOpenFeatureScreen: () -> Unit,
-    onOpenScheduleScreen: () -> Unit
+    onOpenScheduleScreen: () -> Unit,
+    onOpenNewsScreen: () -> Unit
 ) {
     val color = LocalExtendedColors.current
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -95,7 +96,8 @@ fun HomeScreen(
                     NewsAndEventsList(
                         items = uiState.newsAndEvents,
                         isLoading = uiState.loadingEventList,
-                        modifier = Modifier.padding(top = 15.dp)
+                        modifier = Modifier.padding(top = 15.dp),
+                        onClickAll = onOpenNewsScreen
                     )
                 }
             }

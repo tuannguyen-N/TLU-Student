@@ -100,11 +100,12 @@ class HomeViewModel(
         updateState { copy(imageBase64 = imageBase64) }
     }
 
-    private suspend fun loadNews(){
+    private suspend fun loadNews() {
         withDelayedLoading(
             onLoading = { updateState { copy(loadingEventList = it) } }
         ) {
-            newsRepository.getNews().fold(
+            delay(400L)
+            newsRepository.getTop5News().fold(
                 onSuccess = { updateState { copy(newsAndEvents = it) } },
                 onFailure = { Log.e("123123", "loadNews: $it") }
             )
@@ -115,6 +116,7 @@ class HomeViewModel(
         withDelayedLoading(
             onLoading = { updateState { copy(loadingScheduleClassList = it) } }
         ) {
+            delay(400L)
             scheduleUseCase.getDaySchedule(getTodayDayOfWeek(), isRefresh)
         }
     }
@@ -123,6 +125,7 @@ class HomeViewModel(
         withDelayedLoading(
             onLoading = { updateState { copy(loadingStudentInfo = it) } }
         ) {
+            delay(400L)
             studentUseCase.getStudentInfo().fold(
                 onSuccess = {},
                 onFailure = {

@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import org.example.project.R
 import org.example.project.domain.model.EventAndNewUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -49,9 +50,9 @@ fun NewAndEventCard(
                     .fillMaxWidth()
                     .height(130.dp)
             ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_launcher_background),
-                    contentDescription = "new and event",
+                AsyncImage(
+                    model = item.imageUrl,
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )

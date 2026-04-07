@@ -3,6 +3,7 @@ package org.example.project.presentations.screen.exam_schedule
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -30,9 +31,8 @@ class ExamScheduleViewModel(
 
     private fun initData() {
         viewModelScope.launch {
-            updateState { copy(isLoading = true) }
+            delay(200L)
             getSemesters()
-            updateState { copy(isLoading = false) }
         }
     }
 

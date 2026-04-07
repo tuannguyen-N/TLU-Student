@@ -78,6 +78,7 @@ class NotificationViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
+            delay(200L)
             notificationRepository.getNotifications().onFailure {
                 Log.e("NotificationViewModel", "loadData: $it")
             }
