@@ -32,7 +32,6 @@ class ExamScheduleRepository(
             }
             _examSchedules.update { data.examSchedules }
             AppResult.Success(data)
-
         } catch (e: Exception) {
             AppResult.Failure(message = e.message, cause = e)
         }

@@ -105,7 +105,8 @@ fun FeatureType.toRoute(): String {
 fun NotificationUiModel.avatarRes(): Int {
     return when (this.sender) {
         NotificationSender.SYSTEM -> R.drawable.icon_avatar_school
-        else -> R.drawable.ic_launcher_background
+        NotificationSender.FACULTY -> R.drawable.icon_faculty
+        NotificationSender.LECTURER -> R.drawable.icon_teacher_back
     }
 }
 

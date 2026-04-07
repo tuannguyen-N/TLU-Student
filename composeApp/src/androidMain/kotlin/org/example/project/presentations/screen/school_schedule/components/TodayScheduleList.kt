@@ -17,9 +17,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.screen.home.components.ScheduleEmptyCard
+import org.example.project.presentations.theme.ExtendedColors
 
 @Composable
 fun TodayScheduleList(
+    color: ExtendedColors,
     modifier: Modifier = Modifier,
     courseClasses: List<CourseClass> = emptyList(),
     isToday: Boolean = false,
@@ -49,6 +51,7 @@ fun TodayScheduleList(
             }
         } else {
             ScheduleEmptyCard(
+                color = color,
                 onClickViewTomorrow = onClickViewTomorrow,
             )
         }

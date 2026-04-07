@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.NotificationUiModel
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.avatarRes
 import org.example.project.presentations.utils.iconRes
@@ -28,13 +29,14 @@ import org.example.project.presentations.utils.iconRes
 @Composable
 fun NotificationItem(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     onHoldItem: () -> Unit = {},
     notification: NotificationUiModel
 ) {
     val backgroundColor = if (notification.isRead)
-        LocalExtendedColors.current.background
+        color.background
     else
-        LocalExtendedColors.current.white
+        color.white
 
     Row(
         modifier = modifier
@@ -47,6 +49,7 @@ fun NotificationItem(
             avatarRes = notification.avatarRes(),
             iconRes = notification.iconRes(),
             isRead = notification.isRead,
+            color = color,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
 
@@ -66,22 +69,22 @@ fun NotificationItem(
             Text(
                 text = notification.sender.value,
                 style = MaterialTheme.typography.bodyMedium,
-                color = LocalExtendedColors.current.gray,
+                color = color.gray,
             )
         }
 
         Text(
             text = notification.createdAgo,
             style = MaterialTheme.typography.bodyMedium,
-            color = LocalExtendedColors.current.gray,
+            color = color.gray,
         )
     }
 }
 
-// TODO: Change icon
 @Composable
 fun AvatarNotification(
     modifier: Modifier,
+    color: ExtendedColors,
     avatarRes: Int,
     iconRes: Int,
     isRead: Boolean = false
@@ -95,7 +98,7 @@ fun AvatarNotification(
                 modifier = Modifier
                     .size(6.dp)
                     .align(Alignment.TopStart)
-                    .background(LocalExtendedColors.current.red, CircleShape)
+                    .background(color.red, CircleShape)
             )
         }
 
@@ -105,6 +108,7 @@ fun AvatarNotification(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
+                .background(color.gray)
         )
 
         Image(

@@ -118,8 +118,8 @@ fun AppNavGraph(
             val container = LocalAppContainer.current
             val factory = remember(container) {
                 LoginViewModelFactory(
-                    container.loginUseCase,
-                    container.deviceProvider
+                    container.deviceProvider,
+                    container.handleLoginSuccessUseCase
                 )
             }
             val loginViewModel: LoginViewModel = viewModel(factory = factory)
@@ -146,6 +146,7 @@ fun AppNavGraph(
                     container.studentUseCase,
                     container.scheduleUseCase,
                     container.featureRepository,
+                    container.newsRepository,
                     container.authPluginConfig
                 )
             }

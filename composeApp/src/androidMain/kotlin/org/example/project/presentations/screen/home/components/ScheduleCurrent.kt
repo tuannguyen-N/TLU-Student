@@ -31,10 +31,12 @@ import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.data.mapper.toHourMinuteAmPm
+import org.example.project.presentations.theme.ExtendedColors
 
 @Composable
 fun ScheduleCurrent(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     item: CourseClass
 ) {
     Row(
@@ -60,8 +62,8 @@ fun ScheduleCurrent(
 
         Spacer(modifier = Modifier.width(34.dp))
 
-        val dotColor = LocalExtendedColors.current.green
-        val lineColor = LocalExtendedColors.current.gray
+        val dotColor = color.green
+        val lineColor = color.gray
 
         Card(
             modifier = Modifier
@@ -90,7 +92,7 @@ fun ScheduleCurrent(
         ) {
             Column(
                 modifier = Modifier
-                    .background(LocalExtendedColors.current.white)
+                    .background(color.white)
                     .padding(horizontal = 12.dp, vertical = 10.dp)
                     .fillMaxWidth()
 
@@ -98,14 +100,14 @@ fun ScheduleCurrent(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(LocalExtendedColors.current.lightGreen)
+                        .background(color.lightGreen)
                         .padding(horizontal = 12.dp, vertical = 3.dp)
                 ) {
                     Text(
                         text = "Đang diễn ra",
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodySmall,
-                        color = LocalExtendedColors.current.green,
+                        color = color.green,
                     )
                 }
 
@@ -123,7 +125,7 @@ fun ScheduleCurrent(
                     Icon(
                         painter = painterResource(R.drawable.icon_location),
                         modifier = Modifier.size(12.dp),
-                        tint = LocalExtendedColors.current.red,
+                        tint = color.red,
                         contentDescription = "location"
                     )
 
@@ -131,7 +133,7 @@ fun ScheduleCurrent(
                         text = item.room,
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Normal,
-                        color = LocalExtendedColors.current.gray,
+                        color = color.gray,
                         modifier = Modifier.padding(horizontal = 3.dp)
                     )
 
@@ -140,7 +142,7 @@ fun ScheduleCurrent(
                             .padding(2.dp)
                             .size(3.dp)
                             .background(
-                                color = LocalExtendedColors.current.red,
+                                color = color.red,
                                 shape = CircleShape
                             )
                     )
@@ -149,36 +151,11 @@ fun ScheduleCurrent(
                         text = "Toà ${item.room.first()}",
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Normal,
-                        color = LocalExtendedColors.current.gray,
+                        color = color.gray,
                         modifier = Modifier.padding(horizontal = 3.dp)
                     )
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ScheduleCurrentPreview() {
-    val sampleCourse = CourseClass(
-        classCode = "INT2204",
-        dayOfWeek = 2,
-        endPeriod = 5,
-        endTime = "10:30:00",
-        room = "A101",
-        startPeriod = 3,
-        startTime = "08:45:00",
-        subjectCode = "INT2204",
-        subjectName = "Lập trình Android",
-        lecturer = Lecturer(
-            fullName = "Nguyễn Văn A",
-            lecturerCode = "123",
-            phoneNumber = "",
-            email = "vana@example.com"
-        )
-    )
-    ScheduleCurrent(
-        item = sampleCourse
-    )
 }

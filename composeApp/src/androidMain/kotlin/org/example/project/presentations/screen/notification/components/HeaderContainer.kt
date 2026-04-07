@@ -27,7 +27,8 @@ import org.example.project.R
 @Preview
 @Composable
 fun HeaderContainer(
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onMarkAllRead: () -> Unit = {}
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -73,7 +74,7 @@ fun HeaderContainer(
                     onDismiss = { showMenu = false },
                     onMarkAllRead = {
                         showMenu = false
-                        // TODO:
+                        onMarkAllRead()
                     }
                 )
             }

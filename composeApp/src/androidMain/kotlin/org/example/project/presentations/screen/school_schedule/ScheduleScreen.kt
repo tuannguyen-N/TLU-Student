@@ -31,6 +31,7 @@ fun ScheduleScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
+    val color = LocalExtendedColors.current
 
     fun copyToClipboard(text: String, label: String) {
         scope.launch {
@@ -43,7 +44,7 @@ fun ScheduleScreen(
     }
 
     Scaffold(
-        containerColor = LocalExtendedColors.current.background,
+        containerColor = color.background,
         topBar = {
             AppTopBar(
                 iconRes = R.drawable.icon_school_schedule,
@@ -72,6 +73,7 @@ fun ScheduleScreen(
 
             TodayScheduleList(
                 modifier = Modifier.padding(top = 20.dp),
+                color = color,
                 onOpenTimetable = onOpenTimetable,
                 courseClasses = uiState.courseClasses ?: emptyList(),
                 isToday = uiState.currentDay == uiState.selectedDayOfWeek,

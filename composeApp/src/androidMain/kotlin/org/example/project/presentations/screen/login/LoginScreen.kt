@@ -57,7 +57,9 @@ fun LoginScreen(
 
     loginViewModel.event.CollectWithLifecycle { event ->
         when (event) {
-            LoginUiEvent.OnNavigateToHome -> onNavigateToHome()
+            LoginUiEvent.OnLoginSuccess -> {
+                onNavigateToHome()
+            }
             LoginUiEvent.ShowNoInternetDialog -> showNoInternetDialog = true
         }
     }

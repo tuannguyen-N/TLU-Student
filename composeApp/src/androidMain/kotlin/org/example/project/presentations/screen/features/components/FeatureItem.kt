@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.domain.model.FeatureEditMode
 import org.example.project.domain.model.FeatureUiModel
-import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.utils.toIconBackgroundColor
 import org.example.project.presentations.utils.toIconTintColor
 import org.example.project.presentations.utils.toImageVector
@@ -38,6 +38,7 @@ import org.example.project.presentations.utils.toImageVector
 @Composable
 fun FeatureItem(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     feature: FeatureUiModel,
     isEditing: Boolean = false,
     editMode: FeatureEditMode,
@@ -45,8 +46,8 @@ fun FeatureItem(
     onClickFeature: (FeatureUiModel) -> Unit,
     onClickEditMode: (FeatureEditMode) -> Unit
 ) {
-    val red = LocalExtendedColors.current.red
-    val green = LocalExtendedColors.current.green
+    val red = color.red
+    val green = color.green
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,7 +106,7 @@ fun FeatureItem(
             text = feature.name,
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
             textAlign = TextAlign.Center,
-            color = LocalExtendedColors.current.gray,
+            color = color.gray,
             maxLines = 2
         )
     }

@@ -16,11 +16,13 @@ import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.FeatureType
 import org.example.project.domain.model.FeatureUiModel
 import org.example.project.presentations.screen.features.components.FeatureGrid
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun FeatureList(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     items: List<FeatureUiModel>,
     onClickItem: (FeatureType) -> Unit = {},
     onClickAll: () -> Unit = {}
@@ -52,6 +54,7 @@ fun FeatureList(
         }
 
         FeatureGrid(
+            color = color,
             items = items,
             onClickFeature = { onClickItem(it.type) },
             modifier = Modifier.padding(horizontal = 15.dp)

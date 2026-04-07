@@ -1,5 +1,6 @@
 package org.example.project.data.mapper
 
+import org.example.project.data.local.entity.NotificationEntity
 import org.example.project.data.remote.dto.notification.Content
 import org.example.project.data.remote.dto.notification.NotificationData
 import org.example.project.domain.model.NotificationSender
@@ -34,3 +35,33 @@ fun String.toNotificationSender(): NotificationSender {
         else -> SYSTEM
     }
 }
+
+fun NotificationUiModel.toEntity(): NotificationEntity {
+    return NotificationEntity(
+        id = id,
+//        title = title,
+//        content = content,
+//        sender = sender,
+//        deadline = deadline,
+//        isRead = isRead,
+//        createdAt = createdAt,
+//        createdTime = createdTime,
+//        createdDate = createdDate,
+//        createdAgo = createdAgo
+    )
+}
+
+//fun NotificationEntity.toUiModel(): NotificationUiModel {
+//    return NotificationUiModel(
+//        id = id,
+//        title = title,
+//        content = content,
+//        sender = sender,
+//        deadline = deadline,
+//        isRead = isRead,
+//        createdAt = createdAt,
+//        createdTime = createdTime,
+//        createdDate = createdDate,
+//        createdAgo = createdAgo
+//    )
+//}

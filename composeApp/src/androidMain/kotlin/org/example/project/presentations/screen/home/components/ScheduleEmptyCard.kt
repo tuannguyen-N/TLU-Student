@@ -27,12 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @Composable
 fun ScheduleEmptyCard(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     atHome: Boolean = false,
     onClickViewTomorrow: () -> Unit = {}
 ) {
@@ -48,7 +49,7 @@ fun ScheduleEmptyCard(
             modifier = Modifier
                 .size(80.dp)
                 .background(
-                    color = LocalExtendedColors.current.seaSerpent.copy(alpha = 0.2f),
+                    color = color.seaSerpent.copy(alpha = 0.2f),
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
@@ -56,7 +57,7 @@ fun ScheduleEmptyCard(
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.MenuBook,
                 contentDescription = null,
-                tint = LocalExtendedColors.current.seaSerpent,
+                tint = color.seaSerpent,
                 modifier = Modifier.size(40.dp)
             )
         }
@@ -85,9 +86,9 @@ fun ScheduleEmptyCard(
         OutlinedButton(
             onClick = onClickViewTomorrow,
             shape = RoundedCornerShape(50.dp),
-            border = BorderStroke(1.5.dp, LocalExtendedColors.current.fontBlue),
+            border = BorderStroke(1.5.dp, color.fontBlue),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = LocalExtendedColors.current.fontBlue
+                contentColor = color.fontBlue
             ),
             modifier = Modifier
                 .fillMaxWidth(0.65f)

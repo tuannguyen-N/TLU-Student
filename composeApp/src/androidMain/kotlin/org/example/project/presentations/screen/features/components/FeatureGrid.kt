@@ -10,10 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.FeatureEditMode
 import org.example.project.domain.model.FeatureUiModel
+import org.example.project.presentations.theme.ExtendedColors
 
 @Composable
 fun FeatureGrid(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     items: List<FeatureUiModel>,
     isEditing: Boolean = false,
     editMode: FeatureEditMode = FeatureEditMode.ADD,
@@ -35,6 +37,7 @@ fun FeatureGrid(
                     val itemIndex = rowIndex * columns + colIndex
                     if (itemIndex < items.size) {
                         FeatureItem(
+                            color = color,
                             feature = items[itemIndex],
                             modifier = Modifier.weight(1f),
                             isEditing = isEditing,

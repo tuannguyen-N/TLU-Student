@@ -22,6 +22,7 @@ import org.example.project.data.mapper.nearestClasses
 import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.FeatureRepository
+import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.presentations.utils.withDelayedLoading
@@ -31,6 +32,7 @@ class HomeViewModel(
     private val studentUseCase: StudentUseCase,
     private val scheduleUseCase: ScheduleUseCase,
     private val featureRepository: FeatureRepository,
+    private val newsRepository: NewsRepository,
     private val authPluginConfig: AuthPluginConfig
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
@@ -89,12 +91,24 @@ class HomeViewModel(
         viewModelScope.launch { featureRepository.seedDefaultsIfNeeded() }
         viewModelScope.launch { loadStudentInfo() }
         viewModelScope.launch { loadCourseClasses() }
+        viewModelScope.launch { loadNews() }
         loadImage()
     }
 
     fun loadImage() {
         val imageBase64 = authPluginConfig.imageStorage.getImageBase64()
         updateState { copy(imageBase64 = imageBase64) }
+    }
+
+    private suspend fun loadNews(){
+        withDelayedLoading(
+            onLoading = { updateState { copy(loadingEventList = it) } }
+        ) {
+            newsRepository.getNews().fold(
+                onSuccess = { updateState { copy(newsAndEvents = it) } },
+                onFailure = { Log.e("123123", "loadNews: $it") }
+            )
+        }
     }
 
     private suspend fun loadCourseClasses(isRefresh: Boolean = false) {

@@ -35,7 +35,7 @@ fun FeaturesScreen(
     val isExitDialog by viewModel.showExitDialog.collectAsState()
     val quickAccessList by viewModel.quickAccessList.collectAsState()
     val quickAccessTypes = remember(quickAccessList) { quickAccessList.map { it.type }.toSet() }
-
+    val color = LocalExtendedColors.current
     viewModel.event.CollectWithLifecycle { event ->
         when (event) {
             is FeatureUiEvent.OnBack -> onBack()
@@ -74,6 +74,7 @@ fun FeaturesScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
             FeatureGrid(
+                color = color,
                 items = quickAccessList,
                 isEditing = isEditing,
                 editMode = FeatureEditMode.REMOVE,
@@ -88,6 +89,7 @@ fun FeaturesScreen(
             FeatureSectionHeader(title = "Tiện ích chung")
             Spacer(modifier = Modifier.height(12.dp))
             FeatureGrid(
+                color = color,
                 items = FeatureUiModel.getGeneralList().filter { it.type !in quickAccessTypes },
                 isEditing = isEditing,
                 editMode = FeatureEditMode.ADD,
@@ -100,6 +102,7 @@ fun FeaturesScreen(
             FeatureSectionHeader(title = "Hỗ trợ")
             Spacer(modifier = Modifier.height(12.dp))
             FeatureGrid(
+                color = color,
                 items = FeatureUiModel.getSupportList(),
                 isEditing = false,
                 onClickFeature = { onNavigate(it) }

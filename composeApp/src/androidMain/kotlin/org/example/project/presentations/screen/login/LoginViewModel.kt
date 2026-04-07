@@ -12,11 +12,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.DeviceProvider
-import org.example.project.domain.usecase.LoginUseCase
+import org.example.project.domain.usecase.HandleLoginSuccessUseCase
 import org.example.project.presentations.utils.MsalHelper
 
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase,
+    private val handleLoginSuccessUseCase: HandleLoginSuccessUseCase,
     private val deviceProvider: DeviceProvider
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginState())
@@ -31,10 +31,9 @@ class LoginViewModel(
             MsalHelper.signOut {}
             delay(1000L)
             MsalHelper.signIn(activity) { newToken, isNoInternet ->
-                if (newToken != null){
+                if (newToken != null) {
                     onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
-                }
-                else if (isNoInternet) {
+                } else if (isNoInternet) {
                     sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
                 } else
                     updateState { copy(isLoading = false, error = "Đăng nhập thất bại") }
@@ -45,9 +44,9 @@ class LoginViewModel(
 
     fun onSignMsalSuccess(token: String, deviceId: String) {
         viewModelScope.launch {
-            loginUseCase(token, deviceId).fold(
+            handleLoginSuccessUseCase(token, deviceId).fold(
                 onSuccess = {
-                    sendUiEvent(LoginUiEvent.OnNavigateToHome)
+                    sendUiEvent(LoginUiEvent.OnLoginSuccess)
                 },
                 onFailure = {
                     updateState { copy(showErrorSheet = true) }

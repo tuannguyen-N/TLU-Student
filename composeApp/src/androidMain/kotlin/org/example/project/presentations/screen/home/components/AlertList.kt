@@ -15,10 +15,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.presentations.components.shimmerEffect
+import org.example.project.presentations.theme.ExtendedColors
 
 @Composable
 fun AlertList(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     items: List<AlertUiModel>,
     isLoading: Boolean = false,
     onClickAction: () -> Unit = {}
@@ -45,9 +47,9 @@ fun AlertList(
                 contentType = { _, item -> if (item.isHighAlert) "HighAlert" else "MediumAlert" }
             ) { _, item ->
                 if (item.isHighAlert) {
-                    HighAlertCard(item = item, onClickAction = onClickAction)
+                    HighAlertCard(item = item,  onClickAction = onClickAction, color = color)
                 } else {
-                    MediumAlertCard(item = item, onClickAction = onClickAction)
+                    MediumAlertCard(item = item, onClickAction = onClickAction, color = color)
                 }
             }
         }

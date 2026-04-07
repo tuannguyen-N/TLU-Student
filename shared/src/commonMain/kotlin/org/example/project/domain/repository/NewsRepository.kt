@@ -1,4 +1,19 @@
 package org.example.project.domain.repository
 
-class NewsRepository {
+import org.example.project.data.mapper.toListUiModel
+import org.example.project.data.remote.api.NewsApi
+import org.example.project.domain.model.AppResult
+import org.example.project.domain.model.EventAndNewUiModel
+
+class NewsRepository(
+    private val api: NewsApi
+) {
+    suspend fun getNews(): AppResult<List<EventAndNewUiModel>> {
+        return try {
+            val data = api.getTop5News().data ?: return AppResult.Failure("Failed to get news")
+            AppResult.Success(data.toListUiModel())
+        } catch (e: Exception) {
+            AppResult.Failure(e.message, e)
+        }
+    }
 }

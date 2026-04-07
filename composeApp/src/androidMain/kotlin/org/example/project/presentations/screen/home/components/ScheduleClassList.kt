@@ -22,14 +22,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.example.project.data.mapper.isGoing
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.shimmerEffect
-import org.example.project.data.mapper.isGoing
+import org.example.project.presentations.theme.ExtendedColors
 import kotlin.time.Clock
 
 @Composable
 fun ScheduleClassList(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     isLoading: Boolean = false,
     onClickViewTomorrow: () -> Unit = {},
     courseClasses: List<CourseClass>?
@@ -96,6 +98,7 @@ fun ScheduleClassList(
             courseClasses.isNullOrEmpty() -> {
                 ScheduleEmptyCard(
                     onClickViewTomorrow = onClickViewTomorrow,
+                    color = color,
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
             }
@@ -107,12 +110,13 @@ fun ScheduleClassList(
                 courseClasses.forEach { item ->
                     key(item.hashCode()) {
                         if (item.isGoing(currentTime)) {
-                            ScheduleCurrent(modifier = modifier, item = item)
+                            ScheduleCurrent(modifier = modifier, item = item, color = color)
                         } else {
                             ScheduleNext(
                                 modifier = modifier,
                                 item = item,
-                                currentTime = currentTime
+                                currentTime = currentTime,
+                                color = color
                             )
                         }
                     }

@@ -26,12 +26,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.R
-import org.example.project.domain.model.NewAndEventUiModel
+import org.example.project.domain.model.EventAndNewUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun NewAndEventCard(
-    item: NewAndEventUiModel
+    item: EventAndNewUiModel
 ) {
     Card(
         modifier = Modifier
@@ -99,7 +99,7 @@ fun NewAndEventCard(
                     )
 
                     Text(
-                        text = "${item.time} ngày trước",
+                        text = item.timeAgo,
                         style = MaterialTheme.typography.bodySmall,
                         color = LocalExtendedColors.current.gray,
                         modifier = Modifier.padding(start = 4.dp)

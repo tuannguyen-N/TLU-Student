@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.home.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,17 +31,19 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.R
-import org.example.project.data.remote.dto.week_schedule.CourseClass
-import org.example.project.data.remote.dto.week_schedule.Lecturer
-import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.theme.Poppins
 import org.example.project.data.mapper.getStatusText
 import org.example.project.data.mapper.toHourMinuteAmPm
+import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.Lecturer
+import org.example.project.presentations.theme.ExtendedColors
+import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.theme.Poppins
 import kotlin.time.Clock
 
 @Composable
 fun ScheduleNext(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     item: CourseClass,
     currentTime: LocalTime,
     isFirstItem: Boolean = false
@@ -61,21 +61,21 @@ fun ScheduleNext(
                 text = item.startTime.toHourMinuteAmPm(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = LocalExtendedColors.current.gray
+                color = color.gray
             )
 
             Text(
                 text = item.endTime.toHourMinuteAmPm(),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Normal,
-                color = LocalExtendedColors.current.gray
+                color = color.gray
             )
         }
 
         Spacer(modifier = Modifier.width(34.dp))
 
-        val dotColor = LocalExtendedColors.current.gray
-        val lineColor = LocalExtendedColors.current.gray
+        val dotColor = color.gray
+        val lineColor = color.gray
 
         Card(
             shape = RoundedCornerShape(12.dp),
@@ -131,14 +131,14 @@ fun ScheduleNext(
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(LocalExtendedColors.current.redLight)
+                        .background(color.redLight)
                         .padding(horizontal = 12.dp, vertical = 3.dp)
                 ) {
                     Text(
                         text = item.getStatusText(currentTime),
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodySmall,
-                        color = LocalExtendedColors.current.red,
+                        color = color.red,
                     )
                 }
 
@@ -146,7 +146,7 @@ fun ScheduleNext(
                     text = item.subjectName,
                     style = MaterialTheme.typography.titleMedium,
                     fontFamily = Poppins,
-                    color = LocalExtendedColors.current.gray,
+                    color = color.gray,
                     modifier = Modifier
                         .padding(top = 8.dp, bottom = 5.dp)
                 )
@@ -157,7 +157,7 @@ fun ScheduleNext(
                     Icon(
                         painter = painterResource(R.drawable.icon_location),
                         contentDescription = "location",
-                        tint = LocalExtendedColors.current.gray,
+                        tint = color.gray,
                         modifier = Modifier.size(12.dp)
                     )
 
@@ -165,7 +165,7 @@ fun ScheduleNext(
                         text = item.room,
                         fontWeight = FontWeight.Normal,
                         style = MaterialTheme.typography.bodySmall,
-                        color = LocalExtendedColors.current.gray,
+                        color = color.gray,
                         modifier = Modifier.padding(horizontal = 3.dp)
                     )
 
@@ -174,7 +174,7 @@ fun ScheduleNext(
                             .padding(2.dp)
                             .size(3.dp)
                             .background(
-                                color = LocalExtendedColors.current.gray,
+                                color = color.gray,
                                 shape = CircleShape
                             )
                     )
@@ -183,7 +183,7 @@ fun ScheduleNext(
                         text = "Toà ${item.room.first()}",
                         fontWeight = FontWeight.Normal,
                         style = MaterialTheme.typography.bodySmall,
-                        color = LocalExtendedColors.current.gray,
+                        color = color.gray,
                         modifier = Modifier.padding(horizontal = 3.dp)
                     )
                 }
@@ -218,6 +218,7 @@ fun ScheduleNextPreview() {
     ScheduleNext(
         item = sampleCourse,
         currentTime = currentTime,
-        isFirstItem = true
+        isFirstItem = true,
+        color = LocalExtendedColors.current
     )
 }

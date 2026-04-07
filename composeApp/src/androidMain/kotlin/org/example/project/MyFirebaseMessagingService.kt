@@ -3,6 +3,8 @@ package org.example.project
 import android.app.NotificationManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -14,6 +16,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val title = message.notification?.title
         val body = message.notification?.body
         showNotification(title, body)
+
+        val work = OneTimeWorkRequestBuilder<SyncNotificationWorker>().build()
+        WorkManager.getInstance(applicationContext).enqueue(work)
     }
 
     override fun onNewToken(token: String) {

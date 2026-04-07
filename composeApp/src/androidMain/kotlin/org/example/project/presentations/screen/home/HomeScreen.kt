@@ -31,6 +31,7 @@ fun HomeScreen(
     onOpenFeatureScreen: () -> Unit,
     onOpenScheduleScreen: () -> Unit
 ) {
+    val color = LocalExtendedColors.current
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullToRefreshState()
 
@@ -67,6 +68,7 @@ fun HomeScreen(
                         isLoading = uiState.loadingAlertList,
                         onClickAction = {},
                         modifier = Modifier.padding(top = 15.dp),
+                        color = color
                     )
                 }
 
@@ -75,15 +77,17 @@ fun HomeScreen(
                         isLoading = uiState.loadingScheduleClassList,
                         courseClasses = uiState.courseClasses,
                         modifier = Modifier.padding(horizontal = 15.dp),
-                        onClickViewTomorrow = onOpenScheduleScreen
+                        onClickViewTomorrow = onOpenScheduleScreen,
+                        color = color
                     )
                 }
 
                 item(key = "feature_list", contentType = "FeatureList") {
                     FeatureList(
+                        color = color,
+                        items = uiState.quickAccessList,
                         onClickItem = onOpenFeature,
-                        onClickAll = onOpenFeatureScreen,
-                        items = uiState.quickAccessList
+                        onClickAll = onOpenFeatureScreen
                     )
                 }
 

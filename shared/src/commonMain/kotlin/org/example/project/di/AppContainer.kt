@@ -8,6 +8,7 @@ import org.example.project.data.local.createDatabase
 import org.example.project.data.local.getDatabaseBuilder
 import org.example.project.data.remote.api.AuthApi
 import org.example.project.data.remote.api.ExamScheduleApi
+import org.example.project.data.remote.api.NewsApi
 import org.example.project.data.remote.api.NotificationApi
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.api.SemesterApi
@@ -18,9 +19,11 @@ import org.example.project.data.remote.api.TranscriptApi
 import org.example.project.data.remote.api.TuitionApi
 import org.example.project.data.remote.createHttpClient
 import org.example.project.data.remote.interceptor.AuthPluginConfig
+import org.example.project.domain.TopicSubscriber
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
+import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.ScheduleRepository
 import org.example.project.domain.repository.SemesterRepository
@@ -28,7 +31,7 @@ import org.example.project.domain.repository.StudentClassRepository
 import org.example.project.domain.repository.StudentRepository
 import org.example.project.domain.repository.TranscriptRepository
 import org.example.project.domain.repository.TuitionRepository
-import org.example.project.domain.usecase.LoginUseCase
+import org.example.project.domain.usecase.HandleLoginSuccessUseCase
 import org.example.project.domain.usecase.LogoutUseCase
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
@@ -41,6 +44,7 @@ class AppContainer(
     firebaseStorage: FirebaseStorage,
     //for deviceId
     val deviceProvider: DeviceProvider,
+    topicSubscriber: TopicSubscriber,
     context: Any? = null
 ) {
     private val httpClient = createHttpClient(tokenStorage)
@@ -50,9 +54,9 @@ class AppContainer(
     private val authRepository = AuthRepository(
         authApi = authApi,
         tokenStorage = tokenStorage,
-        imageStorage = imageStorage
+        imageStorage = imageStorage,
+        firebaseStorage = firebaseStorage
     )
-    val loginUseCase = LoginUseCase(authRepository, firebaseStorage)
 
     val authPluginConfig = AuthPluginConfig().apply {
         this.imageStorage = imageStorage
@@ -75,6 +79,8 @@ class AppContainer(
     //for features
     private val featureDao = database.featureDao()
     val featureRepository = FeatureRepository(featureDao)
+    private val newsApi = NewsApi(httpClient)
+    val newsRepository = NewsRepository(newsApi)
 
     //for transcript
     private val transcriptApi = TranscriptApi(httpClient)
@@ -102,6 +108,14 @@ class AppContainer(
     val tuitionRepository = TuitionRepository(tuitionApi)
 
     //for notification
+    private val notificationDao = database.notificationDao()
     private val notificationApi = NotificationApi(httpClient)
-    val notificationRepository = NotificationRepository(notificationApi)
+    val notificationRepository = NotificationRepository(
+        notificationApi,
+        firebaseStorage,
+        topicSubscriber,
+        notificationDao
+    )
+
+    val handleLoginSuccessUseCase = HandleLoginSuccessUseCase(authRepository, notificationRepository)
 }

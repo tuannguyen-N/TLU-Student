@@ -13,21 +13,17 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.google.firebase.messaging.FirebaseMessaging
-import org.example.project.di.AppContainer
-import org.example.project.local.AndroidAppContainer
+import org.example.MyApplication
 import org.example.project.presentations.utils.MsalHelper
 import org.example.project.presentations.utils.createNotificationChannel
 
 class MainActivity : ComponentActivity() {
-    lateinit var container: AppContainer
-    lateinit var androidAppContainer: AndroidAppContainer
-
+    private val appContainer by lazy {
+        (application as MyApplication).appContainer
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initAppContainer()
         initMsal()
-        handleFirebaseToken()
         fitSystemWindow()
         hideBottonNavigationBar()
         createNotificationChannel(this)
@@ -39,33 +35,11 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
-
-    private fun handleFirebaseToken() {
-        val oldToken = androidAppContainer.firebaseStorage.getFirebaseToken()
-        FirebaseMessaging.getInstance().token.addOnSuccessListener { newToken ->
-            Log.d("FCM", "Current Token: $newToken")
-            if (newToken != oldToken) {
-                androidAppContainer.firebaseStorage.saveFirebaseToken(newToken)
-            }
-        }
-    }
-
-    private fun initAppContainer() {
-        androidAppContainer = AndroidAppContainer(applicationContext)
-        container = AppContainer(
-            androidAppContainer.tokenStorage,
-            androidAppContainer.imageStorage,
-            androidAppContainer.firebaseStorage,
-            androidAppContainer.deviceProvider,
-            applicationContext
-        )
-    }
-
     private fun initMsal() {
         MsalHelper.init(this) {
             setContent {
                 CompositionLocalProvider(
-                    LocalAppContainer provides container
+                    LocalAppContainer provides appContainer
                 ) {
                     AppRoot(
                         resetAppData = {

@@ -22,11 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.AlertUiModel
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun MediumAlertCard(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     item: AlertUiModel,
     onClickAction: () -> Unit = {}
 ) {
@@ -39,7 +41,7 @@ fun MediumAlertCard(
         Card(
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(
-                containerColor = LocalExtendedColors.current.white
+                containerColor = color.white
             ),
             elevation = CardDefaults.cardElevation(3.dp),
             modifier = Modifier
@@ -54,7 +56,7 @@ fun MediumAlertCard(
                     modifier = Modifier
                         .padding(bottom = 5.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .background(LocalExtendedColors.current.lightYellow)
+                        .background(color.lightYellow)
                         .padding(horizontal = 6.dp, vertical = 3.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -62,7 +64,7 @@ fun MediumAlertCard(
                         text = "Sắp đến hạn",
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodySmall,
-                        color = LocalExtendedColors.current.yellow
+                        color = color.yellow
                     )
                 }
 
@@ -70,7 +72,7 @@ fun MediumAlertCard(
                     text = item.title,
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleMedium,
-                    color = LocalExtendedColors.current.mainBlue
+                    color = color.mainBlue
                 )
 
                 Text(
@@ -79,7 +81,7 @@ fun MediumAlertCard(
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Normal,
                     style = MaterialTheme.typography.bodySmall,
-                    color = LocalExtendedColors.current.mainBlue,
+                    color = color.mainBlue,
                     modifier = Modifier.padding(top = 8.dp, bottom = 15.dp)
                 )
 
@@ -87,13 +89,13 @@ fun MediumAlertCard(
                     text = "Hành động ngay",
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = LocalExtendedColors.current.white,
+                    color = color.white,
                     modifier = Modifier
                         .clickable {
                             onClickAction()
                         }
                         .clip(RoundedCornerShape(6.dp))
-                        .background(LocalExtendedColors.current.yellow)
+                        .background(color.yellow)
                         .padding(horizontal = 32.dp, vertical = 8.dp)
                         .align(Alignment.CenterHorizontally)
                 )

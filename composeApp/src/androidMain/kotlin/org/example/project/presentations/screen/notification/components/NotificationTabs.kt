@@ -13,42 +13,70 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.example.project.domain.model.NotificationSender
+import org.example.project.domain.model.NotificationUiModel
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun NotificationTabs(
     selectedTab: Int,
+    color: ExtendedColors,
+    notifications: List<NotificationUiModel>,
     onTabSelected: (Int) -> Unit
 ) {
     val tabs = listOf("Tất cả", "Trường", "Giáo viên", "Khoa")
+    val hasUnreadAll = notifications.any { !it.isRead }
+    val hasUnreadSystem = notifications.any {
+        !it.isRead && it.sender == NotificationSender.SYSTEM
+    }
+    val hasUnreadLecturer = notifications.any {
+        !it.isRead && it.sender == NotificationSender.LECTURER
+    }
+    val hasUnreadFaculty = notifications.any {
+        !it.isRead && it.sender == NotificationSender.FACULTY
+    }
+    val unreadMap = mapOf(
+        0 to hasUnreadAll,
+        1 to hasUnreadSystem,
+        2 to hasUnreadLecturer,
+        3 to hasUnreadFaculty
+    )
 
     PrimaryTabRow(
         selectedTabIndex = selectedTab,
-        containerColor = LocalExtendedColors.current.white,
-        contentColor = LocalExtendedColors.current.mainBlue,
+        containerColor = color.white,
+        contentColor = color.mainBlue,
         indicator = {
             TabRowDefaults.PrimaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(selectedTab),
-                color = LocalExtendedColors.current.mainBlue
+                color = color.mainBlue
             )
         }
     ) {
         tabs.forEachIndexed { index, title ->
+            val hasUnread = unreadMap[index] == true
             Tab(
                 selected = selectedTab == index,
                 onClick = { onTabSelected(index) },
-                selectedContentColor = LocalExtendedColors.current.mainBlue,
-                unselectedContentColor = LocalExtendedColors.current.gray,
+                selectedContentColor = color.mainBlue,
+                unselectedContentColor = color.gray,
                 text = {
                     Box {
                         Text(title)
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .align(Alignment.TopEnd)
-                                .offset(x = 4.dp, y = (-4).dp)
-                                .background(LocalExtendedColors.current.red, CircleShape)
-                        )
+
+                        if (hasUnread) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .align(Alignment.TopEnd)
+                                    .offset(x = 4.dp, y = (-4).dp)
+                                    .background(
+                                        color.red,
+                                        CircleShape
+                                    )
+                            )
+                        }
                     }
                 }
             )

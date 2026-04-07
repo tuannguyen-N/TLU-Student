@@ -25,11 +25,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.domain.model.AlertUiModel
+import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun HighAlertCard(
     modifier: Modifier = Modifier,
+    color: ExtendedColors,
     item: AlertUiModel,
     onClickAction: () -> Unit = {}
 ) {
@@ -42,7 +44,7 @@ fun HighAlertCard(
         Card(
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(
-                containerColor = LocalExtendedColors.current.white
+                containerColor = color.white
             ),
             elevation = CardDefaults.cardElevation(3.dp),
             modifier = Modifier
@@ -56,7 +58,7 @@ fun HighAlertCard(
                     modifier = Modifier
                         .padding(bottom = 5.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .background(LocalExtendedColors.current.redLight)
+                        .background(color.redLight)
                         .padding(horizontal = 6.dp, vertical = 3.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -70,7 +72,7 @@ fun HighAlertCard(
                         text = "Cảnh Báo",
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodySmall,
-                        color = LocalExtendedColors.current.red
+                        color = color.red
                     )
                 }
 
@@ -78,7 +80,7 @@ fun HighAlertCard(
                     text = item.title,
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleMedium,
-                    color = LocalExtendedColors.current.mainBlue
+                    color = color.mainBlue
                 )
 
                 Text(
@@ -87,7 +89,7 @@ fun HighAlertCard(
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    color = LocalExtendedColors.current.mainBlue,
+                    color = color.mainBlue,
                     modifier = Modifier.padding(top = 8.dp, bottom = 15.dp)
                 )
 
@@ -95,10 +97,10 @@ fun HighAlertCard(
                     text = "Hành động ngay",
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = LocalExtendedColors.current.white,
+                    color = color.white,
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
-                        .background(LocalExtendedColors.current.red)
+                        .background(color.red)
                         .clickable {
                             onClickAction()
                         }

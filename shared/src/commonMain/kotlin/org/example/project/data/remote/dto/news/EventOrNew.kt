@@ -3,7 +3,7 @@ package org.example.project.data.remote.dto.news
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NotificationContent(
+data class EventOrNew(
     val excerpt: String,
     val imageUrl: String,
     val newsUrl: String,
