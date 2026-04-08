@@ -7,15 +7,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import org.example.project.domain.model.EventAndNewUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -27,6 +30,22 @@ fun NewsAndEventsList(
     onClickAll: () -> Unit,
     onOpenNews: (String) -> Unit
 ) {
+    val pageCount = Int.MAX_VALUE
+    val startPage = pageCount / 2
+
+    val pagerState = rememberPagerState(
+        initialPage = startPage
+    ) {
+        pageCount
+    }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3000)
+            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+        }
+    }
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = modifier
@@ -52,22 +71,25 @@ fun NewsAndEventsList(
             )
         }
 
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        HorizontalPager(
+            state = pagerState,
+            pageSpacing = 10.dp,
+            contentPadding = PaddingValues(horizontal = 20.dp),
+            pageSize = PageSize.Fixed(220.dp)
+        ) { page ->
             if (isLoading) {
-                items(count = 3, key = { "shimmer_news_$it" }) {
+                repeat(3) {
                     ShimmerNew()
                 }
             } else {
-                itemsIndexed(
-                    items = items,
-                    key = { index, item -> "${index}_${item.title}" },
-                    contentType = { _, _ -> "NewsAndEvent" }
-                ) { _, item ->
-                    NewAndEventCard(item, onOpenNews = onOpenNews)
+                if (items.isNotEmpty()) {
+                    val realIndex = page % items.size
+                    val item = items[realIndex]
+
+                    NewAndEventCard(
+                        item = item,
+                        onOpenNews = onOpenNews,
+                    )
                 }
             }
         }

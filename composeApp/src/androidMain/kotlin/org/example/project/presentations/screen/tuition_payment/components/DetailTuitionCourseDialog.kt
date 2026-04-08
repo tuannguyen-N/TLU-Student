@@ -94,7 +94,7 @@ fun DetailTuitionCourseDialog(
             LazyColumn {
                 items(courses) { course ->
                     TuitionCourseItem(
-                        courseCode = "course.code", // TODO:
+                        courseCode = course.subjectCode,
                         courseName = course.subjectName,
                         credits = course.credits,
                         amount = course.amount.toLong().toFormatAmountAndD(),
@@ -105,34 +105,4 @@ fun DetailTuitionCourseDialog(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewDetailTuitionCourseDialog() {
-    val mockCourses = listOf(
-        TuitionItem(
-            id = 1,
-            subjectName = "Lập trình Android",
-            credits = 3,
-            coefficient = 1.0,
-            pricePerCredit = 500000.0,
-            amount = 1500000.0,
-            retake = false
-        ),
-        TuitionItem(
-            id = 2,
-            subjectName = "Cấu trúc dữ liệu",
-            credits = 4,
-            coefficient = 1.2,
-            pricePerCredit = 500000.0,
-            amount = 2400000.0,
-            retake = true
-        )
-    )
-
-    DetailTuitionCourseDialog(
-        courses = mockCourses,
-        onDismiss = {}
-    )
 }

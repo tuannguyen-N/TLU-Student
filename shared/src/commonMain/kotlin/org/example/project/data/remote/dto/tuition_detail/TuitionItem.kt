@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class TuitionItem(
     val amount: Double,
     val coefficient: Double,
+    val subjectCode: String,
     val credits: Int,
     val id: Int,
     val retake: Boolean,

@@ -32,11 +32,11 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun NewAndEventCard(
     item: EventAndNewUiModel,
-    onOpenNews: (String) -> Unit
+    onOpenNews: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
-            .padding(horizontal = 8.dp)
+        modifier = modifier
             .width(220.dp)
             .clip(RoundedCornerShape(14.dp))
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(14.dp))

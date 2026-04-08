@@ -39,20 +39,6 @@ class ProfileViewModel(
         }
     }
 
-    private fun loadFromApi() {
-        viewModelScope.launch {
-//            updateState { copy(isLoading = true) }
-            studentUseCase.getStudentInfo().fold(
-                onSuccess = {
-                    // TODO:  
-                },
-                onFailure = {
-                    // TODO:  
-                }
-            )
-        }
-    }
-
     private fun updateState(newState: ProfileState.() -> ProfileState) {
         _uiState.update(newState)
     }

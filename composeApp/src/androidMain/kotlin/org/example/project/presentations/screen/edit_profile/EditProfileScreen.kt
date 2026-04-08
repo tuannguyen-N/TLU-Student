@@ -43,11 +43,6 @@ fun EditProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val imageBase64 = uiState.avatarBase64
-//    val launcher = rememberLauncherForActivityResult(
-//        ActivityResultContracts.GetContent()
-//    ) {uri ->
-//        // TODO:
-//    }
 
     viewModel.events.CollectWithLifecycle { event ->
         when (event) {

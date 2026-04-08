@@ -67,7 +67,7 @@ private fun TuitionCourseList(
         Column(modifier = Modifier.fillMaxWidth()) {
             courses.forEach { course ->
                 TuitionCourseItem(
-                    courseCode = "course.code", // TODO:
+                    courseCode =course.subjectCode,
                     courseName = course.subjectName,
                     credits = course.credits,
                     amount = course.amount.toLong().toFormatAmountAndD(),

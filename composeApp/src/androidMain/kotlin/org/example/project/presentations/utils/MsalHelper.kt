@@ -12,11 +12,14 @@ import com.microsoft.identity.client.PublicClientApplication
 import com.microsoft.identity.client.SilentAuthenticationCallback
 import com.microsoft.identity.client.exception.MsalClientException
 import com.microsoft.identity.client.exception.MsalException
+import com.microsoft.identity.client.exception.MsalUiRequiredException
 import org.example.project.R
 
 object MsalHelper {
     private var msalApp: ISingleAccountPublicClientApplication? = null
     private val SCOPES = arrayOf("api://77df993d-e728-4b8e-9770-6b409aa99552/access_as_user")
+    private const val AUTHORITY =
+        "https://login.microsoftonline.com/aec003eb-c537-4e8a-b0f3-1144a93a60bc"
 
     fun init(context: Context, onReady: () -> Unit) {
         PublicClientApplication.createSingleAccountPublicClientApplication(
@@ -54,35 +57,47 @@ object MsalHelper {
         })
     }
 
-    fun checkExistingAccount(onResult: (IAccount?, String?) -> Unit) {
-        val app = msalApp ?: return onResult(null, null)
+    fun checkExistingAccount(
+        onSuccess: (IAccount, String) -> Unit,
+        onRequireLogin: () -> Unit
+    ) {
+        val app = msalApp ?: return onRequireLogin()
 
         app.getCurrentAccountAsync(object :
             ISingleAccountPublicClientApplication.CurrentAccountCallback {
+
             override fun onAccountLoaded(activeAccount: IAccount?) {
                 if (activeAccount == null) {
-                    onResult(null, null)
+                    onRequireLogin()
                     return
                 }
+
                 app.acquireTokenSilentAsync(
                     SCOPES,
-                    activeAccount.authority,
+                    AUTHORITY,
                     object : SilentAuthenticationCallback {
+
                         override fun onSuccess(result: IAuthenticationResult) {
-                            onResult(result.account, result.accessToken)
+                            onSuccess(result.account, result.accessToken)
                         }
 
                         override fun onError(exception: MsalException) {
-                            onResult(null, null)
+                            if (exception is MsalUiRequiredException) {
+                                onRequireLogin()
+                            } else {
+                                onRequireLogin()
+                            }
                         }
                     })
             }
 
             override fun onAccountChanged(priorAccount: IAccount?, currentAccount: IAccount?) {
-                if (currentAccount == null) onResult(null, null)
+                if (currentAccount == null) onRequireLogin()
             }
 
-            override fun onError(exception: MsalException) = onResult(null, null)
+            override fun onError(exception: MsalException) {
+                onRequireLogin()
+            }
         })
     }
 

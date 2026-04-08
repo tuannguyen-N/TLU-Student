@@ -1,11 +1,9 @@
 package org.example.project.presentations.screen.login
 
 import android.app.Activity
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -28,17 +26,25 @@ class LoginViewModel(
     fun onLoginClick(activity: Activity) {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
-            MsalHelper.signOut {}
-            delay(1000L)
-            MsalHelper.signIn(activity) { newToken, isNoInternet ->
-                if (newToken != null) {
-                    onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
-                } else if (isNoInternet) {
-                    sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
-                } else
-                    updateState { copy(isLoading = false, error = "Đăng nhập thất bại") }
-                Log.e("123123", "onLoginClick: $newToken")
-            }
+
+            MsalHelper.checkExistingAccount(
+                onSuccess = { _, token ->
+                    onSignMsalSuccess(token, deviceProvider.getDeviceId())
+                },
+                onRequireLogin = {
+                    MsalHelper.signIn(activity) { newToken, isNoInternet ->
+                        if (newToken != null) {
+                            onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
+                        } else if (isNoInternet) {
+                            sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
+                        } else {
+                            updateState {
+                                copy(isLoading = false, error = "Đăng nhập thất bại")
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 

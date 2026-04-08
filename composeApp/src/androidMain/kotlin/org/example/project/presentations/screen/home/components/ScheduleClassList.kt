@@ -97,6 +97,7 @@ fun ScheduleClassList(
 
             courseClasses.isNullOrEmpty() -> {
                 ScheduleEmptyCard(
+                    isVisibleButton = false,
                     onClickViewTomorrow = onClickViewTomorrow,
                     color = color,
                     modifier = Modifier.padding(horizontal = 20.dp)

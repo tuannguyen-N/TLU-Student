@@ -33,6 +33,7 @@ fun ScheduleEmptyCard(
     modifier: Modifier = Modifier,
     color: ExtendedColors,
     atHome: Boolean = false,
+    isVisibleButton: Boolean = true,
     onClickViewTomorrow: () -> Unit = {}
 ) {
     Column(
@@ -79,24 +80,25 @@ fun ScheduleEmptyCard(
             textAlign = TextAlign.Center,
         )
 
-        Spacer(modifier = Modifier.height(18.dp))
-
-        OutlinedButton(
-            onClick = onClickViewTomorrow,
-            shape = RoundedCornerShape(50.dp),
-            border = BorderStroke(1.5.dp, color.fontBlue),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = color.fontBlue
-            ),
-            modifier = Modifier
-                .fillMaxWidth(0.65f)
-                .height(44.dp)
-        ) {
-            Text(
-                text = if (atHome) "Xem lịch chi tiết" else "Xem lịch ngày mai",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold
-            )
+        if (isVisibleButton){
+            Spacer(modifier = Modifier.height(18.dp))
+            OutlinedButton(
+                onClick = onClickViewTomorrow,
+                shape = RoundedCornerShape(50.dp),
+                border = BorderStroke(1.5.dp, color.fontBlue),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = color.fontBlue
+                ),
+                modifier = Modifier
+                    .fillMaxWidth(0.65f)
+                    .height(44.dp)
+            ) {
+                Text(
+                    text = if (atHome) "Xem lịch chi tiết" else "Xem lịch ngày mai",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }
