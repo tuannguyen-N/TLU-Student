@@ -113,8 +113,8 @@ fun HeaderProfile(
                         .size(120.dp)
                         .clip(CircleShape)
                         .background(LocalExtendedColors.current.gray)
-                        .padding(20.dp)
                         .border(1.dp, Color.White, CircleShape)
+                        .padding(20.dp)
                 )
             }
 

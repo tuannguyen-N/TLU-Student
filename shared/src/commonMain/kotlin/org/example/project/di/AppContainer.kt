@@ -1,6 +1,7 @@
 package org.example.project.di
 
 import org.example.project.DeviceProvider
+import org.example.project.data.local.AppPreferences
 import org.example.project.data.local.FirebaseStorage
 import org.example.project.data.local.ImageBase64Storage
 import org.example.project.data.local.TokenStorage
@@ -44,6 +45,8 @@ class AppContainer(
     firebaseStorage: FirebaseStorage,
     //for deviceId
     val deviceProvider: DeviceProvider,
+    //for notification
+    val appPreferences: AppPreferences,
     topicSubscriber: TopicSubscriber,
     context: Any? = null
 ) {

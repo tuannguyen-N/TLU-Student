@@ -78,6 +78,7 @@ import org.example.project.presentations.screen.transcript_term.TranscriptTermVi
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentScreen
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentViewModel
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentViewModelFactory
+import org.example.project.presentations.utils.NotificationPermissionManager
 import org.example.project.presentations.utils.openDialer
 import org.example.project.presentations.utils.openEmail
 import org.example.project.presentations.utils.toRoute
@@ -207,7 +208,14 @@ fun AppNavGraph(
 
         composable(AppRoute.Setting) {
             val container = LocalAppContainer.current
-            val factory = remember(container) { SettingViewModelFactory(container.logoutUseCase) }
+            val context = LocalContext.current
+            val factory = remember(container) {
+                SettingViewModelFactory(
+                    container.logoutUseCase,
+                    permissionManager = NotificationPermissionManager(context),
+                    prefs = container.appPreferences
+                )
+            }
             val settingViewModel: SettingViewModel = viewModel(factory = factory)
             SettingScreen(
                 viewModel = settingViewModel,

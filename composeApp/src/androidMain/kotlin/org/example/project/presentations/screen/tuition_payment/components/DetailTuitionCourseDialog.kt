@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +32,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import org.example.project.data.mapper.toFormatAmountAndD
 import org.example.project.data.remote.dto.tuition_detail.TuitionItem
+import org.example.project.presentations.components.DashedDivider
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -77,6 +81,15 @@ fun DetailTuitionCourseDialog(
                     )
                 }
             }
+
+            Spacer(Modifier.height(8.dp))
+
+            DashedDivider(
+                color = LocalExtendedColors.current.blackBackground,
+                strokeWidth = 0.5.dp,
+                dashLength = 5.dp,
+                gapLength = 5.dp
+            )
 
             LazyColumn {
                 items(courses) { course ->

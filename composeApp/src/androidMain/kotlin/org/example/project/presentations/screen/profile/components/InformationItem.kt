@@ -43,7 +43,7 @@ fun InformationItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = 5.dp),
+                modifier = Modifier.padding(start = 8.dp),
                 color = LocalExtendedColors.current.gray
             )
 

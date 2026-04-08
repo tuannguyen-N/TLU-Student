@@ -18,6 +18,7 @@ class MyApplication : Application() {
             androidAppContainer.imageStorage,
             androidAppContainer.firebaseStorage,
             androidAppContainer.deviceProvider,
+            androidAppContainer.appPreferences,
             androidAppContainer.topicSubscriber,
             applicationContext
         )

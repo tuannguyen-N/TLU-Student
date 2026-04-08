@@ -23,7 +23,7 @@ class NewsViewModel(
 
     private fun loadNews() {
         viewModelScope.launch {
-            withDelayedLoading(onLoading = { updateState { copy(isLoading = it) } }) {
+            withDelayedLoading(delayMs = 0L, onLoading = { updateState { copy(isLoading = it) } }) {
                 delay(400L)
                 newsRepository.getNews().onSuccess { news ->
                     updateState { copy(news = news) }

@@ -1,5 +1,15 @@
 package org.example.project.presentations.screen.setting
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,33 +29,63 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.example.project.R
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.CollectWithLifecycle
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SettingScreen(
     viewModel: SettingViewModel,
     resetAppData: () -> Unit,
     onBack: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val activity = context as Activity
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        viewModel.onPermissionResult(granted)
+    }
+
     viewModel.event.CollectWithLifecycle { event ->
         when (event) {
-            is SettingUiEvent.LogoutSuccessful -> {
-                resetAppData()
+            is SettingUiEvent.LogoutSuccessful -> resetAppData()
+
+            SettingUiEvent.RequestNotificationPermission -> {
+                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+
+            SettingUiEvent.OpenAppSettings -> {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", context.packageName, null)
+                }
+                context.startActivity(intent)
+            }
+
+            is SettingUiEvent.ShowToast -> {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -93,10 +133,13 @@ fun SettingScreen(
                     .clip(RoundedCornerShape(13.dp))
                     .background(LocalExtendedColors.current.white)
             ) {
-                NotificationSetting()
-                NotificationSetting()
-                NotificationSetting()
-                NotificationSetting(true)
+                NotificationSetting(
+                    isLastItem = true,
+                    isChecked = state.isNotificationEnabled,
+                    onCheckedChange = {
+                        viewModel.onToggleNotification(activity, it)
+                    }
+                )
             }
 
             Row(
@@ -122,13 +165,15 @@ fun SettingScreen(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun NotificationSetting(
-    isLastItem: Boolean = false
+    isLastItem: Boolean = false,
+    isChecked: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit = {}
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -139,7 +184,9 @@ fun NotificationSetting(
                 contentDescription = null,
             )
 
-            Column(modifier = Modifier.padding(start = 10.dp)) {
+            Column(
+                modifier = Modifier.padding(start = 10.dp)
+            ) {
                 Text(
                     text = "Thông báo",
                     style = MaterialTheme.typography.bodyMedium,
@@ -152,6 +199,22 @@ fun NotificationSetting(
                     color = LocalExtendedColors.current.gray
                 )
             }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Switch(
+                checked = isChecked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = LocalExtendedColors.current.white,
+                    checkedTrackColor = LocalExtendedColors.current.green,
+
+                    uncheckedThumbColor = Color.White,
+                    uncheckedTrackColor = Color.LightGray,
+
+                    uncheckedBorderColor = Color.Transparent
+                )
+            )
         }
 
         if (!isLastItem) {
