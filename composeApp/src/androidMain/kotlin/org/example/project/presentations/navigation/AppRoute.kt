@@ -23,4 +23,5 @@ object AppRoute {
     const val TuitionPayment = "tuition_payment_screen"
     const val NewsScreen = "news_screen"
     const val Chat = "chat_screen"
+    const val Application = "application_screen"
 }

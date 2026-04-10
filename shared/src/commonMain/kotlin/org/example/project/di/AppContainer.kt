@@ -7,6 +7,7 @@ import org.example.project.data.local.ImageBase64Storage
 import org.example.project.data.local.TokenStorage
 import org.example.project.data.local.createDatabase
 import org.example.project.data.local.getDatabaseBuilder
+import org.example.project.data.remote.api.ApplicationApi
 import org.example.project.data.remote.api.AuthApi
 import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.api.NewsApi
@@ -21,6 +22,7 @@ import org.example.project.data.remote.api.TuitionApi
 import org.example.project.data.remote.createHttpClient
 import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.TopicSubscriber
+import org.example.project.domain.repository.ApplicationRepository
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
@@ -121,4 +123,8 @@ class AppContainer(
     )
 
     val handleLoginSuccessUseCase = HandleLoginSuccessUseCase(authRepository, notificationRepository)
+
+    //for application
+    private val applicationApi = ApplicationApi(httpClient)
+    val applicationRepository = ApplicationRepository(applicationApi)
 }

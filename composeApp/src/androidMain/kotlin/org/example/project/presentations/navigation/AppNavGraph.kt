@@ -21,6 +21,9 @@ import org.example.project.domain.model.FeatureUiModel
 import org.example.project.domain.usecase.CountdownTimerUseCase
 import org.example.project.domain.usecase.GenerateQrUseCase
 import org.example.project.domain.usecase.GpaPredictUseCase
+import org.example.project.presentations.screen.application.ApplicationScreen
+import org.example.project.presentations.screen.application.ApplicationViewModel
+import org.example.project.presentations.screen.application.ApplicationViewModelFactory
 import org.example.project.presentations.screen.chat.ChatScreen
 import org.example.project.presentations.screen.class_sign_up.ClassSignUpScreen
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardScreen
@@ -447,6 +450,20 @@ fun AppNavGraph(
 
         composable(AppRoute.Chat) {
             ChatScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(AppRoute.Application) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                ApplicationViewModelFactory(
+                    container.applicationRepository
+                )
+            }
+            val newsViewModel: ApplicationViewModel = viewModel(factory = factory)
+            ApplicationScreen(
+                viewModel = newsViewModel,
                 onBack = { navController.popBackStack() }
             )
         }

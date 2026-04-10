@@ -1,4 +1,4 @@
-package org.example.project.presentations.screen.feedback.components
+package org.example.project.presentations.screen.application.components
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -27,28 +27,27 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
-import org.example.project.domain.model.SubjectOption
+import org.example.project.data.remote.dto.application.ApplicationType
 import org.example.project.presentations.components.ButtonView
-import org.example.project.presentations.screen.feedback.FeedBackState
+import org.example.project.presentations.screen.application.ApplicationState
+import org.example.project.presentations.screen.feedback.components.ImportantNoteFeedbackCard
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.clearFocusOnTap
 
 @Composable
-fun FeedbackFormContent(
+fun ApplicationContent(
     modifier: Modifier = Modifier,
-    uiState: FeedBackState,
-    onTitleChange: (String) -> Unit,
-    onSubjectChange: (SubjectOption) -> Unit,
-    onContentChange: (String) -> Unit,
+    uiState: ApplicationState,
+    onApplicationChange: (ApplicationType) -> Unit,
     onSubjectExpandedChange: (Boolean) -> Unit,
-    onAddImage: (Uri) -> Unit,
-    onRemoveImage: (Uri) -> Unit,
+    onAddFile: (Uri) -> Unit,
+    onRemoveFile: () -> Unit,
     onSubmit: () -> Unit,
 ) {
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
-        uri?.let { onAddImage(it) }
+        uri?.let { onAddFile(it) }
     }
 
     Column(
@@ -57,33 +56,10 @@ fun FeedbackFormContent(
             .padding(horizontal = 16.dp)
             .clearFocusOnTap(),
     ) {
-        FeedbackLabel(text = "Tiêu đề")
-        OutlinedTextField(
-            value = uiState.title,
-            onValueChange = onTitleChange,
-            placeholder = {
-                Text(
-                    text = "Nhập nội dung phản hồi của bạn....",
-                    color = LocalExtendedColors.current.gray,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedBorderColor = LocalExtendedColors.current.gray,
-                unfocusedBorderColor = LocalExtendedColors.current.gray.copy(alpha = 0.2f)
-            ),
-            singleLine = true,
-        )
-
         FeedbackLabel(text = "Chủ đề", true)
         Box {
             OutlinedTextField(
-                value = uiState.subject?.value ?: "",
+                value = uiState.selectedApplicationType?.name ?: "",
                 onValueChange = {},
                 readOnly = true,
                 placeholder = {
@@ -119,44 +95,21 @@ fun FeedbackFormContent(
             ) {}
 
             if (uiState.subjectExpanded) {
-                TypeFeedbackMenu(
-                    onSelected = onSubjectChange,
+                ApplicationTypeMenu(
+                    applicationTypes = uiState.applicationTypes,
+                    onSelected = onApplicationChange,
                     onDismiss = { onSubjectExpandedChange(false) }
                 )
             }
         }
 
-        FeedbackLabel(text = "Nội dung phản hồi", true)
-        OutlinedTextField(
-            value = uiState.content,
-            onValueChange = onContentChange,
-            placeholder = {
-                Text(
-                    text = "Nhập nội dung phản hồi của bạn....",
-                    color = LocalExtendedColors.current.gray,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedBorderColor = LocalExtendedColors.current.gray,
-                unfocusedBorderColor = LocalExtendedColors.current.gray.copy(alpha = 0.2f)
-            ),
-            maxLines = 5
-        )
-
-        ImageAttachmentContent(
+        PdfAttachmentContent(
             uiState = uiState,
-            onRemoveImage = onRemoveImage,
-            onOpenImagePicker = { launcher.launch("image/*") },
+            onRemoveFile = onRemoveFile,
+            onOpenFilePicker = { launcher.launch("application/pdf") },
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(80.dp))
 
         ImportantNoteFeedbackCard()
 
@@ -181,10 +134,7 @@ fun FeedbackLabel(text: String, isNeedAsterisk: Boolean = false) {
         text = buildAnnotatedString {
             append(text)
             append(" ")
-
-            withStyle(
-                style = SpanStyle(color = LocalExtendedColors.current.red)
-            ) {
+            withStyle(style = SpanStyle(color = LocalExtendedColors.current.red)) {
                 if (isNeedAsterisk) append("*")
             }
         },
@@ -195,21 +145,17 @@ fun FeedbackLabel(text: String, isNeedAsterisk: Boolean = false) {
 
 @Preview(showBackground = true)
 @Composable
-private fun FeedbackFormContentPreview() {
-    FeedbackFormContent(
-        uiState = FeedBackState(
-            title = "Sample Title",
-            subject = SubjectOption.entries.first(),
-            content = "Sample content for preview",
-            attachedImages = emptyList(),
+private fun ApplicationContentPreview() {
+    ApplicationContent(
+        uiState = ApplicationState(
+            applicationTypes = emptyList(),
+            attachedFile = null,
             subjectExpanded = false
         ),
-        onTitleChange = {},
-        onSubjectChange = {},
-        onContentChange = {},
+        onApplicationChange = {},
         onSubjectExpandedChange = {},
-        onAddImage = {},
-        onRemoveImage = {},
-        onSubmit = {}
+        onRemoveFile = {},
+        onSubmit = {},
+        onAddFile = {}
     )
 }

@@ -96,6 +96,7 @@ fun FeatureType.toRoute(): String {
         FeatureType.STUDENT_CLASS -> AppRoute.StudentClass
         FeatureType.COURSE_REGISTER -> AppRoute.ClassSignUp
         FeatureType.TUITION_PAYMENT -> AppRoute.TuitionPayment
+        FeatureType.DIGITAL_FORM -> AppRoute.Application
         else -> "" // TODO:
     }
 }
