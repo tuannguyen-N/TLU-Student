@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.login
 
 import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -29,17 +30,20 @@ class LoginViewModel(
 
             MsalHelper.checkExistingAccount(
                 onSuccess = { _, token ->
+                    Log.e("123123", "onLoginClick: $token", )
                     onSignMsalSuccess(token, deviceProvider.getDeviceId())
                 },
                 onRequireLogin = {
-                    MsalHelper.signIn(activity) { newToken, isNoInternet ->
-                        if (newToken != null) {
-                            onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
-                        } else if (isNoInternet) {
-                            sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
-                        } else {
-                            updateState {
-                                copy(isLoading = false, error = "Đăng nhập thất bại")
+                    MsalHelper.signOut {
+                        MsalHelper.signIn(activity) { newToken, isNoInternet ->
+                            if (newToken != null) {
+                                onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
+                            } else if (isNoInternet) {
+                                sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
+                            } else {
+                                updateState {
+                                    copy(isLoading = false, error = "Đăng nhập thất bại")
+                                }
                             }
                         }
                     }

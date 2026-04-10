@@ -21,6 +21,7 @@ import org.example.project.domain.model.FeatureUiModel
 import org.example.project.domain.usecase.CountdownTimerUseCase
 import org.example.project.domain.usecase.GenerateQrUseCase
 import org.example.project.domain.usecase.GpaPredictUseCase
+import org.example.project.presentations.screen.chat.ChatScreen
 import org.example.project.presentations.screen.class_sign_up.ClassSignUpScreen
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardScreen
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardViewModel
@@ -184,7 +185,8 @@ fun AppNavGraph(
                 onOpenNews = { url ->
                     val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                     context.startActivity(intent)
-                }
+                },
+                onOpenChat = { navController.navigate(AppRoute.Chat) }
             )
         }
 
@@ -440,6 +442,12 @@ fun AppNavGraph(
                     val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                     context.startActivity(intent)
                 }
+            )
+        }
+
+        composable(AppRoute.Chat) {
+            ChatScreen(
+                onBack = { navController.popBackStack() }
             )
         }
     }

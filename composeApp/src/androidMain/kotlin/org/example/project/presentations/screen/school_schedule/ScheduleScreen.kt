@@ -26,7 +26,8 @@ fun ScheduleScreen(
     viewModel: ScheduleViewModel,
     onOpenNotificationScreen: () -> Unit,
     onOpenTimetable: () -> Unit,
-    onSendEmail: (String) -> Unit
+    onSendEmail: (String) -> Unit,
+    onOpenChat: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val clipboard = LocalClipboard.current
@@ -49,7 +50,8 @@ fun ScheduleScreen(
             AppTopBar(
                 iconRes = R.drawable.icon_school_schedule,
                 title = "Lịch Học",
-                onOpenNotificationScreen = onOpenNotificationScreen
+                onOpenNotificationScreen = onOpenNotificationScreen,
+                onOpenChat = onOpenChat
             )
         }
     ) {

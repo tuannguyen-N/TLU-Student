@@ -31,7 +31,8 @@ fun HomeScreen(
     onOpenFeatureScreen: () -> Unit,
     onOpenScheduleScreen: () -> Unit,
     onOpenNewsScreen: () -> Unit,
-    onOpenNews: (String) -> Unit
+    onOpenNews: (String) -> Unit,
+    onOpenChat: () -> Unit
 ) {
     val color = LocalExtendedColors.current
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -47,7 +48,8 @@ fun HomeScreen(
                 onOpenProfile = onOpenProfileScreen,
                 onOpenNotification = onOpenNotificationScreen,
                 isProfileReady = !uiState.loadingStudentInfo && uiState.studentInfo != null,
-                imageBase64 = uiState.imageBase64
+                imageBase64 = uiState.imageBase64,
+                onOpenChat = onOpenChat
             )
         }
     ) { paddingValues ->

@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import org.example.project.domain.model.FeatureType
 import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.screen.BottomBar
+import org.example.project.presentations.screen.chat.ChatScreen
 import org.example.project.presentations.screen.home.HomeScreen
 import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.school_schedule.ScheduleScreen
@@ -38,7 +39,8 @@ fun MainScreen(
     onSendEmail: (String) -> Unit,
     onOpenFeature: (FeatureType) -> Unit,
     onOpenNewsScreen: () -> Unit,
-    onOpenNews: (String) -> Unit
+    onOpenNews: (String) -> Unit,
+    onOpenChat: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()
@@ -71,23 +73,26 @@ fun MainScreen(
                         },
                         onOpenFeature = onOpenFeature,
                         onOpenNewsScreen = onOpenNewsScreen,
-                        onOpenNews = onOpenNews
+                        onOpenNews = onOpenNews,
+                        onOpenChat = onOpenChat
                     )
 
                     1 -> ScheduleScreen(
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenTimetable = onOpenTimetable,
                         viewModel = scheduleViewModel,
-                        onSendEmail = { onSendEmail(it) }
+                        onSendEmail = { onSendEmail(it) },
+                        onOpenChat = onOpenChat
                     )
 
-                    2 -> Box(modifier = Modifier.fillMaxSize())
+                    2 -> {}
                     3 -> TranscriptScreen(
                         viewModel = transcriptViewModel,
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenTranscriptTerm = { semester ->
                             onOpenTranscriptTerm(semester.semesterLabel, semester.academicYear)
-                        }
+                        },
+                        onOpenChat = onOpenChat
                     )
                 }
             }

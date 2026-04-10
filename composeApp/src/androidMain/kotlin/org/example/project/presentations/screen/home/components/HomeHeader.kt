@@ -7,7 +7,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -20,14 +22,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import org.example.project.R
 import org.example.project.presentations.components.Base64Image
 import org.example.project.presentations.components.shimmerEffect
@@ -41,8 +49,14 @@ fun HomeHeader(
     onOpenProfile: () -> Unit,
     onOpenNotification: () -> Unit,
     imageBase64: String?,
-    isProfileReady: Boolean
+    isProfileReady: Boolean,
+    isNotificationBadgeVisible: Boolean = false,
+    onOpenChat: () -> Unit
 ) {
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.ai_star)
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -51,7 +65,7 @@ fun HomeHeader(
         Row(
             modifier = Modifier
                 .statusBarsPadding()
-                .padding(start = 24.dp, end = 15.dp)
+                .padding(start = 15.dp, end = 15.dp)
                 .padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -122,31 +136,48 @@ fun HomeHeader(
             }
 
             IconButton(
-                onClick = onOpenNotification,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
+                onClick = onOpenChat,
+                modifier = Modifier.size(30.dp)
             ) {
-                Image(
-                    painter = painterResource(R.drawable.icon_notification),
-                    contentDescription = "notification",
-                    modifier = Modifier
-                        .size(30.dp)
-                )
+                Box {
+                    Image(
+                        painter = painterResource(R.drawable.icon_chat_ai_1),
+                        contentDescription = null,
+                    )
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .offset(0.dp, (-10).dp)
+                            .scale(1.2f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            IconButton(
+                onClick = onOpenNotification,
+                modifier = Modifier.size(30.dp)
+            ) {
+                Box {
+                    Image(
+                        painter = painterResource(R.drawable.icon_notification),
+                        contentDescription = null,
+                    )
+
+                    if(isNotificationBadgeVisible){
+                        Spacer(
+                            Modifier
+                                .padding(5.dp)
+                                .size(8.dp)
+                                .background(LocalExtendedColors.current.red, shape = CircleShape)
+                                .align(Alignment.TopEnd)
+                        )
+                    }
+                }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewComp() {
-    HomeHeader(
-        modifier = Modifier,
-        name = "Nguyen Van A",
-        studentCode = "123456789",
-        {},
-        {},
-        "",
-        false
-    )
 }

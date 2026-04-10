@@ -43,7 +43,7 @@ fun TopCenterScreenBar(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
+                .padding(vertical = 10.dp, )
         ) {
             IconButton(
                 onClick = onBack,

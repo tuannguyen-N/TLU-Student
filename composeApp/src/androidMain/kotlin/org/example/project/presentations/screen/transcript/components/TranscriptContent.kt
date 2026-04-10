@@ -28,7 +28,8 @@ fun TranscriptContent(
     onOpenNotificationScreen: () -> Unit,
     uiState: TranscriptState,
     transcriptUiModel: TranscriptUiModel?,
-    onOpenTranscriptTerm: (SemesterUiModel) -> Unit
+    onOpenTranscriptTerm: (SemesterUiModel) -> Unit,
+    onOpenChat: () -> Unit
 ) {
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
@@ -37,7 +38,8 @@ fun TranscriptContent(
             AppTopBar(
                 iconRes = R.drawable.icon_transcript,
                 title = "Bảng điểm",
-                onOpenNotificationScreen = onOpenNotificationScreen
+                onOpenNotificationScreen = onOpenNotificationScreen,
+                onOpenChat = onOpenChat
             )
         }
     ) { padding ->

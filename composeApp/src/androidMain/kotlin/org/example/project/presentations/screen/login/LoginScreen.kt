@@ -43,7 +43,6 @@ import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.CollectWithLifecycle
 import org.example.project.presentations.utils.rememberSafeClick
 
-@RequiresApi(Build.VERSION_CODES.P)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(

@@ -11,9 +11,10 @@ fun TranscriptScreen(
     viewModel: TranscriptViewModel,
     onOpenNotificationScreen: () -> Unit = {},
     onOpenTranscriptTerm: (SemesterUiModel) -> Unit = {},
+    onOpenChat: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val transcriptUiModel = uiState.transcriptUiModel
 
-    TranscriptContent(onOpenNotificationScreen, uiState, transcriptUiModel, onOpenTranscriptTerm)
+    TranscriptContent(onOpenNotificationScreen, uiState, transcriptUiModel, onOpenTranscriptTerm, onOpenChat)
 }
