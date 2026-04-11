@@ -1,6 +1,5 @@
 package org.example.project.presentations.navigation
 
-import android.content.Intent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -9,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,6 +19,7 @@ import org.example.project.domain.model.FeatureUiModel
 import org.example.project.domain.usecase.CountdownTimerUseCase
 import org.example.project.domain.usecase.GenerateQrUseCase
 import org.example.project.domain.usecase.GpaPredictUseCase
+import org.example.project.presentations.components.WebViewScreen
 import org.example.project.presentations.screen.application.ApplicationScreen
 import org.example.project.presentations.screen.application.ApplicationViewModel
 import org.example.project.presentations.screen.application.ApplicationViewModelFactory
@@ -86,6 +85,7 @@ import org.example.project.presentations.utils.NotificationPermissionManager
 import org.example.project.presentations.utils.openDialer
 import org.example.project.presentations.utils.openEmail
 import org.example.project.presentations.utils.toRoute
+import java.net.URLEncoder
 
 @Composable
 fun AppNavGraph(
@@ -157,6 +157,7 @@ fun AppNavGraph(
                     container.scheduleUseCase,
                     container.featureRepository,
                     container.newsRepository,
+                    container.quoteRepository,
                     container.authPluginConfig
                 )
             }
@@ -185,12 +186,24 @@ fun AppNavGraph(
                 onSendEmail = { email -> context.openEmail(email) },
                 onOpenFeature = { navController.navigate(it.toRoute()) },
                 onOpenNewsScreen = { navController.navigate(AppRoute.NewsScreen) },
+//                onOpenNews = { url ->
+//                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+//                    context.startActivity(intent)
+//                },
                 onOpenNews = { url ->
-                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                    context.startActivity(intent)
+                    navController.navigate("webview?url=${URLEncoder.encode(url, "UTF-8")}")
                 },
                 onOpenChat = { navController.navigate(AppRoute.Chat) }
             )
+        }
+
+        composable(
+            route = "webview?url={url}",
+            arguments = listOf(navArgument("url") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val url = backStackEntry.arguments?.getString("url") ?: ""
+
+            WebViewScreen(url = url)
         }
 
         composable(AppRoute.Profile) {
@@ -431,7 +444,6 @@ fun AppNavGraph(
 
         composable(AppRoute.NewsScreen) {
             val container = LocalAppContainer.current
-            val context = LocalContext.current
             val factory = remember(container) {
                 NewsViewModelFactory(
                     container.newsRepository
@@ -442,8 +454,7 @@ fun AppNavGraph(
                 viewModel = newsViewModel,
                 onBack = { navController.popBackStack() },
                 onOpenNews = { url ->
-                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                    context.startActivity(intent)
+                    navController.navigate("webview?url=${URLEncoder.encode(url, "UTF-8")}")
                 }
             )
         }

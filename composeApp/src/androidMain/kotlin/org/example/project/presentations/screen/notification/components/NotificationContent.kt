@@ -73,16 +73,16 @@ fun NotificationContent(
             }
         }
 
-        if (uiState.isShowBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = onHideBottomSheet,
-                dragHandle = null,
-                shape = RoundedCornerShape(0, 0, 0, 0),
-            ) {
-                NotificationBottomSheetContent(
-                    onDismiss = onHideBottomSheet,
-                )
-            }
-        }
+//        if (uiState.isShowBottomSheet) {
+//            ModalBottomSheet(
+//                onDismissRequest = onHideBottomSheet,
+//                dragHandle = null,
+//                shape = RoundedCornerShape(0, 0, 0, 0),
+//            ) {
+//                NotificationBottomSheetContent(
+//                    onDismiss = onHideBottomSheet,
+//                )
+//            }
+//        }
     }
 }

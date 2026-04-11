@@ -36,3 +36,17 @@ fun createHttpClient(tokenStorage: TokenStorage): HttpClient {
         }
     }
 }
+
+fun createExternalHttpClient(): HttpClient {
+    return HttpClient {
+
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                }
+            )
+        }
+    }
+}

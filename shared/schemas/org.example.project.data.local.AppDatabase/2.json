@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "b330cbf2694b7749353e7956dd2b5684",
+    "identityHash": "021dc0d0dbcec2326f8142511aaf79c9",
     "entities": [
       {
         "tableName": "quick_access_features",
@@ -159,11 +159,41 @@
             "id"
           ]
         }
+      },
+      {
+        "tableName": "DailyQuote",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`date` TEXT NOT NULL, `author` TEXT NOT NULL, `quote` TEXT NOT NULL, PRIMARY KEY(`date`))",
+        "fields": [
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "author",
+            "columnName": "author",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quote",
+            "columnName": "quote",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "date"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b330cbf2694b7749353e7956dd2b5684')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '021dc0d0dbcec2326f8142511aaf79c9')"
     ]
   }
 }

@@ -23,6 +23,7 @@ import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
+import org.example.project.domain.repository.QuoteRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.presentations.utils.withDelayedLoading
@@ -33,6 +34,7 @@ class HomeViewModel(
     private val scheduleUseCase: ScheduleUseCase,
     private val featureRepository: FeatureRepository,
     private val newsRepository: NewsRepository,
+    private val quoteRepository: QuoteRepository,
     private val authPluginConfig: AuthPluginConfig
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
@@ -92,7 +94,13 @@ class HomeViewModel(
         viewModelScope.launch { loadStudentInfo() }
         viewModelScope.launch { loadCourseClasses() }
         viewModelScope.launch { loadNews() }
+        viewModelScope.launch { loadDailyQuote() }
         loadImage()
+    }
+
+    private suspend fun loadDailyQuote() {
+        val dailyQuote = quoteRepository.getDailyQuote()
+        updateState { copy(dailyQuote = dailyQuote) }
     }
 
     fun loadImage() {

@@ -19,6 +19,7 @@ import org.example.project.presentations.screen.home.components.AlertList
 import org.example.project.presentations.screen.home.components.FeatureList
 import org.example.project.presentations.screen.home.components.HomeHeader
 import org.example.project.presentations.screen.home.components.NewsAndEventsList
+import org.example.project.presentations.screen.home.components.QuoteCard
 import org.example.project.presentations.screen.home.components.ScheduleClassList
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -103,6 +104,10 @@ fun HomeScreen(
                         onClickAll = onOpenNewsScreen,
                         onOpenNews = onOpenNews
                     )
+                }
+
+                item(key = "advices") {
+                    QuoteCard(dailyQuote = uiState.dailyQuote)
                 }
             }
         }

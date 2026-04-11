@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.home
 
+import org.example.project.data.local.entity.QuoteEntity
 import org.example.project.data.remote.dto.me.StudentData
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.model.AlertUiModel
@@ -13,6 +14,7 @@ data class HomeState(
     val alerts: List<AlertUiModel> = AlertUiModel.getDemoList(),
     val newsAndEvents: List<EventAndNewUiModel> = emptyList(),
     val imageBase64: String? = null,
+    val dailyQuote: QuoteEntity? = null,
 
     val loadingStudentInfo: Boolean = false,
     val loadingAlertList: Boolean = false,

@@ -12,6 +12,7 @@ import org.example.project.data.remote.api.AuthApi
 import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.api.NewsApi
 import org.example.project.data.remote.api.NotificationApi
+import org.example.project.data.remote.api.QuoteApi
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.api.SemesterApi
 import org.example.project.data.remote.api.StudentApi
@@ -19,6 +20,7 @@ import org.example.project.data.remote.api.StudentClassApi
 import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.api.TranscriptApi
 import org.example.project.data.remote.api.TuitionApi
+import org.example.project.data.remote.createExternalHttpClient
 import org.example.project.data.remote.createHttpClient
 import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.TopicSubscriber
@@ -28,6 +30,7 @@ import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
+import org.example.project.domain.repository.QuoteRepository
 import org.example.project.domain.repository.ScheduleRepository
 import org.example.project.domain.repository.SemesterRepository
 import org.example.project.domain.repository.StudentClassRepository
@@ -53,6 +56,7 @@ class AppContainer(
     context: Any? = null
 ) {
     private val httpClient = createHttpClient(tokenStorage)
+    private val externalHttpClient = createExternalHttpClient()
 
     // for auth
     private val authApi = AuthApi(httpClient)
@@ -86,6 +90,9 @@ class AppContainer(
     val featureRepository = FeatureRepository(featureDao)
     private val newsApi = NewsApi(httpClient)
     val newsRepository = NewsRepository(newsApi)
+    private val quoteDao = database.quoteDao()
+    private val quoteApi = QuoteApi(externalHttpClient)
+    val quoteRepository = QuoteRepository(quoteApi, quoteDao)
 
     //for transcript
     private val transcriptApi = TranscriptApi(httpClient)
@@ -122,7 +129,8 @@ class AppContainer(
         notificationDao
     )
 
-    val handleLoginSuccessUseCase = HandleLoginSuccessUseCase(authRepository, notificationRepository)
+    val handleLoginSuccessUseCase =
+        HandleLoginSuccessUseCase(authRepository, notificationRepository)
 
     //for application
     private val applicationApi = ApplicationApi(httpClient)
