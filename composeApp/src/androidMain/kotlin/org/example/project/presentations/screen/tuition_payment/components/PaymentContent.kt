@@ -28,7 +28,7 @@ fun PaymentContent(color: ExtendedColors, tuitionDetail: TuitionDetailUiModel) {
             TuitionCard(
                 color = color,
                 semester = tuitionDetail.semester,
-                totalAmount = if (tuitionDetail.status == PaymentStatus.UNPAID) tuitionDetail.totalAmount else "0đ",
+                totalAmount = if (tuitionDetail.status == PaymentStatus.UNPAID) tuitionDetail.totalAmount else "0",
                 deadline = tuitionDetail.dueDate,
                 status = tuitionDetail.status
             )

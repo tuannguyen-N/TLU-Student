@@ -30,7 +30,7 @@ class LoginViewModel(
 
             MsalHelper.checkExistingAccount(
                 onSuccess = { _, token ->
-                    Log.e("123123", "onLoginClick: $token", )
+                    Log.e("123123", "onLoginClick: $token")
                     onSignMsalSuccess(token, deviceProvider.getDeviceId())
                 },
                 onRequireLogin = {
@@ -42,9 +42,10 @@ class LoginViewModel(
                                 sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
                             } else {
                                 updateState {
-                                    copy(isLoading = false, error = "Đăng nhập thất bại")
+                                    copy(error = "Đăng nhập thất bại")
                                 }
                             }
+                            updateState { copy(isLoading = false) }
                         }
                     }
                 }

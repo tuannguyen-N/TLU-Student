@@ -9,7 +9,7 @@ fun TuitionDetailData.toUiModel(): TuitionDetailUiModel {
         finalAmount = finalAmount.toLong().toFormatAmountAndD(),
         items = items,
         status = status.toTuitionStatus(),
-        totalAmount = totalAmount.toLong().toFormatAmountAndD(),
+        totalAmount = totalAmount.toLong().toString(),
         semester = semesterName
     )
 }
