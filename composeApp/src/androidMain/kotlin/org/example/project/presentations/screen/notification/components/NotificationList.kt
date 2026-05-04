@@ -23,7 +23,7 @@ fun NotificationList(
     notifications: List<NotificationUiModel>,
     newNotificationIds: Set<Int>,
     selectedTab: Int,
-    onRead: (NotificationUiModel) -> Unit
+    onClickNotification: (NotificationUiModel) -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -51,7 +51,9 @@ fun NotificationList(
                     )
                     .combinedClickable(
                         onLongClick = { onShowBottomSheet() },
-                        onClick = { onRead(item) }
+                        onClick = {
+                            onClickNotification(item)
+                        }
                     )
             )
 

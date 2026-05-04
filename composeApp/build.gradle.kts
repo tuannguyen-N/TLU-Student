@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.accompanist.systemuicontroller)
             implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
             implementation("androidx.work:work-runtime-ktx:2.9.0")
+            implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.27.0")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

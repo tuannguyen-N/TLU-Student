@@ -60,6 +60,7 @@ class LoginViewModel(
                     sendUiEvent(LoginUiEvent.OnLoginSuccess)
                 },
                 onFailure = {
+                    Log.e("123123", "onSignMsalSuccess: $it", )
                     updateState { copy(showErrorSheet = true) }
                 }
             )

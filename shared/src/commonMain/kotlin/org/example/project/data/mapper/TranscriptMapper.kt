@@ -1,8 +1,9 @@
 package org.example.project.data.mapper
 
-import org.example.project.data.remote.dto.transcript.SemesterResult
-import org.example.project.data.remote.dto.transcript.SubjectResult
 import org.example.project.data.remote.dto.transcript.AcademicResultData
+import org.example.project.data.remote.dto.transcript.SemesterResult
+import org.example.project.data.remote.dto.transcript.SemesterSummary
+import org.example.project.data.remote.dto.transcript.SubjectResult
 import org.example.project.domain.model.AcademicYearGroup
 import org.example.project.domain.model.SemesterUiModel
 import org.example.project.domain.model.SubjectResultUiModel
@@ -13,14 +14,14 @@ object TranscriptMapper {
 
     fun getGpa(transcript: AcademicResultData): Double {
         val gpa = transcript.semesterResults
-            .map { it.semesterSummary.semesterGpa }
+            .map { it.semesterSummary?.semesterGpa ?: it.calculateSemesterSummary().semesterGpa }
             .average()
         return round(gpa * 100) / 100
     }
 
-    fun getTotalCredit(transcript: AcademicResultData): Int{
+    fun getTotalCredit(transcript: AcademicResultData): Int {
         return transcript.semesterResults.sumOf { semesterResult ->
-            semesterResult.semesterSummary.creditsPassed
+            semesterResult.semesterSummary?.creditsPassed ?: semesterResult.calculateSemesterSummary().creditsPassed
         }
     }
 
@@ -39,8 +40,7 @@ object TranscriptMapper {
                 )
             }
 
-        val lastSummary = sorted.firstOrNull()?.semesterSummary
-        val totalCreditsPassed = semesterResults.sumOf { it.semesterSummary.creditsPassed }
+        val totalCreditsPassed = semesterResults.sumOf { it.semesterSummary?.creditsPassed ?: it.calculateSemesterSummary().creditsPassed }
 
         return TranscriptUiModel(
             cumulativeGpa = getGpa(this),
@@ -49,13 +49,29 @@ object TranscriptMapper {
         )
     }
 
-    private fun SemesterResult.toSemesterUiModel() = SemesterUiModel(
-        semesterLabel = extractSemesterLabel(),
-        semesterGpa = semesterSummary.semesterGpa,
-        creditsPassed = semesterSummary.creditsPassed,
-        academicYear = extractYear(),
-        subjects = subjectResults.map { it.toSubjectUiModel() }
-    )
+    private fun SemesterResult.toSemesterUiModel(): SemesterUiModel {
+        val summary = semesterSummary ?: calculateSemesterSummary()
+        return SemesterUiModel(
+            semesterLabel = semester,
+            semesterGpa = summary.semesterGpa,
+            creditsPassed = summary.creditsPassed,
+            academicYear = extractYear(),
+            subjects = subjectResults.map { it.toSubjectUiModel() }
+        )
+    }
+
+    private fun SemesterResult.calculateSemesterSummary(): SemesterSummary {
+        val creditsRegistered = subjectResults.sumOf { it.credits }
+        val creditsPassed = subjectResults.filter { it.isPass }.sumOf { it.credits }
+        val totalScore = subjectResults.sumOf { it.score10 * it.credits }
+        val semesterGpa = if (creditsRegistered > 0) totalScore / creditsRegistered else 0.0
+        return SemesterSummary(
+            creditsRegistered = creditsRegistered,
+            creditsPassed = creditsPassed,
+            semesterGpa = round(semesterGpa * 100) / 100,
+            conductScore = 0
+        )
+    }
 
     private fun SubjectResult.toSubjectUiModel() = SubjectResultUiModel(
         subjectName = subjectName,
@@ -80,7 +96,4 @@ object TranscriptMapper {
     private fun SemesterResult.extractSemesterNumber(): Int =
         semester.removePrefix("HK").substringBefore(" ").toIntOrNull() ?: 0
 
-    // "HK2 2021-2022" → "HK2"
-    private fun SemesterResult.extractSemesterLabel(): String =
-        semester.substringBefore(" ").trim()
 }

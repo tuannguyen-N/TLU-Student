@@ -11,6 +11,7 @@ import org.example.project.data.remote.dto.notification.MarkReadNotificationRequ
 import org.example.project.data.remote.dto.notification.MarkReadNotificationResponse
 import org.example.project.data.remote.dto.notification.NotificationRequest
 import org.example.project.data.remote.dto.notification.NotificationResponse
+import org.example.project.data.remote.dto.notification_detail.NotificationDetailResponse
 import org.example.project.data.remote.dto.notification_prepare.PrepareNotificationResponse
 
 class NotificationApi(
@@ -31,6 +32,10 @@ class NotificationApi(
                 )
             )
         }.body()
+    }
+
+    suspend fun getNotificationDetail(id: Int): NotificationDetailResponse {
+        return client.get("/api/v1/notification/detail/$id").body()
     }
 
     suspend fun prepareNotification(): PrepareNotificationResponse {

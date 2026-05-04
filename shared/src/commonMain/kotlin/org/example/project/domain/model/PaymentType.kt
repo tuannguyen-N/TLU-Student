@@ -1,6 +1,6 @@
 package org.example.project.domain.model
 
-enum class PaymentType {
-    QR_BANK,
-    QR_BANK_DEMO
+enum class PaymentType(val value: String) {
+    VN_PAY("VNPAY"),
+    ZALO_PAY("ZALOPAY")
 }

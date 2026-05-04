@@ -24,6 +24,8 @@ import org.example.project.presentations.screen.application.ApplicationScreen
 import org.example.project.presentations.screen.application.ApplicationViewModel
 import org.example.project.presentations.screen.application.ApplicationViewModelFactory
 import org.example.project.presentations.screen.chat.ChatScreen
+import org.example.project.presentations.screen.chat.ChatViewModel
+import org.example.project.presentations.screen.chat.ChatViewModelFactory
 import org.example.project.presentations.screen.class_sign_up.ClassSignUpScreen
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardScreen
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardViewModel
@@ -55,6 +57,9 @@ import org.example.project.presentations.screen.news.NewsViewModelFactory
 import org.example.project.presentations.screen.notification.NotificationScreen
 import org.example.project.presentations.screen.notification.NotificationViewModel
 import org.example.project.presentations.screen.notification.NotificationViewModelFactory
+import org.example.project.presentations.screen.notification_detail.NotificationDetailScreen
+import org.example.project.presentations.screen.notification_detail.NotificationDetailViewModel
+import org.example.project.presentations.screen.notification_detail.NotificationDetailViewModelFactory
 import org.example.project.presentations.screen.profile.ProfileScreen
 import org.example.project.presentations.screen.profile.ProfileViewModel
 import org.example.project.presentations.screen.profile.ProfileViewModelFactory
@@ -203,7 +208,9 @@ fun AppNavGraph(
         ) { backStackEntry ->
             val url = backStackEntry.arguments?.getString("url") ?: ""
 
-            WebViewScreen(url = url)
+            WebViewScreen(url = url, onClose = {
+                navController.popBackStack()
+            })
         }
 
         composable(AppRoute.Profile) {
@@ -265,7 +272,26 @@ fun AppNavGraph(
             val notificationViewModel: NotificationViewModel = viewModel(factory = factory)
             NotificationScreen(
                 viewModel = notificationViewModel,
-                onBack = { navController.popBackStack() })
+                onBack = { navController.popBackStack() },
+                onOpenNotificationDetail = { id ->
+                    navController.navigate(AppRoute.notificationDetail(id))
+                }
+            )
+        }
+
+        composable(
+            route = AppRoute.NotificationDetail,
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                NotificationDetailViewModelFactory(container.notificationRepository)
+            }
+            val viewModel: NotificationDetailViewModel = viewModel(factory = factory)
+            NotificationDetailScreen(
+                onBack = { navController.popBackStack() },
+                viewModel = viewModel
+            )
         }
 
         composable(
@@ -432,7 +458,8 @@ fun AppNavGraph(
             val container = LocalAppContainer.current
             val factory = remember(container) {
                 TuitionPaymentViewModelFactory(
-                    container.tuitionRepository
+                    container.tuitionRepository,
+                    container.paymentRepository
                 )
             }
             val tuitionPaymentViewModel: TuitionPaymentViewModel = viewModel(factory = factory)
@@ -460,7 +487,15 @@ fun AppNavGraph(
         }
 
         composable(AppRoute.Chat) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                ChatViewModelFactory(
+                    container.chatRepository
+                )
+            }
+            val chatViewModel: ChatViewModel = viewModel(factory = factory)
             ChatScreen(
+                viewModel = chatViewModel,
                 onBack = { navController.popBackStack() }
             )
         }

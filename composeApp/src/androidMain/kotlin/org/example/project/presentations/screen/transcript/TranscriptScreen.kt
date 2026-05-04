@@ -16,5 +16,5 @@ fun TranscriptScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val transcriptUiModel = uiState.transcriptUiModel
 
-    TranscriptContent(onOpenNotificationScreen, uiState, transcriptUiModel, onOpenTranscriptTerm, onOpenChat)
+    TranscriptContent(onOpenNotificationScreen, uiState, transcriptUiModel, onOpenTranscriptTerm, onOpenChat, viewModel::refreshData)
 }

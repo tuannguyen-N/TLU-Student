@@ -118,7 +118,7 @@ fun NotificationUiModel.iconRes(): Int {
 }
 
 
-fun PaymentType.icon(): ImageVector = when (this) {
-    PaymentType.QR_BANK -> Icons.Outlined.QrCode
-    PaymentType.QR_BANK_DEMO -> Icons.Outlined.AccountBalance
+fun PaymentType.icon(): Int = when (this) {
+    PaymentType.VN_PAY -> R.drawable.icon_vnpay
+    PaymentType.ZALO_PAY -> R.drawable.icon_zalo_pay
 }

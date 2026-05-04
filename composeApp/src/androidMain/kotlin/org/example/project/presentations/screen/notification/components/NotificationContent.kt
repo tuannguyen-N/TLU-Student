@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -24,7 +22,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun NotificationContent(
     uiState: NotificationState,
     onBack: () -> Unit,
-    onRead: (NotificationUiModel) -> Unit,
+    onClickNotification: (NotificationUiModel) -> Unit,
     onShowBottomSheet: () -> Unit,
     onHideBottomSheet: () -> Unit,
     onRefresh: () -> Unit,
@@ -65,7 +63,7 @@ fun NotificationContent(
                     newNotificationIds = uiState.newNotificationIds,
                     selectedTab = uiState.selectedTab,
                     onShowBottomSheet = onShowBottomSheet,
-                    onRead = onRead,
+                    onClickNotification = onClickNotification,
                     modifier = Modifier
                         .fillMaxHeight()
                         .background(LocalExtendedColors.current.background)

@@ -55,7 +55,7 @@ fun SubjectResultCard(
     credits: Int,
     letterGrade: String
 ) {
-    val color = score4.toAcademicRank().toColor()
+    val color = score10.toAcademicRank().toColor()
 
     var isExpanded by remember { mutableStateOf(false) }
     val rotation by animateFloatAsState(

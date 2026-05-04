@@ -29,6 +29,7 @@ class TranscriptViewModel(
         transcriptUseCase.transcriptCached
             .filterNotNull()
             .onEach { uiModel ->
+                Log.e("123123", "observeTranscript: $uiModel", )
                 updateState { copy(transcriptUiModel = uiModel) }
             }
             .launchIn(viewModelScope)
@@ -59,5 +60,28 @@ class TranscriptViewModel(
 
     private fun updateState(block: TranscriptState.() -> TranscriptState) {
         _uiState.value = _uiState.value.block()
+    }
+
+    fun refreshData() {
+        viewModelScope.launch {
+            withDelayedLoading(onLoading = {
+                updateState { copy(isRefreshing = it) }
+            }) {
+                transcriptUseCase.getTranscript().fold(
+                    onSuccess = {
+                        updateState {
+                            copy(
+                                gpa = TranscriptMapper.getGpa(it),
+                                totalCredit = TranscriptMapper.getTotalCredit(it)
+                            )
+                        }
+                    },
+                    onFailure = { error ->
+                        Log.e("123123", "loadData: $error")
+                        updateState { copy(error = error.message) }
+                    }
+                )
+            }
+        }
     }
 }

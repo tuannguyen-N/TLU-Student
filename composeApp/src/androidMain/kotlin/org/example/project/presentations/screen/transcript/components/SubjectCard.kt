@@ -67,7 +67,7 @@ fun SubjectCard(
         ) {
             Column {
                 Text(
-                    text = "Học kỳ $termNumber",
+                    text = termNumber,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                 )

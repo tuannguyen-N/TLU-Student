@@ -7,5 +7,6 @@ data class TranscriptState(
     val gpa: Double = 0.0,
     val totalCredit: Int = 0,
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val error: String? = null
 )

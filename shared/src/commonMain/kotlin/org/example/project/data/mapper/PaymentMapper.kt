@@ -13,11 +13,11 @@ fun Long.toFormatAmountAndD(): String {
 }
 
 fun PaymentType.displayName(): String = when (this) {
-    PaymentType.QR_BANK -> "Chuyển khoản ngân hàng"
-    PaymentType.QR_BANK_DEMO -> "Chuyển khoản ngân hàng 1"
+    PaymentType.VN_PAY -> "Chuyển khoản qua VNPAY"
+    PaymentType.ZALO_PAY -> "Chuyển khoản qua ZaloPay"
 }
 
 fun PaymentType.subtitle(): String = when (this) {
-    PaymentType.QR_BANK -> "QRPAY"
-    PaymentType.QR_BANK_DEMO -> "QRPAY 1"
+    PaymentType.VN_PAY -> "VNPAY"
+    PaymentType.ZALO_PAY -> "ZaloPay"
 }

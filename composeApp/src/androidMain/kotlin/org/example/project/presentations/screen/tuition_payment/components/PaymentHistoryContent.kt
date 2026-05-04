@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.PaymentStatus
 import org.example.project.domain.model.TuitionUiModel
+import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.components.LabelHeader
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -38,7 +39,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun PaymentHistoryContent(
     tuitionList: List<TuitionUiModel>?,
     color: ExtendedColors = LocalExtendedColors.current,
-    onViewDetailTuition: (TuitionUiModel) -> Unit
+    onViewDetailTuition: (TuitionUiModel) -> Unit,
+    onNavigateToPayment: (TuitionUiModel) -> Unit
 ) {
     if (tuitionList.isNullOrEmpty()) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -56,7 +58,12 @@ fun PaymentHistoryContent(
                 item { LabelHeader(label = tuition.semesterName) }
 
                 item {
-                    PaymentCard(item = tuition, color = color, onClick = onViewDetailTuition)
+                    PaymentCard(
+                        item = tuition,
+                        color = color,
+                        onClick = onNavigateToPayment,
+                        onPayment = onNavigateToPayment
+                    )
                 }
 
                 item { Spacer(Modifier.height(8.dp)) }
@@ -69,7 +76,8 @@ fun PaymentHistoryContent(
 private fun PaymentCard(
     item: TuitionUiModel,
     color: ExtendedColors,
-    onClick: (TuitionUiModel) -> Unit = {}
+    onClick: (TuitionUiModel) -> Unit = {},
+    onPayment: (TuitionUiModel) -> Unit = {}
 ) {
     Surface(
         modifier = Modifier
@@ -81,45 +89,62 @@ private fun PaymentCard(
         tonalElevation = 1.dp,
         shadowElevation = 2.dp
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 16.dp, vertical = 14.dp)
         ) {
-            StatusIcon(status = item.status, color = color)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                StatusIcon(status = item.status, color = color)
 
-            Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Thanh toán học phí",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.Medium,
-                        color = color.blackBackground
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Thanh toán học phí",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.Medium,
+                            color = color.blackBackground
+                        )
                     )
-                )
-                Spacer(modifier = Modifier.height(3.dp))
-                Text(
-                    text = item.dueDate,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = color.gray
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = item.dueDate,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = color.gray
+                        )
                     )
-                )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = item.totalAmount,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = color.blackBackground
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    StatusLabel(status = item.status, color = color)
+                }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = item.totalAmount,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = color.blackBackground
-                    )
+            if (item.status == PaymentStatus.UNPAID) {
+                Spacer(modifier = Modifier.height(12.dp))
+                ButtonView(
+                    text = "Thanh toán",
+                    enabled = true,
+                    textColorRes = color.white,
+                    backgroundColorRes = color.red,
+                    shape = RoundedCornerShape(12.dp),
+                    onClick = { onPayment(item) },
+                    modifier = Modifier.padding(horizontal = 20.dp)
                 )
-                Spacer(modifier = Modifier.height(3.dp))
-                StatusLabel(status = item.status, color = color)
             }
         }
     }

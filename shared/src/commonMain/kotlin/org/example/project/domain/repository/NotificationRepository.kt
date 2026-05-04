@@ -2,7 +2,6 @@ package org.example.project.domain.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import org.example.project.data.cache.CacheManager
 import org.example.project.data.local.FirebaseStorage
@@ -12,6 +11,7 @@ import org.example.project.data.mapper.toListNotificationUiModel
 import org.example.project.data.remote.api.NotificationApi
 import org.example.project.data.remote.dto.notification.MarkReadNotificationResponse
 import org.example.project.data.remote.dto.notification.NotificationData
+import org.example.project.data.remote.dto.notification_detail.NotificationDetailData
 import org.example.project.data.remote.dto.notification_prepare.PrepareNotificationData
 import org.example.project.domain.TopicSubscriber
 import org.example.project.domain.model.AppResult
@@ -107,5 +107,15 @@ class NotificationRepository(
 
     suspend fun getReadNotifications(): List<Int> {
         return notificationDao.getReadNotifications().map { it.id }
+    }
+
+    suspend fun getNotificationDetail(id: Int): AppResult<NotificationDetailData> {
+        return try {
+            val data =
+                notificationApi.getNotificationDetail(id).data ?: throw Exception("Thông báo trống")
+            AppResult.Success(data)
+        } catch (e: Exception) {
+            return AppResult.Failure(e.message, e)
+        }
     }
 }

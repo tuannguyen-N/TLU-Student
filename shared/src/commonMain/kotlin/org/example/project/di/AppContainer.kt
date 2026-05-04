@@ -12,6 +12,7 @@ import org.example.project.data.remote.api.AuthApi
 import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.api.NewsApi
 import org.example.project.data.remote.api.NotificationApi
+import org.example.project.data.remote.api.PaymentApi
 import org.example.project.data.remote.api.QuoteApi
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.api.SemesterApi
@@ -26,10 +27,12 @@ import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.TopicSubscriber
 import org.example.project.domain.repository.ApplicationRepository
 import org.example.project.domain.repository.AuthRepository
+import org.example.project.domain.repository.ChatRepository
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
+import org.example.project.domain.repository.PaymentRepository
 import org.example.project.domain.repository.QuoteRepository
 import org.example.project.domain.repository.ScheduleRepository
 import org.example.project.domain.repository.SemesterRepository
@@ -118,6 +121,8 @@ class AppContainer(
     //for tuition
     private val tuitionApi = TuitionApi(httpClient)
     val tuitionRepository = TuitionRepository(tuitionApi)
+    private val paymentApi = PaymentApi(httpClient)
+    val paymentRepository = PaymentRepository(paymentApi)
 
     //for notification
     private val notificationDao = database.notificationDao()
@@ -135,4 +140,7 @@ class AppContainer(
     //for application
     private val applicationApi = ApplicationApi(httpClient)
     val applicationRepository = ApplicationRepository(applicationApi)
+
+    //for chat
+    val chatRepository = ChatRepository(externalHttpClient)
 }

@@ -5,6 +5,7 @@ import org.example.project.domain.model.TuitionDetailUiModel
 
 fun TuitionDetailData.toUiModel(): TuitionDetailUiModel {
     return TuitionDetailUiModel(
+        tuitionId = invoiceId,
         dueDate = dueDate.toDisplayDate(),
         finalAmount = finalAmount.toLong().toFormatAmountAndD(),
         items = items,

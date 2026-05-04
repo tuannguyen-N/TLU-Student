@@ -1,37 +1,40 @@
 package org.example.project.presentations.screen.tuition_payment.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.TuitionUiModel
-import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.screen.tuition_payment.TuitionStatus
 import org.example.project.presentations.theme.LocalExtendedColors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TuitionPaymentContent(
     uiState: TuitionStatus,
     onBack: () -> Unit,
-    onChangeTab: (Int) -> Unit,
     onViewDetailTuition: (TuitionUiModel) -> Unit,
-    onDismissDialog: () -> Unit
+    onNavigateToPayment: (TuitionUiModel) -> Unit,
+    onDismissDialog: () -> Unit,
+    onRefresh: () -> Unit
 ) {
     val color = LocalExtendedColors.current
-    val tabs = listOf("Thanh Toán" to null, "Lịch sử" to null)
+    val pullRefreshState = rememberPullToRefreshState()
 
     Scaffold(
         containerColor = color.background,
         contentWindowInsets = WindowInsets(0),
         topBar = {
             TopScreenBar<String>(
-                title = "Thanh toán học phí",
+                title = "Tài chính sinh viên",
                 enableListItem = true,
                 onBack = onBack,
                 backgroundColor = color.white,
@@ -46,26 +49,17 @@ fun TuitionPaymentContent(
                 .padding(horizontal = 25.dp)
                 .padding(top = 18.dp)
         ) {
-
-            TabRowView(
-                tabs = tabs,
-                selectedTab = uiState.selectedTab,
-                onTabSelected = onChangeTab
-            )
-
-            Spacer(Modifier.height(20.dp))
-
-            if (uiState.selectedTab == 0) {
-                uiState.currentTuitionDetail?.let {
-                    PaymentContent(
-                        color,
-                        tuitionDetail = it
-                    )
-                }
-            } else {
+            PullToRefreshBox(
+                isRefreshing = uiState.isRefreshing,
+                onRefresh = onRefresh,
+                state = pullRefreshState,
+                modifier = Modifier.fillMaxSize()
+            ) {
                 PaymentHistoryContent(
-                    tuitionList = uiState.allTuition, color,
-                    onViewDetailTuition = onViewDetailTuition
+                    tuitionList = uiState.allTuition,
+                    color = color,
+                    onViewDetailTuition = onViewDetailTuition,
+                    onNavigateToPayment = onNavigateToPayment
                 )
             }
         }

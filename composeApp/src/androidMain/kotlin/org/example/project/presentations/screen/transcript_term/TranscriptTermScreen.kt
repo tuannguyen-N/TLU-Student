@@ -20,6 +20,14 @@ import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.screen.transcript_term.components.SubjectResultCard
 import org.example.project.presentations.theme.LocalExtendedColors
 
+private fun formatSemesterLabel(label: String): String {
+    return if (label.startsWith("HK")) {
+        "Học kỳ ${label.removePrefix("HK")}"
+    } else {
+        label
+    }
+}
+
 @Composable
 fun TranscriptTermScreen(
     viewModel: TranscriptTermViewModel,
@@ -34,7 +42,7 @@ fun TranscriptTermScreen(
         contentWindowInsets = WindowInsets(0),
         topBar = {
             TopScreenBar<String>(
-                title = "Chi tiết ${uiState.semesterLabel}",
+                title = "Chi tiết ${formatSemesterLabel(uiState.semesterLabel)}",
                 onBack = onBack,
                 justView = true,
                 value = uiState.academicYear,

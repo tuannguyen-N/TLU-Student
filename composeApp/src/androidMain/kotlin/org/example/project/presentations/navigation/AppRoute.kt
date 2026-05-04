@@ -6,6 +6,7 @@ object AppRoute {
     const val Main = "main_screen"
     const val Profile = "profile"
     const val Notification = "notification_screen"
+    const val NotificationDetail = "notification_detail/{id}"
     const val Setting = "setting_screen"
     const val EditProfile = "edit_profile_screen"
     const val TranscriptTerm = "transcript_term_screen"
@@ -24,4 +25,5 @@ object AppRoute {
     const val NewsScreen = "news_screen"
     const val Chat = "chat_screen"
     const val Application = "application_screen"
+    fun notificationDetail(id: Int) = "notification_detail/$id"
 }

@@ -16,7 +16,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun PaymentMethodList(
     modifier: Modifier = Modifier,
-    selectedType: PaymentType? = PaymentType.QR_BANK,
+    selectedType: PaymentType? = PaymentType.VN_PAY,
     onSelect: (PaymentType) -> Unit = {}
 ) {
     Column(

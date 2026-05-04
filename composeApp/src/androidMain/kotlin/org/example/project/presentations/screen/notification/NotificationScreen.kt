@@ -11,6 +11,7 @@ import org.example.project.presentations.screen.notification.components.Notifica
 @Composable
 fun NotificationScreen(
     viewModel: NotificationViewModel,
+    onOpenNotificationDetail: (Int) -> Unit,
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -20,7 +21,10 @@ fun NotificationScreen(
     NotificationContent(
         uiState = uiState,
         onBack = onBack,
-        onRead = viewModel::onRead,
+        onClickNotification = {
+            viewModel.onRead(it)
+            onOpenNotificationDetail(it.id)
+        },
         onShowBottomSheet = viewModel::onShowBottomSheet,
         onHideBottomSheet = viewModel::onHideBottomSheet,
         onRefresh = viewModel::onRefreshData,

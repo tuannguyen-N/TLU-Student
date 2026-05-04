@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class SemesterResult(
     val semester: String,
     val subjectResults: List<SubjectResult>,
-    val semesterSummary: SemesterSummary
+    val semesterSummary: SemesterSummary?
 )

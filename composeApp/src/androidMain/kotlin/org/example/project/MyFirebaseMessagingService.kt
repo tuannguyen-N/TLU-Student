@@ -12,7 +12,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Log.e("FCM", "onMessageReceived: go here")
         val title = message.notification?.title
         val body = message.notification?.body
         showNotification(title, body)

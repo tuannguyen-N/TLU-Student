@@ -8,5 +8,5 @@ data class LoginDataResponse(
     val email: String,
     val name: String,
     val avatar: String?,
-    val token: String
+    val accessToken: String,
 )

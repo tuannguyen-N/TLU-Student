@@ -17,9 +17,9 @@ class AuthRepository(
             val firebaseToken = firebaseStorage.getFirebaseToken()
                 ?: return AppResult.Failure(message = "Firebase token not found")
             val response = authApi.login(microsoftAccessToken, firebaseToken, deviceId)
-            val token = response.data?.token
+            val token = response.data?.accessToken
                 ?: return AppResult.Failure(message = response.message)
-            val imageBase64 = response.data.avatar
+            val imageBase64 = null /*response.data.avatar*/ // TODO:  
 
             tokenStorage.saveAccessToken(token)
             imageStorage.saveImageBase64(imageBase64)

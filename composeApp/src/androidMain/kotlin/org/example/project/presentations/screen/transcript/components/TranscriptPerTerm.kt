@@ -38,7 +38,7 @@ fun TranscriptPerTerm(
                 SubjectCard(
                     onOpenTranscriptTerm = onOpen,
                     academicYear = academicYear,
-                    termNumber = semester.semesterLabel.last().toString(),
+                    termNumber = semester.semesterLabel,
                     subjects = subjectNames,
                     gpa = semester.semesterGpa,
                     credits = semester.creditsPassed,

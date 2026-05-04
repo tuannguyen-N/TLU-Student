@@ -16,10 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,10 +27,11 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun MessageInputField(
     modifier: Modifier = Modifier,
-    onSendClick: (String) -> Unit = {}
+    text: String = "",
+    onTextChange: (String) -> Unit = {},
+    onSendClick: (String) -> Unit = {},
+    enabled: Boolean = true
 ) {
-    var text by remember { mutableStateOf("") }
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -47,13 +44,14 @@ fun MessageInputField(
     ) {
         BasicTextField(
             value = text,
-            onValueChange = { text = it },
+            onValueChange = onTextChange,
             modifier = Modifier.weight(1f),
             textStyle = TextStyle(
                 fontSize = 16.sp,
                 color = Color.Black
             ),
             singleLine = true,
+            enabled = enabled,
             decorationBox = { innerTextField ->
                 if (text.isEmpty()) {
                     Text("Hãy hỏi gì đó....", color = Color.Gray, fontSize = 16.sp)
@@ -68,9 +66,10 @@ fun MessageInputField(
             onClick = {
                 if (text.isNotBlank()) {
                     onSendClick(text)
-                    text = ""
+                    onTextChange("")
                 }
             },
+            enabled = enabled,
             modifier = Modifier
                 .size(30.dp)
                 .background(color = LocalExtendedColors.current.mainBlue, shape = CircleShape)

@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.tuition_payment.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.data.mapper.displayName
@@ -62,10 +64,9 @@ fun PaymentMethodItem(
                     .background(color.mainBlue.copy(alpha = 0.1f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = type.icon(),
+                Image(
+                    painter = painterResource(type.icon()),
                     contentDescription = null,
-                    tint = color.mainBlue,
                     modifier = Modifier.size(24.dp)
                 )
             }

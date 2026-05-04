@@ -9,43 +9,53 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownColor
+import com.mikepenz.markdown.m3.markdownTypography
 import org.example.project.R
 import org.example.project.domain.model.ChatMessage
+import org.example.project.presentations.components.StatusBarStyle
+import org.example.project.presentations.screen.chat.ChatState
 import org.example.project.presentations.theme.LocalExtendedColors
+
 
 @Composable
 fun ChatContent(
+    uiState: ChatState,
+    onPromptChange: (String) -> Unit,
+    onSendClick: () -> Unit,
     onBack: () -> Unit = {}
 ) {
     val color = LocalExtendedColors.current
-    val messages = remember {
-        mutableStateListOf(
-            ChatMessage("Hello 👋", false),
-            ChatMessage("Hi AI", true)
-        )
-    }
     val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(uiState.messages.size) {
+        if (uiState.messages.isNotEmpty()) {
+            listState.animateScrollToItem(0)
+        }
+    }
+
+    StatusBarStyle(darkIcons = true)
 
     Scaffold(
         containerColor = color.background,
@@ -61,7 +71,7 @@ fun ChatContent(
                     Box(
                         modifier = Modifier
                             .background(color.white, shape = CircleShape)
-                            .fillMaxSize()
+                            .size(40.dp)
                     )
                     Icon(
                         painter = painterResource(R.drawable.icon_back),
@@ -77,6 +87,18 @@ fun ChatContent(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            if (uiState.messages.isEmpty()) {
+                Text(
+                    text = "Xin chào,\nTôi có thể giúp gì cho bạn ?",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .imePadding()
+                        .padding(15.dp),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = LocalExtendedColors.current.mainBlue
+                )
+            }
+
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -85,7 +107,18 @@ fun ChatContent(
                     .imePadding(),
                 reverseLayout = true
             ) {
-                items(messages.reversed()) { message ->
+                item {
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(15.dp),
+                            color = color.mainBlue
+                        )
+                    }
+                }
+
+                items(uiState.messages.reversed()) { message ->
                     MessageItem(message)
                 }
             }
@@ -95,12 +128,12 @@ fun ChatContent(
                     .align(Alignment.BottomCenter)
                     .imePadding()
                     .padding(15.dp),
-                onSendClick = { text ->
-                    messages.add(ChatMessage(text, true))
-                    scope.launch {
-                        listState.animateScrollToItem(0)
-                    }
-                }
+                text = uiState.prompt,
+                onTextChange = onPromptChange,
+                onSendClick = {
+                    onSendClick()
+                },
+                enabled = !uiState.isLoading
             )
         }
     }
@@ -123,11 +156,24 @@ fun MessageItem(message: ChatMessage) {
                 )
                 .padding(vertical = 10.dp, horizontal = 15.dp)
         ) {
-            Text(
-                text = message.text,
-                fontSize = 16.sp,
-                color = if (message.isUser) color.white else color.blackBackground
-            )
+            if (message.isUser) {
+                Text(
+                    text = message.text,
+                    fontSize = 16.sp,
+                    color = color.white
+                )
+            } else {
+                Markdown(
+                    content = message.text,
+                    colors = markdownColor(
+                        text = color.blackBackground,
+                        codeBackground = color.background
+                    ),
+                    typography = markdownTypography(
+                        text = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
+                    )
+                )
+            }
         }
     }
 }

@@ -63,6 +63,7 @@ fun HighAlertCard(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.icon_caution),
+                        tint = color.red,
                         contentDescription = "caution",
                         modifier = Modifier.padding(end = 3.dp)
                     )

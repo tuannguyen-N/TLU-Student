@@ -157,3 +157,10 @@ fun String.toCreatedAgo(): String {
         else               -> "${diffMinutes / 43200} tháng trước"
     }
 }
+
+fun String.toFullDisplayDate(): String {
+    val datePart = this.substringBefore("T") // "2026-04-24"
+    val date = LocalDate.parse(datePart)
+
+    return "${date.day.twoDigits()}/${date.month.number.twoDigits()}/${date.year}"
+}
