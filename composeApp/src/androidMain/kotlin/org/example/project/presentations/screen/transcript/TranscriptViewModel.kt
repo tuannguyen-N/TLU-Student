@@ -10,11 +10,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.example.project.data.mapper.TranscriptMapper
+import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.usecase.TranscriptUseCase
 import org.example.project.presentations.utils.withDelayedLoading
 
 class TranscriptViewModel(
-    private val transcriptUseCase: TranscriptUseCase
+    private val transcriptUseCase: TranscriptUseCase,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TranscriptState())
@@ -22,14 +24,21 @@ class TranscriptViewModel(
 
     init {
         observeTranscript()
+        observeReadNotifications()
         loadData()
+    }
+
+    private fun observeReadNotifications() {
+        notificationRepository.readNotificationIds.onEach { readIds ->
+            updateState { copy(isAllNotificationsRead = readIds.isEmpty()) }
+        }.launchIn(viewModelScope)
     }
 
     private fun observeTranscript() {
         transcriptUseCase.transcriptCached
             .filterNotNull()
             .onEach { uiModel ->
-                Log.e("123123", "observeTranscript: $uiModel", )
+                Log.e("123123", "observeTranscript: $uiModel")
                 updateState { copy(transcriptUiModel = uiModel) }
             }
             .launchIn(viewModelScope)

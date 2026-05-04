@@ -8,6 +8,7 @@ data class CourseClass(
     val dayOfWeek: Int,
     val subjectName: String,
     val subjectCode: String,
+    val credits: Int?,
     val startPeriod: Int,
     val endPeriod: Int,
     val startTime: String,

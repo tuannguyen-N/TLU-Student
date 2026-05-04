@@ -23,6 +23,7 @@ import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
+import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.QuoteRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.StudentUseCase
@@ -35,7 +36,8 @@ class HomeViewModel(
     private val featureRepository: FeatureRepository,
     private val newsRepository: NewsRepository,
     private val quoteRepository: QuoteRepository,
-    private val authPluginConfig: AuthPluginConfig
+    private val authPluginConfig: AuthPluginConfig,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState = combine(
@@ -55,7 +57,14 @@ class HomeViewModel(
     init {
         observeStudentInfo()
         observeCourseClasses()
+        observeReadNotifications()
         loadInitData()
+    }
+
+    private fun observeReadNotifications() {
+        notificationRepository.readNotificationIds.onEach { readIds ->
+            updateState { copy(isAllNotificationsRead = readIds.isEmpty()) }
+        }.launchIn(viewModelScope)
     }
 
     private fun observeCourseClasses() {

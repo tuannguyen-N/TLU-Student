@@ -205,6 +205,7 @@ fun ScheduleNextPreview() {
         startTime = "08:45:00",
         subjectCode = "INT2204",
         subjectName = "Lập trình Android",
+        credits = 1,
         lecturer = Lecturer(
             fullName = "Nguyễn Văn A",
             lecturerCode = "123",

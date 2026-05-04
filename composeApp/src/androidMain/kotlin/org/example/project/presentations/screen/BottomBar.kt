@@ -42,7 +42,7 @@ fun BottomBar(
     val tabs = listOf(
         R.drawable.icon_home,
         R.drawable.icon_calendar,
-        R.drawable.icon_chat,
+//        R.drawable.icon_chat,
         R.drawable.icon_transcript
     )
 
@@ -56,7 +56,7 @@ fun BottomBar(
             modifier = Modifier
                 .clip(RoundedCornerShape(30.dp))
                 .height(60.dp)
-                .width(250.dp)
+                .width(200.dp) //250
                 .background(LocalExtendedColors.current.mainBlue),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically

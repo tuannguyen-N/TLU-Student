@@ -26,7 +26,6 @@ fun NotificationScreen(
             onOpenNotificationDetail(it.id)
         },
         onShowBottomSheet = viewModel::onShowBottomSheet,
-        onHideBottomSheet = viewModel::onHideBottomSheet,
         onRefresh = viewModel::onRefreshData,
         onTabSelected = viewModel::onTabSelected,
         onMarkAllRead = viewModel::onMarkAllRead

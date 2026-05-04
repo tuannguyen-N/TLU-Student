@@ -26,10 +26,10 @@ class NotificationRepository(
 ) {
     private lateinit var prepareNotificationData: PrepareNotificationData
 
-    private val _readNotificationIds = notificationDao.observeReadNotifications()
     private val notificationCache = CacheManager<String, NotificationData>(5.minutes)
     private val _notifications = MutableStateFlow<List<NotificationUiModel>>(emptyList())
-    val notifications = combine(_notifications, _readNotificationIds) { notifications, readIds ->
+    val readNotificationIds = notificationDao.observeReadNotifications()
+    val notifications = combine(_notifications, readNotificationIds) { notifications, readIds ->
         val readIdsSet = readIds.toSet()
         notifications.map {
             it.copy(isRead = readIdsSet.contains(it.id))

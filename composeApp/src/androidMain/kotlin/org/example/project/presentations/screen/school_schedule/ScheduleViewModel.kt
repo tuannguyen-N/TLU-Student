@@ -12,10 +12,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.example.project.data.mapper.getTodayDayOfWeek
 import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 
 class ScheduleViewModel(
-    private val scheduleUseCase: ScheduleUseCase
+    private val scheduleUseCase: ScheduleUseCase,
+    private val notificationRepository: NotificationRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         ScheduleState(
@@ -26,7 +28,14 @@ class ScheduleViewModel(
 
     init {
         observeDayOfWeekSchedule()
+        observeReadNotifications()
         loadData()
+    }
+
+    private fun observeReadNotifications() {
+        notificationRepository.readNotificationIds.onEach { readIds ->
+            updateState { copy(isAllNotificationsRead = readIds.isEmpty()) }
+        }.launchIn(viewModelScope)
     }
 
     private fun observeDayOfWeekSchedule() {
@@ -35,13 +44,11 @@ class ScheduleViewModel(
             _uiState.map { it.selectedDayOfWeek }.distinctUntilChanged()
         ) { cache, selectedDay ->
             cache[selectedDay]
-        }
-            .onEach { data ->
+        }.onEach { data ->
                 data?.let {
                     updateState { copy(courseClasses = it.courseClasses) }
                 }
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     private fun loadData() {

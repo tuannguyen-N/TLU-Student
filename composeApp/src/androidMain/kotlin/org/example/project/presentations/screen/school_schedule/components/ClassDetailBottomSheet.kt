@@ -69,6 +69,7 @@ private fun ClassDetailBottomSheetPreview() {
         endTime = "09:30",
         room = "A101",
         subjectCode = "CS101",
+        credits = 1,
         subjectName = "Lập trình hướng đối tượng",
         lecturer = Lecturer(
             lecturerCode = "GV001",

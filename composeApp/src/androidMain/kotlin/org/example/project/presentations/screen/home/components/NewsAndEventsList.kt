@@ -85,7 +85,6 @@ fun NewsAndEventsList(
                 if (items.isNotEmpty()) {
                     val realIndex = page % items.size
                     val item = items[realIndex]
-
                     NewAndEventCard(
                         item = item,
                         onOpenNews = onOpenNews,

@@ -51,7 +51,8 @@ fun ScheduleScreen(
                 iconRes = R.drawable.icon_school_schedule,
                 title = "Lịch Học",
                 onOpenNotificationScreen = onOpenNotificationScreen,
-                onOpenChat = onOpenChat
+                onOpenChat = onOpenChat,
+                isNotificationBadgeVisible = uiState.isAllNotificationsRead
             )
         }
     ) {

@@ -85,8 +85,8 @@ fun MainScreen(
                         onOpenChat = onOpenChat
                     )
 
-                    2 -> {}
-                    3 -> TranscriptScreen(
+//                    2 -> {}
+                    2 -> TranscriptScreen(
                         viewModel = transcriptViewModel,
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenTranscriptTerm = { semester ->

@@ -45,7 +45,8 @@ fun TranscriptContent(
                 iconRes = R.drawable.icon_transcript,
                 title = "Bảng điểm",
                 onOpenNotificationScreen = onOpenNotificationScreen,
-                onOpenChat = onOpenChat
+                onOpenChat = onOpenChat,
+                isNotificationBadgeVisible = uiState.isAllNotificationsRead
             )
         }
     ) { padding ->

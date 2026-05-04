@@ -48,6 +48,7 @@ fun FeatureItem(
 ) {
     val red = color.red
     val green = color.green
+    val alpha = if (feature.isUpcoming) 0.5f else 1f
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -55,8 +56,8 @@ fun FeatureItem(
     ) {
         Box {
             Surface(
-                onClick = { if (!isEditing) onClickFeature(feature) },
-                color = feature.type.toIconBackgroundColor(),
+                onClick = { if (!isEditing && !feature.isUpcoming) onClickFeature(feature) },
+                color = feature.type.toIconBackgroundColor().copy(alpha = alpha),
                 modifier = Modifier
                     .size(60.dp)
                     .clip(RoundedCornerShape(16.dp))
@@ -65,7 +66,7 @@ fun FeatureItem(
                     Icon(
                         imageVector = feature.type.toImageVector(),
                         contentDescription = feature.name,
-                        tint = feature.type.toIconTintColor(),
+                        tint = feature.type.toIconTintColor().copy(alpha = alpha),
                         modifier = Modifier.size(30.dp)
                     )
                 }

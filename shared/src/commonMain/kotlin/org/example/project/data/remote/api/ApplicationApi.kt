@@ -11,4 +11,6 @@ class ApplicationApi(
     suspend fun getApplicationTypes(): ApplicationTypesResponse {
         return client.get("/api/v1/applications/types").body()
     }
+
+
 }

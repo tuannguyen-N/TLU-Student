@@ -2,7 +2,8 @@ package org.example.project.domain.model
 
 data class FeatureUiModel(
     val name: String,
-    val type: FeatureType
+    val type: FeatureType,
+    val isUpcoming: Boolean = false
 ) {
     companion object {
         fun getQuickAccessList() = listOf(
@@ -18,9 +19,9 @@ data class FeatureUiModel(
             FeatureUiModel("Đăng ký môn",     FeatureType.COURSE_REGISTER),
             FeatureUiModel("Dự đoán GPA",        FeatureType.GPA_PREDICTION),
             FeatureUiModel("Lớp hành chính",       FeatureType.STUDENT_CLASS),
-            FeatureUiModel("Bản đồ",          FeatureType.MAP),
-            FeatureUiModel("Câu lạc bộ",      FeatureType.CLUB),
-            FeatureUiModel("Việc làm",        FeatureType.JOBS),
+            FeatureUiModel("Bản đồ",          FeatureType.MAP, isUpcoming = true),
+            FeatureUiModel("Câu lạc bộ",      FeatureType.CLUB, isUpcoming = true),
+            FeatureUiModel("Việc làm",        FeatureType.JOBS, isUpcoming = true),
             FeatureUiModel("Đơn từ điện tử",  FeatureType.DIGITAL_FORM),
             FeatureUiModel("Học phí",      FeatureType.TUITION_PAYMENT),
         )

@@ -8,5 +8,6 @@ data class TranscriptState(
     val totalCredit: Int = 0,
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isAllNotificationsRead: Boolean = false
 )

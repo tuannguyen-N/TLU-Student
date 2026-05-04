@@ -10,5 +10,6 @@ data class ScheduleState(
     val currentDay: Int,
     val selectedDayOfWeek: Int,
 
+    val isAllNotificationsRead: Boolean = false,
     val isLoading: Boolean = false
 )

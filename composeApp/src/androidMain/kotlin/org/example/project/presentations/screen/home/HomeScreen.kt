@@ -50,7 +50,8 @@ fun HomeScreen(
                 onOpenNotification = onOpenNotificationScreen,
                 isProfileReady = !uiState.loadingStudentInfo && uiState.studentInfo != null,
                 imageBase64 = uiState.imageBase64,
-                onOpenChat = onOpenChat
+                onOpenChat = onOpenChat,
+                isNotificationBadgeVisible = uiState.isAllNotificationsRead
             )
         }
     ) { paddingValues ->

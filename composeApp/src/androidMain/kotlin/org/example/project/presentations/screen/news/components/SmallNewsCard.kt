@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,10 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import org.example.project.R
 import org.example.project.domain.model.EventAndNewUiModel
 import org.example.project.presentations.theme.ExtendedColors
 
@@ -37,12 +41,23 @@ fun SmallNewsCard(
             .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = { onClick(item.newsUrl) })
     ) {
-        AsyncImage(
-            model = item.imageUrl,
-            contentDescription = item.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
+        if (item.imageUrl != null) {
+            AsyncImage(
+                model = item.imageUrl,
+                contentDescription = item.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Icon(
+                painter = painterResource(R.drawable.icon_no_image),
+                contentDescription = "no image",
+                modifier = Modifier
+                    .size(50.dp)
+                    .align(Alignment.Center),
+                tint = color.gray
+            )
+        }
 
         Box(
             modifier = Modifier

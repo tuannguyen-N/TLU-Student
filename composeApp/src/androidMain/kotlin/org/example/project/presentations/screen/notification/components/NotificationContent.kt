@@ -24,7 +24,6 @@ fun NotificationContent(
     onBack: () -> Unit,
     onClickNotification: (NotificationUiModel) -> Unit,
     onShowBottomSheet: () -> Unit,
-    onHideBottomSheet: () -> Unit,
     onRefresh: () -> Unit,
     onTabSelected: (Int) -> Unit,
     onMarkAllRead: () -> Unit

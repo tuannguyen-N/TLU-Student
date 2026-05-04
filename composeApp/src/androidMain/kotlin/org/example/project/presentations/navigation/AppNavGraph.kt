@@ -163,14 +163,21 @@ fun AppNavGraph(
                     container.featureRepository,
                     container.newsRepository,
                     container.quoteRepository,
-                    container.authPluginConfig
+                    container.authPluginConfig,
+                    container.notificationRepository
                 )
             }
             val scheduleFactory = remember(container) {
-                ScheduleViewModelFactory(container.scheduleUseCase)
+                ScheduleViewModelFactory(
+                    container.scheduleUseCase,
+                    container.notificationRepository
+                )
             }
             val transcriptFactory = remember(container) {
-                TranscriptViewModelFactory(container.transcriptUseCase)
+                TranscriptViewModelFactory(
+                    container.transcriptUseCase,
+                    container.notificationRepository
+                )
             }
 
             val homeViewModel: HomeViewModel = viewModel(factory = homeFactory)
