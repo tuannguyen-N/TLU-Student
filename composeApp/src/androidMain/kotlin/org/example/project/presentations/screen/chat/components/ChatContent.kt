@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -19,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,35 +61,12 @@ fun ChatContent(
 
     StatusBarStyle(darkIcons = true)
 
-    Scaffold(
-        containerColor = color.background,
-        contentWindowInsets = WindowInsets(0),
-        topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp, horizontal = 10.dp)
-                    .statusBarsPadding()
-            ) {
-                IconButton(onClick = onBack) {
-                    Box(
-                        modifier = Modifier
-                            .background(color.white, shape = CircleShape)
-                            .size(40.dp)
-                    )
-                    Icon(
-                        painter = painterResource(R.drawable.icon_back),
-                        contentDescription = null,
-                        tint = color.blackBackground
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
+    Box(modifier = Modifier
+        .statusBarsPadding()
+        .background(color.background)) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
         ) {
             if (uiState.messages.isEmpty()) {
                 Text(
@@ -137,6 +112,26 @@ fun ChatContent(
                 enabled = !uiState.isLoading
             )
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 10.dp)
+                .align(Alignment.TopStart)
+        ) {
+            IconButton(onClick = onBack) {
+                Box(
+                    modifier = Modifier
+                        .background(color.white, shape = CircleShape)
+                        .size(40.dp)
+                )
+                Icon(
+                    painter = painterResource(R.drawable.icon_back),
+                    contentDescription = null,
+                    tint = color.blackBackground
+                )
+            }
+        }
     }
 }
 
@@ -152,6 +147,10 @@ fun MessageItem(message: ChatMessage) {
         if (message.text.isEmpty()) return@Row
         Box(
             modifier = Modifier
+                .padding(
+                    start = if (message.isUser) 10.dp else 0.dp,
+                    end = if (!message.isUser) 10.dp else 0.dp
+                )
                 .background(
                     color = if (message.isUser) color.mainBlue else color.white,
                     shape = RoundedCornerShape(18.dp)
@@ -162,7 +161,7 @@ fun MessageItem(message: ChatMessage) {
                 Text(
                     text = message.text,
                     fontSize = 16.sp,
-                    color = color.white
+                    color = color.white,
                 )
             } else {
                 Markdown(
@@ -173,7 +172,7 @@ fun MessageItem(message: ChatMessage) {
                     ),
                     typography = markdownTypography(
                         text = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
-                    )
+                    ),
                 )
             }
         }
@@ -186,7 +185,6 @@ private fun TypingIndicator(modifier: Modifier = Modifier) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.typing_indicator)
     )
-
     Box(
         modifier = modifier.size(50.dp)
     ) {

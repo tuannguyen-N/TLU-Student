@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.toAcademicRank
@@ -68,7 +69,7 @@ fun SubjectCard(
             Column {
                 Text(
                     text = termNumber,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.height(2.dp))
