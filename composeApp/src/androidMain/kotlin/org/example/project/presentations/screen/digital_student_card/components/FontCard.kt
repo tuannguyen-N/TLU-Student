@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import org.example.project.R
+import org.example.project.presentations.components.Base64Image
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -82,10 +83,8 @@ fun FrontCard(
                             .padding(20.dp)
                     )
                 } else {
-                    AsyncImage(
-                        model = avatarUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
+                    Base64Image(
+                        base64String = avatarUrl,
                         modifier = Modifier
                             .size(100.dp)
                             .clip(CircleShape)

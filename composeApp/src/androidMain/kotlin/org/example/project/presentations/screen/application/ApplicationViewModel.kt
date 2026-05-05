@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.application
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.data.remote.dto.application.ApplicationType
+import org.example.project.domain.model.SubmitState
 import org.example.project.domain.repository.ApplicationRepository
 
 class ApplicationViewModel(
@@ -24,7 +26,7 @@ class ApplicationViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            delay(200L)
+            delay(100L)
             applicationRepository.getApplicationTypes().onSuccess { applicationTypes ->
                 _uiState.update { it.copy(applicationTypes = applicationTypes) }
             }
@@ -52,8 +54,29 @@ class ApplicationViewModel(
         _uiState.update { it.copy(attachedFile = null) }
     }
 
-    fun onSubmit() {
+    fun onDismiss() {
+        _uiState.update { it.copy(submitState = SubmitState.Idle) }
+    }
+
+    fun onSubmit(fileBytes: ByteArray) {
         val state = _uiState.value
-        // TODO: xử lý gửi dữ liệu
+        if (!state.isFormValid) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(submitState = SubmitState.Loading) }
+
+            val uri = state.attachedFile!!.toUri()
+            val fileName = uri.lastPathSegment ?: "file.pdf"
+            val files = listOf(fileName to fileBytes)
+
+            applicationRepository.submitApplication(
+                files = files,
+                applicationType = state.selectedApplicationType!!.id,
+            ).onSuccess {
+                _uiState.update { it.copy(submitState = SubmitState.Success) }
+            }.onFailure { result ->
+                _uiState.update { it.copy(submitState = SubmitState.Error(message = result.message!!)) }
+            }
+        }
     }
 }

@@ -252,7 +252,8 @@ fun AppNavGraph(
             SettingScreen(
                 viewModel = settingViewModel,
                 resetAppData = resetAppData,
-                onBack = { navController.popBackStack() })
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(AppRoute.EditProfile) {
@@ -431,7 +432,8 @@ fun AppNavGraph(
                 DigitalStudentCardViewModelFactory(
                     container.studentUseCase,
                     CountdownTimerUseCase(),
-                    GenerateQrUseCase()
+                    GenerateQrUseCase(),
+                    container.authPluginConfig
                 )
             }
             val digitalStudentCardViewModel: DigitalStudentCardViewModel =

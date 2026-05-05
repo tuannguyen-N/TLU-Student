@@ -71,6 +71,7 @@ fun SubjectCard(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                 )
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "Năm học $academicYear",
                     style = MaterialTheme.typography.bodyMedium,

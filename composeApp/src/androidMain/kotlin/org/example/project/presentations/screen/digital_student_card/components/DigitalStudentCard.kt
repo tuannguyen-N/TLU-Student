@@ -23,6 +23,7 @@ fun DigitalStudentCard(
     modifier: Modifier = Modifier,
     studentInfo: StudentData,
     qrState: QrState,
+    avatarUrl: String?,
     onCreateQr: () -> Unit,
     onRegenerateQr: () -> Unit,
     onBackToFrontCard: () -> Unit
@@ -55,8 +56,8 @@ fun DigitalStudentCard(
                     studentCode = studentInfo.studentCode,
                     faculty = studentInfo.major.majorName,
                     birthDate = studentInfo.dateOfBirth,
-                    course = "", // TODO:
-                    avatarUrl = "",
+                    course = studentInfo.academicInfo.cohort,
+                    avatarUrl = avatarUrl,
                     onCreateQr = onCreateQr
                 )
             }

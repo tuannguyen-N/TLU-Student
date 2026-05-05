@@ -112,7 +112,7 @@ class HomeViewModel(
         updateState { copy(dailyQuote = dailyQuote) }
     }
 
-    fun loadImage() {
+    private fun loadImage() {
         val imageBase64 = authPluginConfig.imageStorage.getImageBase64()
         updateState { copy(imageBase64 = imageBase64) }
     }

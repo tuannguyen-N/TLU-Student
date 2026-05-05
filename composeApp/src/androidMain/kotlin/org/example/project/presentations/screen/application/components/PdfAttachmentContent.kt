@@ -86,7 +86,7 @@ fun PdfAttachmentContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(8.dp))
-                        .background(LocalExtendedColors.current.gray)
+                        .background(LocalExtendedColors.current.white)
                         .padding(8.dp)
                 ) {
                     Icon(
