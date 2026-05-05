@@ -9,9 +9,25 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.example.project.data.local.TokenStorage
 import org.example.project.data.remote.interceptor.AuthPlugin
+import io.ktor.client.plugins.api.createClientPlugin
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
+
+var isNetworkAvailable: () -> Boolean = { true }
+val showNoNetworkDialog = MutableStateFlow(false)
+
+val NetworkCheckPlugin = createClientPlugin("NetworkCheckPlugin") {
+    onRequest { _, _ ->
+        if (!isNetworkAvailable()) {
+            showNoNetworkDialog.value = true
+            throw CancellationException("No network connection")
+        }
+    }
+}
 
 fun createHttpClient(tokenStorage: TokenStorage): HttpClient {
     return HttpClient {
+        install(NetworkCheckPlugin)
 
         defaultRequest {
             url {
@@ -39,6 +55,7 @@ fun createHttpClient(tokenStorage: TokenStorage): HttpClient {
 
 fun createExternalHttpClient(): HttpClient {
     return HttpClient {
+        install(NetworkCheckPlugin)
 
         install(ContentNegotiation) {
             json(

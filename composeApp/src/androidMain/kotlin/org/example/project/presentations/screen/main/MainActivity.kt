@@ -16,11 +16,17 @@ import androidx.core.view.WindowInsetsControllerCompat
 import org.example.MyApplication
 import org.example.project.presentations.utils.MsalHelper
 import org.example.project.presentations.utils.createNotificationChannel
+import org.example.project.presentations.utils.NetworkMonitor
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import android.widget.Toast
 
 class MainActivity : ComponentActivity() {
     private val appContainer by lazy {
         (application as MyApplication).appContainer
     }
+
+    private lateinit var networkMonitor: NetworkMonitor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +40,18 @@ class MainActivity : ComponentActivity() {
                 arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 1001
             )
+        }
+        observeNetworkStatus()
+    }
+
+    private fun observeNetworkStatus() {
+        networkMonitor = NetworkMonitor(this)
+        lifecycleScope.launch {
+            networkMonitor.isConnected.collect { isConnected ->
+                if (!isConnected) {
+                    Toast.makeText(this@MainActivity, "Mất kết nối mạng!", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
