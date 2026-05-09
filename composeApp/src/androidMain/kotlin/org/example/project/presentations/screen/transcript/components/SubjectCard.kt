@@ -45,6 +45,7 @@ fun SubjectCard(
     credits: Int,
     onOpenTranscriptTerm: () -> Unit
 ) {
+    val gpa = gpa * 10 / 4
     val color = gpa.toAcademicRank().toColor()
     val rank = gpa.toTextTermRank()
     val maxVisible = 3

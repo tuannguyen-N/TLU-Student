@@ -11,5 +11,7 @@ data class Content(
     val id: Int,
     val isRead: Boolean,
     val targetType: String,
-    val title: String
+    val title: String,
+    val isImportant: Boolean,
+    val referenceType: String
 )

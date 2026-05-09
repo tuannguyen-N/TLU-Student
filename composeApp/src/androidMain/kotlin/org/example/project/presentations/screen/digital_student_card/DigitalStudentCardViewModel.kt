@@ -50,7 +50,7 @@ class DigitalStudentCardViewModel(
         viewModelScope.launch {
             updateState { copy(qrState = QrState.Generating) }
 
-            val qrData = generateQrUseCase() // TODO: truyền studentId
+            val qrData = generateQrUseCase()
 
             val qrBytes = generateQrBitmap(qrData).toByteArray()
             updateState {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -24,50 +25,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.example.project.data.remote.dto.enrollment_course_classes.CourseClassEnrollmentData
 import org.example.project.domain.model.CourseFilter
 import org.example.project.domain.model.CourseItem
-import org.example.project.domain.model.CourseStatus
 import org.example.project.presentations.components.TopCenterScreenBar
+import org.example.project.presentations.screen.class_sign_up.ClassSignUpState
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassSignUpContent(
     modifier: Modifier = Modifier,
-    onBack: () -> Unit = {}
+    uiState: ClassSignUpState,
+    onBack: () -> Unit,
+    onSelectedSchedule: (CourseItem) -> Unit,
+    onDismissSelectedScheduleDialog: () -> Unit,
+    onEnrollClass: (CourseClassEnrollmentData) -> Unit,
+    onOpenSignedUpClass: () -> Unit
 ) {
-    val allCourses = remember {
-        listOf(
-            CourseItem(
-                "IT101",
-                3,
-                "Lập trình hướng đối tượng",
-                CourseStatus.AVAILABLE,
-                CourseFilter.REQUIRED
-            ),
-            CourseItem(
-                "IT101",
-                3,
-                "Lập trình hướng đối tượng",
-                CourseStatus.AVAILABLE,
-                CourseFilter.REQUIRED
-            ),
-            CourseItem("MA303", 3, "Xác suất thống kê", CourseStatus.FULL, CourseFilter.REQUIRED),
-            CourseItem(
-                "IT205",
-                3,
-                "Cấu trúc dữ liệu & Giải thuật",
-                CourseStatus.AVAILABLE,
-                CourseFilter.REQUIRED
-            ),
-            CourseItem("EN101", 2, "Tiếng Anh 1", CourseStatus.AVAILABLE, CourseFilter.ELECTIVE),
-            CourseItem("PE201", 1, "Giáo dục thể chất", CourseStatus.FULL, CourseFilter.ELECTIVE),
-        )
-    }
+    val allCourses = uiState.courses
 
     var searchQuery by remember { mutableStateOf("") }
     var selectedFilter by remember { mutableStateOf(CourseFilter.ALL) }
@@ -93,7 +71,6 @@ fun ClassSignUpContent(
             )
         }
     ) { innerPadding ->
-
         Box(modifier = Modifier.padding(innerPadding)) {
             LazyColumn(
                 modifier = Modifier
@@ -103,7 +80,10 @@ fun ClassSignUpContent(
             ) {
 
                 item {
-                    SemesterInformation(color)
+                    SemesterInformation(
+                        color,
+                        semesterName = uiState.currentSemester?.semesterName ?: ""
+                    )
                 }
 
                 item {
@@ -116,7 +96,13 @@ fun ClassSignUpContent(
                 }
 
                 item {
-                    selectedFilter = courseFilter(selectedFilter, color)
+                    CourseFilterRow(
+                        selectedFilter = selectedFilter,
+                        color = color,
+                        onFilterSelected = {
+                            selectedFilter = it
+                        }
+                    )
                 }
 
                 items(filtered) { course ->
@@ -124,47 +110,92 @@ fun ClassSignUpContent(
                         course = course,
                         color = color,
                         onSignUp = {
-                            // TODO:
+                            onSelectedSchedule(it)
                         }
                     )
                 }
 
-                item { Spacer(Modifier.height(60.dp)) }
+                item { Spacer(Modifier.height(90.dp)) }
             }
 
             ClassSelectedInformationCard(
+                totalSubjects = uiState.totalSubjects,
+                totalCredits = uiState.totalCredits,
+                onConfirmClick = onOpenSignedUpClass,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)
             )
+
+            if (uiState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            if (uiState.error != null) {
+                Text(
+                    text = uiState.error,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            if (uiState.showDialog) {
+                SchedulePickerDialog(
+                    courseTitle = uiState.selectedCourseTitle,
+                    onDismiss = onDismissSelectedScheduleDialog,
+                    isLoading = uiState.isDialogLoading,
+                    classGroups = uiState.courseClasses,
+                    enrolledClassCodes = uiState.enrolledClasses.map { it.classCode }.toSet(),
+                    onSelect = onEnrollClass
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun courseFilter(
+private fun CourseFilterRow(
     selectedFilter: CourseFilter,
-    color: ExtendedColors
-): CourseFilter {
-    var selectedFilter1 = selectedFilter
+    color: ExtendedColors,
+    onFilterSelected: (CourseFilter) -> Unit
+) {
     val chips = listOf(
         "Tất cả" to CourseFilter.ALL,
         "Bắt buộc" to CourseFilter.REQUIRED,
         "Tự do" to CourseFilter.ELECTIVE
     )
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+
         items(chips) { (label, filter) ->
-            val selected = selectedFilter1 == filter
+
+            val selected = selectedFilter == filter
+
             FilterChip(
                 selected = selected,
-                onClick = { selectedFilter1 = filter },
-                label = { Text(label, style = MaterialTheme.typography.labelMedium) },
+
+                onClick = {
+                    onFilterSelected(filter)
+                },
+
+                label = {
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                },
+
                 colors = FilterChipDefaults.filterChipColors(
                     selectedContainerColor = color.fontBlue,
                     selectedLabelColor = Color.White,
                     containerColor = LocalExtendedColors.current.white,
                     labelColor = Color.Black
                 ),
+
                 border = FilterChipDefaults.filterChipBorder(
                     enabled = true,
                     selected = selected,
@@ -175,5 +206,4 @@ private fun courseFilter(
             )
         }
     }
-    return selectedFilter1
 }

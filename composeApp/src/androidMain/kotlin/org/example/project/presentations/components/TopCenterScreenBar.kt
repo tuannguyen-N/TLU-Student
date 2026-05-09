@@ -33,7 +33,8 @@ fun TopCenterScreenBar(
     onBack: () -> Unit = {},
     onClickAction: () -> Unit = {},
     icon: ImageVector = Icons.Outlined.Done,
-    contentColor: Color = Color.White
+    contentColor: Color = Color.White,
+    iconColor: Color = contentColor
 ) {
     Box(
         modifier = Modifier
@@ -73,7 +74,7 @@ fun TopCenterScreenBar(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = contentColor
+                        tint = iconColor
                     )
                 }
             }

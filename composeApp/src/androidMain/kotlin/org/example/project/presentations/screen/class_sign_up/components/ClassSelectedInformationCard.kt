@@ -35,6 +35,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun ClassSelectedInformationCard(
     modifier: Modifier = Modifier,
     totalSubjects: Int = 12,
+    totalCredits: Int = 12,
     onConfirmClick: () -> Unit = {},
     color: ExtendedColors = LocalExtendedColors.current
 ) {
@@ -78,7 +79,7 @@ fun ClassSelectedInformationCard(
                         color = Color.White
                     )
                     Text(
-                        text = "TỔNG: $totalSubjects MÔN HỌC",
+                        text = "TỔNG: $totalSubjects MÔN HỌC - $totalCredits Tín",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium,
                         color = color.gray,

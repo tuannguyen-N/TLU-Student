@@ -15,6 +15,16 @@ fun Double.toAcademicRank(): AcademicRank {
     }
 }
 
+fun Double.gpaToAcademicRank(): AcademicRank {
+    return when {
+        this >= 3.8 -> AcademicRank.EXCELLENT
+        this >= 3.2 -> AcademicRank.VERY_GOOD
+        this >= 2.5 -> AcademicRank.GOOD
+        this >= 2.0 -> AcademicRank.AVERAGE
+        else -> AcademicRank.WEAK
+    }
+}
+
 @Composable
 fun AcademicRank.toColor(): Color = when (this) {
     AcademicRank.EXCELLENT -> LocalExtendedColors.current.purple

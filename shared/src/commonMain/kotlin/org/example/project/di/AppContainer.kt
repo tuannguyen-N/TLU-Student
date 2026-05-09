@@ -46,6 +46,8 @@ import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.domain.usecase.TranscriptUseCase
+import org.example.project.data.remote.api.EnrollmentApi
+import org.example.project.domain.repository.EnrollmentRepository
 
 class AppContainer(
     tokenStorage: TokenStorage,
@@ -143,4 +145,8 @@ class AppContainer(
 
     //for chat
     val chatRepository = ChatRepository(externalHttpClient)
+
+    //for enrollment
+    private val enrollmentApi = EnrollmentApi(httpClient)
+    val enrollmentRepository = EnrollmentRepository(enrollmentApi, studyProgramApi)
 }

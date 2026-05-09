@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.example.project.data.mapper.TranscriptMapper
 import org.example.project.domain.model.SubjectScore
@@ -24,6 +26,13 @@ class GpaPredictViewModel(
 
     init {
         loadData()
+        observeStudyProgram()
+    }
+
+    private fun observeStudyProgram() {
+        transcriptUseCase.studyProgram.onEach { studyProgram ->
+            updateState { copy(totalCredit = studyProgram?.totalCredits ?: 136) }
+        }.launchIn(viewModelScope)
     }
 
     private fun loadData() {
@@ -55,7 +64,7 @@ class GpaPredictViewModel(
             onSuccess = {
                 val gpa = TranscriptMapper.getGpa(it)
                 val credits = TranscriptMapper.getTotalCredit(it)
-                updateState { copy(realGpa = gpa, totalRealCredit = credits) }
+                updateState { copy(realGpa = gpa, passedRealCredit = credits) }
             },
             onFailure = {
                 Log.e("GPA Predict", "loadData: $it")
@@ -79,12 +88,17 @@ class GpaPredictViewModel(
 
     fun onPredictGpa() {
         updateFailedSubject()
-        val (predictGpa, totalPredictCredit) = gpaPredictUseCase.predictGpa(
+        val (predictGpa, passPredictCredit) = gpaPredictUseCase.predictGpa(
             _uiState.value.scores,
             _uiState.value.realGpa,
-            _uiState.value.totalRealCredit
+            _uiState.value.passedRealCredit
         )
-        updateState { copy(predictedGpa = predictGpa, totalPredictedCredit = totalPredictCredit) }
+        updateState {
+            copy(
+                predictedGpa = predictGpa,
+                passedPredictedCredit = passPredictCredit,
+            )
+        }
     }
 
     private fun updateFailedSubject() {
@@ -96,7 +110,7 @@ class GpaPredictViewModel(
         updateState {
             copy(
                 predictedGpa = null,
-                totalPredictedCredit = null,
+                passedPredictedCredit = null,
                 scores = emptyMap(),
                 failedSubjects = emptyList()
             )

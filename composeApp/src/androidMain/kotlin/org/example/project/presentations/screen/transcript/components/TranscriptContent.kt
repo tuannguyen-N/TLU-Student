@@ -34,7 +34,8 @@ fun TranscriptContent(
     transcriptUiModel: TranscriptUiModel?,
     onOpenTranscriptTerm: (SemesterUiModel) -> Unit,
     onOpenChat: () -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onOpenGpaTracker: () -> Unit
 ) {
     val pullRefreshState = rememberPullToRefreshState()
     Scaffold(
@@ -69,7 +70,9 @@ fun TranscriptContent(
                     ) {
                         GpaCard(
                             gpa = uiState.gpa,
-                            credit = uiState.totalCredit,
+                            credit = uiState.passedCredits,
+                            totalCredits = uiState.totalCredits,
+                            onOpenGpaTracker = onOpenGpaTracker,
                             modifier = Modifier.padding(top = 5.dp)
                         )
                     }

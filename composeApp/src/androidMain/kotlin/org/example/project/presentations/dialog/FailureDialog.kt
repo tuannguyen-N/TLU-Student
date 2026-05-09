@@ -33,6 +33,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Preview
 @Composable
 fun FailureDialog(
+    title: String ="Gửi thất bại",
     message: String = "Không thể gửi phản hồi. Lý do: Kết nối mạng không ổn định. Vui lòng kiểm tra lại đường truyền.",
     onDismiss: () -> Unit = {}
 ) {
@@ -76,7 +77,7 @@ fun FailureDialog(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "Gửi thất bại",
+                    text = title,
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     ),

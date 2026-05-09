@@ -25,7 +25,14 @@ class TranscriptViewModel(
     init {
         observeTranscript()
         observeReadNotifications()
+        observeStudyProgram()
         loadData()
+    }
+
+    private fun observeStudyProgram() {
+        transcriptUseCase.studyProgram.onEach { studyProgram ->
+            updateState { copy(totalCredits = studyProgram?.totalCredits ?: 136) }
+        }.launchIn(viewModelScope)
     }
 
     private fun observeReadNotifications() {
@@ -50,11 +57,11 @@ class TranscriptViewModel(
                 updateState { copy(isLoading = it) }
             }) {
                 transcriptUseCase.getTranscript().fold(
-                    onSuccess = {
+                    onSuccess = { result ->
                         updateState {
                             copy(
-                                gpa = TranscriptMapper.getGpa(it),
-                                totalCredit = TranscriptMapper.getTotalCredit(it)
+                                gpa = TranscriptMapper.getGpa(result),
+                                passedCredits = TranscriptMapper.getTotalCredit(result)
                             )
                         }
                     },
@@ -81,7 +88,7 @@ class TranscriptViewModel(
                         updateState {
                             copy(
                                 gpa = TranscriptMapper.getGpa(it),
-                                totalCredit = TranscriptMapper.getTotalCredit(it)
+                                passedCredits = TranscriptMapper.getTotalCredit(it)
                             )
                         }
                     },

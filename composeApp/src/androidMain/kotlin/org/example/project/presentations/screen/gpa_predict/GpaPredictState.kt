@@ -9,8 +9,9 @@ data class GpaPredictState(
     val failedSubjects: List<String> = emptyList(),
     val realGpa: Double = 0.0,
     val predictedGpa: Double? = null,
-    val totalPredictedCredit: Int? = null,
-    val totalRealCredit: Int = 0,
+    val passedPredictedCredit: Int? = null,
+    val passedRealCredit: Int = 0,
+    val totalCredit: Int = 0,
 
     val isLoading: Boolean = false
 )

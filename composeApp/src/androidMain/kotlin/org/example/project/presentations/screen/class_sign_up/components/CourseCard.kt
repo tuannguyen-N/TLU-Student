@@ -32,7 +32,7 @@ import org.example.project.presentations.theme.ExtendedColors
 fun CourseCard(
     course: CourseItem,
     color: ExtendedColors,
-    onSignUp: () -> Unit
+    onSignUp: (CourseItem) -> Unit
 ) {
     val isFull = course.status == CourseStatus.FULL
 
@@ -99,7 +99,7 @@ fun CourseCard(
                 Spacer(Modifier.height(6.dp))
                 Button(
                     onClick = {
-                        onSignUp()
+                        onSignUp(course)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = color.mainBlue,

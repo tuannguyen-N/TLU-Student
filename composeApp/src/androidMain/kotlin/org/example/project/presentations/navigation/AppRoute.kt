@@ -26,4 +26,6 @@ object AppRoute {
     const val Chat = "chat_screen"
     const val Application = "application_screen"
     fun notificationDetail(id: Int) = "notification_detail/$id"
+    const val GpaTracker = "gpa_tracker_screen"
+    const val TempSchedule = "temp_schedule_screen"
 }

@@ -40,7 +40,8 @@ fun MainScreen(
     onOpenFeature: (FeatureType) -> Unit,
     onOpenNewsScreen: () -> Unit,
     onOpenNews: (String) -> Unit,
-    onOpenChat: () -> Unit
+    onOpenChat: () -> Unit,
+    onOpenGpaTracker: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()
@@ -92,7 +93,8 @@ fun MainScreen(
                         onOpenTranscriptTerm = { semester ->
                             onOpenTranscriptTerm(semester.semesterLabel, semester.academicYear)
                         },
-                        onOpenChat = onOpenChat
+                        onOpenChat = onOpenChat,
+                        onOpenGpaTracker = onOpenGpaTracker
                     )
                 }
             }

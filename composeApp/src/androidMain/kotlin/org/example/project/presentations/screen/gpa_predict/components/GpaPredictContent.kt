@@ -67,8 +67,8 @@ fun GpaPredictContent(
                 GpaCard(
                     title = "GPA HIỆN TẠI",
                     gpa = uiState.realGpa,
-                    creditsEarned = uiState.totalRealCredit,
-                    totalCredits = 140,
+                    creditsEarned = uiState.passedRealCredit,
+                    totalCredits = uiState.totalCredit,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -77,8 +77,8 @@ fun GpaPredictContent(
                 GpaCard(
                     title = "GPA DỰ KIẾN",
                     gpa = uiState.predictedGpa,
-                    creditsEarned = uiState.totalPredictedCredit,
-                    totalCredits = 140, // TODO: change total credits 
+                    creditsEarned = uiState.passedPredictedCredit,
+                    totalCredits = uiState.totalCredit,
                     isDark = true,
                     modifier = Modifier.weight(1f)
                 )

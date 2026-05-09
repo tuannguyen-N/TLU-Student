@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.gpaToAcademicRank
 import org.example.project.presentations.utils.toAcademicRank
 import org.example.project.presentations.utils.toColor
 import org.example.project.presentations.utils.toTextRank
@@ -42,13 +43,14 @@ fun GpaCard(
     modifier: Modifier = Modifier,
     gpa: Double = 3.3,
     credit: Int = 36,
-    totalCredit: Int = 136
+    totalCredits: Int = 136,
+    onOpenGpaTracker: () -> Unit = {}
 ) {
-    val rank = gpa.toAcademicRank()
+    val rank = gpa.gpaToAcademicRank()
     val textColor = rank.toColor()
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .shadow(
                 elevation = 1.dp,
                 shape = RoundedCornerShape(14.dp)
@@ -102,7 +104,7 @@ fun GpaCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 LinearProgressIndicator(
-                    progress = { credit.toFloat() / totalCredit.toFloat() },
+                    progress = { credit.toFloat() / totalCredits.toFloat() },
                     modifier = Modifier
                         .weight(1f)
                         .height(8.dp)
@@ -114,7 +116,7 @@ fun GpaCard(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
-                    text = "$credit/$totalCredit Tín chỉ",
+                    text = "$credit/$totalCredits Tín chỉ",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Black
@@ -123,9 +125,7 @@ fun GpaCard(
         }
 
         IconButton(
-            onClick = {
-
-            },
+            onClick = onOpenGpaTracker,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(18.dp)

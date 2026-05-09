@@ -8,5 +8,6 @@ data class StudyProgram(
     val studyProgramCode: String,
     val studyProgramName: String,
     val isPrimary: Boolean,
+    val totalCredits: Int,
     val startYear: Int
 )

@@ -27,6 +27,11 @@ import org.example.project.presentations.screen.chat.ChatScreen
 import org.example.project.presentations.screen.chat.ChatViewModel
 import org.example.project.presentations.screen.chat.ChatViewModelFactory
 import org.example.project.presentations.screen.class_sign_up.ClassSignUpScreen
+import org.example.project.presentations.screen.class_sign_up.ClassSignUpViewModel
+import org.example.project.presentations.screen.class_sign_up.ClassSignUpViewModelFactory
+import org.example.project.presentations.screen.class_signed_up.SignedUpClassViewModelFactory
+import org.example.project.presentations.screen.class_signed_up.SignedUpClassesScreen
+import org.example.project.presentations.screen.class_signed_up.SignedUpClassesViewModel
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardScreen
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardViewModel
 import org.example.project.presentations.screen.digital_student_card.DigitalStudentCardViewModelFactory
@@ -44,6 +49,9 @@ import org.example.project.presentations.screen.feedback_detail.FeedbackDetailSc
 import org.example.project.presentations.screen.gpa_predict.GpaPredictScreen
 import org.example.project.presentations.screen.gpa_predict.GpaPredictViewModel
 import org.example.project.presentations.screen.gpa_predict.GpaPredictViewModelFactory
+import org.example.project.presentations.screen.gpa_tracker.GpaTrackerScreen
+import org.example.project.presentations.screen.gpa_tracker.GpaTrackerViewModel
+import org.example.project.presentations.screen.gpa_tracker.GpaTrackerViewModelFactory
 import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.home.HomeViewModelFactory
 import org.example.project.presentations.screen.login.LoginScreen
@@ -72,6 +80,9 @@ import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.student_class.StudentClassScreen
 import org.example.project.presentations.screen.student_class.StudentClassViewModel
 import org.example.project.presentations.screen.student_class.StudentClassViewModelFactory
+import org.example.project.presentations.screen.temp_timetable.TempTimetableScreen
+import org.example.project.presentations.screen.temp_timetable.TempTimetableViewModel
+import org.example.project.presentations.screen.temp_timetable.TempTimetableViewModelFactory
 import org.example.project.presentations.screen.timetable.TimetableScreen
 import org.example.project.presentations.screen.timetable.TimetableViewModel
 import org.example.project.presentations.screen.timetable.TimetableViewModelFactory
@@ -205,7 +216,8 @@ fun AppNavGraph(
                 onOpenNews = { url ->
                     navController.navigate("webview?url=${URLEncoder.encode(url, "UTF-8")}")
                 },
-                onOpenChat = { navController.navigate(AppRoute.Chat) }
+                onOpenChat = { navController.navigate(AppRoute.Chat) },
+                onOpenGpaTracker = { navController.navigate(AppRoute.GpaTracker) }
             )
         }
 
@@ -458,8 +470,21 @@ fun AppNavGraph(
         }
 
         composable(AppRoute.ClassSignUp) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                ClassSignUpViewModelFactory(
+                    container.enrollmentRepository,
+                    container.semesterUseCase
+                )
+            }
+            val classSignUpViewModel: ClassSignUpViewModel = viewModel(factory = factory)
+
             ClassSignUpScreen(
-                onBack = { navController.popBackStack() }
+                viewModel = classSignUpViewModel,
+                onBack = { navController.popBackStack() },
+                onOpenSignedUpClass = {
+                    navController.navigate(AppRoute.ClassSignUpDetail)
+                }
             )
         }
 
@@ -520,6 +545,63 @@ fun AppNavGraph(
             ApplicationScreen(
                 viewModel = newsViewModel,
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(AppRoute.GpaTracker) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                GpaTrackerViewModelFactory(
+                    container.transcriptUseCase
+                )
+            }
+            val gpaTrackerViewModel: GpaTrackerViewModel = viewModel(factory = factory)
+            GpaTrackerScreen(
+                viewModel = gpaTrackerViewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(AppRoute.ClassSignUpDetail) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                SignedUpClassViewModelFactory(
+                    container.enrollmentRepository,
+                    container.semesterUseCase
+                )
+            }
+            val signedUpClassesViewModel: SignedUpClassesViewModel = viewModel(factory = factory)
+            SignedUpClassesScreen(
+                viewModel = signedUpClassesViewModel,
+                onBack = { navController.popBackStack() },
+                onOpenTempSchedule = { navController.navigate(AppRoute.TempSchedule) },
+                onBackToHome = {
+                    navController.navigate(AppRoute.Main) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(AppRoute.TempSchedule) {
+            val container = LocalAppContainer.current
+            val context = LocalContext.current
+            val factory =
+                remember(container) {
+                    TempTimetableViewModelFactory(
+                        container.enrollmentRepository,
+                        container.semesterUseCase
+                    )
+                }
+            val tempTimetableViewModel: TempTimetableViewModel = viewModel(factory = factory)
+
+            TempTimetableScreen(
+                viewModel = tempTimetableViewModel,
+                onBack = { navController.popBackStack() },
+                onOpenEmail = { email -> context.openEmail(email) }
             )
         }
     }

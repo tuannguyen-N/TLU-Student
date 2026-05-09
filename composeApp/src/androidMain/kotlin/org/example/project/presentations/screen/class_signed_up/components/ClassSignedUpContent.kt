@@ -18,7 +18,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,31 +34,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.example.project.R
 import org.example.project.data.remote.dto.day_schedule.ScheduleData
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.components.TopCenterScreenBar
-import org.example.project.presentations.screen.class_signed_up.ClassSignedUpState
+import org.example.project.presentations.screen.class_signed_up.SignedUpClassesState
 import org.example.project.presentations.screen.transcript_term.components.SubjectCode
 import org.example.project.presentations.theme.ExtendedColors
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
-fun ClassSignedUpContent(
+fun SignedUpClassesContent(
     modifier: Modifier = Modifier,
-    uiState: ClassSignedUpState,
+    uiState: SignedUpClassesState,
     color: ExtendedColors = LocalExtendedColors.current,
     onBack: () -> Unit = {},
-    onConfirm: () -> Unit = {}
+    onConfirm: () -> Unit = {},
+    onOpenTempSchedule: () -> Unit = {},
+    onDeleteClass: (subjectCode: String, classCode: String) -> Unit = { _, _ -> }
 ) {
     Scaffold(
         modifier = modifier,
@@ -68,7 +68,11 @@ fun ClassSignedUpContent(
                 title = "Môn học đã đăng ký",
                 onBack = onBack,
                 backgroundColor = color.white,
-                contentColor = Color.Black
+                contentColor = Color.Black,
+                enableActionButton = true,
+                icon = Icons.Default.CalendarMonth,
+                iconColor = LocalExtendedColors.current.fontBlue,
+                onClickAction = onOpenTempSchedule
             )
         }
     ) { innerPadding ->
@@ -80,7 +84,7 @@ fun ClassSignedUpContent(
         ) {
             Spacer(Modifier.height(5.dp))
 
-            if (uiState.courseClasses != null) {
+            if (uiState.courseClasses != null && uiState.courseClasses.courseClasses.isNotEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -93,16 +97,18 @@ fun ClassSignedUpContent(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         contentPadding = PaddingValues(bottom = 160.dp)
                     ) {
+                        val grouped =
+                            uiState.courseClasses.courseClasses.groupBy { it.classCode }.values.toList()
                         items(
-                            items = uiState.courseClasses.courseClasses,
-                            key = { it.classCode }
-                        ) { courseClass ->
+                            items = grouped,
+                            key = { it.first().classCode }
+                        ) { courseClassGroup ->
                             CourseItem(
-                                isRequired = false, // TODO:
                                 color = color,
-                                courseClass = courseClass,
+                                courseClassGroup = courseClassGroup,
                                 onDeleteClick = {
-                                    // TODO: onClickDelete
+                                    val rep = courseClassGroup.first()
+                                    onDeleteClass(rep.subjectCode, rep.classCode)
                                 }
                             )
                         }
@@ -119,6 +125,7 @@ fun ClassSignedUpContent(
 
             ConfirmSignUp(
                 modifier = Modifier.align(Alignment.BottomCenter),
+                uiState = uiState,
                 onConfirm = onConfirm
             )
         }
@@ -127,7 +134,7 @@ fun ClassSignedUpContent(
 
 @Preview
 @Composable
-fun PreviewClassSignedUpContent() {
+fun PreviewSignedUpClassesContent() {
     val sampleCourse = CourseClass(
         classCode = "INT2204",
         dayOfWeek = 2,
@@ -147,9 +154,17 @@ fun PreviewClassSignedUpContent() {
         )
     )
 
+    val sampleCourse2 = sampleCourse.copy(
+        dayOfWeek = 4,
+        startPeriod = 6,
+        endPeriod = 8,
+        startTime = "13:00:00",
+        endTime = "15:30:00"
+    )
 
-    ClassSignedUpContent(
-        uiState = ClassSignedUpState(ScheduleData(listOf(sampleCourse)))
+
+    SignedUpClassesContent(
+        uiState = SignedUpClassesState(ScheduleData(listOf(sampleCourse, sampleCourse2)))
     )
 }
 
@@ -157,6 +172,7 @@ fun PreviewClassSignedUpContent() {
 @Composable
 private fun ConfirmSignUp(
     modifier: Modifier = Modifier,
+    uiState: SignedUpClassesState,
     color: ExtendedColors = LocalExtendedColors.current,
     onConfirm: () -> Unit
 ) {
@@ -173,6 +189,11 @@ private fun ConfirmSignUp(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
+            val allClasses = uiState.courseClasses?.courseClasses.orEmpty()
+            val grouped = allClasses.groupBy { it.classCode }
+            val totalSubjects = grouped.size
+            val totalCredits = grouped.values.sumOf { group -> group.first().credits ?: 0 }
+
             Column {
                 Text(
                     text = "Tổng số tín chỉ",
@@ -183,7 +204,7 @@ private fun ConfirmSignUp(
 
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
-                        text = "10",
+                        text = totalCredits.toString(),
                         style = MaterialTheme.typography.headlineSmall,
                         color = color.mainBlue,
                         fontWeight = FontWeight.Medium
@@ -210,7 +231,7 @@ private fun ConfirmSignUp(
                 )
 
                 Text(
-                    text = "10",
+                    text = totalSubjects.toString(),
                     style = MaterialTheme.typography.headlineSmall,
                     color = color.mainBlue,
                     fontWeight = FontWeight.Medium
@@ -237,8 +258,7 @@ private fun ConfirmSignUp(
 
 @Composable
 private fun CourseItem(
-    isRequired: Boolean,
-    courseClass: CourseClass,
+    courseClassGroup: List<CourseClass>,
     color: ExtendedColors,
     onDeleteClick: () -> Unit
 ) {
@@ -275,39 +295,22 @@ private fun CourseItem(
                         .fillMaxWidth()
                         .padding(end = 40.dp)
                 ) {
+                    val representative = courseClassGroup.first()
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         SubjectCode(
-                            name = courseClass.subjectCode,
+                            name = representative.classCode,
                             color = color.fontBlue
                         )
-
-                        if (isRequired) {
-                            Text(
-                                text = "BẮT BUỘC",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = color.grayNavy,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = buildAnnotatedString {
-                            append(courseClass.subjectName)
-                            append(" ")
-                            withStyle(
-                                style = SpanStyle(
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 15.sp
-                                ),
-                            ) {
-                                append("(${courseClass.classCode})")
-                            }
+                            append(representative.subjectName)
                         },
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
@@ -326,48 +329,63 @@ private fun CourseItem(
                             modifier = Modifier.size(18.dp)
                         )
                         Text(
-                            text = courseClass.lecturer.fullName,
+                            text = representative.lecturer.fullName,
                             style = MaterialTheme.typography.bodyMedium,
                             color = color.gray
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.CalendarMonth,
-                                contentDescription = null,
-                                tint = color.gray,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Text(
-                                text = "", // TODO:
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = color.gray
-                            )
-                        }
-
-
+                    courseClassGroup.forEach { cc ->
+                        TimePeriod(
+                            dayOfWeek = cc.dayOfWeek,
+                            startPeriod = cc.startPeriod,
+                            endPeriod = cc.endPeriod
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
                     }
                 }
 
                 Text(
-                    text = "1 Tín chỉ", // TODO: add credit
+                    text = "${courseClassGroup.first().credits} Tín chỉ",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.align(Alignment.BottomEnd)
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun TimePeriod(
+    dayOfWeek: Int,
+    startPeriod: Int,
+    endPeriod: Int
+) {
+    val color = LocalExtendedColors.current
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.AccessTime,
+                contentDescription = null,
+                tint = color.gray,
+                modifier = Modifier.size(18.dp)
+            )
+            Text(
+                text = "Thứ ${dayOfWeek}: Tiết ${startPeriod}-${endPeriod}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = color.gray
+            )
         }
     }
 }

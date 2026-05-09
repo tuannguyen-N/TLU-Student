@@ -90,7 +90,7 @@ fun NotificationDetailContent(
             Spacer(Modifier.height(20.dp))
 
             Text(
-                text = "Nội dung thông báo",
+                text = notificationDetail?.content ?: "Trống",
                 style = MaterialTheme.typography.bodyLarge,
                 color = color.blackBackground
             )
