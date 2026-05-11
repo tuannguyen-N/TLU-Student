@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import org.example.project.domain.model.FeatureType
 import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.screen.BottomBar
-import org.example.project.presentations.screen.chat.ChatScreen
 import org.example.project.presentations.screen.home.HomeScreen
 import org.example.project.presentations.screen.home.HomeViewModel
 import org.example.project.presentations.screen.school_schedule.ScheduleScreen
@@ -41,7 +40,9 @@ fun MainScreen(
     onOpenNewsScreen: () -> Unit,
     onOpenNews: (String) -> Unit,
     onOpenChat: () -> Unit,
-    onOpenGpaTracker: () -> Unit
+    onOpenGpaTracker: () -> Unit,
+    openAlertsAndActionsScreen: () -> Unit,
+    onViewMaterials: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()
@@ -75,7 +76,8 @@ fun MainScreen(
                         onOpenFeature = onOpenFeature,
                         onOpenNewsScreen = onOpenNewsScreen,
                         onOpenNews = onOpenNews,
-                        onOpenChat = onOpenChat
+                        onOpenChat = onOpenChat,
+                        openAlertsAndActionsScreen = openAlertsAndActionsScreen
                     )
 
                     1 -> ScheduleScreen(
@@ -83,7 +85,8 @@ fun MainScreen(
                         onOpenTimetable = onOpenTimetable,
                         viewModel = scheduleViewModel,
                         onSendEmail = { onSendEmail(it) },
-                        onOpenChat = onOpenChat
+                        onOpenChat = onOpenChat,
+                        onViewMaterials = onViewMaterials
                     )
 
 //                    2 -> {}

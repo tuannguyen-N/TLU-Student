@@ -34,7 +34,7 @@ fun InfoCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = LocalExtendedColors.current.background),
+        colors = CardDefaults.cardColors(containerColor = LocalExtendedColors.current.white),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         border = BorderStroke(1.dp, LocalExtendedColors.current.gray.copy(alpha = 0.1f))
     ) {

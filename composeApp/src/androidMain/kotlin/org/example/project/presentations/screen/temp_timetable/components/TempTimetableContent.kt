@@ -31,6 +31,7 @@ fun TempTimetableContent(
     onCopyLecturerCode: (String, String) -> Unit,
     onCopyPhoneNumber: (String, String) -> Unit,
     onCopyEmail: (String, String) -> Unit,
+    onViewMaterials: () -> Unit,
 ) {
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
@@ -64,9 +65,7 @@ fun TempTimetableContent(
             ClassDetailBottomSheet(
                 onDismiss = onDismissDetailCourseClass,
                 courseClass = uiState.selectedCourseClass!!,
-                onViewMaterials = {
-
-                },
+                onViewMaterials = onViewMaterials,
                 onOpenDetailLecturerInfo = onOpenDetailLecturerInfo
             )
         }

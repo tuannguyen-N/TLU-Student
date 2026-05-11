@@ -15,7 +15,8 @@ import org.example.project.presentations.screen.temp_timetable.components.TempTi
 fun TempTimetableScreen(
     viewModel: TempTimetableViewModel,
     onOpenEmail: (String) -> Unit,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onViewMaterials: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val clipboard = LocalClipboard.current
@@ -39,6 +40,7 @@ fun TempTimetableScreen(
         onCopyPhoneNumber = copyToClipboard,
         onCopyEmail = copyToClipboard,
         onCopyLecturerCode = copyToClipboard,
-        onContact = { onOpenEmail(it) }
+        onContact = { onOpenEmail(it) },
+        onViewMaterials = onViewMaterials
     )
 }

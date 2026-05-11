@@ -13,5 +13,5 @@ data class Content(
     val targetType: String,
     val title: String,
     val isImportant: Boolean,
-    val referenceType: String
+    val referenceType: String?
 )

@@ -47,7 +47,7 @@ fun TranscriptContent(
                 title = "Bảng điểm",
                 onOpenNotificationScreen = onOpenNotificationScreen,
                 onOpenChat = onOpenChat,
-                isNotificationBadgeVisible = uiState.isAllNotificationsRead
+                isNotificationBadgeVisible = !uiState.isAllNotificationsRead
             )
         }
     ) { padding ->

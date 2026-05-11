@@ -10,5 +10,6 @@ data class NotificationUiModel(
     val createdAt: String,
     val createdTime: String,
     val createdDate: String,
-    val createdAgo: String
+    val createdAgo: String,
+    val referenceType: NotificationReferenceType?
 )

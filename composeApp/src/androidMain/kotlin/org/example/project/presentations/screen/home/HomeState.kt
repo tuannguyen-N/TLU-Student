@@ -11,7 +11,7 @@ data class HomeState(
     val studentInfo: StudentData? = null,
     val courseClasses: List<CourseClass>? = null,
     val quickAccessList: List<FeatureUiModel> = emptyList(),
-    val alerts: List<AlertUiModel> = AlertUiModel.getDemoList(),
+    val alerts: List<AlertUiModel> = emptyList(),
     val newsAndEvents: List<EventAndNewUiModel> = emptyList(),
     val imageBase64: String? = null,
     val dailyQuote: QuoteEntity? = null,

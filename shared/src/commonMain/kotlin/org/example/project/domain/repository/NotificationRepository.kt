@@ -1,11 +1,17 @@
 package org.example.project.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import org.example.project.data.cache.CacheManager
 import org.example.project.data.local.FirebaseStorage
+import org.example.project.data.local.dao.AlertDao
 import org.example.project.data.local.dao.NotificationDao
+import org.example.project.data.local.entity.PerformedAlertEntity
+import org.example.project.data.mapper.toAlertUiModels
 import org.example.project.data.mapper.toEntity
 import org.example.project.data.mapper.toListNotificationUiModel
 import org.example.project.data.remote.api.NotificationApi
@@ -14,6 +20,7 @@ import org.example.project.data.remote.dto.notification.NotificationData
 import org.example.project.data.remote.dto.notification_detail.NotificationDetailData
 import org.example.project.data.remote.dto.notification_prepare.PrepareNotificationData
 import org.example.project.domain.TopicSubscriber
+import org.example.project.domain.model.AlertUiModel
 import org.example.project.domain.model.AppResult
 import org.example.project.domain.model.NotificationUiModel
 import kotlin.time.Duration.Companion.minutes
@@ -22,7 +29,8 @@ class NotificationRepository(
     private val notificationApi: NotificationApi,
     private val firebaseStorage: FirebaseStorage,
     private val topicSubscriber: TopicSubscriber,
-    private val notificationDao: NotificationDao
+    private val notificationDao: NotificationDao,
+    private val alertDao: AlertDao
 ) {
     private lateinit var prepareNotificationData: PrepareNotificationData
 
@@ -34,6 +42,10 @@ class NotificationRepository(
         notifications.map {
             it.copy(isRead = readIdsSet.contains(it.id))
         }
+    }
+
+    val hasUnreadNotifications = notifications.map { list ->
+        list.any { !it.isRead }
     }
 
     suspend fun getNotifications(forceRefresh: Boolean = false): AppResult<List<NotificationUiModel>> {
@@ -117,5 +129,40 @@ class NotificationRepository(
         } catch (e: Exception) {
             return AppResult.Failure(e.message, e)
         }
+    }
+
+    fun getAlertList(studentId: String): Flow<List<AlertUiModel>> {
+        return combine(
+            notifications,
+            alertDao.observePerformedAlerts(studentId)
+        ) { notificationList, performedAlerts ->
+
+            val performedIds = performedAlerts
+                .map { it.notificationId }
+                .toSet()
+
+            notificationList
+                .filterNot { it.id in performedIds }
+                .toAlertUiModels()
+                .sortedWith(
+                    compareBy { it.daysUntil }
+                )
+        }.distinctUntilChanged()
+    }
+
+    fun getFullAlertList(): Flow<List<AlertUiModel>> {
+        return notifications.map { it.toAlertUiModels() }
+    }
+
+    suspend fun getPerformedAlerts(studentId: String): List<PerformedAlertEntity> {
+        return alertDao.getAllPerformedAlerts(studentId = studentId)
+    }
+
+    suspend fun insertPerformedAlert(studentId: String, notificationId: Int) {
+        alertDao.insertPerformedAlert(PerformedAlertEntity(studentId, notificationId))
+    }
+
+    suspend fun deletePerformedAlert(studentId: String, notificationId: Int) {
+        alertDao.deletePerformedAlert(notificationId, studentId)
     }
 }

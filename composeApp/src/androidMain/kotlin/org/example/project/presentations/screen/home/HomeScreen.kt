@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.example.project.domain.model.FeatureType
 import org.example.project.presentations.screen.home.components.AlertList
+import org.example.project.presentations.screen.home.components.EmptyAlertCard
 import org.example.project.presentations.screen.home.components.FeatureList
 import org.example.project.presentations.screen.home.components.HomeHeader
 import org.example.project.presentations.screen.home.components.NewsAndEventsList
@@ -33,7 +34,8 @@ fun HomeScreen(
     onOpenScheduleScreen: () -> Unit,
     onOpenNewsScreen: () -> Unit,
     onOpenNews: (String) -> Unit,
-    onOpenChat: () -> Unit
+    onOpenChat: () -> Unit,
+    openAlertsAndActionsScreen: () -> Unit
 ) {
     val color = LocalExtendedColors.current
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
@@ -51,7 +53,7 @@ fun HomeScreen(
                 isProfileReady = !uiState.loadingStudentInfo && uiState.studentInfo != null,
                 imageBase64 = uiState.imageBase64,
                 onOpenChat = onOpenChat,
-                isNotificationBadgeVisible = uiState.isAllNotificationsRead
+                isNotificationBadgeVisible = !uiState.isAllNotificationsRead
             )
         }
     ) { paddingValues ->
@@ -69,13 +71,22 @@ fun HomeScreen(
                 contentPadding = PaddingValues(bottom = 200.dp)
             ) {
                 item(key = "alert_list", contentType = "AlertList") {
-                    AlertList(
-                        items = uiState.alerts,
-                        isLoading = uiState.loadingAlertList,
-                        onClickAction = {},
-                        modifier = Modifier.padding(top = 15.dp),
-                        color = color
-                    )
+                    if (uiState.alerts.isNotEmpty()) {
+                        AlertList(
+                            items = uiState.alerts,
+                            isLoading = uiState.loadingAlertList,
+                            onClickAction = openAlertsAndActionsScreen,
+                            modifier = Modifier.padding(top = 10.dp),
+                        )
+                    } else {
+                        EmptyAlertCard(
+                            modifier = Modifier.padding(
+                                start = 20.dp,
+                                end = 20.dp,
+                                top = 10.dp
+                            )
+                        )
+                    }
                 }
 
                 item(key = "schedule_list", contentType = "ScheduleList") {

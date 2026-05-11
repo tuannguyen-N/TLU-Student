@@ -58,12 +58,21 @@ class HomeViewModel(
         observeStudentInfo()
         observeCourseClasses()
         observeReadNotifications()
+        observeAlerts()
         loadInitData()
     }
 
+    private fun observeAlerts() {
+        notificationRepository.getAlertList(studentUseCase.studentInfo.value?.studentCode ?: "")
+            .onEach {
+                updateState { copy(alerts = it) }
+            }
+            .launchIn(viewModelScope)
+    }
+
     private fun observeReadNotifications() {
-        notificationRepository.readNotificationIds.onEach { readIds ->
-            updateState { copy(isAllNotificationsRead = readIds.isEmpty()) }
+        notificationRepository.hasUnreadNotifications.onEach { hasUnread ->
+            updateState { copy(isAllNotificationsRead = !hasUnread) }
         }.launchIn(viewModelScope)
     }
 
@@ -104,7 +113,16 @@ class HomeViewModel(
         viewModelScope.launch { loadCourseClasses() }
         viewModelScope.launch { loadNews() }
         viewModelScope.launch { loadDailyQuote() }
+        viewModelScope.launch { loadAlert() }
         loadImage()
+    }
+
+    private suspend fun loadAlert() {
+        withDelayedLoading(
+            onLoading = { updateState { copy(loadingAlertList = it) } }
+        ) {
+            notificationRepository.getNotifications(true)
+        }
     }
 
     private suspend fun loadDailyQuote() {

@@ -15,7 +15,8 @@ import org.example.project.presentations.screen.timetable.components.TimetableCo
 fun TimetableScreen(
     viewModel: TimetableViewModel,
     onOpenEmail: (String) -> Unit,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onViewMaterials: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val clipboard = LocalClipboard.current
@@ -44,6 +45,7 @@ fun TimetableScreen(
         onContact = { onOpenEmail(it) },
         onChangeSemester = viewModel::onChangeSemester,
         onToggleDropDown = viewModel::onToggleDropDown,
-        onChangeWeek = viewModel::onChangeWeek
+        onChangeWeek = viewModel::onChangeWeek,
+        onViewMaterials = onViewMaterials
     )
 }

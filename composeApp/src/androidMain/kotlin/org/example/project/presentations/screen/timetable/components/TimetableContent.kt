@@ -38,7 +38,8 @@ fun TimetableContent(
     onCopyEmail: (String, String) -> Unit,
     onChangeSemester: (String) -> Unit,
     onChangeWeek: (String) -> Unit,
-    onToggleDropDown: () -> Unit
+    onToggleDropDown: () -> Unit,
+    onViewMaterials: () -> Unit
 ) {
     Scaffold(
         containerColor = LocalExtendedColors.current.background,
@@ -99,9 +100,7 @@ fun TimetableContent(
             ClassDetailBottomSheet(
                 onDismiss = onDismissDetailCourseClass,
                 courseClass = uiState.selectedCourseClass!!,
-                onViewMaterials = {
-                    // TODO:
-                },
+                onViewMaterials = onViewMaterials,
                 onOpenDetailLecturerInfo = onOpenDetailLecturerInfo
             )
         }

@@ -42,7 +42,7 @@ fun LecturerCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = LocalExtendedColors.current.background),
+        colors = CardDefaults.cardColors(containerColor = LocalExtendedColors.current.white),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         border = BorderStroke(1.dp, LocalExtendedColors.current.gray.copy(alpha = 0.1f))
     ) {
@@ -56,7 +56,7 @@ fun LecturerCard(
                     modifier = Modifier
                         .size(45.dp)
                         .background(
-                            color = LocalExtendedColors.current.mainBlue,
+                            color = LocalExtendedColors.current.lightBlue,
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -89,7 +89,7 @@ fun LecturerCard(
                     Box(
                         modifier = Modifier
                             .background(
-                                color = Color.Blue.copy(alpha = 0.12f),
+                                color = LocalExtendedColors.current.lightBlue.copy(alpha = 0.12f),
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .padding(horizontal = 10.dp, vertical = 1.dp)
@@ -97,7 +97,7 @@ fun LecturerCard(
                         Text(
                             text = lecturerId,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color.Blue,
+                            color = LocalExtendedColors.current.lightBlue,
                         )
                     }
                 }

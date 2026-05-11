@@ -1,5 +1,6 @@
 package org.example.project.presentations.navigation
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -8,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,6 +22,9 @@ import org.example.project.domain.usecase.CountdownTimerUseCase
 import org.example.project.domain.usecase.GenerateQrUseCase
 import org.example.project.domain.usecase.GpaPredictUseCase
 import org.example.project.presentations.components.WebViewScreen
+import org.example.project.presentations.screen.alerts_and_actions.AlertsAndActionsScreen
+import org.example.project.presentations.screen.alerts_and_actions.AlertsAndActionsViewModel
+import org.example.project.presentations.screen.alerts_and_actions.AlertsAndActionsViewModelFactory
 import org.example.project.presentations.screen.application.ApplicationScreen
 import org.example.project.presentations.screen.application.ApplicationViewModel
 import org.example.project.presentations.screen.application.ApplicationViewModelFactory
@@ -217,7 +222,15 @@ fun AppNavGraph(
                     navController.navigate("webview?url=${URLEncoder.encode(url, "UTF-8")}")
                 },
                 onOpenChat = { navController.navigate(AppRoute.Chat) },
-                onOpenGpaTracker = { navController.navigate(AppRoute.GpaTracker) }
+                onOpenGpaTracker = { navController.navigate(AppRoute.GpaTracker) },
+                openAlertsAndActionsScreen = { navController.navigate(AppRoute.AlertsAndActions) },
+                onViewMaterials = {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        "https://elearning.thanglong.edu.vn/login/index.php".toUri()
+                    )
+                    context.startActivity(intent)
+                }
             )
         }
 
@@ -230,6 +243,22 @@ fun AppNavGraph(
             WebViewScreen(url = url, onClose = {
                 navController.popBackStack()
             })
+        }
+
+        composable(AppRoute.AlertsAndActions) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                AlertsAndActionsViewModelFactory(
+                    container.notificationRepository
+                )
+            }
+            val viewModel: AlertsAndActionsViewModel = viewModel(factory = factory)
+            AlertsAndActionsScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onNavigateToExamSchedule = { navController.navigate(AppRoute.ExamSchedule) },
+                onNavigateToTuition = { navController.navigate(AppRoute.TuitionPayment) }
+            )
         }
 
         composable(AppRoute.Profile) {
@@ -347,7 +376,14 @@ fun AppNavGraph(
             TimetableScreen(
                 viewModel = timetableViewModel,
                 onBack = { navController.popBackStack() },
-                onOpenEmail = { email -> context.openEmail(email) }
+                onOpenEmail = { email -> context.openEmail(email) },
+                onViewMaterials = {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        "https://elearning.thanglong.edu.vn/login/index.php".toUri()
+                    )
+                    context.startActivity(intent)
+                }
             )
         }
 
@@ -366,7 +402,14 @@ fun AppNavGraph(
             OfflineTimetableScreen(
                 viewModel = offlineTimetableViewModel,
                 onBack = { navController.popBackStack() },
-                onOpenEmail = { email -> context.openEmail(email) }
+                onOpenEmail = { email -> context.openEmail(email) },
+                onViewMaterials = {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        "https://elearning.thanglong.edu.vn/login/index.php".toUri()
+                    )
+                    context.startActivity(intent)
+                }
             )
         }
 
@@ -601,7 +644,14 @@ fun AppNavGraph(
             TempTimetableScreen(
                 viewModel = tempTimetableViewModel,
                 onBack = { navController.popBackStack() },
-                onOpenEmail = { email -> context.openEmail(email) }
+                onOpenEmail = { email -> context.openEmail(email) },
+                onViewMaterials = {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        "https://elearning.thanglong.edu.vn/login/index.php".toUri()
+                    )
+                    context.startActivity(intent)
+                }
             )
         }
     }

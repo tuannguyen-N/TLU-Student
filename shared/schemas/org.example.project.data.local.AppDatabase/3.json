@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "b8ffdb917cd6de22dc4c744e6d389091",
+    "version": 3,
+    "identityHash": "1d2c6e4f7b03b0b7b6896653e4a62260",
     "entities": [
       {
         "tableName": "quick_access_features",
@@ -192,8 +192,14 @@
       },
       {
         "tableName": "performed_alerts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`notificationId` INTEGER NOT NULL, PRIMARY KEY(`notificationId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`studentId` TEXT NOT NULL, `notificationId` INTEGER NOT NULL, PRIMARY KEY(`studentId`))",
         "fields": [
+          {
+            "fieldPath": "studentId",
+            "columnName": "studentId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
           {
             "fieldPath": "notificationId",
             "columnName": "notificationId",
@@ -204,14 +210,14 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "notificationId"
+            "studentId"
           ]
         }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b8ffdb917cd6de22dc4c744e6d389091')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1d2c6e4f7b03b0b7b6896653e4a62260')"
     ]
   }
 }

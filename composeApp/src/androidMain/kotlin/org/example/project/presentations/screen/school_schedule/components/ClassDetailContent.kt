@@ -16,12 +16,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.MeetingRoom
+import androidx.compose.material.icons.outlined.StickyNote2
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +34,7 @@ import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.transcript_term.components.SubjectCode
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.dashedBorder
 
 @Composable
 fun ClassDetailContent(
@@ -91,7 +95,11 @@ fun ClassDetailContent(
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(modifier = Modifier.weight(1f))
-            SubjectCode(name = courseClass.subjectCode, modifier = Modifier.padding(start = 8.dp))
+            SubjectCode(
+                name = courseClass.subjectCode,
+                modifier = Modifier.padding(start = 8.dp),
+                color = LocalExtendedColors.current.lightBlue
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -127,21 +135,71 @@ fun ClassDetailContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = "NỘI DUNG BÀI HỌC",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = 0.5.sp
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .height(20.dp)
+                    .background(
+                        color = LocalExtendedColors.current.lightBlue,
+                        shape = RoundedCornerShape(2.dp)
+                    )
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "NỘI DUNG BÀI HỌC",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp,
+                color = LocalExtendedColors.current.blackBackground
+            )
+        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = "Nothing", // TODO: add lesson content
-            style = MaterialTheme.typography.bodyMedium,
-            color = LocalExtendedColors.current.gray,
-            lineHeight = 22.sp
-        )
+        val lessonContent = null
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = LocalExtendedColors.current.mainBlue.copy(alpha = 0.03f),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .dashedBorder(
+                    color = LocalExtendedColors.current.mainBlue.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(vertical = 32.dp, horizontal = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (lessonContent.isNullOrBlank()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.StickyNote2,
+                        contentDescription = null,
+                        tint = LocalExtendedColors.current.mainBlue.copy(alpha = 0.3f),
+                        modifier = Modifier.size(30.dp)
+                    )
+                    Text(
+                        text = "Chưa có nội dung cho tiết học này",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = LocalExtendedColors.current.gray.copy(alpha = 0.7f),
+                        fontStyle = FontStyle.Italic
+                    )
+                }
+            } else {
+                Text(
+                    text = lessonContent.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = LocalExtendedColors.current.gray,
+                    lineHeight = 22.sp
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

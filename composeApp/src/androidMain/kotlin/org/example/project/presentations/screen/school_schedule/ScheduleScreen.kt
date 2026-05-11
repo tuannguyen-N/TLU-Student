@@ -27,7 +27,8 @@ fun ScheduleScreen(
     onOpenNotificationScreen: () -> Unit,
     onOpenTimetable: () -> Unit,
     onSendEmail: (String) -> Unit,
-    onOpenChat: () -> Unit
+    onOpenChat: () -> Unit,
+    onViewMaterials: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val clipboard = LocalClipboard.current
@@ -52,7 +53,7 @@ fun ScheduleScreen(
                 title = "Lịch Học",
                 onOpenNotificationScreen = onOpenNotificationScreen,
                 onOpenChat = onOpenChat,
-                isNotificationBadgeVisible = uiState.isAllNotificationsRead
+                isNotificationBadgeVisible = !uiState.isAllNotificationsRead
             )
         }
     ) {
@@ -90,9 +91,7 @@ fun ScheduleScreen(
             ClassDetailBottomSheet(
                 onDismiss = viewModel::onDismissDetailCourseClass,
                 courseClass = uiState.selectedCourseClass!!,
-                onViewMaterials = {
-                    // TODO:  
-                },
+                onViewMaterials = onViewMaterials,
                 onOpenDetailLecturerInfo = viewModel::onOpenDetailLecturerInfo
             )
         }

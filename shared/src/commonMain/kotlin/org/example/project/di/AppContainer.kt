@@ -9,6 +9,7 @@ import org.example.project.data.local.createDatabase
 import org.example.project.data.local.getDatabaseBuilder
 import org.example.project.data.remote.api.ApplicationApi
 import org.example.project.data.remote.api.AuthApi
+import org.example.project.data.remote.api.EnrollmentApi
 import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.api.NewsApi
 import org.example.project.data.remote.api.NotificationApi
@@ -28,6 +29,7 @@ import org.example.project.domain.TopicSubscriber
 import org.example.project.domain.repository.ApplicationRepository
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.ChatRepository
+import org.example.project.domain.repository.EnrollmentRepository
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
@@ -46,8 +48,6 @@ import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.domain.usecase.TranscriptUseCase
-import org.example.project.data.remote.api.EnrollmentApi
-import org.example.project.domain.repository.EnrollmentRepository
 
 class AppContainer(
     tokenStorage: TokenStorage,
@@ -129,11 +129,13 @@ class AppContainer(
     //for notification
     private val notificationDao = database.notificationDao()
     private val notificationApi = NotificationApi(httpClient)
+    private val alertDao = database.alertDao()
     val notificationRepository = NotificationRepository(
         notificationApi,
         firebaseStorage,
         topicSubscriber,
-        notificationDao
+        notificationDao,
+        alertDao
     )
 
     val handleLoginSuccessUseCase =

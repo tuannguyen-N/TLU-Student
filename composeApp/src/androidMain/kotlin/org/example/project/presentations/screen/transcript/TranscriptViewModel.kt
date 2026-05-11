@@ -36,8 +36,8 @@ class TranscriptViewModel(
     }
 
     private fun observeReadNotifications() {
-        notificationRepository.readNotificationIds.onEach { readIds ->
-            updateState { copy(isAllNotificationsRead = readIds.isEmpty()) }
+        notificationRepository.hasUnreadNotifications.onEach { hasUnread ->
+            updateState { copy(isAllNotificationsRead = !hasUnread) }
         }.launchIn(viewModelScope)
     }
 
