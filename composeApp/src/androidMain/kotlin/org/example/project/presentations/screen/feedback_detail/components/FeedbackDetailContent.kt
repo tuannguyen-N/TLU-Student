@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import org.example.project.domain.model.FeedbackItem
-import org.example.project.domain.model.FeedbackStatus
+import org.example.project.domain.model.ApplicationStatus
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.feedback.components.FeedbackStatusBadge
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -45,7 +45,7 @@ fun FeedbackDetailContent(
         title = "Lỗi thanh toán",
         preview = "",
         date = "10/05/2026",
-        status = FeedbackStatus.RESOLVED
+        status = ApplicationStatus.RESOLVED
     )
     val fullContent =
         "Tôi đã thanh toán đơn hàng mã #12345 qua ví điện tử nhưng hệ thống vẫn báo chưa thanh toán. Tôi đã bị trừ tiền trong tài khoản ngân hàng. Vui lòng kiểm tra và cập nhật trạng thái đơn hàng giúp tôi. Xin cảm ơn!"
@@ -162,7 +162,7 @@ fun FeedbackDetailContent(
             backgroundColorRes = LocalExtendedColors.current.mainRed,
             textColorRes = Color.White,
             onClick = { /*TODO*/ },
-            enabled = item.status == FeedbackStatus.PENDING
+            enabled = item.status == ApplicationStatus.PENDING
         )
     }
 }

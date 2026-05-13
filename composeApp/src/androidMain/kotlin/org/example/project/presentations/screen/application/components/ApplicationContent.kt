@@ -30,6 +30,7 @@ import org.example.project.R
 import org.example.project.data.remote.dto.application.ApplicationType
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.application.ApplicationState
+import org.example.project.presentations.screen.feedback.components.FeedbackLabel
 import org.example.project.presentations.screen.feedback.components.ImportantNoteFeedbackCard
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.clearFocusOnTap
@@ -43,6 +44,7 @@ fun ApplicationContent(
     onAddFile: (Uri) -> Unit,
     onRemoveFile: () -> Unit,
     onSubmit: () -> Unit,
+    onContentChange: (String) -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
@@ -56,7 +58,7 @@ fun ApplicationContent(
             .padding(horizontal = 16.dp)
             .clearFocusOnTap(),
     ) {
-        FeedbackLabel(text = "Chủ đề", true)
+        ApplicationLabel(text = "Chủ đề", true)
         Box {
             OutlinedTextField(
                 value = uiState.selectedApplicationType?.name ?: "",
@@ -103,6 +105,30 @@ fun ApplicationContent(
             }
         }
 
+        FeedbackLabel(text = "Nội dung đơn từ", false)
+        OutlinedTextField(
+            value = uiState.content ?: "",
+            onValueChange = onContentChange,
+            placeholder = {
+                Text(
+                    text = "Nhập nội dung đơn từ của bạn nếu có....",
+                    color = LocalExtendedColors.current.gray,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedBorderColor = LocalExtendedColors.current.gray,
+                unfocusedBorderColor = LocalExtendedColors.current.gray.copy(alpha = 0.2f)
+            ),
+            maxLines = 5
+        )
+
         PdfAttachmentContent(
             uiState = uiState,
             onRemoveFile = onRemoveFile,
@@ -129,7 +155,7 @@ fun ApplicationContent(
 }
 
 @Composable
-fun FeedbackLabel(text: String, isNeedAsterisk: Boolean = false) {
+fun ApplicationLabel(text: String, isNeedAsterisk: Boolean = false) {
     Text(
         text = buildAnnotatedString {
             append(text)
@@ -156,6 +182,7 @@ private fun ApplicationContentPreview() {
         onSubjectExpandedChange = {},
         onRemoveFile = {},
         onSubmit = {},
-        onAddFile = {}
+        onAddFile = {},
+        onContentChange = {}
     )
 }

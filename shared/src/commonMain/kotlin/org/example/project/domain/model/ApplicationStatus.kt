@@ -1,7 +1,8 @@
 package org.example.project.domain.model
 
-enum class FeedbackStatus {
+enum class ApplicationStatus {
     PENDING,
     PROCESSING,
-    RESOLVED
+    RESOLVED,
+    APPROVED
 }

@@ -161,12 +161,7 @@ class HomeViewModel(
             onLoading = { updateState { copy(loadingStudentInfo = it) } }
         ) {
             delay(400L)
-            studentUseCase.getStudentInfo().fold(
-                onSuccess = {},
-                onFailure = {
-                    Log.e("123123", "loadStudentInfo: $it")
-                }
-            )
+            studentUseCase.getStudentInfo()
         }
     }
 
@@ -181,6 +176,7 @@ class HomeViewModel(
             updateState { copy(isRefreshing = true) }
             try {
                 loadCourseClasses(true)
+                loadAlert()
             } finally {
                 delay(1000L)
                 updateState { copy(isRefreshing = false) }

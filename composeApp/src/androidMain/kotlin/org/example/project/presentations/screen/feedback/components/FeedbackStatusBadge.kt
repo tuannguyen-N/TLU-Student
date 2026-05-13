@@ -10,25 +10,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.FeedbackStatus
+import org.example.project.domain.model.ApplicationStatus
 
 @Composable
-fun FeedbackStatusBadge(status: FeedbackStatus) {
+fun FeedbackStatusBadge(status: ApplicationStatus) {
     val (label, backgroundColor, textColor) = when (status) {
-        FeedbackStatus.PENDING -> Triple(
+        ApplicationStatus.PENDING -> Triple(
             "Đang chờ xử lý",
             Color(0xFFFFF3E0),
             Color(0xFFE65100)
         )
 
-        FeedbackStatus.PROCESSING -> Triple(
+        ApplicationStatus.PROCESSING -> Triple(
             "Đang xử lý",
             Color(0xFFE3F2FD),
             Color(0xFF1565C0)
         )
 
-        FeedbackStatus.RESOLVED -> Triple(
+        ApplicationStatus.RESOLVED -> Triple(
             "Đã xử lý",
+            Color(0xFFE8F5E9),
+            Color(0xFF2E7D32)
+        )
+
+        ApplicationStatus.APPROVED -> Triple(
+            "Đã phê duyệt",
             Color(0xFFE8F5E9),
             Color(0xFF2E7D32)
         )

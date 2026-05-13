@@ -43,6 +43,12 @@ object MsalHelper {
 
         app.signIn(activity, null, SCOPES, object : AuthenticationCallback {
             override fun onSuccess(result: IAuthenticationResult) {
+                val account = result.account
+
+                Log.d("MSAL", "username = ${account.username}")
+                Log.d("MSAL", "id = ${account.id}")
+                Log.d("MSAL", "claims = ${account.claims}")
+                Log.d("MSAL", "accessToken = ${result.accessToken}")
                 onResult(result.accessToken, false)
             }
 

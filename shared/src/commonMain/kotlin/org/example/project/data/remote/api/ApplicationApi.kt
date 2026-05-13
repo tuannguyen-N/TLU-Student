@@ -9,6 +9,7 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import org.example.project.data.remote.dto.application.ApplicationSubmitResponse
 import org.example.project.data.remote.dto.application.ApplicationTypesResponse
+import org.example.project.data.remote.dto.application_history.ApplicationHistoryResponse
 
 class ApplicationApi(
     private val client: HttpClient
@@ -39,5 +40,13 @@ class ApplicationApi(
                 content?.let { append("content", it) }
             }
         ).body()
+    }
+
+    suspend fun getApplicationHistory(): ApplicationHistoryResponse {
+        return client.get("/api/v1/applications/history").body()
+    }
+
+    suspend fun getApplicationDetail(id: Int): org.example.project.data.remote.dto.application_detail.ApplicationDetailResponse {
+        return client.get("/api/v1/applications/history/$id").body()
     }
 }

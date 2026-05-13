@@ -168,7 +168,7 @@ fun RankAchievement(
         Spacer(modifier = Modifier.width(6.dp))
 
         Text(
-            text = "Sinh viên ${gpa.toTextRank()}",
+            text = "Sinh viên ${(gpa * 10 / 4).toTextRank()}",
             color = color,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold

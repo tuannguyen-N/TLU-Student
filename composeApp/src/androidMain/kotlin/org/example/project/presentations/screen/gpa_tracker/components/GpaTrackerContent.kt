@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Job
@@ -138,11 +137,36 @@ private fun CurrentGpaCard(gpa: Double, delta: Double) {
                 )
             }
 
-            val sign = if (delta >= 0) "+" else ""
+            val isIncrease = delta > 0
+            val isDecrease = delta < 0
+
+            val sign = when {
+                isIncrease -> "+"
+                isDecrease -> "-"
+                else -> ""
+            }
+
+            val arrow = when {
+                isDecrease -> "↘"
+                else -> "↗"
+            }
+
+            val backgroundColor = when {
+                isIncrease -> color.green.copy(alpha = 0.1f)
+                isDecrease -> color.red.copy(alpha = 0.1f)
+                else -> color.orange.copy(alpha = 0.1f)
+            }
+
+            val textColor = when {
+                isIncrease -> color.green
+                isDecrease -> color.red
+                else -> color.orange
+            }
+
             LabelView(
-                text = "↗ $sign${"%.2f".format(delta)}",
-                backgroundColor = color.green.copy(alpha = 0.1f),
-                textColor = color.green
+                text = "$arrow $sign${"%.2f".format(kotlin.math.abs(delta))}",
+                backgroundColor = backgroundColor,
+                textColor = textColor
             )
         }
     }

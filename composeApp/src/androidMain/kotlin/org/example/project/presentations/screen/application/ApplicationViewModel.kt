@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.application
 
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +30,12 @@ class ApplicationViewModel(
             delay(100L)
             applicationRepository.getApplicationTypes().onSuccess { applicationTypes ->
                 _uiState.update { it.copy(applicationTypes = applicationTypes) }
+            }
+
+            applicationRepository.getApplicationHistory().onSuccess { applicationHistory ->
+                _uiState.update { it.copy(applicationHistory = applicationHistory) }
+            }.onFailure {
+                Log.e("check_history", "loadData: ${it.message}")
             }
         }
     }
@@ -70,6 +77,7 @@ class ApplicationViewModel(
             val files = listOf(fileName to fileBytes)
 
             applicationRepository.submitApplication(
+                content = state.content,
                 files = files,
                 applicationType = state.selectedApplicationType!!.id,
             ).onSuccess {
@@ -78,5 +86,17 @@ class ApplicationViewModel(
                 _uiState.update { it.copy(submitState = SubmitState.Error(message = result.message!!)) }
             }
         }
+    }
+
+    fun refreshData() {
+        loadData()
+    }
+
+    fun onTabSelected(index: Int) {
+        _uiState.update { it.copy(selectedTab = index) }
+    }
+
+    fun onContentChange(content: String) {
+        _uiState.update { it.copy(content = content) }
     }
 }

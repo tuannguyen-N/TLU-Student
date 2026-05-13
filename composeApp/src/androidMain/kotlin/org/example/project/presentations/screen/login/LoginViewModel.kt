@@ -40,12 +40,13 @@ class LoginViewModel(
                                 onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
                             } else if (isNoInternet) {
                                 sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
+                                updateState { copy(isLoading = false) }
                             } else {
                                 updateState {
                                     copy(error = "Đăng nhập thất bại")
                                 }
+                                updateState { copy(isLoading = false) }
                             }
-                            updateState { copy(isLoading = false) }
                         }
                     }
                 }
@@ -60,7 +61,7 @@ class LoginViewModel(
                     sendUiEvent(LoginUiEvent.OnLoginSuccess)
                 },
                 onFailure = {
-                    Log.e("123123", "onSignMsalSuccess: $it", )
+                    Log.e("123123", "onSignMsalSuccess: $it")
                     updateState { copy(showErrorSheet = true) }
                 }
             )

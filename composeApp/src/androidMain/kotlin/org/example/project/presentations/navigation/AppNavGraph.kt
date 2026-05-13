@@ -28,6 +28,9 @@ import org.example.project.presentations.screen.alerts_and_actions.AlertsAndActi
 import org.example.project.presentations.screen.application.ApplicationScreen
 import org.example.project.presentations.screen.application.ApplicationViewModel
 import org.example.project.presentations.screen.application.ApplicationViewModelFactory
+import org.example.project.presentations.screen.application_detail.ApplicationDetailScreen
+import org.example.project.presentations.screen.application_detail.ApplicationDetailViewModel
+import org.example.project.presentations.screen.application_detail.ApplicationDetailViewModelFactory
 import org.example.project.presentations.screen.chat.ChatScreen
 import org.example.project.presentations.screen.chat.ChatViewModel
 import org.example.project.presentations.screen.chat.ChatViewModelFactory
@@ -587,7 +590,34 @@ fun AppNavGraph(
             val newsViewModel: ApplicationViewModel = viewModel(factory = factory)
             ApplicationScreen(
                 viewModel = newsViewModel,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onNavigateToDetail = { id ->
+                    navController.navigate(AppRoute.applicationDetail(id))
+                }
+            )
+        }
+
+        composable(
+            route = AppRoute.ApplicationDetail,
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: -1
+            val container = LocalAppContainer.current
+            val context = LocalContext.current
+            val factory = remember(container, id) {
+                ApplicationDetailViewModelFactory(
+                    container.applicationRepository,
+                    id
+                )
+            }
+            val viewModel: ApplicationDetailViewModel = viewModel(factory = factory)
+            ApplicationDetailScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onOpenUrl = { url ->
+                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                    context.startActivity(intent)
+                }
             )
         }
 

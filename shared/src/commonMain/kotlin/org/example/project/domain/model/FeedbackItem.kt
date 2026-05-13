@@ -5,5 +5,5 @@ data class FeedbackItem(
     val title: String,
     val preview: String,
     val date: String,
-    val status: FeedbackStatus
+    val status: ApplicationStatus
 )
