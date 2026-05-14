@@ -18,19 +18,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import org.example.project.domain.model.SubjectOption
+import org.example.project.data.remote.dto.feedback.FeedbackCategoryData
 
-@Preview
 @Composable
 fun TypeFeedbackMenu(
-    onSelected: (SubjectOption) -> Unit = {},
+    onSelected: (FeedbackCategoryData) -> Unit = {},
+    categories: List<FeedbackCategoryData>,
     onDismiss: () -> Unit = {}
 ) {
-    val subjectOptions = SubjectOption.entries
-
     Popup(
         alignment = Alignment.TopEnd,
         onDismissRequest = onDismiss
@@ -44,7 +41,7 @@ fun TypeFeedbackMenu(
                     .background(Color.White),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(subjectOptions) { item ->
+                items(categories) { item ->
                     Surface(
                         onClick = {
                             onSelected(item)
@@ -54,7 +51,7 @@ fun TypeFeedbackMenu(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = item.value,
+                            text = item.description,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 13.dp),
@@ -64,7 +61,7 @@ fun TypeFeedbackMenu(
                         )
                     }
 
-                    if (item != subjectOptions.last()) {
+                    if (item != categories.last()) {
                         Spacer(
                             Modifier
                                 .fillMaxWidth()

@@ -117,7 +117,7 @@ fun FrontCard(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             StudentInfoRow(label = "Mã sinh viên", value = studentCode)
-            StudentInfoRow(label = "Khoa", value = faculty)
+            StudentInfoRow(label = "Ngành", value = faculty)
             StudentInfoRow(label = "Ngày sinh", value = birthDate)
             StudentInfoRow(label = "Khoá học", value = course)
         }

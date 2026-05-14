@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import org.example.project.R
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.gpaToAcademicRank
-import org.example.project.presentations.utils.toAcademicRank
 import org.example.project.presentations.utils.toColor
 import org.example.project.presentations.utils.toTextRank
 
@@ -149,7 +148,7 @@ fun GpaCard(
 fun RankAchievement(
     gpa: Double
 ) {
-    val color = gpa.toAcademicRank().toColor()
+    val color = gpa.gpaToAcademicRank().toColor()
 
     Row(
         modifier = Modifier

@@ -27,9 +27,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.data.remote.dto.feedback.FeedbackCategoryData
 import org.example.project.domain.model.SubjectOption
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.feedback.FeedBackState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.net.toUri
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.clearFocusOnTap
 
@@ -38,12 +43,12 @@ fun FeedbackFormContent(
     modifier: Modifier = Modifier,
     uiState: FeedBackState,
     onTitleChange: (String) -> Unit,
-    onSubjectChange: (SubjectOption) -> Unit,
+    onSubjectChange: (FeedbackCategoryData) -> Unit,
     onContentChange: (String) -> Unit,
     onSubjectExpandedChange: (Boolean) -> Unit,
     onAddImage: (Uri) -> Unit,
     onRemoveImage: (Uri) -> Unit,
-    onSubmit: () -> Unit,
+    onSubmit: (List<Pair<String, ByteArray>>) -> Unit,
 ) {
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
@@ -83,7 +88,7 @@ fun FeedbackFormContent(
         FeedbackLabel(text = "Chủ đề", true)
         Box {
             OutlinedTextField(
-                value = uiState.subject?.value ?: "",
+                value = uiState.feedbackCategory?.description ?: "",
                 onValueChange = {},
                 readOnly = true,
                 placeholder = {
@@ -121,7 +126,8 @@ fun FeedbackFormContent(
             if (uiState.subjectExpanded) {
                 TypeFeedbackMenu(
                     onSelected = onSubjectChange,
-                    onDismiss = { onSubjectExpandedChange(false) }
+                    onDismiss = { onSubjectExpandedChange(false) },
+                    categories = uiState.feedbackCategories
                 )
             }
         }
@@ -160,12 +166,31 @@ fun FeedbackFormContent(
 
         ImportantNoteFeedbackCard()
 
+        val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+
         ButtonView(
             text = "Gửi phản hồi",
             backgroundColorRes = LocalExtendedColors.current.mainRed,
             textColorRes = Color.White,
             enabled = uiState.isFormValid,
-            onClick = onSubmit,
+            onClick = {
+                scope.launch {
+                    val files = mutableListOf<Pair<String, ByteArray>>()
+                    uiState.attachedImages.forEachIndexed { index, uriString ->
+                        try {
+                            val uri = uriString.toUri()
+                            val input = context.contentResolver.openInputStream(uri)
+                            val bytes = input?.use { it.readBytes() } ?: return@forEachIndexed
+                            val fileName = uri.lastPathSegment ?: "image_$index.jpg"
+                            files += fileName to bytes
+                        } catch (_: Exception) {
+                            // skip unreadable file
+                        }
+                    }
+                    onSubmit(files)
+                }
+            },
             modifier = Modifier
                 .padding(top = 30.dp, start = 50.dp, end = 50.dp, bottom = 30.dp)
                 .height(50.dp)
@@ -190,26 +215,5 @@ fun FeedbackLabel(text: String, isNeedAsterisk: Boolean = false) {
         },
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.padding(top = 15.dp, bottom = 10.dp)
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun FeedbackFormContentPreview() {
-    FeedbackFormContent(
-        uiState = FeedBackState(
-            title = "Sample Title",
-            subject = SubjectOption.entries.first(),
-            content = "Sample content for preview",
-            attachedImages = emptyList(),
-            subjectExpanded = false
-        ),
-        onTitleChange = {},
-        onSubjectChange = {},
-        onContentChange = {},
-        onSubjectExpandedChange = {},
-        onAddImage = {},
-        onRemoveImage = {},
-        onSubmit = {}
     )
 }

@@ -145,6 +145,10 @@ class AppContainer(
     private val applicationApi = ApplicationApi(httpClient)
     val applicationRepository = ApplicationRepository(applicationApi)
 
+    //for feedback
+    private val feedbackApi = org.example.project.data.remote.api.FeedbackApi(httpClient)
+    val feedbackRepository = org.example.project.domain.repository.FeedbackRepository(feedbackApi)
+
     //for chat
     val chatRepository = ChatRepository(externalHttpClient)
 

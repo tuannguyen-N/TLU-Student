@@ -1,25 +1,20 @@
 package org.example.project.presentations.screen.feedback
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.domain.model.SubmitState
 import org.example.project.presentations.components.StatusBarStyle
-import org.example.project.presentations.components.TabRowView
 import org.example.project.presentations.components.TopCenterScreenBar
+import org.example.project.presentations.dialog.FailureDialog
+import org.example.project.presentations.dialog.SuccessDialog
 import org.example.project.presentations.screen.feedback.components.FeedbackFormContent
-import org.example.project.presentations.screen.feedback.components.FeedbackHistoryContent
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -28,10 +23,6 @@ fun FeedbackScreen(
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val tabs = listOf(
-        "Tạo phản hồi" to Icons.Filled.Edit,
-        "Lịch sử" to Icons.Filled.History
-    )
 
     StatusBarStyle(darkIcons = false)
 
@@ -45,40 +36,29 @@ fun FeedbackScreen(
             )
         }
     ) { paddingValues ->
-        Column(
+        FeedbackFormContent(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(paddingValues)
-        ) {
-            TabRowView(
-                tabs = tabs,
-                selectedTab = uiState.selectedTab,
-                onTabSelected = viewModel::onTabSelected,
-                modifier = Modifier.padding(top = 12.dp)
-            )
+                .verticalScroll(rememberScrollState()),
+            uiState = uiState,
+            onTitleChange = viewModel::onTitleChange,
+            onSubjectChange = viewModel::onSubjectChange,
+            onContentChange = viewModel::onContentChange,
+            onSubjectExpandedChange = viewModel::onSubjectExpandedChange,
+            onSubmit = viewModel::onSubmit,
+            onRemoveImage = viewModel::onRemoveImage,
+            onAddImage = viewModel::onAddImage
+        )
+    }
 
-            if (uiState.selectedTab == 0) {
-                FeedbackFormContent(
-                    modifier = Modifier
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState()),
-                    uiState = uiState,
-                    onTitleChange = viewModel::onTitleChange,
-                    onSubjectChange = viewModel::onSubjectChange,
-                    onContentChange = viewModel::onContentChange,
-                    onSubjectExpandedChange = viewModel::onSubjectExpandedChange,
-                    onSubmit = viewModel::onSubmit,
-                    onRemoveImage = viewModel::onRemoveImage,
-                    onAddImage = viewModel::onAddImage
-                )
-            } else {
-                FeedbackHistoryContent(
-                    onCreateFeedback = { viewModel.onTabSelected(0) },
-                    onViewDetail = {
-                        // TODO:
-                    }
-                )
-            }
-        }
+    when (uiState.submitState) {
+        is SubmitState.Error -> FailureDialog(
+            message = (uiState.submitState as SubmitState.Error).message,
+            onDismiss = viewModel::onDismiss
+        )
+
+        is SubmitState.Idle -> Unit
+        is SubmitState.Loading -> Unit
+        is SubmitState.Success -> SuccessDialog(onDismiss = { onBack() })
     }
 }

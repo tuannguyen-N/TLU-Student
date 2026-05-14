@@ -53,6 +53,8 @@ import org.example.project.presentations.screen.features.FeaturesScreen
 import org.example.project.presentations.screen.features.FeaturesViewModel
 import org.example.project.presentations.screen.features.FeaturesViewModelFactory
 import org.example.project.presentations.screen.feedback.FeedbackScreen
+import org.example.project.presentations.screen.feedback.FeedbackViewModel
+import org.example.project.presentations.screen.feedback.FeedbackViewModelFactory
 import org.example.project.presentations.screen.feedback_detail.FeedbackDetailScreen
 import org.example.project.presentations.screen.gpa_predict.GpaPredictScreen
 import org.example.project.presentations.screen.gpa_predict.GpaPredictViewModel
@@ -474,8 +476,14 @@ fun AppNavGraph(
         }
 
         composable(AppRoute.Feedback) {
+            val container = LocalAppContainer.current
+            val factory = FeedbackViewModelFactory(
+                container.feedbackRepository
+            )
+            val feedbackViewModel: FeedbackViewModel = viewModel(factory = factory)
+
             FeedbackScreen(
-                viewModel = viewModel(), // TODO:
+                viewModel = feedbackViewModel,
                 onBack = { navController.popBackStack() }
             )
         }
