@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.example.project.domain.model.SubmitState
+import org.example.project.presentations.components.LoadingView
 import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.dialog.FailureDialog
@@ -58,7 +59,7 @@ fun FeedbackScreen(
         )
 
         is SubmitState.Idle -> Unit
-        is SubmitState.Loading -> Unit
+        is SubmitState.Loading -> LoadingView()
         is SubmitState.Success -> SuccessDialog(onDismiss = { onBack() })
     }
 }
