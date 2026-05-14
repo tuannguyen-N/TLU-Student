@@ -38,7 +38,7 @@ fun DetailTuitionCourse(
             )
 
             Text(
-                text = "5 môn học",
+                text = "${items.size} môn học",
                 style = MaterialTheme.typography.titleSmall
             )
         }
@@ -67,7 +67,7 @@ private fun TuitionCourseList(
         Column(modifier = Modifier.fillMaxWidth()) {
             courses.forEach { course ->
                 TuitionCourseItem(
-                    courseCode =course.subjectCode,
+                    courseCode = course.subjectCode,
                     courseName = course.subjectName,
                     credits = course.credits,
                     amount = course.amount.toLong().toFormatAmountAndD(),
