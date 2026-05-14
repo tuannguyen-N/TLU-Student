@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.domain.model.AppResult
+import org.example.project.domain.model.ExportState
 import org.example.project.domain.usecase.TranscriptUseCase
 
 class GpaTrackerViewModel(
@@ -31,6 +33,26 @@ class GpaTrackerViewModel(
         viewModelScope.launch {
             transcriptUseCase.getTranscript(true)
         }
+    }
+
+    fun exportTranscript() {
+        viewModelScope.launch {
+            updateState { copy(exportState = ExportState.Loading) }
+            when (val result = transcriptUseCase.exportTranscript()) {
+                is AppResult.Success -> updateState { copy(exportState = ExportState.Success(result.data)) }
+                is AppResult.Failure -> updateState {
+                    copy(
+                        exportState = ExportState.Error(
+                            result.message ?: "Export thất bại"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun resetExportState() {
+        updateState { copy(exportState = ExportState.Idle) }
     }
 
     private fun updateState(newState: GpaTrackerState.() -> GpaTrackerState) {

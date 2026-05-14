@@ -6,6 +6,7 @@ import org.example.project.data.mapper.TranscriptMapper.toUiModel
 import org.example.project.data.remote.dto.study_program.StudyProgram
 import org.example.project.data.remote.dto.transcript.AcademicResultData
 import org.example.project.domain.model.AppResult
+import org.example.project.domain.model.ExportedFile
 import org.example.project.domain.model.TranscriptUiModel
 import org.example.project.domain.repository.TranscriptRepository
 
@@ -20,5 +21,9 @@ class TranscriptUseCase(
 
     suspend fun getTranscript(forceRefresh: Boolean = false): AppResult<AcademicResultData> {
         return transcriptRepository.getTranscript(forceRefresh)
+    }
+
+    suspend fun exportTranscript(): AppResult<ExportedFile> {
+        return transcriptRepository.exportTranscript()
     }
 }

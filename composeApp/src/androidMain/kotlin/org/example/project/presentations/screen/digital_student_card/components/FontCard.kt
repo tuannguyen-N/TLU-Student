@@ -1,9 +1,7 @@
 package org.example.project.presentations.screen.digital_student_card.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,30 +10,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import org.example.project.R
 import org.example.project.presentations.components.Base64Image
-import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -45,124 +43,152 @@ fun FrontCard(
     faculty: String,
     birthDate: String,
     course: String,
+    classCode: String,
     avatarUrl: String?,
+    majorCode: String,
     onCreateQr: () -> Unit
 ) {
-    val color = LocalExtendedColors.current
+    val backgroundColor = when (majorCode) {
+        "TA", "TI", "TE", "TT", "IT" -> Color(0xFF1D53E6)
+        "EC", "IE", "EL", "MK", "AC", "FN", "LG", "BA" -> Color(0xFF16A634)
+        "NU" -> Color(0xFF3AC2D8)
+        "EN", "KR", "CN", "JP", "VN" -> Color(0xFFD43A26)
+        "TM", "HM" -> Color(0xFF00715F)
+        "MM" -> Color(0xFFFFA400)
+        "VO" -> Color(0xFF6F00FF)
+        else -> Color(0xFF1D53E6)
+    }
 
-    Column {
+    val logoFactory = when (majorCode) {
+        "TA", "TI", "TE", "TT", "IT" -> R.drawable.toan_tin
+        "EC", "IE", "EL", "MK", "AC", "FN", "LG", "BA" -> R.drawable.kinh_te
+        "NU" -> R.drawable.suc_khoe
+        "EN", "KR", "CN", "JP", "VN" -> R.drawable.ngoai_ngu
+        "TM", "HM" -> R.drawable.du_lich
+        "MM" -> R.drawable.truyen_thong
+        "VO" -> R.drawable.am_nhac
+        else -> R.drawable.toan_tin
+    }
+
+    val color = LocalExtendedColors.current
+    Column(
+        modifier = Modifier
+            .width(340.dp)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
+                .height(230.dp)
+                .background(Color.White),
+            contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(R.drawable.bg_digital_card_student),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .offset(y = 40.dp)
-            ) {
-                if (avatarUrl == "" || avatarUrl.isNullOrEmpty()) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .background(LocalExtendedColors.current.gray)
-                            .border(
-                                BorderStroke(1.dp, Color.White), CircleShape
-                            )
-                            .padding(20.dp)
-                    )
-                } else {
-                    Base64Image(
-                        base64String = avatarUrl,
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .border(1.dp, Color.White, CircleShape)
-                    )
-                }
+            if (avatarUrl.isNullOrEmpty()) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = Color(0xFF90A4AE),
+                    modifier = Modifier.size(80.dp)
+                )
+            } else {
+                Base64Image(
+                    base64String = avatarUrl,
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
         }
 
-        Spacer(Modifier.height(55.dp))
-
-        Text(
-            text = name,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            color = Color.Black,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-        Spacer(Modifier.height(24.dp))
-
-        HorizontalDivider(
-            color = color.gray.copy(alpha = 0.15f),
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
-
         Column(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(backgroundColor)
+                .padding(horizontal = 20.dp)
         ) {
-            StudentInfoRow(label = "Mã sinh viên", value = studentCode)
-            StudentInfoRow(label = "Ngành", value = faculty)
-            StudentInfoRow(label = "Ngày sinh", value = birthDate)
-            StudentInfoRow(label = "Khoá học", value = course)
+
+            InfoRow("Sinh viên", name.uppercase(), isName = true)
+            InfoRow("Ngày sinh", birthDate)
+            InfoRow("Ngành", faculty)
+            InfoRow("Lớp", classCode)
+            InfoRow("Niên khoá", course)
+            InfoRow("MSV", studentCode, isLast = true)
+
+            Spacer(Modifier.height(5.dp))
         }
 
-        Spacer(Modifier.height(18.dp))
+        Box {
+            Image(
+                painter = painterResource(logoFactory),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth().scale(1.01f),
+                contentScale = ContentScale.Crop
+            )
 
-        ButtonView(
-            text = "Tạo mã QR",
-            backgroundColorRes = color.red,
-            textColorRes = Color.White,
-            iconRes = R.drawable.ic_qr_code,
-            enabled = true,
-            onClick = onCreateQr,
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(horizontal = 34.dp)
-        )
-
-        Spacer(Modifier.height(30.dp))
+            IconButton(
+                onClick = onCreateQr,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .align(Alignment.CenterEnd)
+                    .clip(
+                        CircleShape
+                    )
+                    .background(color.white)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_qr_code),
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp),
+                    tint = color.red
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun StudentInfoRow(
+private fun InfoRow(
     label: String,
-    value: String
+    value: String,
+    isLast: Boolean = false,
+    isName: Boolean = false
 ) {
-    val color = LocalExtendedColors.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
+            .padding(vertical = 9.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = color.gray
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White.copy(alpha = 0.65f),
+            modifier = Modifier.width(80.dp)
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = if (isName) MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold) else MaterialTheme.typography.bodySmall.copy(
                 fontWeight = FontWeight.SemiBold
             ),
-            color = Color.Black
+            color = Color.White,
+            modifier = Modifier.weight(1f)
+        )
+    }
+    if (!isLast) HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FrontCardPreview() {
+    MaterialTheme {
+        FrontCard(
+            name = "Nguyễn Văn A",
+            studentCode = "B21DCCN001",
+            faculty = "Công nghệ thông tin",
+            birthDate = "01/01/2003",
+            course = "K21",
+            avatarUrl = null,
+            onCreateQr = {},
+            classCode = "1123",
+            majorCode = "KHMT"
         )
     }
 }

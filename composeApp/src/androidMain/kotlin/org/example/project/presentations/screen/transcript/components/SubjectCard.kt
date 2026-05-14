@@ -65,20 +65,13 @@ fun SubjectCard(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(
-                    text = termNumber,
-                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "Năm học $academicYear",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            Text(
+                text = termNumber,
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
+                fontWeight = FontWeight.Bold,
+            )
 
             Box(
                 modifier = Modifier
@@ -97,7 +90,7 @@ fun SubjectCard(
             }
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(8.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),

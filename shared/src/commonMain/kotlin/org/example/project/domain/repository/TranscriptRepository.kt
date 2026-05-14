@@ -3,12 +3,15 @@ package org.example.project.domain.repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.number
 import org.example.project.data.cache.CacheManager
+import org.example.project.data.mapper.today
 import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.api.TranscriptApi
 import org.example.project.data.remote.dto.study_program.StudyProgram
 import org.example.project.data.remote.dto.transcript.AcademicResultData
 import org.example.project.domain.model.AppResult
+import org.example.project.domain.model.ExportedFile
 import kotlin.time.Duration.Companion.minutes
 
 class TranscriptRepository(
@@ -25,12 +28,12 @@ class TranscriptRepository(
 
     suspend fun getTranscript(
         forceRefresh: Boolean = false
-    ): AppResult<AcademicResultData>{
+    ): AppResult<AcademicResultData> {
         return try {
             val data = transcriptCache.getOrFetch(
                 key = "transcript",
                 forceRefresh = forceRefresh
-            ){
+            ) {
                 val studyProgram = studyProgramApi.getStudyPrograms().data
                     ?.firstOrNull()
                     ?: throw Exception("Study program not found")
@@ -43,6 +46,27 @@ class TranscriptRepository(
 
             _transcriptCached.update { data }
             AppResult.Success(data)
+        } catch (e: Exception) {
+            AppResult.Failure(message = e.message, cause = e)
+        }
+    }
+
+    suspend fun exportTranscript(): AppResult<ExportedFile> {
+        return try {
+            val studyProgram = _studyProgram.value
+                ?: studyProgramApi.getStudyPrograms().data
+                    ?.firstOrNull()
+                ?: throw Exception("Study program not found")
+
+            val bytes = transcriptApi.exportTranscript(studyProgram.studyProgramCode)
+
+            val fileName = "Ket_Qua_Hoc_Tap_${today.year}${
+                today.month.number.toString().padStart(2, '0')
+            }${
+                today.day.toString().padStart(2, '0')
+            }.xlsx"
+
+            AppResult.Success(ExportedFile(fileName = fileName, bytes = bytes))
         } catch (e: Exception) {
             AppResult.Failure(message = e.message, cause = e)
         }

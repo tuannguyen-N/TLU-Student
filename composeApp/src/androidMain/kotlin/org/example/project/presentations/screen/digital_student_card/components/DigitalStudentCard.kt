@@ -3,7 +3,10 @@ package org.example.project.presentations.screen.digital_student_card.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -15,8 +18,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import org.example.project.R
 import org.example.project.data.remote.dto.me.StudentData
 import org.example.project.domain.model.QrState
+import org.example.project.presentations.components.ButtonView
 
 @Composable
 fun DigitalStudentCard(
@@ -56,11 +61,25 @@ fun DigitalStudentCard(
                     studentCode = studentInfo.studentCode,
                     faculty = studentInfo.major.majorName,
                     birthDate = studentInfo.dateOfBirth,
-                    course = studentInfo.academicInfo.cohort,
+                    course = "${studentInfo.startYear} - ${studentInfo.endYear}",
                     avatarUrl = avatarUrl,
-                    onCreateQr = onCreateQr
+                    onCreateQr = onCreateQr,
+                    classCode = studentInfo.classCode,
+                    majorCode = studentInfo.major.majorCode
                 )
             }
+
+            /*ButtonView(
+                text = "Tạo mã QR",
+                backgroundColorRes = Color.Red,
+                textColorRes = Color.White,
+                iconRes = R.drawable.ic_qr_code,
+                enabled = true,
+                onClick = onCreateQr,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.padding(horizontal = 34.dp)
+            )
+            Spacer(Modifier.height(20.dp))*/
 
             Box(
                 modifier = Modifier
