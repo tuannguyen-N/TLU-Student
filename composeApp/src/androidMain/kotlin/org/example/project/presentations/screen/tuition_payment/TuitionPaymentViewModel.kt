@@ -38,10 +38,6 @@ class TuitionPaymentViewModel(
         }
     }
 
-    fun onSelectTuition(tuition: TuitionUiModel) {
-        updateState { copy(selectedTuition = tuition) }
-    }
-
     fun onNavigateToPayment(tuition: TuitionUiModel) {
         viewModelScope.launch {
             tuitionRepository.getDetailTuition(tuition.invoiceId).onSuccess { detail ->
@@ -100,7 +96,7 @@ class TuitionPaymentViewModel(
     }
 
     fun onRefreshDetail() {
-        val invoiceId = _uiState.value.selectedTuition?.invoiceId ?: return
+        val invoiceId = _uiState.value.selectedTuitionDetail?.tuitionId ?: return
         viewModelScope.launch {
             updateState { copy(isRefreshingDetail = true) }
             try {

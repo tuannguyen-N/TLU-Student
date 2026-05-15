@@ -51,7 +51,6 @@ fun TuitionPaymentScreen(
             TuitionPaymentContent(
                 uiState = uiState,
                 onBack = onBack,
-                onViewDetailTuition = viewModel::onSelectTuition,
                 onNavigateToPayment = viewModel::onNavigateToPayment,
                 onDismissDialog = viewModel::onDismissDialog,
                 onRefresh = viewModel::onRefreshData

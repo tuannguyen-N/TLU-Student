@@ -49,7 +49,9 @@ fun TimetableContent(
                 onBack = onBack,
                 values = uiState.semesters.toSemesterStringList(),
                 onClickItem = {
-                    onChangeSemester(it)
+                    if (uiState.selectedSemester?.semesterName != it) {
+                        onChangeSemester(it)
+                    }
                 },
                 enableListItem = true,
                 value = uiState.selectedSemester?.semesterName ?: "2026"

@@ -23,6 +23,7 @@ import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.api.TranscriptApi
 import org.example.project.data.remote.api.TuitionApi
 import org.example.project.data.remote.createExternalHttpClient
+import org.example.project.data.remote.createExternalHttpClientWithAuthPlugin
 import org.example.project.data.remote.createHttpClient
 import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.TopicSubscriber
@@ -62,6 +63,7 @@ class AppContainer(
 ) {
     private val httpClient = createHttpClient(tokenStorage)
     private val externalHttpClient = createExternalHttpClient()
+    private val chatHttpClient = createExternalHttpClientWithAuthPlugin(tokenStorage)
 
     // for auth
     private val authApi = AuthApi(httpClient)
@@ -150,7 +152,7 @@ class AppContainer(
     val feedbackRepository = org.example.project.domain.repository.FeedbackRepository(feedbackApi)
 
     //for chat
-    val chatRepository = ChatRepository(externalHttpClient)
+    val chatRepository = ChatRepository(chatHttpClient)
 
     //for enrollment
     private val enrollmentApi = EnrollmentApi(httpClient)

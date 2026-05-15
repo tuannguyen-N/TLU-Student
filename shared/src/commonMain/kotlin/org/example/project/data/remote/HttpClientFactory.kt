@@ -67,3 +67,22 @@ fun createExternalHttpClient(): HttpClient {
         }
     }
 }
+
+fun createExternalHttpClientWithAuthPlugin(tokenStorage: TokenStorage): HttpClient{
+    return HttpClient {
+        install(NetworkCheckPlugin)
+
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                }
+            )
+        }
+
+        install(AuthPlugin) {
+            this.tokenStorage = tokenStorage
+        }
+    }
+}

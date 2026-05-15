@@ -21,7 +21,6 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun TuitionPaymentContent(
     uiState: TuitionStatus,
     onBack: () -> Unit,
-    onViewDetailTuition: (TuitionUiModel) -> Unit,
     onNavigateToPayment: (TuitionUiModel) -> Unit,
     onDismissDialog: () -> Unit,
     onRefresh: () -> Unit
@@ -58,7 +57,6 @@ fun TuitionPaymentContent(
                 PaymentHistoryContent(
                     tuitionList = uiState.allTuition,
                     color = color,
-                    onViewDetailTuition = onViewDetailTuition,
                     onNavigateToPayment = onNavigateToPayment
                 )
             }

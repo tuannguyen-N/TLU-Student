@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -39,7 +40,6 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun PaymentHistoryContent(
     tuitionList: List<TuitionUiModel>?,
     color: ExtendedColors = LocalExtendedColors.current,
-    onViewDetailTuition: (TuitionUiModel) -> Unit,
     onNavigateToPayment: (TuitionUiModel) -> Unit
 ) {
     if (tuitionList.isNullOrEmpty()) {
@@ -53,11 +53,13 @@ fun PaymentHistoryContent(
             )
         }
     } else {
-        LazyColumn {
-            tuitionList.forEach { tuition ->
-                item { LabelHeader(label = tuition.semesterName) }
+        val grouped = tuitionList.groupBy { it.semesterName }
 
-                item {
+        LazyColumn {
+            grouped.forEach { (semesterName, tuitions) ->
+                item { LabelHeader(label = semesterName) }
+
+                items(tuitions) { tuition ->
                     PaymentCard(
                         item = tuition,
                         color = color,

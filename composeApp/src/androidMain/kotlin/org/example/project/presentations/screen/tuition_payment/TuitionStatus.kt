@@ -8,7 +8,6 @@ data class TuitionStatus(
     val allTuition: List<TuitionUiModel>? = null,
     val currentTuitionDetail: TuitionDetailUiModel? = null,
     val selectedTuitionDetail: TuitionDetailUiModel? = null,
-    val selectedTuition: TuitionUiModel? = null,
 
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,

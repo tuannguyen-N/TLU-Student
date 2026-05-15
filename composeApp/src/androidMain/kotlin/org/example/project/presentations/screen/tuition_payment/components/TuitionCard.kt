@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import org.example.project.data.mapper.toFormatAmount
 import org.example.project.domain.model.PaymentStatus
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.ExtendedColors
@@ -84,7 +85,7 @@ fun TuitionCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = totalAmount,
+                    text = totalAmount.toLong().toFormatAmount(),
                     style = MaterialTheme.typography.displaySmall.copy(
                         fontWeight = FontWeight.ExtraBold
                     ),
