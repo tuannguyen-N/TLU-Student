@@ -25,7 +25,12 @@ class EnrollmentRepository(
             val result = api.getAllCourseEnrollment(studyProgram.studyProgramCode)
 
             return if (result.data == null) {
-                AppResult.Failure(message = ErrorMapper.map(result.code, result.message))
+                AppResult.Failure(
+                    message = ErrorMapper.mapEnrollment(
+                        result.code,
+                        result.message
+                    ).messageVi
+                )
             } else {
                 AppResult.Success(result.data)
             }
@@ -41,7 +46,12 @@ class EnrollmentRepository(
         try {
             val result = api.getSubjectEnrollment(subjectId, semesterId)
             return if (result.data == null) {
-                AppResult.Failure(message = ErrorMapper.map(result.code, result.message))
+                AppResult.Failure(
+                    message = ErrorMapper.mapEnrollment(
+                        result.code,
+                        result.message
+                    ).messageVi
+                )
             } else {
                 AppResult.Success(result.data)
             }
@@ -54,7 +64,12 @@ class EnrollmentRepository(
         try {
             val result = api.enrollClass(studyProgramId, courseClassId)
             return if (result.code != 0) {
-                AppResult.Failure(message = ErrorMapper.map(result.code, result.message))
+                AppResult.Failure(
+                    message = ErrorMapper.mapEnrollment(
+                        result.code,
+                        result.message
+                    ).messageVi
+                )
             } else {
                 AppResult.Success(result.message)
             }
@@ -70,7 +85,12 @@ class EnrollmentRepository(
                 _enrolledClasses.value = result.data
                 AppResult.Success(result.data)
             } else {
-                AppResult.Failure(message = ErrorMapper.map(result.code, result.message))
+                AppResult.Failure(
+                    message = ErrorMapper.mapEnrollment(
+                        result.code,
+                        result.message
+                    ).messageVi
+                )
             }
         } catch (e: Exception) {
             return AppResult.Failure(message = e.message, cause = e)
@@ -81,7 +101,12 @@ class EnrollmentRepository(
         try {
             val result = api.cancelEnrollmentClass(courseClassId)
             return if (result.code != 0) {
-                AppResult.Failure(message = ErrorMapper.map(result.code, result.message))
+                AppResult.Failure(
+                    message = ErrorMapper.mapEnrollment(
+                        result.code,
+                        result.message
+                    ).messageVi
+                )
             } else {
                 AppResult.Success(result.message)
             }

@@ -6,6 +6,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import org.example.project.AndroidTopicSubscriber
 import org.example.project.DeviceProvider
+import org.example.project.data.AndroidLocationRepository
 import org.example.project.data.local.AppPreferences
 import org.example.project.data.local.FirebaseStorage
 import org.example.project.data.local.ImageBase64Storage
@@ -42,6 +43,8 @@ class AndroidAppContainer(context: Context) {
     val deviceProvider = DeviceProvider(context)
 
     val topicSubscriber = AndroidTopicSubscriber()
+
+    val locationRepository = AndroidLocationRepository(context)
 
     val appPreferences: AppPreferences by lazy {
         AndroidAppPreferences(encryptedSharedPreferences)

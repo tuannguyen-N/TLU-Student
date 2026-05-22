@@ -33,7 +33,8 @@ class MyApplication : Application() {
             androidAppContainer.deviceProvider,
             androidAppContainer.appPreferences,
             androidAppContainer.topicSubscriber,
-            applicationContext
+            androidAppContainer.locationRepository,
+            applicationContext,
         )
         handleFirebaseToken()
     }

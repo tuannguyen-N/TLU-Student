@@ -1,7 +1,7 @@
 package org.example.project.presentations.screen.attendance_checking
 
 sealed interface CameraQrUiEvent {
-    object OnScanAndApiCompleted : CameraQrUiEvent
-    object OnAttendanceSuccess : CameraQrUiEvent
-    object OnAttendanceFailure : CameraQrUiEvent
+    data object OnScanAndApiCompleted : CameraQrUiEvent
+    data class OnAttendanceSuccess(val message: String) : CameraQrUiEvent
+    data class OnAttendanceFailure(val message: String) : CameraQrUiEvent
 }

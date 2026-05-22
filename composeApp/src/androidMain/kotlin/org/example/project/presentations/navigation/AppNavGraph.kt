@@ -31,6 +31,9 @@ import org.example.project.presentations.screen.application.ApplicationViewModel
 import org.example.project.presentations.screen.application_detail.ApplicationDetailScreen
 import org.example.project.presentations.screen.application_detail.ApplicationDetailViewModel
 import org.example.project.presentations.screen.application_detail.ApplicationDetailViewModelFactory
+import org.example.project.presentations.screen.attendance_checking.CameraQrScreen
+import org.example.project.presentations.screen.attendance_checking.CameraQrViewModel
+import org.example.project.presentations.screen.attendance_checking.CameraQrViewModelFactory
 import org.example.project.presentations.screen.chat.ChatScreen
 import org.example.project.presentations.screen.chat.ChatViewModel
 import org.example.project.presentations.screen.chat.ChatViewModelFactory
@@ -107,9 +110,6 @@ import org.example.project.presentations.screen.transcript_term.TranscriptTermVi
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentScreen
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentViewModel
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentViewModelFactory
-import org.example.project.presentations.screen.attendance_checking.CameraQrScreen
-import org.example.project.presentations.screen.attendance_checking.CameraQrViewModel
-import org.example.project.presentations.screen.attendance_checking.CameraQrViewModelFactory
 import org.example.project.presentations.utils.NotificationPermissionManager
 import org.example.project.presentations.utils.openDialer
 import org.example.project.presentations.utils.openEmail
@@ -699,7 +699,11 @@ fun AppNavGraph(
         composable(AppRoute.AttendanceChecking) {
             val container = LocalAppContainer.current
             val factory = remember(container) {
-                CameraQrViewModelFactory()
+                CameraQrViewModelFactory(
+                    container.attendanceRepository,
+                    container.getLocationUseCase,
+                    container.locationRepository
+                )
             }
             val cameraQrViewModel: CameraQrViewModel = viewModel(factory = factory)
 

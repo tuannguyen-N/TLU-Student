@@ -9,6 +9,7 @@ import org.example.project.data.local.createDatabase
 import org.example.project.data.local.getDatabaseBuilder
 import org.example.project.data.remote.api.ApplicationApi
 import org.example.project.data.remote.api.AuthApi
+import org.example.project.data.remote.api.AttendanceApi
 import org.example.project.data.remote.api.EnrollmentApi
 import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.api.NewsApi
@@ -30,9 +31,11 @@ import org.example.project.domain.TopicSubscriber
 import org.example.project.domain.repository.ApplicationRepository
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.ChatRepository
+import org.example.project.domain.repository.AttendanceRepository
 import org.example.project.domain.repository.EnrollmentRepository
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
+import org.example.project.domain.repository.LocationRepository
 import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.PaymentRepository
@@ -43,6 +46,7 @@ import org.example.project.domain.repository.StudentClassRepository
 import org.example.project.domain.repository.StudentRepository
 import org.example.project.domain.repository.TranscriptRepository
 import org.example.project.domain.repository.TuitionRepository
+import org.example.project.domain.usecase.GetLocationUseCase
 import org.example.project.domain.usecase.HandleLoginSuccessUseCase
 import org.example.project.domain.usecase.LogoutUseCase
 import org.example.project.domain.usecase.ScheduleUseCase
@@ -59,6 +63,7 @@ class AppContainer(
     //for notification
     val appPreferences: AppPreferences,
     topicSubscriber: TopicSubscriber,
+    val locationRepository: LocationRepository,
     context: Any? = null
 ) {
     private val httpClient = createHttpClient(tokenStorage)
@@ -157,4 +162,9 @@ class AppContainer(
     //for enrollment
     private val enrollmentApi = EnrollmentApi(httpClient)
     val enrollmentRepository = EnrollmentRepository(enrollmentApi, studyProgramApi)
+
+    //for attendance
+    private val attendanceApi = AttendanceApi(httpClient)
+    val attendanceRepository = AttendanceRepository(attendanceApi)
+    val getLocationUseCase = GetLocationUseCase(locationRepository)
 }

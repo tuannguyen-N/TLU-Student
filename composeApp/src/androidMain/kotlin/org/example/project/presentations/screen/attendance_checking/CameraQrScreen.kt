@@ -1,21 +1,19 @@
 package org.example.project.presentations.screen.attendance_checking
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.Camera
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,33 +26,32 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.common.InputImage
 import org.example.project.presentations.components.LoadingView
 import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.components.TopCenterScreenBar
 import org.example.project.presentations.dialog.FailureDialog
 import org.example.project.presentations.dialog.SuccessDialog
+import org.example.project.presentations.screen.attendance_checking.components.CameraPreview
+import org.example.project.presentations.screen.attendance_checking.components.LocationDisabledContent
 import org.example.project.presentations.screen.attendance_checking.components.PermissionDeniedContent
 import org.example.project.presentations.screen.attendance_checking.components.ScannerOverlay
 import org.example.project.presentations.utils.CollectWithLifecycle
-import java.util.concurrent.Executors
 
 @Composable
 fun CameraQrScreen(
@@ -65,6 +62,8 @@ fun CameraQrScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    var isLocationEnabled by remember { mutableStateOf(viewModel.checkGpsEnabled()) }
+
     var hasCameraPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -74,10 +73,62 @@ fun CameraQrScreen(
         )
     }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
+    var hasLocationPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                isLocationEnabled = viewModel.checkGpsEnabled()
+                hasLocationPermission = ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+                hasCameraPermission = ContextCompat.checkSelfPermission(
+                    context, Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context?, intent: Intent?) {
+                if (intent?.action == LocationManager.PROVIDERS_CHANGED_ACTION) {
+                    isLocationEnabled = viewModel.checkGpsEnabled()
+                }
+            }
+        }
+        val filter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+        context.registerReceiver(receiver, filter)
+
+        onDispose {
+            context.unregisterReceiver(receiver)
+        }
+    }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            hasLocationPermission = isGranted
+            if (isGranted) isLocationEnabled = viewModel.checkGpsEnabled()
+        }
+    )
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
             hasCameraPermission = isGranted
+            if (isGranted && !hasLocationPermission) {
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
         }
     )
 
@@ -86,7 +137,9 @@ fun CameraQrScreen(
 
     LaunchedEffect(Unit) {
         if (!hasCameraPermission) {
-            permissionLauncher.launch(Manifest.permission.CAMERA)
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        } else if (!hasLocationPermission) {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
@@ -94,10 +147,10 @@ fun CameraQrScreen(
         when (event) {
             is CameraQrUiEvent.OnScanAndApiCompleted -> onBack()
             is CameraQrUiEvent.OnAttendanceSuccess ->
-                successMessage = "Bạn đã điểm danh thành công!"
+                successMessage = event.message.ifBlank { "Bạn đã điểm danh thành công!" }
 
             is CameraQrUiEvent.OnAttendanceFailure -> failureMessage =
-                "Điểm danh thất bại, vui lòng thử lại sau!"
+                "Điểm danh thất bại, lý do: ${event.message}"
         }
     }
 
@@ -115,7 +168,10 @@ fun CameraQrScreen(
         FailureDialog(
             title = "Thất bại",
             message = message,
-            onDismiss = { failureMessage = null })
+            onDismiss = {
+                failureMessage = null
+                viewModel.dismissError()
+            })
     }
 
     StatusBarStyle(darkIcons = false)
@@ -129,97 +185,22 @@ fun CameraQrScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (hasCameraPermission) {
+            if (hasCameraPermission && hasLocationPermission && isLocationEnabled) {
                 var camera by remember { mutableStateOf<Camera?>(null) }
                 var isTorchEnabled by remember { mutableStateOf(false) }
-                var zoomRatio by remember { mutableFloatStateOf(1f) }
 
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .pointerInput(Unit) {
-                            detectTransformGestures { _, _, zoom, _ ->
-                                camera?.cameraInfo?.zoomState?.value?.let { zoomState ->
-                                    val currentZoom = zoomState.zoomRatio
-                                    val newZoom = (currentZoom * zoom)
-                                        .coerceIn(
-                                            zoomState.minZoomRatio,
-                                            zoomState.maxZoomRatio
-                                        )
-
-                                    zoomRatio = newZoom
-                                    camera?.cameraControl?.setZoomRatio(newZoom)
-                                }
-                            }
-                        }
                 ) {
-                    AndroidView(
-                        factory = { ctx ->
-                            val previewView = PreviewView(ctx).apply {
-                                scaleType = PreviewView.ScaleType.FILL_CENTER
-                            }
-                            val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
-                            val executor = ContextCompat.getMainExecutor(ctx)
-                            val analysisExecutor = Executors.newSingleThreadExecutor()
-
-                            cameraProviderFuture.addListener({
-                                val cameraProvider = cameraProviderFuture.get()
-                                val preview = Preview.Builder().build().also {
-                                    it.setSurfaceProvider(previewView.surfaceProvider)
-                                }
-
-                                val imageAnalysis = ImageAnalysis.Builder()
-                                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                                    .build()
-
-                                imageAnalysis.setAnalyzer(analysisExecutor) { imageProxy ->
-                                    val mediaImage = imageProxy.image
-                                    if (mediaImage != null) {
-                                        val image = InputImage.fromMediaImage(
-                                            mediaImage,
-                                            imageProxy.imageInfo.rotationDegrees
-                                        )
-                                        val scanner = BarcodeScanning.getClient()
-                                        scanner.process(image)
-                                            .addOnSuccessListener { barcodes ->
-                                                for (barcode in barcodes) {
-                                                    val rawValue = barcode.rawValue
-                                                    if (!rawValue.isNullOrBlank()) {
-                                                        executor.execute {
-                                                            viewModel.onQrScanned(rawValue)
-                                                        }
-                                                        break
-                                                    }
-                                                }
-                                            }
-                                            .addOnFailureListener { e ->
-                                                Log.e("CameraQrScreen", "QR scan error", e)
-                                            }
-                                            .addOnCompleteListener {
-                                                imageProxy.close()
-                                            }
-                                    } else {
-                                        imageProxy.close()
-                                    }
-                                }
-
-                                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                                try {
-                                    cameraProvider.unbindAll()
-                                    camera = cameraProvider.bindToLifecycle(
-                                        lifecycleOwner,
-                                        cameraSelector,
-                                        preview,
-                                        imageAnalysis
-                                    )
-                                } catch (e: Exception) {
-                                    Log.e("CameraQrScreen", "Use case binding failed", e)
-                                }
-                            }, executor)
-
-                            previewView
+                    CameraPreview(
+                        modifier = Modifier.fillMaxSize(),
+                        lifecycleOwner = lifecycleOwner,
+                        onCameraReady = { cam -> camera = cam },
+                        onQrScanned = { rawValue ->
+                            viewModel.onQrScanned(rawValue)
                         },
-                        modifier = Modifier.fillMaxSize()
+                        onError = { e -> Log.e("CameraQrScreen", "CameraPreview error", e) }
                     )
 
                     ScannerOverlay()
@@ -251,9 +232,30 @@ fun CameraQrScreen(
                         )
                     }
                 }
+            } else if (hasCameraPermission && hasLocationPermission && !isLocationEnabled) {
+                LocationDisabledContent(
+                    onEnableLocation = {
+                        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        context.startActivity(intent)
+                    },
+                    onOpenSettings = {
+                        val intent = Intent(
+                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", context.packageName, null)
+                        )
+                        context.startActivity(intent)
+                    },
+                    onBack = onBack
+                )
             } else {
                 PermissionDeniedContent(
-                    onRequestPermission = { permissionLauncher.launch(Manifest.permission.CAMERA) },
+                    onRequestPermission = {
+                        if (!hasCameraPermission) {
+                            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        } else if (!hasLocationPermission) {
+                            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                        }
+                    },
                     onOpenSettings = {
                         val intent = Intent(
                             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -267,14 +269,6 @@ fun CameraQrScreen(
 
             if (uiState.isLoading) {
                 LoadingView()
-            }
-
-            if (uiState.isError) {
-                FailureDialog(
-                    title = "Điểm danh thất bại",
-                    message = uiState.errorMessage ?: "Không thể kết nối đến máy chủ",
-                    onDismiss = { viewModel.dismissError() }
-                )
             }
         }
     }

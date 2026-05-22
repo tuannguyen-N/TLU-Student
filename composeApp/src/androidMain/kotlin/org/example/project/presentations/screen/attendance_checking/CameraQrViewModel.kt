@@ -3,14 +3,21 @@ package org.example.project.presentations.screen.attendance_checking
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.domain.repository.AttendanceRepository
+import org.example.project.domain.repository.LocationRepository
+import org.example.project.domain.usecase.GetLocationUseCase
 
-class CameraQrViewModel : ViewModel() {
+class CameraQrViewModel(
+    private val attendanceRepository: AttendanceRepository,
+    private val getLocationUseCase: GetLocationUseCase,
+    private val locationRepository: LocationRepository
+) : ViewModel() {
+
     private val _uiState = MutableStateFlow(CameraQrState())
     val uiState = _uiState.asStateFlow()
 
@@ -18,29 +25,38 @@ class CameraQrViewModel : ViewModel() {
     val event = _event.receiveAsFlow()
 
     fun onQrScanned(rawValue: String) {
-        if (_uiState.value.isLoading || _uiState.value.isSuccess) return
+        if (_uiState.value.isLoading || _uiState.value.isSuccess || _uiState.value.isError) return
+
+        val location = getLocationUseCase()
 
         viewModelScope.launch {
             updateState { copy(isLoading = true, scannedValue = rawValue) }
 
-            // TODO: Call API điểm danh ở đây
-            // Tạm thời giả lập call API trong 1.5 giây
-            try {
-                delay(1500)
-                updateState { copy(isLoading = false, isSuccess = true) }
-                
-                // Đợi 500ms để người dùng thấy trạng thái thành công (nếu cần) trước khi popBackStack
-                sendUiEvent(CameraQrUiEvent.OnAttendanceSuccess)
-            } catch (e: Exception) {
-                updateState {
-                    copy(
-                        isLoading = false,
-                        isError = true,
-                        errorMessage = e.message ?: "Có lỗi xảy ra khi điểm danh"
+            attendanceRepository.checkIn(rawValue, location.latitude, location.longitude).fold(
+                onSuccess = { message ->
+                    updateState { copy(isLoading = false, isSuccess = true) }
+                    sendUiEvent(CameraQrUiEvent.OnAttendanceSuccess(message))
+                },
+                onFailure = { failure ->
+                    updateState {
+                        copy(
+                            isLoading = false,
+                            isError = true,
+                            errorMessage = failure.message
+                        )
+                    }
+                    sendUiEvent(
+                        CameraQrUiEvent.OnAttendanceFailure(
+                            failure.message ?: "Đã xảy ra lỗi"
+                        )
                     )
                 }
-            }
+            )
         }
+    }
+
+    fun checkGpsEnabled(): Boolean {
+        return locationRepository.isGpsEnabled()
     }
 
     fun dismissError() {
