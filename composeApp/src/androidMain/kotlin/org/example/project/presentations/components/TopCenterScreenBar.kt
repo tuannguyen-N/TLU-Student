@@ -34,17 +34,23 @@ fun TopCenterScreenBar(
     onClickAction: () -> Unit = {},
     icon: ImageVector = Icons.Outlined.Done,
     contentColor: Color = Color.White,
-    iconColor: Color = contentColor
+    iconColor: Color = contentColor,
+    enablePaddingStatus: Boolean = true
 ) {
     Box(
         modifier = Modifier
             .background(backgroundColor)
-            .statusBarsPadding(),
+            .then(
+                if (enablePaddingStatus)
+                    Modifier.statusBarsPadding()
+                else
+                    Modifier
+            )
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp, )
+                .padding(vertical = 10.dp)
         ) {
             IconButton(
                 onClick = onBack,

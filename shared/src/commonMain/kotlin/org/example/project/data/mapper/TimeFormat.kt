@@ -9,6 +9,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.number
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.toInstant
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import kotlin.time.Clock
 
@@ -163,4 +164,40 @@ fun String.toFullDisplayDate(): String {
     val date = LocalDate.parse(datePart)
 
     return "${date.day.twoDigits()}/${date.month.number.twoDigits()}/${date.year}"
+}
+
+fun computeEnrollmentStatusText(
+    startTime: String?,
+    endTime: String?,
+    hasSubjects: Boolean
+): String? {
+    if (startTime == null || endTime == null) return null
+
+    return try {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val start = kotlinx.datetime.LocalDateTime.parse(startTime)
+        val end = kotlinx.datetime.LocalDateTime.parse(endTime)
+
+        fun diffLabel(from: kotlinx.datetime.LocalDateTime, to: kotlinx.datetime.LocalDateTime): String {
+            val fromEpoch = from.toInstant(TimeZone.currentSystemDefault()).epochSeconds
+            val toEpoch = to.toInstant(TimeZone.currentSystemDefault()).epochSeconds
+            val diffSeconds = toEpoch - fromEpoch
+            val diffMs = diffSeconds / 60
+
+            return when {
+                diffMs >= 24 * 60 -> "${diffMs / (24 * 60)} ngày"
+                diffMs >= 60      -> "${diffMs / 60} giờ"
+                else              -> "$diffMs phút"
+            }
+        }
+
+        when {
+            now < start -> "Đăng ký học sẽ diễn ra sau ${diffLabel(now, start)}"
+            !hasSubjects && now >= start && now < end ->
+                "Đăng ký học sẽ đóng sau ${diffLabel(now, end)}"
+            else -> null
+        }
+    } catch (e: Exception) {
+        null
+    }
 }

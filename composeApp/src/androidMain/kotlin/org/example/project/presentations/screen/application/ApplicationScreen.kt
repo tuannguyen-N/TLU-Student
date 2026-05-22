@@ -57,7 +57,6 @@ fun ApplicationScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
         ) {
             TabRowView(
                 tabs = tabs,

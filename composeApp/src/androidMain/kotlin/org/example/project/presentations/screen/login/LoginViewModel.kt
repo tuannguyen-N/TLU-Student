@@ -21,7 +21,7 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow(LoginState())
     val uiState = _uiState.asStateFlow()
 
-    private val _event = Channel<LoginUiEvent>()
+    private val _event = Channel<LoginUiEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
     fun onLoginClick(activity: Activity) {

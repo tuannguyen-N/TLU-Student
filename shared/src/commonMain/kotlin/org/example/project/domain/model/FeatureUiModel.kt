@@ -14,6 +14,7 @@ data class FeatureUiModel(
         )
 
         fun getGeneralList() = listOf(
+            FeatureUiModel("Điểm danh",FeatureType.ATTENDANCE_CHECKING ),
             FeatureUiModel("Thẻ sinh viên",        FeatureType.DIGITAL_STUDENT_CARD),
             FeatureUiModel("Lịch thi",        FeatureType.EXAM_SCHEDULE),
             FeatureUiModel("Đăng ký môn",     FeatureType.COURSE_REGISTER),
@@ -49,5 +50,6 @@ enum class FeatureType {
     FEEDBACK,
     TRAINING_OFFICE,
     ACADEMIC_ADVISOR,
-    UPCOMING
+    UPCOMING,
+    ATTENDANCE_CHECKING
 }

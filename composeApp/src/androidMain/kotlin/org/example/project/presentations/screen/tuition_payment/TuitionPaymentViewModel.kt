@@ -3,13 +3,18 @@ package org.example.project.presentations.screen.tuition_payment
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import org.example.project.domain.model.PaymentResult
 import org.example.project.domain.model.PaymentType
 import org.example.project.domain.model.TuitionUiModel
 import org.example.project.domain.repository.PaymentRepository
 import org.example.project.domain.repository.TuitionRepository
+import org.example.project.presentations.utils.PaymentDeepLinkEvent
 import org.example.project.presentations.utils.withDelayedLoading
 
 class TuitionPaymentViewModel(
@@ -18,22 +23,39 @@ class TuitionPaymentViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(TuitionStatus())
     val uiState = _uiState.asStateFlow()
+    private val _uiEvent = Channel<TuitionUiEvent>(Channel.BUFFERED)
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
         loadData()
+        observePaymentDeepLink()
+    }
+
+    private fun observePaymentDeepLink() {
+        viewModelScope.launch {
+            PaymentDeepLinkEvent.result.collect { result ->
+                when (result) {
+                    is PaymentResult.Failure -> sendUiEvent(TuitionUiEvent.ShowDialogPaymentFailed)
+                    is PaymentResult.Success -> {
+                        updateState { copy(isLoading = true) }
+                        onPaymentReturn()
+                        delay(2000L)
+                        updateState { copy(isLoading = false) }
+                    }
+                }
+                PaymentDeepLinkEvent.clear()
+            }
+        }
     }
 
     private fun loadData() {
         viewModelScope.launch {
             withDelayedLoading(onLoading = { updateState { copy(isLoading = it) } }) {
-                tuitionRepository.getTuition().fold(
-                    onSuccess = { result ->
-                        updateState { copy(allTuition = result) }
-                    },
-                    onFailure = {
-                        Log.e("tuition_error", "loadData: $it")
-                    }
-                )
+                tuitionRepository.getTuition().fold(onSuccess = { result ->
+                    updateState { copy(allTuition = result) }
+                }, onFailure = {
+                    Log.e("tuition_error", "loadData: $it")
+                })
             }
         }
     }
@@ -43,8 +65,7 @@ class TuitionPaymentViewModel(
             tuitionRepository.getDetailTuition(tuition.invoiceId).onSuccess { detail ->
                 updateState {
                     copy(
-                        selectedTuitionDetail = detail,
-                        isInPaymentScreen = true
+                        selectedTuitionDetail = detail, isInPaymentScreen = true
                     )
                 }
             }
@@ -61,21 +82,18 @@ class TuitionPaymentViewModel(
 
     fun onPay(invoiceId: Int, paymentType: PaymentType) {
         viewModelScope.launch {
-            updateState { copy(isProcessingPayment = true) }
-            paymentRepository.createOrderPayment(invoiceId, paymentType.value).fold(
-                onSuccess = { data ->
+            updateState { copy(isLoading = true) }
+            paymentRepository.createOrderPayment(invoiceId, paymentType.value)
+                .fold(onSuccess = { data ->
                     updateState {
                         copy(
-                            isProcessingPayment = false,
-                            paymentUrl = data.orderUrl
+                            isLoading = false, paymentUrl = data.orderUrl
                         )
                     }
-                },
-                onFailure = {
+                }, onFailure = {
                     Log.e("payment_error", "onPay: $it")
-                    updateState { copy(isProcessingPayment = false) }
-                }
-            )
+                    updateState { copy(isLoading = false) }
+                })
         }
     }
 
@@ -89,7 +107,7 @@ class TuitionPaymentViewModel(
             try {
                 tuitionRepository.getTuition()
             } finally {
-                kotlinx.coroutines.delay(1000L)
+                delay(1000L)
                 updateState { copy(isRefreshing = false) }
             }
         }
@@ -104,7 +122,7 @@ class TuitionPaymentViewModel(
                     updateState { copy(selectedTuitionDetail = detail) }
                 }
             } finally {
-                kotlinx.coroutines.delay(1000L)
+                delay(1000L)
                 updateState { copy(isRefreshingDetail = false) }
             }
         }
@@ -113,11 +131,23 @@ class TuitionPaymentViewModel(
     fun onBackFromPayment() {
         updateState {
             copy(
-                isInPaymentScreen = false,
-                selectedTuitionDetail = null,
-                paymentUrl = null
+                isInPaymentScreen = false, selectedTuitionDetail = null, paymentUrl = null
             )
         }
+        onRefreshData()
+    }
+
+    private suspend fun onPaymentReturn() {
+        paymentRepository.paymentReturn(_uiState.value.selectedTuitionDetail?.tuitionId!!)
+            .fold(onSuccess = {
+                sendUiEvent(TuitionUiEvent.ShowDialogPaymentSuccess)
+            }, onFailure = {
+                sendUiEvent(TuitionUiEvent.ShowDialogPaymentFailed)
+            })
+    }
+
+    private fun sendUiEvent(event: TuitionUiEvent) {
+        _uiEvent.trySend(event)
     }
 
     private fun updateState(block: TuitionStatus.() -> TuitionStatus) {

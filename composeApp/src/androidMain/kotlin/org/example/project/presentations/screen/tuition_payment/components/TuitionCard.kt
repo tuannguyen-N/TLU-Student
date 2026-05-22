@@ -22,7 +22,6 @@ import org.example.project.domain.model.PaymentStatus
 import org.example.project.presentations.components.LabelView
 import org.example.project.presentations.theme.ExtendedColors
 
-
 @Composable
 fun TuitionCard(
     modifier: Modifier = Modifier,

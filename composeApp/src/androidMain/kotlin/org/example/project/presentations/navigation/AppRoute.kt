@@ -25,6 +25,7 @@ object AppRoute {
     const val NewsScreen = "news_screen"
     const val Chat = "chat_screen"
     const val Application = "application_screen"
+    const val AttendanceChecking = "attendance_checking_screen"
     const val ApplicationDetail = "application_detail_screen/{id}"
     fun applicationDetail(id: Int) = "application_detail_screen/$id"
     fun notificationDetail(id: Int) = "notification_detail/$id"

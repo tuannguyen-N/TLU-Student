@@ -86,7 +86,14 @@ class ClassSignUpViewModel(
                         category = if (subject.isRequired) CourseFilter.REQUIRED else CourseFilter.ELECTIVE
                     )
                 }
-                _uiState.update { it.copy(isLoading = false, courses = courseItems) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        courses = courseItems,
+                        enrollmentStartTime = result.data.startTime,
+                        enrollmentEndTime = result.data.endTime
+                    )
+                }
             }
 
             is AppResult.Failure -> {

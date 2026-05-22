@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -13,13 +14,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import org.example.MyApplication
-import org.example.project.presentations.utils.MsalHelper
-import org.example.project.presentations.utils.createNotificationChannel
-import org.example.project.presentations.utils.NetworkMonitor
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import android.widget.Toast
+import org.example.MyApplication
+import org.example.project.presentations.utils.MsalHelper
+import org.example.project.presentations.utils.NetworkMonitor
+import org.example.project.presentations.utils.PaymentDeepLinkEvent
+import org.example.project.presentations.utils.createNotificationChannel
 
 class MainActivity : ComponentActivity() {
     private val appContainer by lazy {
@@ -42,6 +43,23 @@ class MainActivity : ComponentActivity() {
             )
         }
         observeNetworkStatus()
+        handleDeepLink(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        handleDeepLink(intent)
+    }
+
+    private fun handleDeepLink(intent: Intent?) {
+        val data = intent?.data ?: return
+        if (data.scheme == "myapp" && data.host == "payment") {
+            val responseCode = data.getQueryParameter("vnp_ResponseCode")
+            val txnRef = data.getQueryParameter("vnp_TxnRef")
+
+            PaymentDeepLinkEvent.emit(responseCode, txnRef)
+        }
     }
 
     private fun observeNetworkStatus() {

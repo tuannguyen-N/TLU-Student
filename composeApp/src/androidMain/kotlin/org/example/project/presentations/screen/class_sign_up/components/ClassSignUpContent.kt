@@ -82,7 +82,10 @@ fun ClassSignUpContent(
                 item {
                     SemesterInformation(
                         color,
-                        semesterName = uiState.currentSemester?.semesterName ?: ""
+                        semesterName = uiState.currentSemester?.semesterName ?: "",
+                        enrollmentStartTime = uiState.enrollmentStartTime,
+                        enrollmentEndTime = uiState.enrollmentEndTime,
+                        hasSubjects = uiState.courses.isNotEmpty()
                     )
                 }
 
@@ -118,15 +121,6 @@ fun ClassSignUpContent(
                 item { Spacer(Modifier.height(90.dp)) }
             }
 
-            ClassSelectedInformationCard(
-                totalSubjects = uiState.totalSubjects,
-                totalCredits = uiState.totalCredits,
-                onConfirmClick = onOpenSignedUpClass,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-            )
-
             if (uiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center)
@@ -138,6 +132,23 @@ fun ClassSignUpContent(
                     text = uiState.error,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            if (allCourses.isEmpty()) {
+                Text(
+                    text = "Chưa đến thời gian đăng ký",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            } else {
+                ClassSelectedInformationCard(
+                    totalSubjects = uiState.totalSubjects,
+                    totalCredits = uiState.totalCredits,
+                    onConfirmClick = onOpenSignedUpClass,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
                 )
             }
 

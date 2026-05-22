@@ -19,6 +19,9 @@ fun String.toTuitionStatus(): PaymentStatus{
     return when(this){
         "PAID" -> PaymentStatus.PAID
         "UNPAID" -> PaymentStatus.UNPAID
+        "PENDING" -> PaymentStatus.PENDING
+        "OVERDUE" -> PaymentStatus.OVERDUE
+        "CANCELLED" -> PaymentStatus.CANCELLED
         else -> PaymentStatus.UNPAID
     }
 }

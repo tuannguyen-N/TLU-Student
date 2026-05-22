@@ -107,6 +107,9 @@ import org.example.project.presentations.screen.transcript_term.TranscriptTermVi
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentScreen
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentViewModel
 import org.example.project.presentations.screen.tuition_payment.TuitionPaymentViewModelFactory
+import org.example.project.presentations.screen.attendance_checking.CameraQrScreen
+import org.example.project.presentations.screen.attendance_checking.CameraQrViewModel
+import org.example.project.presentations.screen.attendance_checking.CameraQrViewModelFactory
 import org.example.project.presentations.utils.NotificationPermissionManager
 import org.example.project.presentations.utils.openDialer
 import org.example.project.presentations.utils.openEmail
@@ -690,6 +693,19 @@ fun AppNavGraph(
                     )
                     context.startActivity(intent)
                 }
+            )
+        }
+
+        composable(AppRoute.AttendanceChecking) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                CameraQrViewModelFactory()
+            }
+            val cameraQrViewModel: CameraQrViewModel = viewModel(factory = factory)
+
+            CameraQrScreen(
+                viewModel = cameraQrViewModel,
+                onBack = { navController.popBackStack() }
             )
         }
     }

@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.tuition_payment.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,8 +17,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.PaymentStatus
 import org.example.project.domain.model.TuitionUiModel
@@ -84,7 +91,7 @@ private fun PaymentCard(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 10.dp),
         onClick = { onClick(item) },
         shape = RoundedCornerShape(16.dp),
         color = color.white,
@@ -136,17 +143,42 @@ private fun PaymentCard(
                 }
             }
 
-            if (item.status == PaymentStatus.UNPAID) {
+            if (item.status == PaymentStatus.UNPAID || item.status == PaymentStatus.OVERDUE) {
                 Spacer(modifier = Modifier.height(12.dp))
                 ButtonView(
                     text = "Thanh toán",
                     enabled = true,
                     textColorRes = color.white,
-                    backgroundColorRes = color.red,
+                    backgroundColorRes = if (item.status == PaymentStatus.OVERDUE) color.orange else color.red,
                     shape = RoundedCornerShape(12.dp),
                     onClick = { onPayment(item) },
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
+            }
+
+            if (item.status == PaymentStatus.PENDING) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(14.dp),
+                        color = color.orange,
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Giao dịch đang đợc xử lý....",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = color.orange,
+                            fontStyle = FontStyle.Italic
+                        )
+                    )
+                }
             }
         }
     }
@@ -154,12 +186,37 @@ private fun PaymentCard(
 
 @Composable
 private fun StatusIcon(status: PaymentStatus, color: ExtendedColors) {
-    val bgColor =
-        if (status == PaymentStatus.PAID) color.green.copy(alpha = 0.2f) else color.red.copy(
-            alpha = 0.2f
+    val (bgColor, iconColor, icon) = when (status) {
+        PaymentStatus.PAID -> Triple(
+            color.green.copy(alpha = 0.2f),
+            color.green,
+            Icons.Filled.Check
         )
-    val iconColor = if (status == PaymentStatus.PAID) color.green else color.red
-    val icon = if (status == PaymentStatus.PAID) Icons.Filled.Check else Icons.Filled.Close
+
+        PaymentStatus.UNPAID -> Triple(
+            color.red.copy(alpha = 0.2f),
+            color.red,
+            Icons.Filled.Close
+        )
+
+        PaymentStatus.PENDING -> Triple(
+            color.orange.copy(alpha = 0.2f),
+            color.orange,
+            Icons.Filled.Refresh
+        )
+
+        PaymentStatus.OVERDUE -> Triple(
+            color.orange.copy(alpha = 0.15f),
+            color.orange,
+            Icons.Filled.Warning
+        )
+
+        PaymentStatus.CANCELLED -> Triple(
+            color.gray.copy(alpha = 0.2f),
+            color.gray,
+            Icons.Filled.Block
+        )
+    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -179,18 +236,20 @@ private fun StatusIcon(status: PaymentStatus, color: ExtendedColors) {
 
 @Composable
 private fun StatusLabel(status: PaymentStatus, color: ExtendedColors) {
-    val text = if (status == PaymentStatus.PAID) "ĐÃ THANH TOÁN" else "CHƯA THANH TOÁN"
-    val color = if (status == PaymentStatus.PAID) color.green else color.red
+    val (text, labelColor) = when (status) {
+        PaymentStatus.PAID -> "ĐÃ THANH TOÁN" to color.green
+        PaymentStatus.UNPAID -> "CHƯA THANH TOÁN" to color.red
+        PaymentStatus.PENDING -> "ĐANG XỬ LÝ" to color.orange
+        PaymentStatus.OVERDUE -> "QUÁ HẠN" to color.orange
+        PaymentStatus.CANCELLED -> "ĐÃ HỦY" to color.gray
+    }
 
     Text(
         text = text,
         style = MaterialTheme.typography.labelSmall.copy(
             fontWeight = FontWeight.SemiBold,
-            color = color,
-            letterSpacing = androidx.compose.ui.unit.TextUnit(
-                value = 0.5f,
-                type = androidx.compose.ui.unit.TextUnitType.Sp
-            )
+            color = labelColor,
+            letterSpacing = TextUnit(value = 0.5f, type = TextUnitType.Sp)
         )
     )
 }

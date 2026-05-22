@@ -17,4 +17,6 @@ data class ClassSignUpState(
     val currentSemester: Semester? = null,
     val courseClasses: List<CourseClassEnrollmentData> = emptyList(),
     val enrolledClasses: List<EnrollmentScheduleData> = emptyList(),
+    val enrollmentStartTime: String? = null,
+    val enrollmentEndTime: String? = null,
 )

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material.icons.outlined.Pending
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.QrCode
+import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.SupportAgent
 import androidx.compose.material.icons.outlined.Work
 import androidx.compose.ui.graphics.Color
@@ -44,6 +45,7 @@ fun FeatureType.toImageVector(): ImageVector {
         FeatureType.TRAINING_OFFICE -> Icons.Outlined.Phone
         FeatureType.ACADEMIC_ADVISOR -> Icons.Outlined.SupportAgent
         FeatureType.UPCOMING -> Icons.Outlined.Pending
+        FeatureType.ATTENDANCE_CHECKING -> Icons.Outlined.QrCodeScanner
     }
 }
 
@@ -64,6 +66,7 @@ fun FeatureType.toIconBackgroundColor(): Color {
         FeatureType.TRAINING_OFFICE -> Color(0xFFE8E8E8)
         FeatureType.ACADEMIC_ADVISOR -> Color(0xFFE8E8E8)
         FeatureType.UPCOMING -> Color(0xFFE8E8E8)
+        FeatureType.ATTENDANCE_CHECKING -> Color(0xFFD9F2FF)
     }
 }
 
@@ -84,6 +87,7 @@ fun FeatureType.toIconTintColor(): Color {
         FeatureType.TRAINING_OFFICE -> Color(0xFF757575)
         FeatureType.ACADEMIC_ADVISOR -> Color(0xFF757575)
         FeatureType.UPCOMING -> Color(0xFF757575)
+        FeatureType.ATTENDANCE_CHECKING -> Color(0xFF1697D6)
     }
 }
 
@@ -97,6 +101,7 @@ fun FeatureType.toRoute(): String {
         FeatureType.COURSE_REGISTER -> AppRoute.ClassSignUp
         FeatureType.TUITION_PAYMENT -> AppRoute.TuitionPayment
         FeatureType.DIGITAL_FORM -> AppRoute.Application
+        FeatureType.ATTENDANCE_CHECKING -> AppRoute.AttendanceChecking
         else -> "" // TODO:
     }
 }

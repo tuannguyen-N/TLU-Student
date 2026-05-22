@@ -40,6 +40,10 @@ kotlin {
             implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
             implementation("androidx.work:work-runtime-ktx:2.9.0")
             implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.27.0")
+            implementation(libs.androidx.camera.camera2)
+            implementation(libs.androidx.camera.lifecycle)
+            implementation(libs.androidx.camera.view)
+            implementation(libs.mlkit.barcode.scanning)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
