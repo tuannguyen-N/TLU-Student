@@ -17,6 +17,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.domain.model.SemesterUiModel
@@ -99,7 +100,8 @@ fun TranscriptContent(
                         item(key = "semester_header", contentType = "Header") {
                             Text(
                                 text = "Điểm học kỳ",
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold,
                                 modifier = Modifier.padding(bottom = 10.dp, top = 20.dp)
                             )
                         }

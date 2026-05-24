@@ -93,7 +93,7 @@ fun HomeScreen(
                     ScheduleClassList(
                         isLoading = uiState.loadingScheduleClassList,
                         courseClasses = uiState.courseClasses,
-                        modifier = Modifier.padding(horizontal = 15.dp),
+                        modifier = Modifier.padding(horizontal = 20.dp),
                         onClickViewTomorrow = onOpenScheduleScreen,
                         color = color
                     )

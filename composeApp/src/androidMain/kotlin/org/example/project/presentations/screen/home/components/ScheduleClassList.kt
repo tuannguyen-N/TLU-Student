@@ -19,13 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.mapper.isGoing
 import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.components.shimmerEffect
 import org.example.project.presentations.theme.ExtendedColors
+import org.example.project.presentations.theme.LocalExtendedColors
 import kotlin.time.Clock
 
 @Composable
@@ -39,14 +42,14 @@ fun ScheduleClassList(
     Column {
         Row(
             modifier = modifier
-                .padding(bottom = 15.dp)
+                .padding(bottom = 10.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Lịch học hôm nay",
-                style = MaterialTheme.typography.titleMedium,
+                text = "Lịch hôm nay",
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
             )
         }
@@ -100,6 +103,7 @@ fun ScheduleClassList(
                     isVisibleButton = false,
                     onClickViewTomorrow = onClickViewTomorrow,
                     color = color,
+                    title = "Không có hoạt động nào hôm nay",
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
             }
@@ -125,4 +129,55 @@ fun ScheduleClassList(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ScheduleClassListPreview() {
+    val courseClasses = listOf(
+        CourseClass(
+            classCode = "INT2215 2",
+            dayOfWeek = 2,
+            subjectName = "Cơ sở dữ liệu",
+            subjectCode = "INT2215",
+            credits = 3,
+            startPeriod = 4,
+            endPeriod = 6,
+            startTime = "10:10:00",
+            endTime = "12:40:00",
+            room = "B201",
+            lecturer = Lecturer(
+                lecturerCode = "GV002",
+                fullName = "Trần Thị B",
+                phoneNumber = "0987654321",
+                email = "tranthib@example.com"
+            )
+        ),
+        CourseClass(
+            classCode = "INT2204 1",
+            dayOfWeek = 2,
+            subjectName = "Lập trình Android",
+            subjectCode = "INT2204",
+            credits = 3,
+            startPeriod = 1,
+            endPeriod = 3,
+            startTime = "07:00:00",
+            endTime = "09:30:00",
+            room = "A305",
+            lecturer = Lecturer(
+                lecturerCode = "GV001",
+                fullName = "Nguyễn Văn A",
+                phoneNumber = "0123456789",
+                email = "nguyenvana@example.com"
+            )
+        ),
+    )
+
+    ScheduleClassList(
+        color = LocalExtendedColors.current,
+        isLoading = false,
+        courseClasses = courseClasses,
+        onClickViewTomorrow = {}
+    )
+
 }

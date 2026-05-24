@@ -21,6 +21,7 @@ import org.example.project.data.mapper.getTodayDayOfWeek
 import org.example.project.data.mapper.nearestClasses
 import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.model.HomeUiEvent
+import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
@@ -37,7 +38,8 @@ class HomeViewModel(
     private val newsRepository: NewsRepository,
     private val quoteRepository: QuoteRepository,
     private val authPluginConfig: AuthPluginConfig,
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
+    private val examScheduleRepository: ExamScheduleRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState = combine(
@@ -114,7 +116,11 @@ class HomeViewModel(
         viewModelScope.launch { loadNews() }
         viewModelScope.launch { loadDailyQuote() }
         viewModelScope.launch { loadAlert() }
+        viewModelScope.launch { loadExamSchedule() }
         loadImage()
+    }
+
+    private fun loadExamSchedule() {
     }
 
     private suspend fun loadAlert() {

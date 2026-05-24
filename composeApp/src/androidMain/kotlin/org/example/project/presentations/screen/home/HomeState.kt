@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.home
 
 import org.example.project.data.local.entity.QuoteEntity
+import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.data.remote.dto.me.StudentData
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.model.AlertUiModel

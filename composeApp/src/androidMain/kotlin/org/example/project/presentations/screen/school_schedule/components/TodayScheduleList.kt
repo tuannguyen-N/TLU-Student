@@ -13,9 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.data.remote.dto.week_schedule.CourseClass
+import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.screen.home.components.ScheduleEmptyCard
 import org.example.project.presentations.theme.ExtendedColors
 
@@ -70,7 +73,8 @@ fun TitleView(
     ) {
         Text(
             text = "Lịch học hôm nay",
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold
         )
         Text(
             text = "Thời khoá biểu",
@@ -80,6 +84,66 @@ fun TitleView(
             modifier = Modifier.clickable(
                 onClick = onOpenTimetable
             )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TodayScheduleListPreview() {
+    val courseClasses = listOf(
+        CourseClass(
+            classCode = "INT2204 1",
+            dayOfWeek = 2,
+            subjectName = "Lập trình Android",
+            subjectCode = "INT2204",
+            credits = 3,
+            startPeriod = 1,
+            endPeriod = 3,
+            startTime = "07:00:00",
+            endTime = "09:30:00",
+            room = "A305",
+            lecturer = Lecturer(
+                lecturerCode = "GV001",
+                fullName = "Nguyễn Văn A",
+                phoneNumber = "0123456789",
+                email = "nguyenvana@example.com"
+            )
+        ),
+        CourseClass(
+            classCode = "INT2215 2",
+            dayOfWeek = 2,
+            subjectName = "Cơ sở dữ liệu",
+            subjectCode = "INT2215",
+            credits = 3,
+            startPeriod = 4,
+            endPeriod = 6,
+            startTime = "10:10:00",
+            endTime = "12:40:00",
+            room = "B201",
+            lecturer = Lecturer(
+                lecturerCode = "GV002",
+                fullName = "Trần Thị B",
+                phoneNumber = "0987654321",
+                email = "tranthib@example.com"
+            )
+        )
+    )
+
+    MaterialTheme {
+        TodayScheduleList(
+            color = ExtendedColors(
+                mainRed = Color(0xFFE53935),
+                red = Color.Red,
+                gray = Color.Gray,
+                white = Color.White
+            ),
+            courseClasses = courseClasses,
+            isToday = true,
+            daysUntil = 0,
+            onOpenTimetable = {},
+            onOpenDetailCourseClass = {},
+            onClickViewTomorrow = {}
         )
     }
 }

@@ -59,7 +59,7 @@ fun FeatureItem(
                 onClick = { if (!isEditing && !feature.isUpcoming) onClickFeature(feature) },
                 color = feature.type.toIconBackgroundColor().copy(alpha = alpha),
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(70.dp)
                     .clip(RoundedCornerShape(16.dp))
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -67,7 +67,7 @@ fun FeatureItem(
                         imageVector = feature.type.toImageVector(),
                         contentDescription = feature.name,
                         tint = feature.type.toIconTintColor().copy(alpha = alpha),
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(35.dp)
                     )
                 }
             }
@@ -107,7 +107,7 @@ fun FeatureItem(
             text = feature.name,
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
             textAlign = TextAlign.Center,
-            color = color.gray,
+            color = color.blackBackground,
             maxLines = 2
         )
     }

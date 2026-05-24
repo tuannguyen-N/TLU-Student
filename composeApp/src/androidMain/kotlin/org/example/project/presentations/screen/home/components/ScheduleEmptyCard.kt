@@ -32,6 +32,7 @@ import org.example.project.presentations.theme.ExtendedColors
 fun ScheduleEmptyCard(
     modifier: Modifier = Modifier,
     color: ExtendedColors,
+    title: String = "Hôm nay bạn không có lịch học",
     atHome: Boolean = false,
     isVisibleButton: Boolean = true,
     onClickViewTomorrow: () -> Unit = {}
@@ -64,7 +65,7 @@ fun ScheduleEmptyCard(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Hôm nay bạn không có lịch học",
+            text = title,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1A1A2E),

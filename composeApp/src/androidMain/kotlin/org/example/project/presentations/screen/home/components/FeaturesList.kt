@@ -30,7 +30,7 @@ fun FeatureList(
     Column(modifier = modifier) {
         Row(
             modifier = modifier
-                .padding(horizontal = 15.dp)
+                .padding(horizontal = 20.dp)
                 .padding(bottom = 10.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -38,7 +38,7 @@ fun FeatureList(
         ) {
             Text(
                 text = "Chức năng",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
             )
 

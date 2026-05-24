@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +46,7 @@ fun ScheduleItem(
             shift = courseClass.startPeriod.toString(),
             startTime = courseClass.startTime
         )
-        ScheduleDotLine(isOngoing = isOngoing, modifier = Modifier.padding(horizontal = 20.dp))
+        ScheduleDotLine(isOngoing = isOngoing, modifier = Modifier.padding(horizontal = 20.dp).width(14.dp))
         SubjectInformationCard(
             courseClass = courseClass,
             isOngoing = isOngoing && isToday,
@@ -80,6 +81,7 @@ fun ScheduleDotLine(isOngoing: Boolean, modifier: Modifier = Modifier) {
                     .size(7.dp)
                     .clip(CircleShape)
                     .background(LocalExtendedColors.current.gray)
+                    .align(Alignment.TopCenter)
             )
         }
     }

@@ -31,7 +31,8 @@ fun QuoteCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(horizontal = 20.dp)
+            .padding(top = 15.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = LocalExtendedColors.current.white),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)

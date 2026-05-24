@@ -49,7 +49,7 @@ fun NewsAndEventsList(
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = modifier
-                .padding(horizontal = 15.dp)
+                .padding(horizontal = 20.dp)
                 .padding(bottom = 10.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -57,7 +57,7 @@ fun NewsAndEventsList(
         ) {
             Text(
                 text = "Tin tức và sự kiện",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold
             )
             Text(

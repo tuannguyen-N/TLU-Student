@@ -70,7 +70,8 @@ private fun TuitionCourseList(
                     courseCode = course.subjectCode,
                     courseName = course.subjectName,
                     credits = course.credits,
-                    amount = course.amount.toLong().toFormatAmountAndD(),
+                    amount = (course.amount * course.credits * course.coefficient).toLong()
+                        .toFormatAmountAndD(),
                     color = color,
                     isLastItem = courses.last() == course
                 )

@@ -3,6 +3,7 @@ package org.example.project.presentations.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.example.project.data.remote.interceptor.AuthPluginConfig
+import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
@@ -17,7 +18,8 @@ class HomeViewModelFactory(
     private val newsRepository: NewsRepository,
     private val quoteRepository: QuoteRepository,
     private val authPluginConfig: AuthPluginConfig,
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
+    private val examScheduleRepository: ExamScheduleRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
@@ -29,7 +31,8 @@ class HomeViewModelFactory(
                 newsRepository,
                 quoteRepository,
                 authPluginConfig,
-                notificationRepository
+                notificationRepository,
+                examScheduleRepository
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
