@@ -51,11 +51,10 @@ fun AcademicInformation(
                 position
             )
 
-            AcademicAdvisorItem(
+            InformationItem(
                 R.drawable.icon_academic_advisor,
                 "Cố vấn học tập",
-                "Nguyễn Var Tày",
-                academicAdvisor
+                academicAdvisor,
             )
 
             InformationItem(

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.example.project.data.cache.CacheManager
 import org.example.project.data.local.dao.ScheduleDao
+import org.example.project.data.mapper.toDaySchedule
 import org.example.project.data.mapper.toSubjects
 import org.example.project.data.mapper.toWeeklyScheduleData
 import org.example.project.data.mapper.toWeeklyScheduleEntity
@@ -12,6 +13,7 @@ import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.dto.day_schedule.ScheduleData
 import org.example.project.data.remote.dto.week_schedule.WeeklyScheduleData
 import org.example.project.domain.model.AppResult
+import org.example.project.domain.model.DaySchedule
 import org.example.project.domain.model.SubjectItem
 import kotlin.time.Duration.Companion.minutes
 
@@ -28,7 +30,7 @@ class ScheduleRepository(
     private val _weekSchedules = MutableStateFlow<Map<String, WeeklyScheduleData>>(emptyMap())
     val weekSchedules = _weekSchedules.asStateFlow()
 
-    suspend fun getDaySchedule(
+    suspend fun getDayStudySchedule(
         dayOfWeek: Int,
         forceRefresh: Boolean = false
     ): AppResult<ScheduleData> {
@@ -42,6 +44,18 @@ class ScheduleRepository(
             }
             _daySchedules.update { it + (dayOfWeek to data) }
             AppResult.Success(data)
+        } catch (e: Exception) {
+            AppResult.Failure(message = e.message, cause = e)
+        }
+    }
+
+    suspend fun getDaySchedule(
+        dayOfWeek: Int,
+    ): AppResult<List<DaySchedule>> {
+        return try {
+            val data = scheduleApi.getDayOfWeekSchedule(dayOfWeek).data
+                ?: throw Exception("Không có dữ liệu lịch học")
+            AppResult.Success(data.toDaySchedule())
         } catch (e: Exception) {
             AppResult.Failure(message = e.message, cause = e)
         }

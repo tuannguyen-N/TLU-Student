@@ -8,8 +8,8 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.number
 import kotlinx.datetime.plus
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import kotlin.time.Clock
 
@@ -151,11 +151,11 @@ fun String.toCreatedAgo(): String {
     val diffMinutes = nowTotalMinutes - createdTotalMinutes
 
     return when {
-        diffMinutes < 1    -> "Vừa xong"
-        diffMinutes < 60   -> "${diffMinutes} phút trước"
+        diffMinutes < 1 -> "Vừa xong"
+        diffMinutes < 60 -> "${diffMinutes} phút trước"
         diffMinutes < 1440 -> "${diffMinutes / 60} giờ trước"       // < 24 giờ
         diffMinutes < 43200 -> "${diffMinutes / 1440} ngày trước"   // < 30 ngày
-        else               -> "${diffMinutes / 43200} tháng trước"
+        else -> "${diffMinutes / 43200} tháng trước"
     }
 }
 
@@ -178,7 +178,10 @@ fun computeEnrollmentStatusText(
         val start = kotlinx.datetime.LocalDateTime.parse(startTime)
         val end = kotlinx.datetime.LocalDateTime.parse(endTime)
 
-        fun diffLabel(from: kotlinx.datetime.LocalDateTime, to: kotlinx.datetime.LocalDateTime): String {
+        fun diffLabel(
+            from: kotlinx.datetime.LocalDateTime,
+            to: kotlinx.datetime.LocalDateTime
+        ): String {
             val fromEpoch = from.toInstant(TimeZone.currentSystemDefault()).epochSeconds
             val toEpoch = to.toInstant(TimeZone.currentSystemDefault()).epochSeconds
             val diffSeconds = toEpoch - fromEpoch
@@ -186,8 +189,8 @@ fun computeEnrollmentStatusText(
 
             return when {
                 diffMs >= 24 * 60 -> "${diffMs / (24 * 60)} ngày"
-                diffMs >= 60      -> "${diffMs / 60} giờ"
-                else              -> "$diffMs phút"
+                diffMs >= 60 -> "${diffMs / 60} giờ"
+                else -> "$diffMs phút"
             }
         }
 
@@ -195,6 +198,7 @@ fun computeEnrollmentStatusText(
             now < start -> "Đăng ký học sẽ diễn ra sau ${diffLabel(now, start)}"
             !hasSubjects && now >= start && now < end ->
                 "Đăng ký học sẽ đóng sau ${diffLabel(now, end)}"
+
             else -> null
         }
     } catch (e: Exception) {

@@ -128,13 +128,13 @@ class TuitionPaymentViewModel(
         }
     }
 
-    fun onBackFromPayment() {
+    fun onBackFromPayment(isRefresh: Boolean = true) {
         updateState {
             copy(
                 isInPaymentScreen = false, selectedTuitionDetail = null, paymentUrl = null
             )
         }
-        onRefreshData()
+        if(isRefresh) onRefreshData()
     }
 
     private suspend fun onPaymentReturn() {

@@ -1,21 +1,30 @@
 package org.example.project.presentations.screen.home
 
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.local.entity.QuoteEntity
 import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.data.remote.dto.me.StudentData
+import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.model.AlertUiModel
+import org.example.project.domain.model.DaySchedule
 import org.example.project.domain.model.EventAndNewUiModel
 import org.example.project.domain.model.FeatureUiModel
+import org.example.project.domain.model.SemesterUiModel
+import kotlin.time.Clock
 
 data class HomeState(
     val studentInfo: StudentData? = null,
-    val courseClasses: List<CourseClass>? = null,
     val quickAccessList: List<FeatureUiModel> = emptyList(),
     val alerts: List<AlertUiModel> = emptyList(),
+    val dayScheduleList: List<DaySchedule> = emptyList(),
+    val examDayScheduleList: List<DaySchedule> = emptyList(),
     val newsAndEvents: List<EventAndNewUiModel> = emptyList(),
     val imageBase64: String? = null,
     val dailyQuote: QuoteEntity? = null,
+    val currentSemester: Semester? = null,
 
     val loadingStudentInfo: Boolean = false,
     val loadingAlertList: Boolean = false,
@@ -23,4 +32,20 @@ data class HomeState(
     val loadingEventList: Boolean = false,
     val isRefreshing: Boolean = false,
     val isAllNotificationsRead: Boolean = false
-) 
+) {
+    val upcomingSchedules: List<DaySchedule>
+        get() {
+            val now = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault()).time
+
+            return (dayScheduleList + examDayScheduleList)
+                .filter { schedule ->
+                    val end = LocalTime.parse(schedule.endTime)
+                    val endMinutes = end.hour * 60 + end.minute
+                    val nowMinutes = now.hour * 60 + now.minute
+                    endMinutes >= nowMinutes
+                }
+                .sortedBy { it.startTime }
+                .take(3)
+        }
+}

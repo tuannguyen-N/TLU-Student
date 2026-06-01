@@ -9,16 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.mapper.getTodayDayOfWeek
-import org.example.project.data.mapper.nearestClasses
 import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.ExamScheduleRepository
@@ -27,9 +23,9 @@ import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.QuoteRepository
 import org.example.project.domain.usecase.ScheduleUseCase
+import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.presentations.utils.withDelayedLoading
-import kotlin.time.Clock
 
 class HomeViewModel(
     private val studentUseCase: StudentUseCase,
@@ -39,7 +35,8 @@ class HomeViewModel(
     private val quoteRepository: QuoteRepository,
     private val authPluginConfig: AuthPluginConfig,
     private val notificationRepository: NotificationRepository,
-    private val examScheduleRepository: ExamScheduleRepository
+    private val examScheduleRepository: ExamScheduleRepository,
+    private val semesterUseCase: SemesterUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState = combine(
@@ -58,10 +55,16 @@ class HomeViewModel(
 
     init {
         observeStudentInfo()
-        observeCourseClasses()
         observeReadNotifications()
         observeAlerts()
+        observeSemester()
         loadInitData()
+    }
+
+    private fun observeSemester() {
+        semesterUseCase.semesters.onEach { semesterList ->
+            updateState { copy(currentSemester = semesterList?.lastOrNull()) }
+        }.launchIn(viewModelScope)
     }
 
     private fun observeAlerts() {
@@ -78,27 +81,6 @@ class HomeViewModel(
         }.launchIn(viewModelScope)
     }
 
-    private fun observeCourseClasses() {
-        scheduleUseCase.daySchedule
-            .map { cache ->
-                cache[getTodayDayOfWeek()]
-            }
-            .map { data ->
-                val currentTime = Clock.System.now()
-                    .toLocalDateTime(TimeZone.currentSystemDefault())
-                    .time
-                data?.courseClasses?.nearestClasses(currentTime)
-            }
-            .onEach { filteredList ->
-                filteredList?.let {
-                    updateState {
-                        copy(courseClasses = it, loadingScheduleClassList = false)
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
     private fun observeStudentInfo() {
         studentUseCase.studentInfo
             .onEach {
@@ -111,16 +93,31 @@ class HomeViewModel(
 
     private fun loadInitData() {
         viewModelScope.launch { featureRepository.seedDefaultsIfNeeded() }
+        viewModelScope.launch { loadSemester() }
         viewModelScope.launch { loadStudentInfo() }
         viewModelScope.launch { loadCourseClasses() }
+        viewModelScope.launch { loadExamSchedule() }
         viewModelScope.launch { loadNews() }
         viewModelScope.launch { loadDailyQuote() }
         viewModelScope.launch { loadAlert() }
-        viewModelScope.launch { loadExamSchedule() }
+        viewModelScope.launch { loadExamDaySchedule() }
         loadImage()
     }
 
+    private suspend fun loadExamDaySchedule() {
+        examScheduleRepository.getExamDaySchedule(
+            _uiState.value.currentSemester?.semesterCode ?: ""
+        ).onSuccess {
+            updateState { copy(examDayScheduleList = it) }
+        }
+    }
+
+    private suspend fun loadSemester() {
+        semesterUseCase.getSemesters(true)
+    }
+
     private fun loadExamSchedule() {
+
     }
 
     private suspend fun loadAlert() {
@@ -153,12 +150,14 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun loadCourseClasses(isRefresh: Boolean = false) {
+    private suspend fun loadCourseClasses() {
         withDelayedLoading(
             onLoading = { updateState { copy(loadingScheduleClassList = it) } }
         ) {
             delay(400L)
-            scheduleUseCase.getDaySchedule(getTodayDayOfWeek(), isRefresh)
+            scheduleUseCase.getDaySchedule(getTodayDayOfWeek()).onSuccess {
+                updateState { copy(dayScheduleList = it) }
+            }
         }
     }
 
@@ -181,7 +180,7 @@ class HomeViewModel(
         viewModelScope.launch {
             updateState { copy(isRefreshing = true) }
             try {
-                loadCourseClasses(true)
+                loadCourseClasses()
                 loadAlert()
             } finally {
                 delay(1000L)

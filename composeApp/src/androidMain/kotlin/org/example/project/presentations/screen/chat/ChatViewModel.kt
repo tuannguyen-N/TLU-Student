@@ -27,6 +27,20 @@ class ChatViewModel(
         _uiState.update(newState)
     }
 
+    init {
+        loadChatContext()
+    }
+
+    private fun loadChatContext() {
+        viewModelScope.launch {
+            chatRepository.getChatbotContext().onSuccess {
+                updateState { copy(chatbotContext = it) }
+            }.onFailure {
+                updateState { copy(error = it.message) }
+            }
+        }
+    }
+
     fun onPromptChange(prompt: String) {
         updateState { copy(prompt = prompt) }
     }
@@ -46,7 +60,7 @@ class ChatViewModel(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            chatRepository.streamChat(prompt)
+            chatRepository.streamChat(prompt, _uiState.value.chatbotContext!!)
                 .onStart { updateState { copy(isLoading = true) } }
                 .onEach { event ->
                     when (event) {
@@ -69,9 +83,11 @@ class ChatViewModel(
                             }
                             updateState { copy(messages = newMessages) }
                         }
+
                         is SseEvent.Error -> {
                             updateState { copy(error = event.message, isLoading = false) }
                         }
+
                         is SseEvent.Done -> {
                             updateState { copy(isLoading = false) }
                         }

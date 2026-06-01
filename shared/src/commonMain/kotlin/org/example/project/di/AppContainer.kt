@@ -10,6 +10,7 @@ import org.example.project.data.local.getDatabaseBuilder
 import org.example.project.data.remote.api.ApplicationApi
 import org.example.project.data.remote.api.AuthApi
 import org.example.project.data.remote.api.AttendanceApi
+import org.example.project.data.remote.api.ChatApi
 import org.example.project.data.remote.api.EnrollmentApi
 import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.api.NewsApi
@@ -157,7 +158,8 @@ class AppContainer(
     val feedbackRepository = org.example.project.domain.repository.FeedbackRepository(feedbackApi)
 
     //for chat
-    val chatRepository = ChatRepository(chatHttpClient)
+    private val chatApi = ChatApi(httpClient)
+    val chatRepository = ChatRepository(chatHttpClient, chatApi)
 
     //for enrollment
     private val enrollmentApi = EnrollmentApi(httpClient)

@@ -92,10 +92,10 @@ fun HomeScreen(
                 item(key = "schedule_list", contentType = "ScheduleList") {
                     ScheduleClassList(
                         isLoading = uiState.loadingScheduleClassList,
-                        courseClasses = uiState.courseClasses,
                         modifier = Modifier.padding(horizontal = 20.dp),
                         onClickViewTomorrow = onOpenScheduleScreen,
-                        color = color
+                        color = color,
+                        daySchedule = uiState.dayScheduleList
                     )
                 }
 

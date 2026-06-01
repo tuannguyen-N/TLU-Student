@@ -41,7 +41,9 @@ fun ScheduleItemLayout(
 
     Row(modifier = modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(top = topPadding),
+            modifier = Modifier
+                .padding(top = topPadding)
+                .width(80.dp),
             horizontalAlignment = Alignment.End
         ) {
             Text(

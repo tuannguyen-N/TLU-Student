@@ -126,16 +126,14 @@ fun ClassSignUpContent(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-
-            if (uiState.error != null) {
+            else if (uiState.error != null) {
                 Text(
                     text = uiState.error,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-
-            if (allCourses.isEmpty()) {
+            else if (allCourses.isEmpty()) {
                 Text(
                     text = "Chưa đến thời gian đăng ký",
                     color = MaterialTheme.colorScheme.onBackground,

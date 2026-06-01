@@ -10,26 +10,45 @@ import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.example.project.domain.model.SseEvent
-
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.example.project.data.remote.api.ChatApi
+import org.example.project.data.remote.dto.chatbot.ChatRequest
+import org.example.project.data.remote.dto.chatbot.ChatbotContextData
+import org.example.project.domain.model.AppResult
+import org.example.project.domain.model.SseEvent
 
 class ChatRepository(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val chatApi: ChatApi
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun streamChat(prompt: String): Flow<SseEvent> = flow {
-        httpClient.preparePost("https://tl-chatbot.nhokthanh3211.workers.dev/api/v1/agent-chat-stream") {
+    fun streamChat(
+        prompt: String,
+        chatbotContext: ChatbotContextData
+    ): Flow<SseEvent> = flow {
+
+        val request = ChatRequest(
+            prompt = prompt,
+            context = chatbotContext
+        )
+
+        httpClient.preparePost(
+            "https://tl-chatbot.nhokthanh3211.workers.dev/api/v1/agent-chat-stream"
+        ) {
             contentType(ContentType.Application.Json)
-            setBody("""{"prompt": "$prompt"}""")
+            setBody(request)
         }.execute { response ->
+
             val channel: ByteReadChannel = response.bodyAsChannel()
+
             try {
                 while (!channel.isClosedForRead) {
+
                     val line = channel.readUTF8Line() ?: break
+
                     if (line.isBlank()) continue
                     if (!line.startsWith("data:")) continue
 
@@ -60,6 +79,19 @@ class ChatRepository(
             } catch (e: Exception) {
                 emit(SseEvent.Error(e.message ?: "Stream error"))
             }
+        }
+    }
+
+    suspend fun getChatbotContext(): AppResult<ChatbotContextData> {
+        try {
+            val data = chatApi.getChatbotContext().data
+            return if (data != null) {
+                AppResult.Success(data)
+            } else {
+                AppResult.Failure(null)
+            }
+        } catch (e: Exception) {
+            return AppResult.Failure(e.message, e)
         }
     }
 }

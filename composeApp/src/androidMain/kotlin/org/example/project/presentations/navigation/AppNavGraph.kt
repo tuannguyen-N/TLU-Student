@@ -189,7 +189,8 @@ fun AppNavGraph(
                     container.quoteRepository,
                     container.authPluginConfig,
                     container.notificationRepository,
-                    container.examScheduleRepository
+                    container.examScheduleRepository,
+                    container.semesterUseCase
                 )
             }
             val scheduleFactory = remember(container) {

@@ -31,9 +31,8 @@ fun createHttpClient(tokenStorage: TokenStorage): HttpClient {
 
         defaultRequest {
             url {
-                protocol = URLProtocol.HTTP
-                host = "localhost"
-                port = 8080
+                protocol = URLProtocol.HTTPS
+                host = "tl-connect-app-latest.onrender.com"
                 path("api/v1/")
             }
         }

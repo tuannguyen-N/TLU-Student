@@ -40,7 +40,7 @@ class ScheduleViewModel(
 
     private fun observeDayOfWeekSchedule() {
         combine(
-            scheduleUseCase.daySchedule,
+            scheduleUseCase.dayStudySchedule,
             _uiState.map { it.selectedDayOfWeek }.distinctUntilChanged()
         ) { cache, selectedDay ->
             cache[selectedDay]
@@ -71,7 +71,7 @@ class ScheduleViewModel(
     fun onChangeDayOfWeek(value: Int) {
         viewModelScope.launch {
             updateState { copy(selectedDayOfWeek = value) }
-            scheduleUseCase.getDaySchedule(value)
+            scheduleUseCase.getDayStudySchedule(value)
         }
     }
 

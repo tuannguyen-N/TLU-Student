@@ -75,7 +75,7 @@ fun TuitionPaymentScreen(
                 tuitionDetail = detail,
                 selectedPaymentType = uiState.selectedPaymentType,
                 isRefreshing = uiState.isRefreshingDetail,
-                onBack = viewModel::onBackFromPayment,
+                onBack = { viewModel.onBackFromPayment(false) },
                 onSelectPaymentType = viewModel::onSelectPaymentType,
                 onPay = viewModel::onPay,
                 onRefresh = viewModel::onRefreshDetail

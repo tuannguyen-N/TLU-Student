@@ -9,6 +9,7 @@ import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.QuoteRepository
 import org.example.project.domain.usecase.ScheduleUseCase
+import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.StudentUseCase
 
 class HomeViewModelFactory(
@@ -19,7 +20,8 @@ class HomeViewModelFactory(
     private val quoteRepository: QuoteRepository,
     private val authPluginConfig: AuthPluginConfig,
     private val notificationRepository: NotificationRepository,
-    private val examScheduleRepository: ExamScheduleRepository
+    private val examScheduleRepository: ExamScheduleRepository,
+    private val semesterUseCase: SemesterUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
@@ -32,7 +34,8 @@ class HomeViewModelFactory(
                 quoteRepository,
                 authPluginConfig,
                 notificationRepository,
-                examScheduleRepository
+                examScheduleRepository,
+                semesterUseCase
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
