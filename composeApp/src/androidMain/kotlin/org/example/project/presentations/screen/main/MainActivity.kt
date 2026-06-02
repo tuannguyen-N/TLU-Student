@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -15,6 +16,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import org.example.MyApplication
 import org.example.project.presentations.utils.MsalHelper
@@ -32,6 +34,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initMsal()
+        testFirestore()
         fitSystemWindow()
         hideBottonNavigationBar()
         createNotificationChannel(this)
@@ -44,6 +47,18 @@ class MainActivity : ComponentActivity() {
         }
         observeNetworkStatus()
         handleDeepLink(intent)
+    }
+
+    fun testFirestore() {
+        FirebaseFirestore.getInstance()
+            .collection("chatRooms")
+            .get()
+            .addOnSuccessListener {
+                Log.d("FIREBASE", "Success: ${it.size()}")
+            }
+            .addOnFailureListener {
+                Log.e("FIREBASE", it.message ?: "")
+            }
     }
 
     override fun onNewIntent(intent: Intent) {

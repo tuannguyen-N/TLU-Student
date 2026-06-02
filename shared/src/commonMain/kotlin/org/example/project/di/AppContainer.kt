@@ -37,6 +37,7 @@ import org.example.project.domain.repository.EnrollmentRepository
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.LocationRepository
+import org.example.project.domain.repository.MessageRepository
 import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.PaymentRepository
@@ -65,7 +66,8 @@ class AppContainer(
     val appPreferences: AppPreferences,
     topicSubscriber: TopicSubscriber,
     val locationRepository: LocationRepository,
-    context: Any? = null
+    context: Any? = null,
+    val messageRepository: MessageRepository
 ) {
     private val httpClient = createHttpClient(tokenStorage)
     private val externalHttpClient = createExternalHttpClient()

@@ -37,11 +37,13 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun AppTopBar(
     onOpenNotificationScreen: () -> Unit = {},
+    isShowSearch: Boolean = false,
     iconRes: Int = R.drawable.icon_school_schedule,
     title: String = "Lịch học",
     backgroundColor: Color = Color.Transparent,
     isNotificationBadgeVisible: Boolean = false,
-    onOpenChat: () -> Unit = {}
+    onOpenChat: () -> Unit = {},
+    onSearch: () -> Unit = {}
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.ai_star)
@@ -73,23 +75,38 @@ fun AppTopBar(
             fontWeight = FontWeight.Bold,
         )
 
-        IconButton(
-            onClick = onOpenChat,
-            modifier = Modifier.size(30.dp)
-        ) {
-            Box {
-                Image(
-                    painter = painterResource(R.drawable.icon_chat_ai),
-                    contentDescription = null,
-                )
-                LottieAnimation(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .offset(0.dp, (-10).dp)
-                        .scale(1.2f)
-                )
+        if (!isShowSearch) {
+            IconButton(
+                onClick = onOpenChat,
+                modifier = Modifier.size(30.dp)
+            ) {
+                Box {
+                    Image(
+                        painter = painterResource(R.drawable.icon_chat_ai),
+                        contentDescription = null,
+                    )
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .offset(0.dp, (-10).dp)
+                            .scale(1.2f)
+                    )
+                }
+            }
+
+        } else {
+            IconButton(
+                onClick = onSearch,
+                modifier = Modifier.size(30.dp)
+            ) {
+                Box {
+                    Image(
+                        painter = painterResource(R.drawable.icon_search_top_bar),
+                        contentDescription = null,
+                    )
+                }
             }
         }
 
@@ -105,7 +122,7 @@ fun AppTopBar(
                     contentDescription = null,
                 )
 
-                if(isNotificationBadgeVisible){
+                if (isNotificationBadgeVisible) {
                     Spacer(
                         Modifier
                             .padding(5.dp)
@@ -118,4 +135,3 @@ fun AppTopBar(
         }
     }
 }
-

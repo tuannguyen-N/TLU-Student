@@ -19,6 +19,8 @@ import org.example.project.presentations.components.StatusBarStyle
 import org.example.project.presentations.screen.BottomBar
 import org.example.project.presentations.screen.home.HomeScreen
 import org.example.project.presentations.screen.home.HomeViewModel
+import org.example.project.presentations.screen.messages.MessagesScreen
+import org.example.project.presentations.screen.messages.MessagesViewModel
 import org.example.project.presentations.screen.school_schedule.ScheduleScreen
 import org.example.project.presentations.screen.school_schedule.ScheduleViewModel
 import org.example.project.presentations.screen.transcript.TranscriptScreen
@@ -30,6 +32,7 @@ fun MainScreen(
     scheduleViewModel: ScheduleViewModel,
     transcriptViewModel: TranscriptViewModel,
     homeViewModel: HomeViewModel,
+    messagesViewModel: MessagesViewModel,
     onOpenProfileScreen: () -> Unit,
     onOpenNotificationScreen: () -> Unit,
     onOpenTranscriptTerm: (String, String) -> Unit,
@@ -89,8 +92,14 @@ fun MainScreen(
                         onViewMaterials = onViewMaterials
                     )
 
-//                    2 -> {}
-                    2 -> TranscriptScreen(
+                    2 -> {
+                        MessagesScreen(
+                            viewModel = messagesViewModel,
+                            onOpenNotificationScreen = onOpenNotificationScreen,
+                        )
+                    }
+
+                    3 -> TranscriptScreen(
                         viewModel = transcriptViewModel,
                         onOpenNotificationScreen = onOpenNotificationScreen,
                         onOpenTranscriptTerm = { semester ->

@@ -107,7 +107,7 @@ fun FeatureItem(
             text = feature.name,
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
             textAlign = TextAlign.Center,
-            color = color.blackBackground,
+            color = color.gray,
             maxLines = 2
         )
     }

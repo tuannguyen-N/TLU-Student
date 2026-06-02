@@ -32,4 +32,5 @@ object AppRoute {
     const val GpaTracker = "gpa_tracker_screen"
     const val TempSchedule = "temp_schedule_screen"
     const val AlertsAndActions = "alerts_and_actions_screen"
+    const val MessageRoute = "message_screen"
 }

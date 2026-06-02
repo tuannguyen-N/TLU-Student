@@ -72,6 +72,8 @@ import org.example.project.presentations.screen.login.LoginViewModel
 import org.example.project.presentations.screen.login.LoginViewModelFactory
 import org.example.project.presentations.screen.main.LocalAppContainer
 import org.example.project.presentations.screen.main.MainScreen
+import org.example.project.presentations.screen.messages.MessagesViewModel
+import org.example.project.presentations.screen.messages.MessagesViewModelFactory
 import org.example.project.presentations.screen.news.NewsScreen
 import org.example.project.presentations.screen.news.NewsViewModel
 import org.example.project.presentations.screen.news.NewsViewModelFactory
@@ -206,9 +208,16 @@ fun AppNavGraph(
                 )
             }
 
+            val messagesViewModelFactory = remember(container) {
+                MessagesViewModelFactory(
+                    container.messageRepository
+                )
+            }
+
             val homeViewModel: HomeViewModel = viewModel(factory = homeFactory)
             val scheduleViewModel: ScheduleViewModel = viewModel(factory = scheduleFactory)
             val transcriptViewModel: TranscriptViewModel = viewModel(factory = transcriptFactory)
+            val messagesViewModel: MessagesViewModel = viewModel(factory = messagesViewModelFactory)
 
             MainScreen(
                 homeViewModel = homeViewModel,
@@ -240,7 +249,8 @@ fun AppNavGraph(
                         "https://elearning.thanglong.edu.vn/login/index.php".toUri()
                     )
                     context.startActivity(intent)
-                }
+                },
+                messagesViewModel = messagesViewModel
             )
         }
 

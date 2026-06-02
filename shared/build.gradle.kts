@@ -44,6 +44,9 @@ kotlin {
             implementation(libs.androidx.security.crypto)
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.work.runtime.ktx)
+
+            implementation("com.google.firebase:firebase-firestore")
+            implementation("com.google.firebase:firebase-auth")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

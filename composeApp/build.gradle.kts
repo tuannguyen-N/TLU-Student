@@ -44,6 +44,12 @@ kotlin {
             implementation(libs.androidx.camera.lifecycle)
             implementation(libs.androidx.camera.view)
             implementation(libs.mlkit.barcode.scanning)
+            implementation("com.google.guava:guava:33.2.1-android")
+
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:34.1.0"))
+
+            implementation("com.google.firebase:firebase-firestore")
+            implementation("com.google.firebase:firebase-auth")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import org.example.project.AndroidMessageRepository
 import org.example.project.AndroidTopicSubscriber
 import org.example.project.DeviceProvider
 import org.example.project.data.AndroidLocationRepository
@@ -49,4 +50,6 @@ class AndroidAppContainer(context: Context) {
     val appPreferences: AppPreferences by lazy {
         AndroidAppPreferences(encryptedSharedPreferences)
     }
+
+    val messageRepository = AndroidMessageRepository()
 }
