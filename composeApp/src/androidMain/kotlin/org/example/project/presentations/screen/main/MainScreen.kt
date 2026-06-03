@@ -45,7 +45,8 @@ fun MainScreen(
     onOpenChat: () -> Unit,
     onOpenGpaTracker: () -> Unit,
     openAlertsAndActionsScreen: () -> Unit,
-    onViewMaterials: () -> Unit
+    onViewMaterials: () -> Unit,
+    onOpenMessage: (roomId: String, chatUserId: String, chatUserName: String) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()
@@ -96,6 +97,7 @@ fun MainScreen(
                         MessagesScreen(
                             viewModel = messagesViewModel,
                             onOpenNotificationScreen = onOpenNotificationScreen,
+                            onOpenMessage = onOpenMessage
                         )
                     }
 

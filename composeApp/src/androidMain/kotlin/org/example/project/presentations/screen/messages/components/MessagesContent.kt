@@ -73,11 +73,11 @@ private val sampleConversations = listOf(
     )
 )
 
-@Preview(showBackground = true)
 @Composable
 fun MessagesContent(
     modifier: Modifier = Modifier,
-    conversations: List<ConversationUiState> = sampleConversations
+    conversations: List<ConversationUiState> = sampleConversations,
+    onOpenMessage: (id: String, chatUserId: String, chatUserName: String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -94,7 +94,9 @@ fun MessagesContent(
             )
         }
         items(conversations, key = { it.roomId }) { conversation ->
-            ConversationItem(conversation = conversation)
+            ConversationItem(conversation = conversation, onOpenMessage = {
+                onOpenMessage(conversation.roomId, conversation.studentId, conversation.chatName)
+            })
             HorizontalDivider(
                 modifier = Modifier.padding(start = 80.dp),
                 thickness = 0.5.dp,

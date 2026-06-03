@@ -16,7 +16,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun MessagesScreen(
     viewModel: MessagesViewModel,
-    onOpenNotificationScreen: () -> Unit
+    onOpenNotificationScreen: () -> Unit,
+    onOpenMessage: (roomId: String, studentId: String, chatName: String) -> Unit
 ) {
     val conversations by viewModel.conversations.collectAsStateWithLifecycle()
 
@@ -37,7 +38,8 @@ fun MessagesScreen(
     ) { innerPadding ->
         MessagesContent(
             modifier = Modifier.padding(innerPadding),
-            conversations = conversations
+            conversations = conversations,
+            onOpenMessage = onOpenMessage
         )
     }
 }

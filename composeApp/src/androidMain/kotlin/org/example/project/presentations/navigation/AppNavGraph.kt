@@ -72,6 +72,9 @@ import org.example.project.presentations.screen.login.LoginViewModel
 import org.example.project.presentations.screen.login.LoginViewModelFactory
 import org.example.project.presentations.screen.main.LocalAppContainer
 import org.example.project.presentations.screen.main.MainScreen
+import org.example.project.presentations.screen.message.MessageScreen
+import org.example.project.presentations.screen.message.MessageViewModel
+import org.example.project.presentations.screen.message.MessageViewModelFactory
 import org.example.project.presentations.screen.messages.MessagesViewModel
 import org.example.project.presentations.screen.messages.MessagesViewModelFactory
 import org.example.project.presentations.screen.news.NewsScreen
@@ -210,7 +213,8 @@ fun AppNavGraph(
 
             val messagesViewModelFactory = remember(container) {
                 MessagesViewModelFactory(
-                    container.messageRepository
+                    container.messageRepository,
+                    container.studentUseCase
                 )
             }
 
@@ -250,7 +254,10 @@ fun AppNavGraph(
                     )
                     context.startActivity(intent)
                 },
-                messagesViewModel = messagesViewModel
+                messagesViewModel = messagesViewModel,
+                onOpenMessage = { roomId, studentId, chatName -> 
+                    navController.navigate(AppRoute.messageDetail(roomId, studentId, chatName)) 
+                }
             )
         }
 
@@ -721,6 +728,39 @@ fun AppNavGraph(
 
             CameraQrScreen(
                 viewModel = cameraQrViewModel,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = AppRoute.MessageRoute,
+            arguments = listOf(
+                navArgument("roomId") {
+                    type = NavType.StringType
+                },
+                navArgument("studentId") {
+                    type = NavType.StringType
+                },
+                navArgument("chatName") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                MessageViewModelFactory(
+                    container.messageRepository,
+                    container.studentUseCase
+                )
+            }
+
+            val viewModel: MessageViewModel = viewModel(
+                viewModelStoreOwner = backStackEntry,
+                factory = factory
+            )
+
+            MessageScreen(
+                viewModel = viewModel,
                 onBack = { navController.popBackStack() }
             )
         }

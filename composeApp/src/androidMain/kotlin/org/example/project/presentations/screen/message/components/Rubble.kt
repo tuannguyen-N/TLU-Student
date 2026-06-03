@@ -35,12 +35,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.domain.model.Message
 import org.example.project.domain.model.MessageType
+import org.example.project.domain.model.MessageUiState
+import org.example.project.domain.utils.DateTimeUtils
 import org.example.project.presentations.theme.LocalExtendedColors
-import org.example.project.presentations.utils.DateTimeUtils
 
 
 @Composable
-fun FileBubble(message: Message) {
+fun FileBubble(message: MessageUiState) {
     val color = LocalExtendedColors.current
     Row(
         modifier = Modifier
@@ -80,8 +81,12 @@ fun FileBubble(message: Message) {
 }
 
 @Composable
-fun MessageBubble(message: Message, showTime: Boolean, onClick: () -> Unit) {
-    val isMe = message.senderId == "current_user"
+fun MessageBubble(
+    message: MessageUiState,
+    showTime: Boolean,
+    onClick: () -> Unit
+) {
+    val isMe = message.isMe
     val color = LocalExtendedColors.current
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -139,6 +144,7 @@ fun MessageBubble(message: Message, showTime: Boolean, onClick: () -> Unit) {
                             lineHeight = 22.sp
                         )
                     )
+
                     MessageType.IMAGE.name -> Text(
                         text = "[Hình ảnh]",
                         style = MaterialTheme.typography.bodyMedium.copy(

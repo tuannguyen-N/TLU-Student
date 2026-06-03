@@ -2,30 +2,27 @@ package org.example.project.presentations.screen.messages
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import org.example.project.domain.model.ConversationUiState
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import org.example.project.domain.repository.MessageRepository
+import org.example.project.domain.usecase.StudentUseCase
 
 class MessagesViewModel(
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
+    private val studentUseCase: StudentUseCase
 ) : ViewModel() {
-
-    private val _conversations = MutableStateFlow<List<ConversationUiState>>(emptyList())
-    val conversations = _conversations.asStateFlow()
-
-    init {
-        observeConversations()
-    }
-
-    private fun observeConversations() {
-        viewModelScope.launch {
-            messageRepository
-                .observeConversations("a45044")
-                .collect {
-                    _conversations.value = it
-                }
+    val conversations = studentUseCase.studentInfo
+        .filterNotNull()
+        .flatMapLatest { student ->
+            messageRepository.observeConversations(
+                student.studentCode.lowercase()
+            )
         }
-    }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
 }

@@ -3,13 +3,16 @@ package org.example.project.presentations.screen.messages
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.example.project.domain.repository.MessageRepository
+import org.example.project.domain.usecase.StudentUseCase
 
 class MessagesViewModelFactory(
-    private val messageRepository: MessageRepository) : ViewModelProvider.Factory {
+    private val messageRepository: MessageRepository,
+    private val studentUseCase: StudentUseCase
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (modelClass.isAssignableFrom(MessagesViewModel::class.java)) {
-            return MessagesViewModel(messageRepository) as T
+            return MessagesViewModel(messageRepository, studentUseCase) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

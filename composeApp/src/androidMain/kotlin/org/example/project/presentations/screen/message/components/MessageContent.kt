@@ -21,26 +21,66 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.Message
 import org.example.project.domain.model.MessageType
+import org.example.project.domain.model.MessageUiState
+import org.example.project.domain.utils.DateTimeUtils
 import org.example.project.presentations.theme.LocalExtendedColors
+import java.util.Calendar
 
 @Composable
 fun MessageContent(
+    messages: List<MessageUiState>,
     modifier: Modifier = Modifier
 ) {
     var visibleTimeId by remember { mutableStateOf<String?>(null) }
-
     val listState = rememberLazyListState()
 
-    LaunchedEffect(sampleMessages.size) {
-        if (sampleMessages.isNotEmpty()) {
-            listState.animateScrollToItem(sampleMessages.lastIndex)
+    val messagesByDate = remember(messages) {
+        messages.groupBy { message ->
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = message.timestamp
+            val year = calendar.get(Calendar.YEAR)
+            val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+            Pair(year, dayOfYear)
+        }.toSortedMap(compareBy({ it.first }, { it.second }))
+    }
+
+    val totalItemCount = remember(messagesByDate) {
+        messagesByDate.values.sumOf { it.size } + messagesByDate.size
+    }
+
+    var shouldAutoScroll by remember {
+        mutableStateOf(true)
+    }
+
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            listState.layoutInfo.visibleItemsInfo
+        }.collect { visibleItems ->
+            if (visibleItems.isNotEmpty()) {
+                val lastVisibleIndex = visibleItems.lastOrNull()?.index ?: 0
+                val totalItems = listState.layoutInfo.totalItemsCount
+                shouldAutoScroll = lastVisibleIndex >= totalItems - 3
+            }
+        }
+    }
+
+    LaunchedEffect(totalItemCount) {
+        if (shouldAutoScroll && totalItemCount > 0) {
+            listState.animateScrollToItem(totalItemCount - 1)
+        }
+    }
+    
+    LaunchedEffect(messages.lastOrNull()?.id) {
+        val lastMessage = messages.lastOrNull()
+        if (lastMessage != null && !lastMessage.isMe) {
+            listState.animateScrollToItem(totalItemCount - 1)
         }
     }
 
@@ -53,27 +93,33 @@ fun MessageContent(
         verticalArrangement = Arrangement.spacedBy(6.dp),
         contentPadding = PaddingValues(vertical = 12.dp)
     ) {
-        item {
-            DateDivider(label = "Hôm nay")
-            Spacer(modifier = Modifier.height(4.dp))
-        }
-
-        items(sampleMessages, key = { it.id }) { msg ->
-            MessageBubble(
-                message = msg,
-                showTime = visibleTimeId == msg.id,
-                onClick = {
-                    visibleTimeId =
-                        if (visibleTimeId == msg.id) null
-                        else msg.id
+        messagesByDate.forEach { (date, messagesForDate) ->
+            item {
+                val firstMessage = messagesForDate.firstOrNull()
+                if (firstMessage != null) {
+                    DateDivider(timestamp = firstMessage.timestamp)
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
-            )
+            }
+
+            items(messagesForDate, key = { it.id }) { msg ->
+                MessageBubble(
+                    message = msg,
+                    showTime = visibleTimeId == msg.id,
+                    onClick = {
+                        visibleTimeId =
+                            if (visibleTimeId == msg.id) null
+                            else msg.id
+                    }
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun DateDivider(label: String) {
+private fun DateDivider(timestamp: Long) {
+    val label = DateTimeUtils.formatRelativeTime(timestamp)
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -87,7 +133,6 @@ private fun DateDivider(label: String) {
         HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
     }
 }
-
 
 private val sampleMessages = listOf(
     Message(
@@ -153,11 +198,3 @@ private val sampleMessages = listOf(
         timestamp = 1780312920000L
     )
 )
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
-@Composable
-fun MessageScreenPreview() {
-    MaterialTheme {
-        MessageContent()
-    }
-}

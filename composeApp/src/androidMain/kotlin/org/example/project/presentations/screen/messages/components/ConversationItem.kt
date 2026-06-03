@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.messages.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,11 +32,15 @@ import org.example.project.domain.model.MessageType
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
-fun ConversationItem(conversation: ConversationUiState) {
+fun ConversationItem(
+    conversation: ConversationUiState,
+    onOpenMessage: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 10.dp),
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .clickable(onClick = onOpenMessage),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(modifier = Modifier.size(56.dp)) {

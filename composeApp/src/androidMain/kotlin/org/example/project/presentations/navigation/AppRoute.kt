@@ -32,5 +32,7 @@ object AppRoute {
     const val GpaTracker = "gpa_tracker_screen"
     const val TempSchedule = "temp_schedule_screen"
     const val AlertsAndActions = "alerts_and_actions_screen"
-    const val MessageRoute = "message_screen"
+    const val MessageRoute = "message_screen/{roomId}/{studentId}/{chatName}"
+    fun messageDetail(roomId: String, studentId: String, chatName: String) = 
+        "message_screen/$roomId/$studentId/${chatName.replace("/", "_")}"
 }
