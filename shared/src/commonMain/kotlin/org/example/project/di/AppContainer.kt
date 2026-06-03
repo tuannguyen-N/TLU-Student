@@ -48,6 +48,7 @@ import org.example.project.domain.repository.StudentClassRepository
 import org.example.project.domain.repository.StudentRepository
 import org.example.project.domain.repository.TranscriptRepository
 import org.example.project.domain.repository.TuitionRepository
+import org.example.project.domain.repository.UserRepository
 import org.example.project.domain.usecase.GetLocationUseCase
 import org.example.project.domain.usecase.HandleLoginSuccessUseCase
 import org.example.project.domain.usecase.LogoutUseCase
@@ -67,7 +68,8 @@ class AppContainer(
     topicSubscriber: TopicSubscriber,
     val locationRepository: LocationRepository,
     context: Any? = null,
-    val messageRepository: MessageRepository
+    val messageRepository: MessageRepository,
+    val userRepository: UserRepository
 ) {
     private val httpClient = createHttpClient(tokenStorage)
     private val externalHttpClient = createExternalHttpClient()

@@ -20,7 +20,7 @@ fun MessagesScreen(
     onOpenMessage: (roomId: String, studentId: String, chatName: String) -> Unit
 ) {
     val conversations by viewModel.conversations.collectAsStateWithLifecycle()
-
+    val users by viewModel.users.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             AppTopBar(
@@ -39,7 +39,8 @@ fun MessagesScreen(
         MessagesContent(
             modifier = Modifier.padding(innerPadding),
             conversations = conversations,
-            onOpenMessage = onOpenMessage
+            onOpenMessage = onOpenMessage,
+            users = users
         )
     }
 }

@@ -1,5 +1,7 @@
 package org.example.project.presentations.screen.message
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -86,9 +88,14 @@ class MessageViewModel(
         viewModelScope.launch {
             messageRepository.observeUserOnlineStatus(chatUserId)
                 .collect { isOnline ->
-                    _chatUser.update { user ->
-                        user.copy(isOnline = isOnline)
+                    Log.d("ONLINE_STATUS", "Firestore = $isOnline")
+
+                    _chatUser.update {
+                        Log.d("ONLINE_STATUS", "Before = ${it.isOnline}")
+                        it.copy(isOnline = isOnline)
                     }
+
+                    Log.d("ONLINE_STATUS", "After = ${_chatUser.value.isOnline}")
                 }
         }
     }
@@ -130,6 +137,14 @@ class MessageViewModel(
                 text
             )
         }
+    }
+
+    fun onImageSelected(uri: Uri?) {
+        updateState { copy(selectedImageUri = uri) }
+    }
+
+    fun onRemoveImage() {
+        updateState { copy(selectedImageUri = null) }
     }
 
     private fun updateState(block: MessageState.() -> MessageState) {

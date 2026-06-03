@@ -33,7 +33,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.example.project.domain.model.Message
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
 import org.example.project.domain.utils.DateTimeUtils
@@ -166,8 +165,7 @@ fun MessageBubble(
                 style = MaterialTheme.typography.labelSmall.copy(color = color.gray),
                 modifier = Modifier
                     .padding(
-                        start = if (isMe) 0.dp else 38.dp,
-                        end = if (isMe) 0.dp else 0.dp,
+                        start = if (isMe) 0.dp else 40.dp,
                         top = 4.dp
                     )
                     .fillMaxWidth(),

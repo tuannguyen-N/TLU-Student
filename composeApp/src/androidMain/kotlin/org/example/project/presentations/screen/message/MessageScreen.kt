@@ -34,7 +34,9 @@ fun MessageScreen(
             MessageInputBar(
                 state = uiState,
                 onMessageChange = viewModel::onMessageChange,
-                onSend = viewModel::onSend
+                onSend = viewModel::onSend,
+                onImagePick = viewModel::onImageSelected,
+                onRemoveImage = viewModel::onRemoveImage
             )
         }
     ) { innerPadding ->

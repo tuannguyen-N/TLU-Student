@@ -3,14 +3,12 @@ package org.example.project
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
 import org.example.project.data.mapper.toConversationUiState
 import org.example.project.data.mapper.toUiState
@@ -24,48 +22,58 @@ import org.example.project.domain.repository.MessageRepository
 
 class AndroidMessageRepository : MessageRepository {
     private val firestore = FirebaseFirestore.getInstance()
-    private val userCache = mutableMapOf<String, User>()
+
+    //    private val userCache = mutableMapOf<String, User>()
+    private val usersState = MutableStateFlow<Map<String, User>>(emptyMap())
+    private val userListeners =
+        mutableMapOf<String, com.google.firebase.firestore.ListenerRegistration>()
 
     override fun observeConversations(
         currentStudentId: String
-    ): Flow<List<ConversationUiState>> = channelFlow {
-        val listener = firestore
-            .collection("chatRooms")
-            .whereArrayContains(
-                "participantIds",
-                currentStudentId
-            )
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    close(error)
-                    return@addSnapshotListener
-                }
-                launch {
+    ): Flow<List<ConversationUiState>> {
+
+        val roomsFlow = callbackFlow<List<ChatRoom>> {
+            val listener = firestore
+                .collection("chatRooms")
+                .whereArrayContains(
+                    "participantIds",
+                    currentStudentId
+                )
+                .addSnapshotListener { snapshot, error ->
+
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
                     val rooms = snapshot?.documents
                         ?.mapNotNull {
                             it.toObject(ChatRoom::class.java)
-                        } ?: emptyList()
-                    val conversations = coroutineScope {
-                        rooms.map { room ->
-                            async {
-                                val otherUserId =
-                                    room.participantIds.firstOrNull {
-                                        it != currentStudentId
-                                    } ?: ""
+                        }
+                        ?: emptyList()
 
-                                val otherUser = getUser(otherUserId)
-
-                                room.toConversationUiState(
-                                    currentStudentId,
-                                    otherUser
-                                )
-                            }
-                        }.awaitAll()
-                    }
-                    trySend(conversations)
+                    trySend(rooms)
                 }
+
+            awaitClose { listener.remove() }
+        }
+
+        return combine(
+            roomsFlow,
+            usersState
+        ) { rooms, users ->
+            rooms.map { room ->
+                val otherUserId =
+                    room.participantIds.first {
+                        it != currentStudentId
+                    }
+                setupUserListener(otherUserId)
+                room.toConversationUiState(
+                    currentStudentId,
+                    users[otherUserId]
+                )
             }
-        awaitClose { listener.remove() }
+        }
     }
 
     override fun observeMessages(
@@ -170,37 +178,82 @@ class AndroidMessageRepository : MessageRepository {
     override fun observeUserOnlineStatus(
         userId: String
     ): Flow<Boolean> = callbackFlow {
+
+        val listener = firestore
+            .collection("users")
+            .document(userId)
+            .addSnapshotListener { snapshot, error ->
+
+                val online = snapshot?.getBoolean("isOnline") ?: false
+
+                Log.d(
+                    "ONLINE_FIRESTORE",
+                    "user=$userId online=$online"
+                )
+
+                trySend(online)
+            }
+
+        awaitClose { listener.remove() }
+    }
+
+    private suspend fun getUser(userId: String): User? {
+        val cachedUser = usersState.value[userId]
+        if (cachedUser != null) return cachedUser
+
+        val snapshot = firestore
+            .collection("users")
+            .document(userId)
+            .get()
+            .await()
+
+        Log.d("GET_USER", "raw data: ${snapshot.data}")
+        Log.d("GET_USER", "isOnline raw: ${snapshot.getBoolean("isOnline")}")
+
+        val user = User(
+            id = snapshot.getString("id") ?: "",
+            name = snapshot.getString("name") ?: "",
+            avatarUrl = snapshot.getString("avatarUrl"),
+            isOnline = snapshot.getBoolean("isOnline") ?: false
+        )
+
+        Log.d("GET_USER", "user after deserialize: $user")
+
+        usersState.update { it + (userId to user) }
+        return user
+    }
+
+    private fun setupUserListener(userId: String) {
+        if (userListeners.containsKey(userId)) {
+            return
+        }
+
         val listener = firestore
             .collection("users")
             .document(userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    close(error)
+                    Log.e("USER_LISTENER_ERROR", "Error listening to user: $userId", error)
                     return@addSnapshotListener
                 }
-                val isOnline = snapshot?.getBoolean("isOnline") ?: false
-                trySend(isOnline)
+
+                if (snapshot != null && snapshot.exists()) {
+                    val user = User(
+                        id = snapshot.getString("id") ?: "",
+                        name = snapshot.getString("name") ?: "",
+                        avatarUrl = snapshot.getString("avatarUrl"),
+                        isOnline = snapshot.getBoolean("isOnline") ?: false
+                    )
+                    usersState.update { it + (userId to user) }
+                    Log.d("USER_UPDATE", "User $userId updated: isOnline=${user.isOnline}")
+                }
             }
 
-        awaitClose {
-            listener.remove()
-        }
+        userListeners[userId] = listener
     }
 
-    private suspend fun getUser(userId: String): User? {
-        userCache[userId]?.let {
-            return it
-        }
-        val user = firestore
-            .collection("users")
-            .document(userId)
-            .get()
-            .await()
-            .toObject(User::class.java)
-
-        if (user != null) {
-            userCache[userId] = user
-        }
-        return user
+    private fun removeUserListener(userId: String) {
+        userListeners[userId]?.remove()
+        userListeners.remove(userId)
     }
 }

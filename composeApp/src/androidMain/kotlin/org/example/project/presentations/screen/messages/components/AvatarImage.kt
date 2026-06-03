@@ -19,7 +19,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun AvatarImage(avatarUrl: String?, name: String, size: Int) {
     val color = LocalExtendedColors.current
-    if (avatarUrl != null) {
+    if (avatarUrl != null && avatarUrl.isNotEmpty()) {
         AsyncImage(
             model = avatarUrl,
             contentDescription = name,

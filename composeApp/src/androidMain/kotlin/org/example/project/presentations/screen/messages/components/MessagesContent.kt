@@ -25,10 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.ConversationUiState
 import org.example.project.domain.model.MessageType
+import org.example.project.domain.model.User
 
 private val sampleConversations = listOf(
     ConversationUiState(
@@ -77,6 +77,7 @@ private val sampleConversations = listOf(
 fun MessagesContent(
     modifier: Modifier = Modifier,
     conversations: List<ConversationUiState> = sampleConversations,
+    users: List<User>,
     onOpenMessage: (id: String, chatUserId: String, chatUserName: String) -> Unit
 ) {
     LazyColumn(
@@ -84,7 +85,7 @@ fun MessagesContent(
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
         item {
-//            ActiveUsersSection(conversations = sampleConversations.filter { it.isOnline })
+            ActiveUsersSection(users = users)
         }
         item {
             Text(
@@ -107,7 +108,7 @@ fun MessagesContent(
 }
 
 @Composable
-fun ActiveUsersSection(conversations: List<ConversationUiState>) {
+fun ActiveUsersSection(users: List<User>) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -125,8 +126,11 @@ fun ActiveUsersSection(conversations: List<ConversationUiState>) {
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(conversations) { conversation ->
-                ActiveUserItem(name = conversation.chatName, avatarUrl = conversation.avatarUrl)
+            items(users) { user ->
+                ActiveUserItem(
+                    name = user.name.substringAfterLast(' '),
+                    avatarUrl = user.avatarUrl
+                )
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
