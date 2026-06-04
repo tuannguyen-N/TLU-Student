@@ -1,6 +1,7 @@
 package org.example.project.presentations.navigation
 
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -750,6 +751,7 @@ fun AppNavGraph(
             )
         ) { backStackEntry ->
             val container = LocalAppContainer.current
+            val context = LocalContext.current
             val factory = remember(container) {
                 MessageViewModelFactory(
                     container.messageRepository,
@@ -764,14 +766,21 @@ fun AppNavGraph(
 
             MessageScreen(
                 viewModel = viewModel,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onClickFile = { url ->
+                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                    context.startActivity(intent)
+                }
             )
         }
 
         composable(AppRoute.StudentSearch) {
             val container = LocalAppContainer.current
             val factory = remember(container) {
-                StudentSearchViewModelFactory(container.studentUseCase, container.searchHistoryRepository)
+                StudentSearchViewModelFactory(
+                    container.studentUseCase,
+                    container.searchHistoryRepository
+                )
             }
 
             val viewModel: StudentSearchViewModel = viewModel(

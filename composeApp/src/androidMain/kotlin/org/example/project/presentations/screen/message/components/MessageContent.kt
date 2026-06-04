@@ -1,7 +1,9 @@
 package org.example.project.presentations.screen.message.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.first
 import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
@@ -37,7 +42,11 @@ import java.util.Calendar
 @Composable
 fun MessageContent(
     messages: List<MessageUiState>,
-    modifier: Modifier = Modifier
+    isLoadingMore: Boolean,
+    modifier: Modifier = Modifier,
+    onClickFile: (String) -> Unit,
+    onClickImage: (String) -> Unit,
+    onLoadMoreMessage: () -> Unit
 ) {
     var visibleTimeId by remember { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
@@ -58,6 +67,22 @@ fun MessageContent(
 
     var shouldAutoScroll by remember {
         mutableStateOf(true)
+    }
+
+    var initialScrollDone by remember { mutableStateOf(false) }
+
+    LaunchedEffect(totalItemCount) {
+        if (totalItemCount > 0 && !initialScrollDone) {
+            snapshotFlow { listState.layoutInfo.totalItemsCount }
+                .first { it >= totalItemCount }
+            listState.scrollToItem(totalItemCount - 1)
+            initialScrollDone = true
+            return@LaunchedEffect
+        }
+
+        if (shouldAutoScroll && totalItemCount > 0) {
+            listState.animateScrollToItem(totalItemCount - 1)
+        }
     }
 
     LaunchedEffect(listState) {
@@ -85,15 +110,54 @@ fun MessageContent(
         }
     }
 
+    var reachedTop by remember { mutableStateOf(false) }
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            listState.firstVisibleItemIndex == 0 &&
+                    listState.firstVisibleItemScrollOffset == 0
+        }.collect { isAtTop ->
+
+            if (isAtTop && !reachedTop) {
+                reachedTop = true
+                Log.d("CHAT", "Đã kéo lên đầu danh sách")
+                messages.lastOrNull()?.id?.let {
+                    onLoadMoreMessage()
+                }
+            }
+
+            if (!isAtTop) {
+                reachedTop = false
+            }
+        }
+    }
+
     LazyColumn(
         state = listState,
         modifier = modifier
             .fillMaxSize()
             .background(LocalExtendedColors.current.background)
             .padding(start = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
         contentPadding = PaddingValues(vertical = 12.dp)
     ) {
+        if (isLoadingMore) {
+            item(
+                key = "loading_more"
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
+        }
+
         messagesByDate.forEach { (date, messagesForDate) ->
             item {
                 val firstMessage = messagesForDate.firstOrNull()
@@ -113,7 +177,11 @@ fun MessageContent(
                             if (visibleTimeId == msg.id) null
                             else msg.id
                     },
-                    isLast = isLast
+                    isLast = isLast,
+                    onClickImage = { url ->
+                        onClickImage(url)
+                    },
+                    onClickFile = onClickFile
                 )
             }
         }
@@ -179,8 +247,29 @@ fun MessageContentPreview() {
             isMe = true,
             status = MessageStatus.SEEN
         ),
+        // Ảnh không có text
         MessageUiState(
             id = "5",
+            senderId = "other",
+            fileUrl = "https://picsum.photos/seed/graph/400/300",
+            type = MessageType.IMAGE.name,
+            timestamp = now - 90_000,
+            isMe = false,
+            status = MessageStatus.SEEN
+        ),
+        // Ảnh kèm text
+        MessageUiState(
+            id = "6",
+            senderId = "me",
+            fileUrl = "https://picsum.photos/seed/dfs/400/300",
+            text = "Đây là sơ đồ DFS mình tự vẽ, bạn xem thử nhé!",
+            type = MessageType.IMAGE.name,
+            timestamp = now - 80_000,
+            isMe = true,
+            status = MessageStatus.SEEN
+        ),
+        MessageUiState(
+            id = "7",
             senderId = "me",
             fileName = "graph_theory_notes.pdf",
             fileSize = "1.2 MB",
@@ -190,7 +279,7 @@ fun MessageContentPreview() {
             status = MessageStatus.SENT
         ),
         MessageUiState(
-            id = "6",
+            id = "8",
             senderId = "me",
             text = "Tin nhắn này đang gửi...",
             type = MessageType.TEXT.name,
@@ -199,7 +288,7 @@ fun MessageContentPreview() {
             status = MessageStatus.SENDING
         ),
         MessageUiState(
-            id = "7",
+            id = "9",
             senderId = "me",
             text = "Tin nhắn gửi thất bại, thử lại sau nhé!",
             type = MessageType.TEXT.name,
@@ -209,7 +298,5 @@ fun MessageContentPreview() {
         )
     )
 
-    MessageContent(
-        messages = messages
-    )
+//    MessageContent(messages = messages, onClickFile = {}, onClickImage = {})
 }

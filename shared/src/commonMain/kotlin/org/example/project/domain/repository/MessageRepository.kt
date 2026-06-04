@@ -11,7 +11,8 @@ interface MessageRepository {
 
     fun observeMessages(
         roomId: String,
-        currentUserId: String
+        currentUserId: String,
+        limit: Long
     ): Flow<List<MessageUiState>>
 
     fun observeUserOnlineStatus(
@@ -27,5 +28,21 @@ interface MessageRepository {
         roomId: String,
         currentUserId: String,
         message: String
+    )
+
+    suspend fun sendImageMessage(
+        roomId: String,
+        senderId: String,
+        imageBytes: ByteArray,
+        caption: String?
+    )
+
+    suspend fun sendFileMessage(
+        roomId: String,
+        senderId: String,
+        fileBytes: ByteArray,
+        fileName: String,
+        fileSize: String,
+        caption: String?
     )
 }

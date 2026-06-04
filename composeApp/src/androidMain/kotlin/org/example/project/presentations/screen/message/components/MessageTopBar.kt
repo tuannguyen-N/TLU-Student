@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.User
 import org.example.project.presentations.theme.LocalExtendedColors
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageTopBar(
@@ -63,12 +62,12 @@ fun MessageTopBar(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = chatUser.name,
+                        text = "${chatUser.id} - ${chatUser.name}",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                         )
                     )
-                    if (chatUser.isOnline){
+                    if (chatUser.isOnline) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
                                 modifier = Modifier

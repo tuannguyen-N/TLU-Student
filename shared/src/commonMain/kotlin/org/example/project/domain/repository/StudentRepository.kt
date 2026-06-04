@@ -10,7 +10,6 @@ import org.example.project.domain.model.AppResult
 class StudentRepository(
     private val studentApi: StudentApi
 ) {
-
     private val _studentInfo = MutableStateFlow<StudentData?>(null)
     val studentInfo = _studentInfo.asStateFlow()
 
@@ -27,6 +26,18 @@ class StudentRepository(
         }
     }
 
+    suspend fun getStudentInfo(studentCode: String): AppResult<org.example.project.data.remote.dto.student_search.StudentData> {
+        return try {
+            val data = studentApi.getStudentInfo(studentCode.uppercase()).data
+                ?: return AppResult.Failure(
+                    message = "Không có dữ liệu sinh viên"
+                )
+            AppResult.Success(data)
+        } catch (e: Exception) {
+            AppResult.Failure(message = e.message, cause = e)
+        }
+    }
+
     suspend fun searchStudents(
         keyword: String,
         page: Int = 0,
@@ -34,7 +45,7 @@ class StudentRepository(
     ): AppResult<StudentPageData> {
         return try {
             val response = studentApi.searchStudents(
-                name = keyword,
+                search = keyword,
                 page = page,
                 size = size
             )

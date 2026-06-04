@@ -20,4 +20,6 @@ class StudentUseCase(
     ): AppResult<StudentPageData> = repository.searchStudents(keyword, page, size)
 
     suspend fun getAllStudents(): AppResult<StudentPageData> = repository.getAllStudents()
+
+    suspend fun getStudentInfo(studentCode: String): AppResult<org.example.project.data.remote.dto.student_search.StudentData> = repository.getStudentInfo(studentCode)
 }

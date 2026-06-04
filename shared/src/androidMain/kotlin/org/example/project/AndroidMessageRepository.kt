@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
 import org.example.project.data.mapper.toConversationUiState
 import org.example.project.data.mapper.toUiState
+import org.example.project.data.remote.api.FileUploadApi
 import org.example.project.domain.model.ChatRoom
 import org.example.project.domain.model.ConversationUiState
 import org.example.project.domain.model.Message
@@ -22,8 +23,11 @@ import org.example.project.domain.model.MessageUiState
 import org.example.project.domain.model.User
 import org.example.project.domain.repository.MessageRepository
 
-class AndroidMessageRepository : MessageRepository {
+class AndroidMessageRepository(
+    private val fileUploadApi: FileUploadApi
+) : MessageRepository {
     private val firestore = FirebaseFirestore.getInstance()
+
     private val usersState = MutableStateFlow<Map<String, User>>(emptyMap())
     private val userListeners =
         mutableMapOf<String, com.google.firebase.firestore.ListenerRegistration>()
@@ -32,7 +36,7 @@ class AndroidMessageRepository : MessageRepository {
         currentStudentId: String
     ): Flow<List<ConversationUiState>> {
 
-        val roomsFlow = callbackFlow{
+        val roomsFlow = callbackFlow {
             val listener = firestore
                 .collection("chatRooms")
                 .whereArrayContains(
@@ -44,7 +48,6 @@ class AndroidMessageRepository : MessageRepository {
                     Query.Direction.DESCENDING
                 )
                 .addSnapshotListener { snapshot, error ->
-
                     if (error != null) {
                         close(error)
                         return@addSnapshotListener
@@ -82,30 +85,31 @@ class AndroidMessageRepository : MessageRepository {
 
     override fun observeMessages(
         roomId: String,
-        currentUserId: String
+        currentUserId: String,
+        limit: Long
     ): Flow<List<MessageUiState>> {
-
         val messagesFlow = callbackFlow {
             val listener = firestore
                 .collection("chatRooms")
                 .document(roomId)
                 .collection("messages")
-                .orderBy("timestamp")
-                .limitToLast(30)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(limit)
                 .addSnapshotListener { snapshot, error ->
+
                     if (error != null) {
-                        close(error); return@addSnapshotListener
+                        close(error)
+                        return@addSnapshotListener
                     }
-                    val messages = snapshot?.documents?.mapNotNull { doc ->
-                        try {
+
+                    val messages =
+                        snapshot?.documents?.mapNotNull { doc ->
                             doc.toObject(Message::class.java)
-                        } catch (e: Exception) {
-                            Log.e("MESSAGE_ERROR", "docId=${doc.id}", e)
-                            null
-                        }
-                    } ?: emptyList()
-                    trySend(messages)
+                        } ?: emptyList()
+
+                    trySend(messages.reversed())
                 }
+
             awaitClose { listener.remove() }
         }
 
@@ -215,6 +219,107 @@ class AndroidMessageRepository : MessageRepository {
         }.await()
     }
 
+    override suspend fun sendImageMessage(
+        roomId: String,
+        senderId: String,
+        imageBytes: ByteArray,
+        caption: String?
+    ) {
+        val participantIds = roomId.split("_")
+        val receiverId = participantIds.first { it != senderId }
+        createRoomIfNeeded(
+            roomId = roomId,
+            currentUserId = senderId,
+            receiverId = receiverId,
+            firstMessage = "📷 Hình ảnh"
+        )
+
+        val currentTimeMillis = System.currentTimeMillis()
+
+        val imageUrl = fileUploadApi.uploadFile(
+            fileName = "${roomId}_$currentTimeMillis.jpg",
+            fileBytes = imageBytes
+        )
+
+        val roomRef = firestore.collection("chatRooms").document(roomId)
+        val messageRef = roomRef.collection("messages").document()
+
+        val messageData = hashMapOf(
+            "id" to messageRef.id,
+            "senderId" to senderId,
+            "text" to (caption ?: ""),
+            "fileUrl" to imageUrl.data.url,
+            "fileName" to null,               // Image không có fileName
+            "type" to MessageType.IMAGE.name,
+            "timestamp" to currentTimeMillis
+        )
+
+        firestore.runTransaction { transaction ->
+            transaction.set(messageRef, messageData)
+            transaction.update(
+                roomRef,
+                mapOf(
+                    "lastMessageText" to "📷 Hình ảnh",
+                    "lastMessageTime" to currentTimeMillis,
+                    "lastSenderId" to senderId,
+                    "unreadCounts.$receiverId" to FieldValue.increment(1)
+                )
+            )
+        }.await()
+    }
+
+    override suspend fun sendFileMessage(
+        roomId: String,
+        senderId: String,
+        fileBytes: ByteArray,
+        fileName: String,
+        fileSize: String,
+        caption: String?
+    ) {
+        val participantIds = roomId.split("_")
+        val receiverId = participantIds.first { it != senderId }
+        createRoomIfNeeded(
+            roomId = roomId,
+            currentUserId = senderId,
+            receiverId = receiverId,
+            firstMessage = "📎 Tệp đính kèm"
+        )
+
+        val currentTimeMillis = System.currentTimeMillis()
+
+        val fileUrl = fileUploadApi.uploadFile(
+            fileName = "file_${roomId}_$currentTimeMillis",
+            fileBytes = fileBytes
+        )
+
+        val roomRef = firestore.collection("chatRooms").document(roomId)
+        val messageRef = roomRef.collection("messages").document()
+
+        val messageData = hashMapOf(
+            "id" to messageRef.id,
+            "senderId" to senderId,
+            "text" to (caption ?: ""),
+            "fileUrl" to fileUrl.data.url,
+            "fileName" to fileName,
+            "fileSize" to fileSize,
+            "type" to MessageType.FILE.name,
+            "timestamp" to currentTimeMillis
+        )
+
+        firestore.runTransaction { transaction ->
+            transaction.set(messageRef, messageData)
+            transaction.update(
+                roomRef,
+                mapOf(
+                    "lastMessageText" to "📎 $fileName",
+                    "lastMessageTime" to currentTimeMillis,
+                    "lastSenderId" to senderId,
+                    "unreadCounts.$receiverId" to FieldValue.increment(1)
+                )
+            )
+        }.await()
+    }
+
     private suspend fun createRoomIfNeeded(
         roomId: String,
         currentUserId: String,
@@ -270,32 +375,6 @@ class AndroidMessageRepository : MessageRepository {
             }
 
         awaitClose { listener.remove() }
-    }
-
-    private suspend fun getUser(userId: String): User? {
-        val cachedUser = usersState.value[userId]
-        if (cachedUser != null) return cachedUser
-
-        val snapshot = firestore
-            .collection("users")
-            .document(userId)
-            .get()
-            .await()
-
-        Log.d("GET_USER", "raw data: ${snapshot.data}")
-        Log.d("GET_USER", "isOnline raw: ${snapshot.getBoolean("isOnline")}")
-
-        val user = User(
-            id = snapshot.getString("id") ?: "",
-            name = snapshot.getString("name") ?: "",
-            avatarUrl = snapshot.getString("avatarUrl"),
-            isOnline = snapshot.getBoolean("isOnline") ?: false
-        )
-
-        Log.d("GET_USER", "user after deserialize: $user")
-
-        usersState.update { it + (userId to user) }
-        return user
     }
 
     private fun setupUserListener(userId: String) {
