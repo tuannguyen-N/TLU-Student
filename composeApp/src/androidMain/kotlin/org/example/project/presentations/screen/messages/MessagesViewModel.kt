@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import org.example.project.domain.repository.MessageRepository
 import org.example.project.domain.repository.UserRepository
@@ -31,8 +30,8 @@ class MessagesViewModel(
 
     val users = studentUseCase.studentInfo
         .filterNotNull()
-        .mapLatest { student ->
-            userRepository.getUsers(
+        .flatMapLatest { student ->
+            userRepository.observeUsers(
                 size = 10,
                 excludeUserId = student.studentCode.lowercase()
             )

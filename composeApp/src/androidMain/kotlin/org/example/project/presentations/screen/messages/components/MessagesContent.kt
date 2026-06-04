@@ -1,6 +1,7 @@
 package org.example.project.presentations.screen.messages.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -78,58 +79,69 @@ fun MessagesContent(
     modifier: Modifier = Modifier,
     conversations: List<ConversationUiState> = sampleConversations,
     users: List<User>,
-    onOpenMessage: (id: String, chatUserId: String, chatUserName: String) -> Unit
+    onOpenMessage: (chatUserId: String, chatUserName: String) -> Unit,
+    onStartNewChat: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 16.dp)
     ) {
         item {
-            ActiveUsersSection(users = users)
-        }
-        item {
-            Text(
-                text = "Gần đây",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            ActiveUsersSection(
+                users = users,
+                onOpenMessage = { studentId, studentName ->
+                    onOpenMessage(studentId, studentName)
+                }
             )
         }
-        items(conversations, key = { it.roomId }) { conversation ->
-            ConversationItem(conversation = conversation, onOpenMessage = {
-                onOpenMessage(conversation.roomId, conversation.studentId, conversation.chatName)
-            })
-            HorizontalDivider(
-                modifier = Modifier.padding(start = 80.dp),
-                thickness = 0.5.dp,
-                color = MaterialTheme.colorScheme.outlineVariant
-            )
+
+        if (conversations.isEmpty()) {
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                EmptyMessagesCard(
+                    onStartChatClick = onStartNewChat
+                )
+            }
+        } else {
+            item {
+                Text(
+                    text = "Gần đây",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+            items(conversations, key = { it.roomId }) { conversation ->
+                ConversationItem(conversation = conversation, onOpenMessage = {
+                    onOpenMessage(conversation.studentId, conversation.chatName)
+                })
+                HorizontalDivider(
+                    modifier = Modifier.padding(start = 80.dp),
+                    thickness = 0.5.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+            }
         }
     }
 }
 
 @Composable
-fun ActiveUsersSection(users: List<User>) {
+fun ActiveUsersSection(
+    users: List<User>,
+    onOpenMessage: (String, String) -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Đang hoạt động",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-            )
-        }
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(users) { user ->
                 ActiveUserItem(
-                    name = user.name.substringAfterLast(' '),
-                    avatarUrl = user.avatarUrl
+                    name = user.name.substringAfterLast(" "),
+                    avatarUrl = user.avatarUrl,
+                    isOnline = user.isOnline,
+                    onClick = {
+                        onOpenMessage(user.id, user.name)
+                    }
                 )
             }
         }
@@ -138,20 +150,29 @@ fun ActiveUsersSection(users: List<User>) {
 }
 
 @Composable
-private fun ActiveUserItem(name: String, avatarUrl: String?) {
+private fun ActiveUserItem(
+    name: String,
+    avatarUrl: String?,
+    isOnline: Boolean,
+    onClick: () -> Unit
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box {
+        Box(
+            modifier = Modifier.clickable(onClick = onClick)
+        ) {
             AvatarImage(avatarUrl = avatarUrl, name = name, size = 56)
-            Box(
-                modifier = Modifier
-                    .size(14.dp)
-                    .align(Alignment.BottomEnd)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface) // border effect
-                    .padding(2.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF4CAF50))
-            )
+            if (isOnline) {
+                Box(
+                    modifier = Modifier
+                        .size(14.dp)
+                        .align(Alignment.BottomEnd)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface) // border effect
+                        .padding(2.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF4CAF50))
+                )
+            }
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(

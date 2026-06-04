@@ -17,7 +17,8 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun MessagesScreen(
     viewModel: MessagesViewModel,
     onOpenNotificationScreen: () -> Unit,
-    onOpenMessage: (roomId: String, studentId: String, chatName: String) -> Unit
+    onOpenMessage: (studentId: String, chatName: String) -> Unit,
+    onOpenStudentSearch: () -> Unit
 ) {
     val conversations by viewModel.conversations.collectAsStateWithLifecycle()
     val users by viewModel.users.collectAsStateWithLifecycle()
@@ -28,7 +29,7 @@ fun MessagesScreen(
                 title = "Tin nhắn",
                 onOpenNotificationScreen = onOpenNotificationScreen,
                 isNotificationBadgeVisible = true,
-                onSearch = {},
+                onSearch = onOpenStudentSearch,
                 isShowSearch = true,
                 backgroundColor = Color.White
             )

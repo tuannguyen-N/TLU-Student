@@ -15,6 +15,7 @@ import org.example.project.data.mapper.toUiState
 import org.example.project.domain.model.ChatRoom
 import org.example.project.domain.model.ConversationUiState
 import org.example.project.domain.model.Message
+import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
 import org.example.project.domain.model.User
@@ -22,8 +23,6 @@ import org.example.project.domain.repository.MessageRepository
 
 class AndroidMessageRepository : MessageRepository {
     private val firestore = FirebaseFirestore.getInstance()
-
-    //    private val userCache = mutableMapOf<String, User>()
     private val usersState = MutableStateFlow<Map<String, User>>(emptyMap())
     private val userListeners =
         mutableMapOf<String, com.google.firebase.firestore.ListenerRegistration>()
@@ -79,37 +78,71 @@ class AndroidMessageRepository : MessageRepository {
     override fun observeMessages(
         roomId: String,
         currentUserId: String
-    ): Flow<List<MessageUiState>> = callbackFlow {
-        val listener = firestore
-            .collection("chatRooms")
-            .document(roomId)
-            .collection("messages")
-            .orderBy("timestamp")
-            .limitToLast(30)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    close(error)
-                    return@addSnapshotListener
+    ): Flow<List<MessageUiState>> {
+
+        val messagesFlow = callbackFlow{
+            val listener = firestore
+                .collection("chatRooms")
+                .document(roomId)
+                .collection("messages")
+                .orderBy("timestamp")
+                .limitToLast(30)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error); return@addSnapshotListener
+                    }
+                    val messages = snapshot?.documents?.mapNotNull { doc ->
+                        try {
+                            doc.toObject(Message::class.java)
+                        } catch (e: Exception) {
+                            Log.e("MESSAGE_ERROR", "docId=${doc.id}", e)
+                            null
+                        }
+                    } ?: emptyList()
+                    trySend(messages)
+                }
+            awaitClose { listener.remove() }
+        }
+
+        val lastReadAtFlow = callbackFlow {
+            val listener = firestore
+                .collection("chatRooms")
+                .document(roomId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error); return@addSnapshotListener
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    val lastReadAt = snapshot?.get("lastReadAt") as? Map<String, Long> ?: emptyMap()
+                    trySend(lastReadAt)
+                }
+            awaitClose { listener.remove() }
+        }
+
+        return combine(messagesFlow, lastReadAtFlow) { messages, lastReadAt ->
+            val otherUserId = lastReadAt.keys.firstOrNull {
+                !it.equals(currentUserId, ignoreCase = true)
+            }
+            val otherLastRead = otherUserId?.let { lastReadAt[it] } ?: 0L
+
+            val lastMyMessageIndex = messages.indexOfLast {
+                it.senderId.equals(currentUserId, ignoreCase = true)
+            }
+
+            messages.mapIndexed { index, message ->
+                val isMe = message.senderId.equals(currentUserId, ignoreCase = true)
+
+                val status = when {
+                    !isMe -> MessageStatus.SEEN
+                    index == lastMyMessageIndex -> {
+                        if (otherLastRead >= message.timestamp) MessageStatus.SEEN
+                        else MessageStatus.SENT
+                    }
+                    else -> MessageStatus.SENT
                 }
 
-                val messages = snapshot?.documents?.mapNotNull { doc ->
-                    try {
-                        doc.toObject(Message::class.java)
-                            ?.toUiState(currentUserId)
-
-                    } catch (e: Exception) {
-                        Log.e(
-                            "MESSAGE_ERROR",
-                            "docId=${doc.id} data=${doc.data}",
-                            e
-                        )
-                        null
-                    }
-                } ?: emptyList()
-                trySend(messages)
+                message.toUiState(currentUserId, status)
             }
-        awaitClose {
-            listener.remove()
         }
     }
 
@@ -117,16 +150,19 @@ class AndroidMessageRepository : MessageRepository {
         roomId: String,
         currentUserId: String
     ) {
-        firestore
+        val roomRef = firestore
             .collection("chatRooms")
             .document(roomId)
-            .update(
-                mapOf(
-                    "unreadCounts.$currentUserId" to 0,
-                    "lastReadAt.$currentUserId" to System.currentTimeMillis()
-                )
+
+        val snapshot = roomRef.get().await()
+        if (!snapshot.exists()) return
+
+        roomRef.update(
+            mapOf(
+                "unreadCounts.$currentUserId" to 0,
+                "lastReadAt.$currentUserId" to System.currentTimeMillis()
             )
-            .await()
+        ).await()
     }
 
     override suspend fun sendMessage(
@@ -134,45 +170,78 @@ class AndroidMessageRepository : MessageRepository {
         currentUserId: String,
         message: String
     ) {
+        val participantIds = roomId.split("_")
+        val receiverId = participantIds.first { it != currentUserId }
+
+        createRoomIfNeeded(
+            roomId = roomId,
+            currentUserId = currentUserId,
+            receiverId = receiverId,
+            firstMessage = message
+        )
+
         val roomRef = firestore.collection("chatRooms").document(roomId)
         val messageRef = roomRef.collection("messages").document()
 
         val currentTimeMillis = System.currentTimeMillis()
 
-        val messageObj = Message(
-            id = messageRef.id,
-            senderId = currentUserId,
-            text = message,
-            type = MessageType.TEXT.name,
-            timestamp = currentTimeMillis
+        val messageData = hashMapOf(
+            "id" to messageRef.id,
+            "senderId" to currentUserId,
+            "text" to message,
+            "type" to MessageType.TEXT.name,
+            "timestamp" to currentTimeMillis
         )
 
         firestore.runTransaction { transaction ->
-            val roomSnapshot = transaction.get(roomRef)
-            val participantIds =
-                roomSnapshot.get("participantIds") as? List<*> ?: return@runTransaction
-
-            val receiverId = participantIds.firstOrNull { it != currentUserId } as? String
-                ?: return@runTransaction
-
-            val messageData = hashMapOf(
-                "id" to messageObj.id,
-                "senderId" to messageObj.senderId,
-                "text" to messageObj.text,
-                "type" to messageObj.type,
-                "timestamp" to currentTimeMillis
-            )
-
-            val roomUpdateData = hashMapOf(
-                "lastMessageText" to message,
-                "lastMessageTime" to currentTimeMillis,
-                "lastSenderId" to currentUserId,
-                "unreadCounts.$receiverId" to FieldValue.increment(1)
-            )
 
             transaction.set(messageRef, messageData)
-            transaction.update(roomRef, roomUpdateData)
+
+            transaction.update(
+                roomRef,
+                mapOf(
+                    "lastMessageText" to message,
+                    "lastMessageTime" to currentTimeMillis,
+                    "lastSenderId" to currentUserId,
+                    "unreadCounts.$receiverId" to FieldValue.increment(1)
+                )
+            )
         }.await()
+    }
+
+    private suspend fun createRoomIfNeeded(
+        roomId: String,
+        currentUserId: String,
+        receiverId: String,
+        firstMessage: String
+    ) {
+        val roomRef = firestore
+            .collection("chatRooms")
+            .document(roomId)
+
+        val snapshot = roomRef.get().await()
+
+        if (snapshot.exists()) return
+
+        val currentTimeMillis = System.currentTimeMillis()
+
+        val room = ChatRoom(
+            id = roomId,
+            participantIds = listOf(currentUserId, receiverId),
+            lastMessageText = firstMessage,
+            lastMessageTime = currentTimeMillis,
+            lastSenderId = currentUserId,
+            unreadCounts = mapOf(
+                currentUserId to 0,
+                receiverId to 1
+            ),
+            lastReadAt = mapOf(
+                currentUserId to currentTimeMillis,
+                receiverId to 0L
+            )
+        )
+
+        roomRef.set(room).await()
     }
 
     override fun observeUserOnlineStatus(

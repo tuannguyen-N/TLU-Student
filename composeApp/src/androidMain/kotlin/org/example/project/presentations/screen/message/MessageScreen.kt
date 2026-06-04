@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.example.project.presentations.components.LoadingView
 import org.example.project.presentations.screen.message.components.MessageContent
 import org.example.project.presentations.screen.message.components.MessageInputBar
 import org.example.project.presentations.screen.message.components.MessageTopBar
@@ -40,9 +41,17 @@ fun MessageScreen(
             )
         }
     ) { innerPadding ->
-        MessageContent(
-            messages = messages,
-            modifier = Modifier.padding(innerPadding)
-        )
+        when{
+            uiState.isLoading -> {
+                LoadingView()
+            }
+
+            else ->{
+                MessageContent(
+                    messages = messages,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+        }
     }
 }

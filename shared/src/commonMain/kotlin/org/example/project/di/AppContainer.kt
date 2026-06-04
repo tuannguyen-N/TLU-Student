@@ -8,8 +8,8 @@ import org.example.project.data.local.TokenStorage
 import org.example.project.data.local.createDatabase
 import org.example.project.data.local.getDatabaseBuilder
 import org.example.project.data.remote.api.ApplicationApi
-import org.example.project.data.remote.api.AuthApi
 import org.example.project.data.remote.api.AttendanceApi
+import org.example.project.data.remote.api.AuthApi
 import org.example.project.data.remote.api.ChatApi
 import org.example.project.data.remote.api.EnrollmentApi
 import org.example.project.data.remote.api.ExamScheduleApi
@@ -30,9 +30,9 @@ import org.example.project.data.remote.createHttpClient
 import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.TopicSubscriber
 import org.example.project.domain.repository.ApplicationRepository
+import org.example.project.domain.repository.AttendanceRepository
 import org.example.project.domain.repository.AuthRepository
 import org.example.project.domain.repository.ChatRepository
-import org.example.project.domain.repository.AttendanceRepository
 import org.example.project.domain.repository.EnrollmentRepository
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
@@ -43,6 +43,7 @@ import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.PaymentRepository
 import org.example.project.domain.repository.QuoteRepository
 import org.example.project.domain.repository.ScheduleRepository
+import org.example.project.domain.repository.SearchHistoryRepository
 import org.example.project.domain.repository.SemesterRepository
 import org.example.project.domain.repository.StudentClassRepository
 import org.example.project.domain.repository.StudentRepository
@@ -69,7 +70,8 @@ class AppContainer(
     val locationRepository: LocationRepository,
     context: Any? = null,
     val messageRepository: MessageRepository,
-    val userRepository: UserRepository
+    val userRepository: UserRepository,
+    val searchHistoryRepository: SearchHistoryRepository
 ) {
     private val httpClient = createHttpClient(tokenStorage)
     private val externalHttpClient = createExternalHttpClient()

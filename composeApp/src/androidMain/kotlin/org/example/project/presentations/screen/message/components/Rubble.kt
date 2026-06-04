@@ -20,6 +20,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.IncompleteCircle
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,19 +37,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
 import org.example.project.domain.utils.DateTimeUtils
 import org.example.project.presentations.theme.LocalExtendedColors
 
-
 @Composable
-fun FileBubble(message: MessageUiState) {
+fun FileBubble(message: MessageUiState, modifier: Modifier = Modifier) {
     val color = LocalExtendedColors.current
     Row(
-        modifier = Modifier
+        modifier = modifier
             .background(color.midBlue, RoundedCornerShape(16.dp))
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .padding(horizontal = 12.dp)
+            .padding(top = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -83,10 +88,12 @@ fun FileBubble(message: MessageUiState) {
 fun MessageBubble(
     message: MessageUiState,
     showTime: Boolean,
+    isLast: Boolean,
     onClick: () -> Unit
 ) {
     val isMe = message.isMe
     val color = LocalExtendedColors.current
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = if (isMe) Alignment.End else Alignment.Start
@@ -96,60 +103,82 @@ fun MessageBubble(
             horizontalArrangement = if (isMe) Arrangement.End else Arrangement.Start,
             verticalAlignment = Alignment.Bottom
         ) {
-            if (!isMe) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = if (isMe) Arrangement.End else Arrangement.Start,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                if (!isMe) {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 6.dp)
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFBDBDBD)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "N",
+                            style = MaterialTheme.typography.labelMedium.copy(color = Color.White)
+                        )
+                    }
+                }
+
                 Box(
                     modifier = Modifier
-                        .padding(end = 6.dp)
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFBDBDBD)),
-                    contentAlignment = Alignment.Center
+                        .widthIn(max = 280.dp)
+                        .padding(
+                            end = if (isMe && !isLast) 18.dp else 0.dp
+                        )
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 18.dp,
+                                topEnd = 18.dp,
+                                bottomStart = if (isMe) 18.dp else 4.dp,
+                                bottomEnd = if (isMe) 4.dp else 18.dp
+                            )
+                        )
+                        .background(if (isMe) color.midBlue else Color(0xFFE5E5E5))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = onClick
+                        )
+                        .padding(
+                            start = if (message.type == MessageType.FILE.name) 0.dp else 14.dp,
+                            end = if (message.type == MessageType.FILE.name) 0.dp else 14.dp,
+                            top = if (message.type == MessageType.FILE.name) 0.dp else 10.dp,
+                            bottom = 10.dp
+                        ),
                 ) {
-                    Text(
-                        text = "N",
-                        style = MaterialTheme.typography.labelMedium.copy(color = Color.White)
-                    )
+                    when (message.type) {
+                        MessageType.FILE.name -> FileBubble(
+                            message = message,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+
+                        MessageType.TEXT.name -> Text(
+                            text = message.text ?: "",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = if (isMe) Color.White else color.blackBackground,
+                                lineHeight = 22.sp
+                            )
+                        )
+
+                        MessageType.IMAGE.name -> Text(
+                            text = "[Hình ảnh]",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = if (isMe) Color.White else color.blackBackground,
+                                lineHeight = 22.sp
+                            )
+                        )
+                    }
                 }
-            }
 
-            Box(
-                modifier = Modifier
-                    .widthIn(max = 280.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 18.dp,
-                            topEnd = 18.dp,
-                            bottomStart = if (isMe) 18.dp else 4.dp,
-                            bottomEnd = if (isMe) 4.dp else 18.dp
-                        )
-                    )
-                    .background(if (isMe) color.midBlue else Color(0xFFE5E5E5))
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = onClick
-                    )
-                    .then(
-                        if (message.type == MessageType.FILE.name) Modifier
-                        else Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
-                    )
-            ) {
-                when (message.type) {
-                    MessageType.FILE.name -> FileBubble(message = message)
-                    MessageType.TEXT.name -> Text(
-                        text = message.text ?: "",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = if (isMe) Color.White else color.blackBackground,
-                            lineHeight = 22.sp
-                        )
-                    )
-
-                    MessageType.IMAGE.name -> Text(
-                        text = "[Hình ảnh]",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = if (isMe) Color.White else color.blackBackground,
-                            lineHeight = 22.sp
-                        )
+                if (isMe && isLast) {
+                    MessageStatusIcon(
+                        status = message.status,
+                        modifier = Modifier.padding(horizontal = 2.dp)
                     )
                 }
             }
@@ -166,11 +195,53 @@ fun MessageBubble(
                 modifier = Modifier
                     .padding(
                         start = if (isMe) 0.dp else 40.dp,
-                        top = 4.dp
+                        top = 4.dp,
+                        end = 16.dp
                     )
                     .fillMaxWidth(),
                 textAlign = if (isMe) TextAlign.End else TextAlign.Start
             )
         }
+    }
+}
+
+@Composable
+fun MessageStatusIcon(
+    status: MessageStatus,
+    modifier: Modifier = Modifier
+) {
+    val tint = when (status) {
+        MessageStatus.FAILED -> Color(0xFFE53935)
+        else -> LocalExtendedColors.current.gray
+    }
+
+    when (status) {
+        MessageStatus.SENT -> Icon(
+            imageVector = Icons.Default.DoneAll,
+            contentDescription = "Đã gửi",
+            tint = tint,
+            modifier = modifier.size(14.dp)
+        )
+
+        MessageStatus.SEEN -> Icon(
+            imageVector = Icons.Default.RemoveRedEye,
+            contentDescription = "Đã xem",
+            tint = tint,
+            modifier = modifier.size(14.dp)
+        )
+
+        MessageStatus.FAILED -> Icon(
+            imageVector = Icons.Default.ErrorOutline,
+            contentDescription = "Gửi thất bại",
+            tint = tint,
+            modifier = modifier.size(14.dp)
+        )
+
+        else -> Icon(
+            imageVector = Icons.Default.IncompleteCircle,
+            contentDescription = "Đang gửi",
+            tint = tint,
+            modifier = modifier.size(14.dp)
+        )
     }
 }

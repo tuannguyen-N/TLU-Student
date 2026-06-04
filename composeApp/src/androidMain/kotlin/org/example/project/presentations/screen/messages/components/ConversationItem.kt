@@ -46,7 +46,7 @@ fun ConversationItem(
         Box(modifier = Modifier.size(56.dp)) {
             AvatarImage(
                 avatarUrl = conversation.avatarUrl,
-                name = conversation.chatName,
+                name = conversation.chatName.substringAfterLast(" "),
                 size = 56
             )
             if (conversation.isOnline) {

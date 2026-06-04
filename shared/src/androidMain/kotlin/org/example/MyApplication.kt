@@ -39,7 +39,8 @@ class MyApplication : Application() {
             androidAppContainer.locationRepository,
             applicationContext,
             androidAppContainer.messageRepository,
-            androidAppContainer.userRepository
+            androidAppContainer.userRepository,
+            androidAppContainer.searchHistoryRepository
         )
         handleFirebaseToken()
 

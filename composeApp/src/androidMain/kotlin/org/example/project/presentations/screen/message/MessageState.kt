@@ -5,7 +5,7 @@ import org.example.project.domain.model.User
 
 data class MessageState(
     val message: String = "",
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val selectedImageUri: Uri? = null,
     val chatUser: User? = null
 )

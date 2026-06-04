@@ -25,8 +25,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.Message
+import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
 import org.example.project.domain.utils.DateTimeUtils
@@ -76,7 +77,7 @@ fun MessageContent(
             listState.animateScrollToItem(totalItemCount - 1)
         }
     }
-    
+
     LaunchedEffect(messages.lastOrNull()?.id) {
         val lastMessage = messages.lastOrNull()
         if (lastMessage != null && !lastMessage.isMe) {
@@ -89,7 +90,7 @@ fun MessageContent(
         modifier = modifier
             .fillMaxSize()
             .background(LocalExtendedColors.current.background)
-            .padding(horizontal = 12.dp),
+            .padding(start = 12.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
         contentPadding = PaddingValues(vertical = 12.dp)
     ) {
@@ -103,6 +104,7 @@ fun MessageContent(
             }
 
             items(messagesForDate, key = { it.id }) { msg ->
+                val isLast = msg == messagesForDate.lastOrNull()
                 MessageBubble(
                     message = msg,
                     showTime = visibleTimeId == msg.id,
@@ -110,7 +112,8 @@ fun MessageContent(
                         visibleTimeId =
                             if (visibleTimeId == msg.id) null
                             else msg.id
-                    }
+                    },
+                    isLast = isLast
                 )
             }
         }
@@ -134,67 +137,79 @@ private fun DateDivider(timestamp: Long) {
     }
 }
 
-private val sampleMessages = listOf(
-    Message(
-        id = "1", senderId = "other_user",
-        text = "Chào cậu, cậu đã làm xong bài tập nhóm môn Kinh tế vĩ mô chưa?",
-        timestamp = 1780312500000L
-    ),
-    Message(
-        id = "2", senderId = "current_user",
-        text = "Tớ vừa hoàn thành xong phần biểu đồ rồi đây. Để tớ gửi file cho cậu xem thử nhé! \uD83D\uDCCA",
-        timestamp = 1780312620000L
-    ),
-    Message(
-        id = "3", senderId = "current_user",
-        type = MessageType.FILE.name,
-        fileName = "Baitap_Nhom_Vimo.pdf",
-        fileSize = "2.4 MB",
-        timestamp = 1780312680000L
-    ),
-    Message(
-        id = "4", senderId = "other_user",
-        text = "Tuyệt vời! Để tớ kiểm tra lại rồi tổng hợp vào slide luôn. Cảm ơn cậu nhé.",
-        timestamp = 1780312800000L
-    ),
-    Message(
-        id = "5", senderId = "other_user",
-        text = "Chiều nay 2h mình họp nhóm ở thư viện tầng 3 được không?",
-        timestamp = 1780312800000L
-    ),
-    Message(
-        id = "6", senderId = "other_user",
-        text = "Tuyệt vời! Để tớ kiểm tra lại rồi tổng hợp vào slide luôn. Cảm ơn cậu nhé.",
-        timestamp = 1780312800000L
-    ),
-    Message(
-        id = "7", senderId = "other_user",
-        text = "Chiều nay 2h mình họp nhóm ở thư viện tầng 3 được không?",
-        timestamp = 1780312800000L
-    ),
-    Message(
-        id = "8", senderId = "other_user",
-        text = "Tuyệt vời! Để tớ kiểm tra lại rồi tổng hợp vào slide luôn. Cảm ơn cậu nhé.",
-        timestamp = 1780312800000L
-    ),
-    Message(
-        id = "9", senderId = "other_user",
-        text = "Chiều nay 2h mình họp nhóm ở thư viện tầng 3 được không?",
-        timestamp = 1780312800000L
-    ),
-    Message(
-        id = "10", senderId = "other_user",
-        text = "Tuyệt vời! Để tớ kiểm tra lại rồi tổng hợp vào slide luôn. Cảm ơn cậu nhé.",
-        timestamp = 1780312800000L
-    ),
-    Message(
-        id = "11", senderId = "other_user",
-        text = "Chiều nay 2h mình họp nhóm ở thư viện tầng 3 được không?",
-        timestamp = 1780312800000L
-    ),
-    Message(
-        id = "12", senderId = "current_user",
-        text = "Okie chốt nhé! Tớ sẽ đến đúng giờ. \uD83D\uDC4D",
-        timestamp = 1780312920000L
+@Preview(showBackground = true, backgroundColor = 0xFFF5F5F5)
+@Composable
+fun MessageContentPreview() {
+    val now = System.currentTimeMillis()
+
+    val messages = listOf(
+        MessageUiState(
+            id = "1",
+            senderId = "other",
+            text = "Chào bạn! Bạn có thể giúp mình về bài tập không?",
+            type = MessageType.TEXT.name,
+            timestamp = now - 300_000,
+            isMe = false,
+            status = MessageStatus.SEEN
+        ),
+        MessageUiState(
+            id = "2",
+            senderId = "me",
+            text = "Chào! Được chứ, bạn cần giúp môn gì vậy?",
+            type = MessageType.TEXT.name,
+            timestamp = now - 240_000,
+            isMe = true,
+            status = MessageStatus.SEEN
+        ),
+        MessageUiState(
+            id = "3",
+            senderId = "other",
+            text = "Môn Toán rời rạc ạ, mình đang làm bài về đồ thị",
+            type = MessageType.TEXT.name,
+            timestamp = now - 180_000,
+            isMe = false,
+            status = MessageStatus.SEEN
+        ),
+        MessageUiState(
+            id = "4",
+            senderId = "me",
+            text = "Oke mình hiểu rồi! Bạn đang gặp khó ở phần nào — DFS, BFS hay là tìm cây khung nhỏ nhất?",
+            type = MessageType.TEXT.name,
+            timestamp = now - 120_000,
+            isMe = true,
+            status = MessageStatus.SEEN
+        ),
+        MessageUiState(
+            id = "5",
+            senderId = "me",
+            fileName = "graph_theory_notes.pdf",
+            fileSize = "1.2 MB",
+            type = MessageType.FILE.name,
+            timestamp = now - 60_000,
+            isMe = true,
+            status = MessageStatus.SENT
+        ),
+        MessageUiState(
+            id = "6",
+            senderId = "me",
+            text = "Tin nhắn này đang gửi...",
+            type = MessageType.TEXT.name,
+            timestamp = now - 10_000,
+            isMe = true,
+            status = MessageStatus.SENDING
+        ),
+        MessageUiState(
+            id = "7",
+            senderId = "me",
+            text = "Tin nhắn gửi thất bại, thử lại sau nhé!",
+            type = MessageType.TEXT.name,
+            timestamp = now,
+            isMe = true,
+            status = MessageStatus.SEEN
+        )
     )
-)
+
+    MessageContent(
+        messages = messages
+    )
+}

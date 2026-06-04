@@ -22,6 +22,7 @@ import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
 import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.QuoteRepository
+import org.example.project.domain.repository.UserRepository
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.StudentUseCase
@@ -36,7 +37,8 @@ class HomeViewModel(
     private val authPluginConfig: AuthPluginConfig,
     private val notificationRepository: NotificationRepository,
     private val examScheduleRepository: ExamScheduleRepository,
-    private val semesterUseCase: SemesterUseCase
+    private val semesterUseCase: SemesterUseCase,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeState())
     val uiState = combine(
@@ -59,6 +61,21 @@ class HomeViewModel(
         observeAlerts()
         observeSemester()
         loadInitData()
+
+        uploadUserOnFirebase()
+    }
+
+    private fun uploadUserOnFirebase() {
+        viewModelScope.launch {
+            studentUseCase.getAllStudents()
+                .onSuccess { students ->
+                    viewModelScope.launch {
+                        userRepository.uploadUsers(students.content)
+                    }
+                }
+                .onFailure {
+                }
+        }
     }
 
     private fun observeSemester() {

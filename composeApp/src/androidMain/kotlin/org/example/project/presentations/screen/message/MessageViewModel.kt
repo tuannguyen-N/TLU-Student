@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -28,10 +29,13 @@ class MessageViewModel(
     private val messageRepository: MessageRepository,
     private val studentUseCase: StudentUseCase
 ) : ViewModel() {
-    private val roomId = savedStateHandle.get<String>("roomId") ?: ""
     private val chatUserId = savedStateHandle.get<String>("studentId") ?: ""
     private val chatUserName = savedStateHandle.get<String>("chatName") ?: ""
     val studentId = studentUseCase.studentInfo.value?.studentCode?.lowercase()
+    val roomId = generateRoomId(
+        studentId!!.lowercase(),
+        chatUserId.lowercase()
+    )
     private val pendingMessages = MutableStateFlow<List<MessageUiState>>(emptyList())
 
     private val _chatUser = MutableStateFlow(
@@ -63,9 +67,21 @@ class MessageViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
+        observeMessagesLoaded()
+
         markAsRead()
         observeUserOnlineStatus()
         observeAndMarkNewMessages()
+    }
+
+    private fun observeMessagesLoaded() {
+        viewModelScope.launch {
+            remoteMessages.first()
+
+            updateState {
+                copy(isLoading = false)
+            }
+        }
     }
 
     private fun observeAndMarkNewMessages() {
@@ -149,5 +165,14 @@ class MessageViewModel(
 
     private fun updateState(block: MessageState.() -> MessageState) {
         _uiState.value = _uiState.value.block()
+    }
+
+    fun generateRoomId(
+        user1: String,
+        user2: String
+    ): String {
+        return listOf(user1, user2)
+            .sorted()
+            .joinToString("_")
     }
 }

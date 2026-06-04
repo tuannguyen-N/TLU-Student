@@ -98,6 +98,9 @@ import org.example.project.presentations.screen.splash.SplashScreen
 import org.example.project.presentations.screen.student_class.StudentClassScreen
 import org.example.project.presentations.screen.student_class.StudentClassViewModel
 import org.example.project.presentations.screen.student_class.StudentClassViewModelFactory
+import org.example.project.presentations.screen.student_search.StudentSearchScreen
+import org.example.project.presentations.screen.student_search.StudentSearchViewModel
+import org.example.project.presentations.screen.student_search.StudentSearchViewModelFactory
 import org.example.project.presentations.screen.temp_timetable.TempTimetableScreen
 import org.example.project.presentations.screen.temp_timetable.TempTimetableViewModel
 import org.example.project.presentations.screen.temp_timetable.TempTimetableViewModelFactory
@@ -195,7 +198,8 @@ fun AppNavGraph(
                     container.authPluginConfig,
                     container.notificationRepository,
                     container.examScheduleRepository,
-                    container.semesterUseCase
+                    container.semesterUseCase,
+                    container.userRepository
                 )
             }
             val scheduleFactory = remember(container) {
@@ -256,9 +260,10 @@ fun AppNavGraph(
                     context.startActivity(intent)
                 },
                 messagesViewModel = messagesViewModel,
-                onOpenMessage = { roomId, studentId, chatName -> 
-                    navController.navigate(AppRoute.messageDetail(roomId, studentId, chatName)) 
-                }
+                onOpenMessage = { studentId, chatName ->
+                    navController.navigate(AppRoute.messageDetail(studentId, chatName))
+                },
+                onOpenStudentSearch = { navController.navigate(AppRoute.StudentSearch) }
             )
         }
 
@@ -736,9 +741,6 @@ fun AppNavGraph(
         composable(
             route = AppRoute.MessageRoute,
             arguments = listOf(
-                navArgument("roomId") {
-                    type = NavType.StringType
-                },
                 navArgument("studentId") {
                     type = NavType.StringType
                 },
@@ -763,6 +765,25 @@ fun AppNavGraph(
             MessageScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(AppRoute.StudentSearch) {
+            val container = LocalAppContainer.current
+            val factory = remember(container) {
+                StudentSearchViewModelFactory(container.studentUseCase, container.searchHistoryRepository)
+            }
+
+            val viewModel: StudentSearchViewModel = viewModel(
+                factory = factory
+            )
+
+            StudentSearchScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onOpenMessage = { studentId, chatName ->
+                    navController.navigate(AppRoute.messageDetail(studentId, chatName))
+                }
             )
         }
     }

@@ -28,25 +28,19 @@ fun ChatRoom.toConversationUiState(
 }
 
 fun Message.toUiState(
-    currentUserId: String
+    currentUserId: String,
+    status: MessageStatus = MessageStatus.SENT
 ): MessageUiState {
     return MessageUiState(
         id = id,
         senderId = senderId,
-
         text = text,
-
         fileUrl = fileUrl,
         fileName = fileName,
         fileSize = fileSize,
-
         type = type,
         timestamp = timestamp,
-
-        isMe = senderId.equals(
-            currentUserId,
-            ignoreCase = true
-        ),
-        status = MessageStatus.SENT
+        isMe = senderId.equals(currentUserId, ignoreCase = true),
+        status = status
     )
 }
