@@ -3,6 +3,7 @@ package org.example.project
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,12 +32,16 @@ class AndroidMessageRepository : MessageRepository {
         currentStudentId: String
     ): Flow<List<ConversationUiState>> {
 
-        val roomsFlow = callbackFlow<List<ChatRoom>> {
+        val roomsFlow = callbackFlow{
             val listener = firestore
                 .collection("chatRooms")
                 .whereArrayContains(
                     "participantIds",
                     currentStudentId
+                )
+                .orderBy(
+                    "lastMessageTime",
+                    Query.Direction.DESCENDING
                 )
                 .addSnapshotListener { snapshot, error ->
 
@@ -80,7 +85,7 @@ class AndroidMessageRepository : MessageRepository {
         currentUserId: String
     ): Flow<List<MessageUiState>> {
 
-        val messagesFlow = callbackFlow{
+        val messagesFlow = callbackFlow {
             val listener = firestore
                 .collection("chatRooms")
                 .document(roomId)
@@ -138,6 +143,7 @@ class AndroidMessageRepository : MessageRepository {
                         if (otherLastRead >= message.timestamp) MessageStatus.SEEN
                         else MessageStatus.SENT
                     }
+
                     else -> MessageStatus.SENT
                 }
 
