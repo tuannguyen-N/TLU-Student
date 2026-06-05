@@ -2,6 +2,7 @@ package org.example.project.presentations.screen.student_class.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,8 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +51,7 @@ fun StudentItem(
     student: Student,
     role: StudentRole = StudentRole.NONE,
     color: ExtendedColors = LocalExtendedColors.current,
+    onMessageClick: (String, String) -> Unit,
 ) {
     val avatarLetter = student.fullName
         .trim()
@@ -123,10 +128,26 @@ fun StudentItem(
                 }
 
                 Text(
-                    text = "MSSV: ${student.studentCode}",
+                    text = "MSV: ${student.studentCode}",
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.Normal,
                     )
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(CircleShape)
+                    .background(LocalExtendedColors.current.mainBlue)
+                    .clickable { onMessageClick(student.studentCode, student.fullName) },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Message,
+                    contentDescription = "Nhắn tin",
+                    tint = Color.White,
+                    modifier = Modifier.size(14.dp)
                 )
             }
         }

@@ -18,7 +18,7 @@ import org.example.project.data.local.TokenStorage
 import org.example.project.data.remote.api.FileUploadApi
 import org.example.project.data.remote.createHttpClient
 
-class AndroidAppContainer(context: Context) {
+class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
     private val encryptedSharedPreferences: SharedPreferences by lazy {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -37,7 +37,7 @@ class AndroidAppContainer(context: Context) {
         AndroidTokenStorage(encryptedSharedPreferences)
     }
 
-    private val httpClient = createHttpClient(tokenStorage)
+    private val httpClient = createHttpClient(tokenStorage, triggerLogout = triggerLogout)
 
     val imageStorage: ImageBase64Storage by lazy {
         AndroidImageBase64Storage(encryptedSharedPreferences)

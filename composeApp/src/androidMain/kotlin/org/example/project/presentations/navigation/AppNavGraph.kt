@@ -1,7 +1,6 @@
 package org.example.project.presentations.navigation
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -550,7 +549,11 @@ fun AppNavGraph(
 
             StudentClassScreen(
                 viewModel = studentClassViewModel,
-                onBack = { navController.popBackStack() })
+                onBack = { navController.popBackStack() },
+                onMessageClick = { studentCode, name ->
+                    navController.navigate(AppRoute.messageDetail(studentCode, name))
+                }
+            )
         }
 
         composable(AppRoute.ClassSignUp) {

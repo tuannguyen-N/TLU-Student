@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +31,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun TopCenterScreenBar(
     title: String = "Title",
     enableActionButton: Boolean = false,
+    isLoading: Boolean = false,
     backgroundColor: Color = LocalExtendedColors.current.mainRed,
     onBack: () -> Unit = {},
     onClickAction: () -> Unit = {},
@@ -72,16 +75,24 @@ fun TopCenterScreenBar(
                 modifier = Modifier.align(Alignment.Center)
             )
 
-            if (enableActionButton) {
+            if (enableActionButton || isLoading) {
                 IconButton(
-                    onClick = onClickAction,
+                    onClick = { if (!isLoading) onClickAction() },
                     modifier = Modifier.align(Alignment.CenterEnd)
                 ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconColor
-                    )
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = iconColor,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = iconColor
+                        )
+                    }
                 }
             }
         }

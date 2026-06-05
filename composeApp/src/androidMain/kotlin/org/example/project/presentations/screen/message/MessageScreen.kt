@@ -6,6 +6,7 @@ import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -43,7 +44,9 @@ fun MessageScreen(
         topBar = {
             Column {
                 MessageTopBar(onBack = onBack, chatUser = uiState.chatUser!!)
-                uiState.chatStudent?.let { StudentInfoSection(student = it) }
+                if (messages.isEmpty()) {
+                    uiState.chatStudent?.let { StudentInfoSection(student = it) }
+                }
             }
         },
         bottomBar = {
@@ -54,7 +57,8 @@ fun MessageScreen(
                 onImagePick = { viewModel.onImageSelected(it, context) },
                 onRemoveImage = viewModel::onRemoveImage,
                 onFilePick = { viewModel.onFileSelected(it, context) },
-                onRemoveFile = viewModel::onRemoveFile
+                onRemoveFile = viewModel::onRemoveFile,
+                modifier = Modifier.imePadding()
             )
         }
     ) { innerPadding ->

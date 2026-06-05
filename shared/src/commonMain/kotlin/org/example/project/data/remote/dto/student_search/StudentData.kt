@@ -12,7 +12,7 @@ data class StudentInfoResponse(
 @Serializable
 data class StudentData(
     val studentCode: String,
-    val name: String,
+    val fullName: String,
     val classCode: String,
     val majorName: String,
     val position: String

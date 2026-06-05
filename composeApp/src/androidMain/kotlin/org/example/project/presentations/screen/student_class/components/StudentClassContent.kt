@@ -25,6 +25,7 @@ fun StudentClassContent(
     uiState: StudentClassState,
     onBack: () -> Unit,
     onCopy: (String, String) -> Unit,
+    onMessageClick: (String, String) -> Unit,
 ) {
     val classInfoData = uiState.studentClassInfoData
     val color = LocalExtendedColors.current
@@ -68,18 +69,18 @@ fun StudentClassContent(
             item(key = "class_card") {
                 ClassCard(
                     color = color,
-                    className = classInfoData?.classCode ?: "#######",
-                    major = classInfoData?.majorName ?: "#######",
+                    className = classInfoData?.classCode ?: "_",
+                    major = classInfoData?.majorName ?: "_",
                 )
             }
 
             item(key = "teacher_card") {
                 Spacer(Modifier.height(20.dp))
                 TeacherCard(
-                    teacherName = classInfoData?.academicAdvisor?.fullName ?: "#######",
-                    teacherId = classInfoData?.academicAdvisor?.lecturerCode ?: "#######",
-                    email = classInfoData?.academicAdvisor?.email ?: "#######",
-                    phone = classInfoData?.academicAdvisor?.phoneNumber ?: "#######",
+                    teacherName = classInfoData?.academicAdvisor?.fullName ?: "_",
+                    teacherId = classInfoData?.academicAdvisor?.lecturerCode ?: "_",
+                    email = classInfoData?.academicAdvisor?.email ?: "_",
+                    phone = classInfoData?.academicAdvisor?.phoneNumber ?: "_",
                     color = color,
                     onCopy = {
                         onCopy(it, "")
@@ -94,6 +95,7 @@ fun StudentClassContent(
                 searchQuery = searchQuery,
                 onSearchQueryChange = { searchQuery = it },
                 color = color,
+                onMessageClick = onMessageClick
             )
 
             item(key = "bottom_spacer") {

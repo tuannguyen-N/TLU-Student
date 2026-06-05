@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StudentData(
+    val avatarUrl: String?,
     val studentCode: String,
     val fullName: String,
     val dateOfBirth: String,

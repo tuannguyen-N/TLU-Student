@@ -41,11 +41,11 @@ fun SubjectCard(
     academicYear: String,
     termNumber: String,
     subjects: List<String>,
-    gpa: Double,
+    score: Double,
     credits: Int,
     onOpenTranscriptTerm: () -> Unit
 ) {
-    val gpa = gpa * 10 / 4
+    val gpa = score * 10 / 4
     val color = gpa.toAcademicRank().toColor()
     val rank = gpa.toTextTermRank()
     val maxVisible = 3
@@ -98,7 +98,7 @@ fun SubjectCard(
         ) {
             Information(
                 title = "GPA",
-                value = gpa.toString(),
+                value = score.toString(),
                 color = color,
                 modifier = Modifier.weight(1f)
             )

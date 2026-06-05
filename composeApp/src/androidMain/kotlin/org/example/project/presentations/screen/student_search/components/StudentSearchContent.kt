@@ -55,7 +55,8 @@ fun StudentSearchContent(
     onRemoveRecentSearch: (String) -> Unit = {},
     onClearAllRecentSearches: () -> Unit = {},
     onOpenMessage: (String, String) -> Unit,
-    onSearch: () -> Unit = {}
+    onSearch: () -> Unit = {},
+    onClickRecentSearch: (String) -> Unit = {}
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -153,7 +154,8 @@ fun StudentSearchContent(
                 RecentSearchesSection(
                     recentSearches = uiState.recentSearches,
                     onRemove = onRemoveRecentSearch,
-                    onClearAll = onClearAllRecentSearches
+                    onClearAll = onClearAllRecentSearches,
+                    onClickRecentSearch = onClickRecentSearch
                 )
             } else {
                 SearchResultsSection(
@@ -169,7 +171,8 @@ fun StudentSearchContent(
 private fun RecentSearchesSection(
     recentSearches: List<String>,
     onRemove: (String) -> Unit,
-    onClearAll: () -> Unit
+    onClearAll: () -> Unit,
+    onClickRecentSearch: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -221,7 +224,8 @@ private fun RecentSearchesSection(
                 recentSearches.forEach { search ->
                     RecentSearchChip(
                         label = search,
-                        onRemove = { onRemove(search) }
+                        onRemove = { onRemove(search) },
+                        onClickRecentSearch = onClickRecentSearch
                     )
                 }
             }
@@ -270,12 +274,14 @@ private fun SearchResultsSection(
 @Composable
 private fun RecentSearchChip(
     label: String,
-    onRemove: () -> Unit
+    onRemove: () -> Unit,
+    onClickRecentSearch: (String) -> Unit
 ) {
     Surface(
         shape = RoundedCornerShape(50),
         color = Color(0xFFE3E5EE),
-        modifier = Modifier.height(36.dp)
+        modifier = Modifier.height(36.dp),
+        onClick = { onClickRecentSearch(label) }
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 14.dp),

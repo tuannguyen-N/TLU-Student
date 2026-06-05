@@ -40,7 +40,7 @@ fun TranscriptPerTerm(
                     academicYear = academicYear,
                     termNumber = semester.semesterLabel,
                     subjects = subjectNames,
-                    gpa = semester.semesterGpa,
+                    score = semester.semesterGpa,
                     credits = semester.creditsPassed,
                 )
             }

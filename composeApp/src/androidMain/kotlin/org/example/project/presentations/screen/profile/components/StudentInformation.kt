@@ -72,7 +72,11 @@ fun PersonalInformation(
 
             InformationItem(R.drawable.icon_student_code, "Mã sinh viên", studentCode)
             InformationItem(R.drawable.icon_name, "Họ và tên", fullName)
-            InformationItem(R.drawable.icon_gender, "Giới tính", gender)
+            InformationItem(
+                R.drawable.icon_gender,
+                "Giới tính",
+                if (gender.equals("NU", true)) "Nữ" else "Nam"
+            )
             InformationItem(R.drawable.icon_birthday, "Ngày sinh", birthDay.toDisplayDate())
             InformationItem(R.drawable.icon_cmnd, "CMND/CCCD", cardNumber)
             InformationItem(R.drawable.icon_phone_number, "Số điện thoại", phoneNumber)

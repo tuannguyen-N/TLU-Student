@@ -35,7 +35,6 @@ class StudentSearchViewModel(
 
     private fun observeSearchHistory() {
         viewModelScope.launch {
-
             studentUseCase.studentInfo
                 .filterNotNull()
                 .map { it.studentCode.lowercase() }
@@ -122,20 +121,16 @@ class StudentSearchViewModel(
 
     fun onSearch() {
         val query = uiState.value.searchQuery.trim()
-
         if (query.isBlank()) return
-
         viewModelScope.launch {
             val studentId =
-                studentUseCase.studentInfo.value
-                    ?.studentCode
-                    ?.lowercase()
-                    ?: return@launch
+                studentUseCase.studentInfo.value?.studentCode?.lowercase() ?: return@launch
 
-            searchHistoryRepository.saveSearchHistory(
-                userId = studentId,
-                keyword = query
-            )
+            searchHistoryRepository.saveSearchHistory(userId = studentId, keyword = query)
         }
+    }
+
+    fun onRecentSearchClick(search: String) {
+        onSearchQueryChange(search)
     }
 }

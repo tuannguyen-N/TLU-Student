@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import org.example.project.data.remote.dto.application.ApplicationType
@@ -30,8 +31,9 @@ fun ApplicationTypeMenu(
 ) {
 
     Popup(
-        alignment = Alignment.TopEnd,
-        onDismissRequest = onDismiss
+        alignment = Alignment.TopStart,
+        onDismissRequest = onDismiss,
+        offset = IntOffset(0,130)
     ) {
         Card(
             elevation = CardDefaults.cardElevation(8.dp)

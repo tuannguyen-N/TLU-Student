@@ -205,3 +205,17 @@ fun computeEnrollmentStatusText(
         null
     }
 }
+
+fun String.toExamCountdown(): String {
+    val examDate = LocalDate.parse(this)
+    val diffDays = examDate.toEpochDays() - today.toEpochDays()
+
+    return when {
+        diffDays <= 0L -> ""
+        diffDays == 1L -> "Ngày mai"
+        diffDays < 30  -> "$diffDays ngày nữa"
+        diffDays < 60  -> "1 tháng nữa"
+        diffDays < 90  -> "2 tháng nữa"
+        else           -> "3 tháng nữa"
+    }
+}

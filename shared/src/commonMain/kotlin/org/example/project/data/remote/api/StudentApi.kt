@@ -11,13 +11,12 @@ import org.example.project.data.remote.dto.student_search.StudentListResponse
 class StudentApi(
     private val client: HttpClient
 ) {
-
     suspend fun getStudentInfo(): StudentInformationResponse {
         return client.get("/api/v1/students/me").body()
     }
 
     suspend fun getStudentInfo(studentCode: String): StudentInfoResponse {
-        return client.get("/api/v1/students/chat") {
+        return client.get("/api/v1/chat/student") {
             parameter("code", studentCode)
         }.body()
     }
@@ -28,7 +27,7 @@ class StudentApi(
         size: Int = 10,
         sort: String? = null
     ): StudentListResponse {
-        return client.get("/api/v1/students/list-students") {
+        return client.get("/api/v1/chat/list-students") {
             parameter("search", search)
             parameter("page", page)
             parameter("size", size)

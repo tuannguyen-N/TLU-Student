@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.example.project.data.remote.api.ChatApi
+import org.example.project.data.remote.dto.chatbot.ChatMessageContext
 import org.example.project.data.remote.dto.chatbot.ChatRequest
 import org.example.project.data.remote.dto.chatbot.ChatbotContextData
 import org.example.project.domain.model.AppResult
@@ -27,13 +28,10 @@ class ChatRepository(
 
     fun streamChat(
         prompt: String,
+        messages: List<ChatMessageContext>,
         chatbotContext: ChatbotContextData
     ): Flow<SseEvent> = flow {
-
-        val request = ChatRequest(
-            prompt = prompt,
-            context = chatbotContext
-        )
+        val request = ChatRequest(prompt = prompt, context = chatbotContext, messages = messages)
 
         httpClient.preparePost(
             "https://tl-chatbot.nhokthanh3211.workers.dev/api/v1/agent-chat-stream"
@@ -41,17 +39,12 @@ class ChatRepository(
             contentType(ContentType.Application.Json)
             setBody(request)
         }.execute { response ->
-
             val channel: ByteReadChannel = response.bodyAsChannel()
-
             try {
                 while (!channel.isClosedForRead) {
-
                     val line = channel.readUTF8Line() ?: break
-
                     if (line.isBlank()) continue
                     if (!line.startsWith("data:")) continue
-
                     val data = line.removePrefix("data:").trim()
 
                     if (data == "[DONE]") {
@@ -71,9 +64,7 @@ class ChatRepository(
                     val cleanText = text
                         .replace("[e-n-t-e-r]", "\n")
                         .replace("\\n", "\n")
-
                     if (cleanText == "Đang xử lý yêu cầu...") continue
-
                     emit(SseEvent.Token(cleanText))
                 }
             } catch (e: Exception) {

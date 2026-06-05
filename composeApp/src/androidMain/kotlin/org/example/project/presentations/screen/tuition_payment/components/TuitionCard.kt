@@ -74,10 +74,10 @@ fun TuitionCard(
                 text = "Tổng học phí cần đóng",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White,
-                fontWeight = FontWeight.Normal
+                fontWeight = FontWeight.SemiBold
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             Row(
                 verticalAlignment = Alignment.Bottom,

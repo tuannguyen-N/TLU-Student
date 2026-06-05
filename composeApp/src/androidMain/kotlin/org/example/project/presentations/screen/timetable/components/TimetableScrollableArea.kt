@@ -8,10 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.example.project.data.mapper.getTodayDayOfWeek
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.DailySchedule
 
@@ -23,6 +27,17 @@ fun TimetableScrollableArea(
     val verticalScroll = rememberScrollState()
     val horizontalScroll = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
+
+    val cellWidth = 100
+    val leftColumnWidth = 50
+    val density = LocalDensity.current
+
+    LaunchedEffect(Unit) {
+        val todayDayOfWeek = getTodayDayOfWeek()
+        val offsetDp = leftColumnWidth + (todayDayOfWeek - 2) * cellWidth
+        val offsetPx = with(density) { offsetDp.dp.roundToPx() }
+        horizontalScroll.scrollTo(offsetPx.coerceAtLeast(0))
+    }
 
     Box(
         modifier = Modifier

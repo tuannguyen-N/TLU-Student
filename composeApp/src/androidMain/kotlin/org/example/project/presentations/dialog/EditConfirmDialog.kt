@@ -57,7 +57,7 @@ fun ExitConfirmDialog(
                 Image(
                     painter = painterResource(R.drawable.icon_warning),
                     contentDescription = null,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(50.dp)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -99,7 +99,10 @@ fun ExitConfirmDialog(
                     }
 
                     Button(
-                        onClick = onConfirm,
+                        onClick = {
+                            onDismiss()
+                            onConfirm()
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = LocalExtendedColors.current.red
                         ),

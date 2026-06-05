@@ -70,11 +70,12 @@ class MessageViewModel(
         remoteMessages,
         uiState.map { it.pendingMessages }.distinctUntilChanged(),
         uiState.map { it.olderMessages }.distinctUntilChanged()
-    ) { remote: List<MessageUiState>, pending: List<MessageUiState>, older: List<MessageUiState> ->
+    ) { remote, pending, older ->
         val latestRemoteTime = remote.maxOfOrNull { it.timestamp } ?: 0L
         val stillPending = pending.filter { it.timestamp > latestRemoteTime }
-        (older + remote + stillPending)
-            .distinctBy { it.id }
+        val remoteIds = remote.map { it.id }.toSet()
+        val filteredOlder = older.filter { it.id !in remoteIds }
+        (filteredOlder + remote + stillPending)
             .sortedBy { it.timestamp }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 

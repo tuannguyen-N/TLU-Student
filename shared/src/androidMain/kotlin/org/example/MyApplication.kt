@@ -28,7 +28,9 @@ class MyApplication : Application() {
             capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
         }
 
-        androidAppContainer = AndroidAppContainer(applicationContext)
+        androidAppContainer = AndroidAppContainer(applicationContext, triggerLogout = {
+
+        })
         appContainer = AppContainer(
             androidAppContainer.tokenStorage,
             androidAppContainer.imageStorage,

@@ -126,4 +126,5 @@ fun NotificationUiModel.iconRes(): Int {
 fun PaymentType.icon(): Int = when (this) {
     PaymentType.VN_PAY -> R.drawable.icon_vnpay
     PaymentType.ZALO_PAY -> R.drawable.icon_zalo_pay
+    PaymentType.MOMO -> R.drawable.icon_momo
 }

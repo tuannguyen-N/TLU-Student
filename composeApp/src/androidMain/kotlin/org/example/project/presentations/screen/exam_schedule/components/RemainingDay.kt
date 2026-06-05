@@ -18,29 +18,33 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun RemainingDay(
     contentColor: Color,
-    dayLeft: Int,
+    dayLeft: String,
     modifier: Modifier = Modifier
 ) {
+    val isToday = dayLeft == "Hôm nay"
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(contentColor.copy(alpha = 0.15f))
             .padding(vertical = 5.dp, horizontal = 8.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        if (isToday) {
             Text(
-                text = "$dayLeft",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                text = "Hôm nay",
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 color = contentColor
             )
-
-            Text(
-                text = "Ngày",
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal),
-                color = contentColor
-            )
+        } else {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = dayLeft,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    color = contentColor
+                )
+            }
         }
     }
 }

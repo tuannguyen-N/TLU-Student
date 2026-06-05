@@ -75,9 +75,14 @@ class AppContainer(
     val searchHistoryRepository: SearchHistoryRepository,
     val presenceRepository: PresenceRepository
 ) {
-    private val httpClient = createHttpClient(tokenStorage)
+    private val httpClient = createHttpClient(tokenStorage, triggerLogout = {
+        // TODO:  
+    })
     private val externalHttpClient = createExternalHttpClient()
-    private val chatHttpClient = createExternalHttpClientWithAuthPlugin(tokenStorage)
+    private val chatHttpClient =
+        createExternalHttpClientWithAuthPlugin(tokenStorage, triggerLogout = {
+            // TODO:  
+        })
 
     // for auth
     private val authApi = AuthApi(httpClient)

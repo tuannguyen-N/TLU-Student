@@ -24,6 +24,7 @@ fun StudentSearchScreen(
         onRemoveRecentSearch = viewModel::onRemoveRecentSearch,
         onClearAllRecentSearches = viewModel::onClearAllRecentSearches,
         onOpenMessage = onOpenMessage,
-        onSearch = viewModel::onSearch
+        onSearch = viewModel::onSearch,
+        onClickRecentSearch = viewModel::onRecentSearchClick
     )
 }

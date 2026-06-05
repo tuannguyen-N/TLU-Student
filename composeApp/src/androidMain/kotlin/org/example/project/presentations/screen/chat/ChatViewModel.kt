@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.data.remote.dto.chatbot.ChatMessageContext
 import org.example.project.domain.model.ChatMessage
 import org.example.project.domain.model.SseEvent
 import org.example.project.domain.repository.ChatRepository
@@ -60,7 +61,16 @@ class ChatViewModel(
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            chatRepository.streamChat(prompt, _uiState.value.chatbotContext!!)
+            chatRepository.streamChat(
+                prompt,
+                messages = _uiState.value.messages.take(3).map {
+                    ChatMessageContext(
+                        content = it.text,
+                        role = if (it.isUser) "user" else "assistant"
+                    )
+                },
+                _uiState.value.chatbotContext!!
+            )
                 .onStart { updateState { copy(isLoading = true) } }
                 .onEach { event ->
                     when (event) {

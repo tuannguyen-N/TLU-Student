@@ -19,9 +19,11 @@ class AuthRepository(
             val response = authApi.login(microsoftAccessToken, firebaseToken, deviceId)
             val token = response.data?.accessToken
                 ?: return AppResult.Failure(message = response.message)
+            val refreshToken = response.data.refreshToken
             val imageBase64 = response.data.avatar
 
             tokenStorage.saveAccessToken(token)
+            tokenStorage.saveRefreshToken(refreshToken)
             imageStorage.saveImageBase64(imageBase64)
             AppResult.Success(Unit)
 
@@ -32,6 +34,7 @@ class AuthRepository(
 
     suspend fun signOut() {
         tokenStorage.clearAccessToken()
+        tokenStorage.clearRefreshToken()
         imageStorage.clearImageBase64()
         firebaseStorage.clearAllTopics()
     }

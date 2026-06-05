@@ -42,8 +42,11 @@ class ScheduleRepository(
                 scheduleApi.getDayOfWeekSchedule(dayOfWeek).data
                     ?: throw Exception("Không có dữ liệu lịch học")
             }
-            _daySchedules.update { it + (dayOfWeek to data) }
-            AppResult.Success(data)
+            val sorted = data.copy(
+                courseClasses = data.courseClasses.sortedBy { it.startPeriod }
+            )
+            _daySchedules.update { it + (dayOfWeek to sorted) }
+            AppResult.Success(sorted)
         } catch (e: Exception) {
             AppResult.Failure(message = e.message, cause = e)
         }
@@ -55,7 +58,11 @@ class ScheduleRepository(
         return try {
             val data = scheduleApi.getDayOfWeekSchedule(dayOfWeek).data
                 ?: throw Exception("Không có dữ liệu lịch học")
-            AppResult.Success(data.toDaySchedule())
+            val sorted = data.copy(
+                courseClasses = data.courseClasses.sortedBy { it.startPeriod }
+            )
+            _daySchedules.update { it + (dayOfWeek to sorted) }
+            AppResult.Success(sorted.toDaySchedule())
         } catch (e: Exception) {
             AppResult.Failure(message = e.message, cause = e)
         }

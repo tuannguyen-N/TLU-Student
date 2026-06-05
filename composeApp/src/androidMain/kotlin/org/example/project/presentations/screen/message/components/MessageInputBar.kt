@@ -62,6 +62,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun MessageInputBar(
+    modifier: Modifier = Modifier,
     state: MessageState,
     onMessageChange: (String) -> Unit,
     onSend: (fileName: String?, fileSize: String?) -> Unit,
@@ -114,7 +115,7 @@ fun MessageInputBar(
     Surface(
         tonalElevation = 2.dp,
         color = Color.White,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Column {
             AnimatedVisibility(
@@ -237,7 +238,7 @@ fun MessageInputBar(
             }
 
             Row(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                modifier = Modifier.padding(horizontal = 8.dp).padding(top = 4.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
@@ -254,7 +255,7 @@ fun MessageInputBar(
                             )
                         )
                     },
-                    shape = RoundedCornerShape(24.dp),
+                    shape = RoundedCornerShape(18.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF1A73E8),
                         unfocusedBorderColor = Color(0xFFE0E0E0),

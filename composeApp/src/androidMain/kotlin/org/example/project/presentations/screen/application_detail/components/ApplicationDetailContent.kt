@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -130,13 +131,13 @@ fun ApplicationDetailContent(
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(Color(0xFFF5F5F5))
                                         .clickable {
-                                            onOpenUrl("https://res.cloudinary.com/dm5ev1isi/raw/upload/${attachment.fileKey}")
+                                            onOpenUrl("https://res.cloudinary.com/dm5ev1isi/image/upload/${attachment.fileKey}")
                                         }
                                         .padding(12.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.InsertDriveFile,
+                                        imageVector = Icons.AutoMirrored.Filled.InsertDriveFile,
                                         contentDescription = "File",
                                         tint = LocalExtendedColors.current.mainRed,
                                         modifier = Modifier.size(24.dp)

@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.exam_schedule.components
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,8 +32,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.data.mapper.toExamCountdown
 import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -76,7 +79,7 @@ fun ExamCard(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = exam.examType,
+                    text = if(exam.examType.equals("FINAL",true)) "Cuối kỳ" else "Giữa kỳ",
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = if (isToday) LocalExtendedColors.current.orange else LocalExtendedColors.current.gray
@@ -107,10 +110,7 @@ fun ExamCard(
 
                 Spacer(Modifier.height(5.dp))
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
+                Column {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -128,6 +128,8 @@ fun ExamCard(
                             )
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -149,12 +151,50 @@ fun ExamCard(
                 }
             }
 
-            if (!isToday && !isPast) {
+            Spacer(Modifier.width(2.dp))
+
+            if (!isPast) {
                 RemainingDay(
-                    contentColor = LocalExtendedColors.current.orange,
-                    dayLeft = 10,
+                    contentColor = if (isToday) LocalExtendedColors.current.green
+                    else LocalExtendedColors.current.orange,
+                    dayLeft = if (isToday) "Hôm nay" else exam.examDate.toExamCountdown(),
                 )
             }
+        }
+    }
+}
+
+@Preview(name = "Today", showBackground = true)
+@Preview(name = "Past", showBackground = true, uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun ExamCardPreview() {
+    val sampleExam = ExamSchedule(
+        attendanceStatus = "Registered",
+        classCode = "SE1701",
+        endTime = "10:00",
+        examAttempt = 1,
+        examDate = "2026-06-07",
+        examFormat = "Written",
+        examLocation = "Hall A",
+        examRoom = "101",
+        examType = "Final",
+        startTime = "08:00",
+        subjectCode = "PRJ301",
+        subjectName = "Project Management"
+    )
+
+    MaterialTheme {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Today
+            ExamCard(exam = sampleExam, isPast = false, isToday = false)
+
+            // Past
+            ExamCard(exam = sampleExam, isPast = true, isToday = false)
         }
     }
 }

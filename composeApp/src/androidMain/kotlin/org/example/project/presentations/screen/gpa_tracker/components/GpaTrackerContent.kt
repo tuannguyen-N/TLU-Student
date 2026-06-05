@@ -129,12 +129,25 @@ private fun CurrentGpaCard(gpa: Double, delta: Double) {
                     letterSpacing = 0.8.sp,
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(
-                    text = "%.2f".format(gpa),
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = gpa.gpaToAcademicRank().toColor(),
-                )
+                Row(
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text = "%.2f".format(gpa),
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = gpa.gpaToAcademicRank().toColor(),
+                    )
+
+                    Text(
+                        text = "/4.0",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = color.gray,
+                        letterSpacing = 0.8.sp,
+                        modifier = Modifier.padding(bottom = 3.dp)
+                    )
+                }
             }
 
             val isIncrease = delta > 0

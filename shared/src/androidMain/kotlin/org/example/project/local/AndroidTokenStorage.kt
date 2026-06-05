@@ -9,6 +9,7 @@ class AndroidTokenStorage(
 ) : TokenStorage {
     companion object {
         private const val KEY_ACCESS_TOKEN = "access_token"
+        private const val KEY_REFRESH_TOKEN = "refresh_token"
     }
 
     override fun saveAccessToken(token: String) {
@@ -23,6 +24,21 @@ class AndroidTokenStorage(
     override fun clearAccessToken(){
         encryptedSharedPreferences.edit {
             remove(KEY_ACCESS_TOKEN)
+        }
+    }
+
+    override fun saveRefreshToken(token: String) {
+        encryptedSharedPreferences.edit {
+            putString(KEY_REFRESH_TOKEN, token)
+        }
+    }
+
+    override fun getRefreshToken(): String? =
+        encryptedSharedPreferences.getString(KEY_REFRESH_TOKEN, null)
+
+    override fun clearRefreshToken() {
+        encryptedSharedPreferences.edit {
+            remove(KEY_REFRESH_TOKEN)
         }
     }
 }

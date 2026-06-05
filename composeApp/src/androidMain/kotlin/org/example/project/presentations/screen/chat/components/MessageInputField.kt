@@ -20,14 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.presentations.theme.LocalExtendedColors
 
+@Preview(showBackground = true)
 @Composable
 fun MessageInputField(
     modifier: Modifier = Modifier,
-    text: String = "",
+    text: String = "ádfasdfasdfasdfasdfasdfádfasdfasdfasdfasdfasdfádfasdfasdfasdfasdfasdfádfasdfasdfasdfasdfasdf",
     onTextChange: (String) -> Unit = {},
     onSendClick: (String) -> Unit = {},
     enabled: Boolean = true
@@ -50,17 +52,18 @@ fun MessageInputField(
                 fontSize = 16.sp,
                 color = Color.Black
             ),
-            singleLine = true,
             enabled = enabled,
             decorationBox = { innerTextField ->
                 if (text.isEmpty()) {
                     Text("Hãy hỏi gì đó....", color = Color.Gray, fontSize = 16.sp)
                 }
                 innerTextField()
-            }
+            },
+            maxLines = 4,
+            singleLine = false
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(18.dp))
 
         IconButton(
             onClick = {

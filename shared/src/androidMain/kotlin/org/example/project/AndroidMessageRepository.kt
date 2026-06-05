@@ -130,11 +130,18 @@ class AndroidMessageRepository(
         }
 
         return combine(messagesFlow, lastReadAtFlow) { messages, lastReadAt ->
+//            val otherUserId = lastReadAt.keys.firstOrNull {
+//                !it.equals(currentUserId, ignoreCase = true)
+//            }
+            Log.d("DEBUG_READ", "lastReadAt map = $lastReadAt")
+            Log.d("DEBUG_READ", "currentUserId = $currentUserId")
+
             val otherUserId = lastReadAt.keys.firstOrNull {
                 !it.equals(currentUserId, ignoreCase = true)
             }
+            Log.d("DEBUG_READ", "otherUserId = $otherUserId")
+            Log.d("DEBUG_READ", "otherLastRead = ${otherUserId?.let { lastReadAt[it] }}")
             val otherLastRead = otherUserId?.let { lastReadAt[it] } ?: 0L
-
             val lastMyMessageIndex = messages.indexOfLast {
                 it.senderId.equals(currentUserId, ignoreCase = true)
             }
@@ -145,10 +152,11 @@ class AndroidMessageRepository(
                 val status = when {
                     !isMe -> MessageStatus.SEEN
                     index == lastMyMessageIndex -> {
-                        if (otherLastRead >= message.timestamp) MessageStatus.SEEN
-                        else MessageStatus.SENT
+                        if (otherLastRead > 0L && otherLastRead >= message.timestamp)
+                            MessageStatus.SEEN
+                        else
+                            MessageStatus.SENT
                     }
-
                     else -> MessageStatus.SENT
                 }
 
@@ -206,10 +214,24 @@ class AndroidMessageRepository(
         val snapshot = roomRef.get().await()
         if (!snapshot.exists()) return
 
+        val latestMessageSnapshot = firestore
+            .collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .await()
+
+        val latestMessageTimestamp = latestMessageSnapshot.documents
+            .firstOrNull()
+            ?.toObject(Message::class.java)
+            ?.timestamp ?: return
+
         roomRef.update(
             mapOf(
                 "unreadCounts.$currentUserId" to 0,
-                "lastReadAt.$currentUserId" to System.currentTimeMillis()
+                "lastReadAt.$currentUserId" to latestMessageTimestamp
             )
         ).await()
     }

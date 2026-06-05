@@ -82,7 +82,7 @@ fun PaymentScreen(
 
                 item { DetailTuitionCourse(color = color, items = tuitionDetail.items) }
 
-                if (tuitionDetail.status == PaymentStatus.UNPAID) {
+                if (tuitionDetail.status == PaymentStatus.UNPAID || tuitionDetail.status == PaymentStatus.OVERDUE) {
                     item { Spacer(Modifier.height(20.dp)) }
 
                     item {

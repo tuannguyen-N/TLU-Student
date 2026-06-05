@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.data.remote.dto.student_search.StudentSummary
+import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun StudentResultCard(
@@ -103,7 +104,7 @@ fun StudentResultCard(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(LocalExtendedColors.current.mainBlue)
                     .clickable { onMessageClick() },
                 contentAlignment = Alignment.Center
             ) {

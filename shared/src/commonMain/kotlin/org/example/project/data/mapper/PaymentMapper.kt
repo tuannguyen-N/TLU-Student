@@ -15,9 +15,11 @@ fun Long.toFormatAmountAndD(): String {
 fun PaymentType.displayName(): String = when (this) {
     PaymentType.VN_PAY -> "Chuyển khoản qua VNPAY"
     PaymentType.ZALO_PAY -> "Chuyển khoản qua ZaloPay"
+    PaymentType.MOMO -> "Chuyển khoản qua MOMO"
 }
 
 fun PaymentType.subtitle(): String = when (this) {
     PaymentType.VN_PAY -> "VNPAY"
     PaymentType.ZALO_PAY -> "ZaloPay"
+    PaymentType.MOMO -> "MoMo"
 }

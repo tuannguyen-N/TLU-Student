@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DownloadForOffline
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -79,9 +80,10 @@ fun GpaTrackerScreen(
                 backgroundColor = Color.White,
                 contentColor = Color.Black,
                 onBack = onBack,
-                icon = Icons.Default.FileDownload,
+                icon = Icons.Default.DownloadForOffline,
                 onClickAction = { viewModel.exportTranscript() },
-                enableActionButton = uiState.exportState !is ExportState.Loading
+                enableActionButton = true,
+                isLoading = uiState.exportState is ExportState.Loading
             )
         },
         contentWindowInsets = WindowInsets(0),

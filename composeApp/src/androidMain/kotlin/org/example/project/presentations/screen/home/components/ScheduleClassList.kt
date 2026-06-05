@@ -105,6 +105,7 @@ fun ScheduleClassList(
             else -> {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(horizontal = 20.dp)
                 ) {
                     daySchedule.forEach { schedule ->
                         DayScheduleCard(schedule = schedule)
