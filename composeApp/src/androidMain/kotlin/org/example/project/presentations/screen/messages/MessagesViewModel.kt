@@ -24,7 +24,7 @@ class MessagesViewModel(
         }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
+            SharingStarted.Eagerly,
             emptyList()
         )
 
@@ -38,7 +38,7 @@ class MessagesViewModel(
         }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
+            SharingStarted.Eagerly,
             emptyList()
         )
 }

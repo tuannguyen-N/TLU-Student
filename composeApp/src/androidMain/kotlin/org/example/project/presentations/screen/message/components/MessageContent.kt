@@ -1,15 +1,14 @@
 package org.example.project.presentations.screen.message.components
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,11 +28,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.first
-import org.example.project.domain.model.MessageStatus
-import org.example.project.domain.model.MessageType
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import org.example.project.domain.model.MessageUiState
 import org.example.project.domain.utils.DateTimeUtils
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -42,6 +39,7 @@ import java.util.Calendar
 @Composable
 fun MessageContent(
     messages: List<MessageUiState>,
+    hasMoreMessages: Boolean,
     isLoadingMore: Boolean,
     modifier: Modifier = Modifier,
     onClickFile: (String) -> Unit,
@@ -51,137 +49,98 @@ fun MessageContent(
     var visibleTimeId by remember { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
 
+    // ── Group by date ────────────────────────────────────────────────────────
     val messagesByDate = remember(messages) {
-        messages.groupBy { message ->
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = message.timestamp
-            val year = calendar.get(Calendar.YEAR)
-            val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
-            Pair(year, dayOfYear)
-        }.toSortedMap(compareBy({ it.first }, { it.second }))
-    }
-
-    val totalItemCount = remember(messagesByDate) {
-        messagesByDate.values.sumOf { it.size } + messagesByDate.size
-    }
-
-    var shouldAutoScroll by remember {
-        mutableStateOf(true)
-    }
-
-    var initialScrollDone by remember { mutableStateOf(false) }
-
-    LaunchedEffect(totalItemCount) {
-        if (totalItemCount > 0 && !initialScrollDone) {
-            snapshotFlow { listState.layoutInfo.totalItemsCount }
-                .first { it >= totalItemCount }
-            listState.scrollToItem(totalItemCount - 1)
-            initialScrollDone = true
-            return@LaunchedEffect
-        }
-
-        if (shouldAutoScroll && totalItemCount > 0) {
-            listState.animateScrollToItem(totalItemCount - 1)
-        }
-    }
-
-    LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.layoutInfo.visibleItemsInfo
-        }.collect { visibleItems ->
-            if (visibleItems.isNotEmpty()) {
-                val lastVisibleIndex = visibleItems.lastOrNull()?.index ?: 0
-                val totalItems = listState.layoutInfo.totalItemsCount
-                shouldAutoScroll = lastVisibleIndex >= totalItems - 3
+        messages
+            .groupBy { msg ->
+                val cal = Calendar.getInstance().apply { timeInMillis = msg.timestamp }
+                cal.get(Calendar.YEAR) to cal.get(Calendar.DAY_OF_YEAR)
             }
+            .toSortedMap(compareBy({ it.first }, { it.second }))
+    }
+
+    LaunchedEffect(isLoadingMore) {
+        Log.d("CHAT_LOADING", "isLoadingMore = $isLoadingMore")
+    }
+
+    val lastMessageId = messages.lastOrNull()?.id
+    LaunchedEffect(lastMessageId) {
+        if (lastMessageId == null) return@LaunchedEffect
+        val firstVisible = listState.layoutInfo.visibleItemsInfo.firstOrNull()?.index ?: 0
+        val isNearBottom = firstVisible <= 2
+        if (isNearBottom) {
+            listState.animateScrollToItem(0)
         }
     }
 
-    LaunchedEffect(totalItemCount) {
-        if (shouldAutoScroll && totalItemCount > 0) {
-            listState.animateScrollToItem(totalItemCount - 1)
-        }
-    }
-
-    LaunchedEffect(messages.lastOrNull()?.id) {
-        val lastMessage = messages.lastOrNull()
-        if (lastMessage != null && !lastMessage.isMe) {
-            listState.animateScrollToItem(totalItemCount - 1)
-        }
-    }
-
-    var reachedTop by remember { mutableStateOf(false) }
-    LaunchedEffect(listState) {
+    // ── Load more when scrolled to top ───────────────────────────────────────
+    LaunchedEffect(listState, hasMoreMessages, isLoadingMore) {
         snapshotFlow {
-            listState.firstVisibleItemIndex == 0 &&
-                    listState.firstVisibleItemScrollOffset == 0
-        }.collect { isAtTop ->
+            val layoutInfo = listState.layoutInfo
 
-            if (isAtTop && !reachedTop) {
-                reachedTop = true
-                Log.d("CHAT", "Đã kéo lên đầu danh sách")
-                messages.lastOrNull()?.id?.let {
+            val lastVisibleIndex =
+                layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+            lastVisibleIndex >= layoutInfo.totalItemsCount - 1
+        }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect {
+                if (hasMoreMessages && !isLoadingMore) {
                     onLoadMoreMessage()
                 }
             }
-
-            if (!isAtTop) {
-                reachedTop = false
-            }
-        }
     }
 
-    LazyColumn(
-        state = listState,
-        modifier = modifier
-            .fillMaxSize()
-            .background(LocalExtendedColors.current.background)
-            .padding(start = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
-        contentPadding = PaddingValues(vertical = 12.dp)
+    Box(
+        modifier = modifier.fillMaxSize()
     ) {
-        if (isLoadingMore) {
-            item(
-                key = "loading_more"
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
-                    )
+        LazyColumn(
+            state = listState,
+            reverseLayout = true,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(LocalExtendedColors.current.background)
+                .padding(start = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
+            contentPadding = PaddingValues(vertical = 12.dp)
+        ) {
+            messagesByDate
+                .entries.sortedByDescending { it.key.first * 1000 + it.key.second }
+                .forEach { (_, messagesForDate) ->
+                    items(messagesForDate.reversed(), key = { it.id }) { msg ->
+                        MessageBubble(
+                            message = msg,
+                            showTime = visibleTimeId == msg.id,
+                            onClick = {
+                                visibleTimeId = if (visibleTimeId == msg.id) null else msg.id
+                            },
+                            isLast = msg == messagesForDate.last(),
+                            onClickImage = onClickImage,
+                            onClickFile = onClickFile
+                        )
+                    }
+
+                    item(key = "header_${messagesForDate.first().timestamp}") {
+                        DateDivider(timestamp = messagesForDate.first().timestamp)
+                    }
                 }
-            }
         }
-
-        messagesByDate.forEach { (date, messagesForDate) ->
-            item {
-                val firstMessage = messagesForDate.firstOrNull()
-                if (firstMessage != null) {
-                    DateDivider(timestamp = firstMessage.timestamp)
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-            }
-
-            items(messagesForDate, key = { it.id }) { msg ->
-                val isLast = msg == messagesForDate.lastOrNull()
-                MessageBubble(
-                    message = msg,
-                    showTime = visibleTimeId == msg.id,
-                    onClick = {
-                        visibleTimeId =
-                            if (visibleTimeId == msg.id) null
-                            else msg.id
-                    },
-                    isLast = isLast,
-                    onClickImage = { url ->
-                        onClickImage(url)
-                    },
-                    onClickFile = onClickFile
+        AnimatedVisibility(
+            visible = isLoadingMore,
+            modifier = Modifier.align(Alignment.TopCenter)
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp
                 )
             }
         }
@@ -203,100 +162,4 @@ private fun DateDivider(timestamp: Long) {
         )
         HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFE0E0E0))
     }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFF5F5F5)
-@Composable
-fun MessageContentPreview() {
-    val now = System.currentTimeMillis()
-
-    val messages = listOf(
-        MessageUiState(
-            id = "1",
-            senderId = "other",
-            text = "Chào bạn! Bạn có thể giúp mình về bài tập không?",
-            type = MessageType.TEXT.name,
-            timestamp = now - 300_000,
-            isMe = false,
-            status = MessageStatus.SEEN
-        ),
-        MessageUiState(
-            id = "2",
-            senderId = "me",
-            text = "Chào! Được chứ, bạn cần giúp môn gì vậy?",
-            type = MessageType.TEXT.name,
-            timestamp = now - 240_000,
-            isMe = true,
-            status = MessageStatus.SEEN
-        ),
-        MessageUiState(
-            id = "3",
-            senderId = "other",
-            text = "Môn Toán rời rạc ạ, mình đang làm bài về đồ thị",
-            type = MessageType.TEXT.name,
-            timestamp = now - 180_000,
-            isMe = false,
-            status = MessageStatus.SEEN
-        ),
-        MessageUiState(
-            id = "4",
-            senderId = "me",
-            text = "Oke mình hiểu rồi! Bạn đang gặp khó ở phần nào — DFS, BFS hay là tìm cây khung nhỏ nhất?",
-            type = MessageType.TEXT.name,
-            timestamp = now - 120_000,
-            isMe = true,
-            status = MessageStatus.SEEN
-        ),
-        // Ảnh không có text
-        MessageUiState(
-            id = "5",
-            senderId = "other",
-            fileUrl = "https://picsum.photos/seed/graph/400/300",
-            type = MessageType.IMAGE.name,
-            timestamp = now - 90_000,
-            isMe = false,
-            status = MessageStatus.SEEN
-        ),
-        // Ảnh kèm text
-        MessageUiState(
-            id = "6",
-            senderId = "me",
-            fileUrl = "https://picsum.photos/seed/dfs/400/300",
-            text = "Đây là sơ đồ DFS mình tự vẽ, bạn xem thử nhé!",
-            type = MessageType.IMAGE.name,
-            timestamp = now - 80_000,
-            isMe = true,
-            status = MessageStatus.SEEN
-        ),
-        MessageUiState(
-            id = "7",
-            senderId = "me",
-            fileName = "graph_theory_notes.pdf",
-            fileSize = "1.2 MB",
-            type = MessageType.FILE.name,
-            timestamp = now - 60_000,
-            isMe = true,
-            status = MessageStatus.SENT
-        ),
-        MessageUiState(
-            id = "8",
-            senderId = "me",
-            text = "Tin nhắn này đang gửi...",
-            type = MessageType.TEXT.name,
-            timestamp = now - 10_000,
-            isMe = true,
-            status = MessageStatus.SENDING
-        ),
-        MessageUiState(
-            id = "9",
-            senderId = "me",
-            text = "Tin nhắn gửi thất bại, thử lại sau nhé!",
-            type = MessageType.TEXT.name,
-            timestamp = now,
-            isMe = true,
-            status = MessageStatus.SEEN
-        )
-    )
-
-//    MessageContent(messages = messages, onClickFile = {}, onClickImage = {})
 }

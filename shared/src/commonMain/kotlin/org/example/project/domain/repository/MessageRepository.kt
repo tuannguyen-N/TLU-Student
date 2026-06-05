@@ -11,9 +11,14 @@ interface MessageRepository {
 
     fun observeMessages(
         roomId: String,
-        currentUserId: String,
-        limit: Long
+        currentUserId: String
     ): Flow<List<MessageUiState>>
+
+    suspend fun <T, K : Any> loadOlderMessages(
+        roomId: String,
+        currentUserId: String,
+        lastDocument: T?
+    ): K
 
     fun observeUserOnlineStatus(
         userId: String

@@ -34,10 +34,7 @@ fun MessageScreen(
 ) {
     val messages by viewModel.messages.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val chatUser by viewModel.chatUser.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val isLoadingMore by viewModel.isLoadingMore.collectAsStateWithLifecycle()
-
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
@@ -45,7 +42,7 @@ fun MessageScreen(
         contentWindowInsets = WindowInsets(0),
         topBar = {
             Column {
-                MessageTopBar(onBack = onBack, chatUser = chatUser)
+                MessageTopBar(onBack = onBack, chatUser = uiState.chatUser!!)
                 uiState.chatStudent?.let { StudentInfoSection(student = it) }
             }
         },
@@ -70,7 +67,8 @@ fun MessageScreen(
                 onClickFile = onClickFile,
                 onClickImage = { url -> selectedImageUrl = url },
                 onLoadMoreMessage = viewModel::loadMoreMessages,
-                isLoadingMore = isLoadingMore
+                isLoadingMore = uiState.isLoadingMore,
+                hasMoreMessages = uiState.hasMoreMessages
             )
         }
     }

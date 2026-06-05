@@ -1,6 +1,7 @@
 package org.example.project
 
 import android.util.Log
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -14,6 +15,7 @@ import kotlinx.coroutines.tasks.await
 import org.example.project.data.mapper.toConversationUiState
 import org.example.project.data.mapper.toUiState
 import org.example.project.data.remote.api.FileUploadApi
+import org.example.project.domain.MessagePage
 import org.example.project.domain.model.ChatRoom
 import org.example.project.domain.model.ConversationUiState
 import org.example.project.domain.model.Message
@@ -86,7 +88,6 @@ class AndroidMessageRepository(
     override fun observeMessages(
         roomId: String,
         currentUserId: String,
-        limit: Long
     ): Flow<List<MessageUiState>> {
         val messagesFlow = callbackFlow {
             val listener = firestore
@@ -94,7 +95,7 @@ class AndroidMessageRepository(
                 .document(roomId)
                 .collection("messages")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
-                .limit(limit)
+                .limit(30)
                 .addSnapshotListener { snapshot, error ->
 
                     if (error != null) {
@@ -154,6 +155,44 @@ class AndroidMessageRepository(
                 message.toUiState(currentUserId, status)
             }
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun <T, K : Any> loadOlderMessages(
+        roomId: String,
+        currentUserId: String,
+        lastDocument: T?
+    ): K {
+        var query = firestore
+            .collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(30)
+
+        val docSnapshot = lastDocument as? DocumentSnapshot
+        if (docSnapshot != null) {
+            query = query.startAfter(docSnapshot)
+        }
+
+        val snapshot = query.get().await()
+
+        val messages = snapshot.documents
+            .mapNotNull { it.toObject(Message::class.java) }
+            .reversed()
+            .map {
+                it.toUiState(
+                    currentUserId = currentUserId,
+                    status = MessageStatus.SEEN
+                )
+            }
+
+        // Ép kiểu MessagePage sang K
+        return MessagePage(
+            messages = messages,
+            lastDocument = snapshot.documents.lastOrNull(),
+            hasMore = snapshot.documents.size == 30
+        ) as K
     }
 
     override suspend fun markConversationAsRead(
