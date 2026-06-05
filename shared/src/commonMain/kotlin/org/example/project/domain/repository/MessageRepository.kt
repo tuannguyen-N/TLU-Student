@@ -20,10 +20,6 @@ interface MessageRepository {
         lastDocument: T?
     ): K
 
-    fun observeUserOnlineStatus(
-        userId: String
-    ): Flow<Boolean>
-
     suspend fun markConversationAsRead(
         roomId: String,
         currentUserId: String

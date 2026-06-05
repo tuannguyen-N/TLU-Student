@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,55 +29,13 @@ import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.ConversationUiState
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.User
-
-private val sampleConversations = listOf(
-    ConversationUiState(
-        roomId = "1", chatName = "Nguyễn Văn A", isOnline = true, unreadCount = 2,
-        lastMessageText = "Tớ vừa gửi tài liệu xong, cậu kiểm tra nhé!",
-        lastMessageTimeFormatted = "10:22 AM",
-        lastMessageType = MessageType.TEXT,
-        isLastMessageFromMe = false,
-        studentId = "1"
-    ),
-    ConversationUiState(
-        roomId = "2", chatName = "Lê Thị B", isOnline = false, unreadCount = 0,
-        lastMessageText = "Chiều nay họp nhóm nhé mọi người!",
-        lastMessageTimeFormatted = "09:45 AM",
-        lastMessageType = MessageType.TEXT,
-        isLastMessageFromMe = false,
-        studentId = "2"
-    ),
-    ConversationUiState(
-        roomId = "3", chatName = "Nhóm Đồ án Cuối kỳ", isOnline = false, unreadCount = 0,
-        lastMessageText = "Trần C: Mọi người nhớ nộp bài đúng hạn...",
-        lastMessageTimeFormatted = "Yesterday",
-        lastMessageType = MessageType.TEXT,
-        isLastMessageFromMe = false,
-        studentId = "3"
-    ),
-    ConversationUiState(
-        roomId = "4", chatName = "Phạm Minh", isOnline = false, unreadCount = 0,
-        lastMessageText = "Cảm ơn cậu nhiều nhé!",
-        lastMessageTimeFormatted = "Sunday",
-        lastMessageType = MessageType.TEXT,
-        isLastMessageFromMe = false,
-        studentId = "4"
-    ),
-    ConversationUiState(
-        roomId = "5", chatName = "Hoàng Lan", isOnline = false, unreadCount = 1,
-        lastMessageText = "Bài tập tuần này khó quá, giúp tớ với!",
-        lastMessageTimeFormatted = "Sat",
-        lastMessageType = MessageType.TEXT,
-        isLastMessageFromMe = false,
-        studentId = "5"
-    )
-)
+import org.example.project.domain.model.UserUiModel
 
 @Composable
 fun MessagesContent(
     modifier: Modifier = Modifier,
-    conversations: List<ConversationUiState> = sampleConversations,
-    users: List<User>,
+    conversations: List<ConversationUiState>,
+    users: List<UserUiModel>,
     onOpenMessage: (chatUserId: String, chatUserName: String) -> Unit,
     onStartNewChat: () -> Unit = {}
 ) {
@@ -111,9 +68,12 @@ fun MessagesContent(
                 )
             }
             items(conversations, key = { it.roomId }) { conversation ->
-                ConversationItem(conversation = conversation, onOpenMessage = {
-                    onOpenMessage(conversation.studentId, conversation.chatName)
-                })
+                ConversationItem(
+                    conversation = conversation,
+                    onOpenMessage = {
+                        onOpenMessage(conversation.studentId, conversation.chatName)
+                    }
+                )
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 80.dp),
                     thickness = 0.5.dp,
@@ -126,7 +86,7 @@ fun MessagesContent(
 
 @Composable
 fun ActiveUsersSection(
-    users: List<User>,
+    users: List<UserUiModel>,
     onOpenMessage: (String, String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -140,7 +100,7 @@ fun ActiveUsersSection(
                     avatarUrl = user.avatarUrl,
                     isOnline = user.isOnline,
                     onClick = {
-                        onOpenMessage(user.id, user.name)
+                        onOpenMessage(user.studentCode, user.name)
                     }
                 )
             }

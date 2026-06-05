@@ -394,28 +394,6 @@ class AndroidMessageRepository(
         roomRef.set(room).await()
     }
 
-    override fun observeUserOnlineStatus(
-        userId: String
-    ): Flow<Boolean> = callbackFlow {
-
-        val listener = firestore
-            .collection("users")
-            .document(userId)
-            .addSnapshotListener { snapshot, error ->
-
-                val online = snapshot?.getBoolean("isOnline") ?: false
-
-                Log.d(
-                    "ONLINE_FIRESTORE",
-                    "user=$userId online=$online"
-                )
-
-                trySend(online)
-            }
-
-        awaitClose { listener.remove() }
-    }
-
     private fun setupUserListener(userId: String) {
         if (userListeners.containsKey(userId)) {
             return
@@ -435,10 +413,9 @@ class AndroidMessageRepository(
                         id = snapshot.getString("id") ?: "",
                         name = snapshot.getString("name") ?: "",
                         avatarUrl = snapshot.getString("avatarUrl"),
-                        isOnline = snapshot.getBoolean("isOnline") ?: false
+//                        isOnline = snapshot.getBoolean("isOnline") ?: false
                     )
                     usersState.update { it + (userId to user) }
-                    Log.d("USER_UPDATE", "User $userId updated: isOnline=${user.isOnline}")
                 }
             }
 

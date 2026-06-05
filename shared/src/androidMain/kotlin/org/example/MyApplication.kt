@@ -40,7 +40,8 @@ class MyApplication : Application() {
             applicationContext,
             androidAppContainer.messageRepository,
             androidAppContainer.userRepository,
-            androidAppContainer.searchHistoryRepository
+            androidAppContainer.searchHistoryRepository,
+            androidAppContainer.presenceRepository
         )
         handleFirebaseToken()
 
@@ -49,7 +50,8 @@ class MyApplication : Application() {
             .addObserver(
                 AndroidLifecycleObserver(
                     androidAppContainer.userRepository,
-                    appContainer.studentUseCase
+                    appContainer.studentUseCase,
+                    androidAppContainer.presenceRepository
                 )
             )
     }

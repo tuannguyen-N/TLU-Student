@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
@@ -43,25 +42,13 @@ fun ConversationItem(
             .clickable(onClick = onOpenMessage),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(modifier = Modifier.size(56.dp)) {
-            AvatarImage(
-                avatarUrl = conversation.avatarUrl,
-                name = conversation.chatName.substringAfterLast(" "),
-                size = 56
-            )
-            if (conversation.isOnline) {
-                Box(
-                    modifier = Modifier
-                        .size(14.dp)
-                        .align(Alignment.BottomEnd)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(2.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF4CAF50))
-                )
-            }
-        }
+        AvatarWithPresence(
+            avatarUrl = conversation.avatarUrl,
+            name = conversation.chatName.substringAfterLast(" "),
+            isOnline = conversation.isOnline,
+            lastSeen = conversation.lastSeen,
+            size = 56
+        )
 
         Spacer(modifier = Modifier.width(12.dp))
 

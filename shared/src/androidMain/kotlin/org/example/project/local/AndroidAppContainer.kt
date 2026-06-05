@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import org.example.project.AndroidMessageRepository
+import org.example.project.AndroidPresenceRepository
 import org.example.project.AndroidSearchHistoryRepository
 import org.example.project.AndroidTopicSubscriber
 import org.example.project.AndroidUserRepository
@@ -61,6 +62,8 @@ class AndroidAppContainer(context: Context) {
     )
 
     val userRepository = AndroidUserRepository()
+
+    val presenceRepository = AndroidPresenceRepository()
 
     val searchHistoryRepository = AndroidSearchHistoryRepository()
 }

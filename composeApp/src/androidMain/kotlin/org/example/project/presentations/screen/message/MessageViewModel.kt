@@ -28,15 +28,17 @@ import org.example.project.domain.MessagePage
 import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
-import org.example.project.domain.model.User
+import org.example.project.domain.model.UserUiModel
 import org.example.project.domain.repository.MessageRepository
+import org.example.project.domain.repository.PresenceRepository
 import org.example.project.domain.usecase.StudentUseCase
 import java.util.UUID
 
 class MessageViewModel(
     savedStateHandle: SavedStateHandle,
     private val messageRepository: MessageRepository,
-    private val studentUseCase: StudentUseCase
+    private val studentUseCase: StudentUseCase,
+    private val presenceRepository: PresenceRepository
 ) : ViewModel() {
 
     private val chatUserId: String = savedStateHandle["studentId"] ?: ""
@@ -49,21 +51,20 @@ class MessageViewModel(
 
     private val _uiState = MutableStateFlow(
         MessageState(
-            chatUser = User(
-                id = chatUserId,
+            chatUser = UserUiModel(
+                studentCode = chatUserId,
                 name = chatUserName,
-                avatarUrl = "",
-                isOnline = false
             )
         )
     )
+
     val uiState = _uiState.asStateFlow()
 
     private var lastDocument: DocumentSnapshot? = null
 
     private val remoteMessages = messageRepository
         .observeMessages(roomId, currentUserId)
-        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000), replay = 1)
+        .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     val messages: StateFlow<List<MessageUiState>> = combine(
         remoteMessages,
@@ -146,9 +147,16 @@ class MessageViewModel(
 
     private fun observeUserOnlineStatus() {
         viewModelScope.launch {
-            messageRepository.observeUserOnlineStatus(chatUserId)
-                .collect { isOnline ->
-                    updateState { copy(chatUser = chatUser?.copy(isOnline = isOnline)) }
+            presenceRepository.observePresence(chatUserId)
+                .collect { chatUserPresence ->
+                    updateState {
+                        copy(
+                            chatUser = chatUser?.copy(
+                                isOnline = chatUserPresence.isOnline,
+                                lastSeen = chatUserPresence.lastSeen
+                            )
+                        )
+                    }
                 }
         }
     }

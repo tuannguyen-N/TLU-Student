@@ -17,7 +17,6 @@ fun ChatRoom.toConversationUiState(
     return ConversationUiState(
         roomId = id,
         chatName = otherUser?.name ?: "Unknown",
-        isOnline = otherUser?.isOnline ?: false,
         unreadCount = unreadCounts[currentUserId] ?: 0,
         lastMessageText = lastMessageText,
         lastMessageTimeFormatted = DateTimeUtils.formatRelativeTime(lastMessageTime),

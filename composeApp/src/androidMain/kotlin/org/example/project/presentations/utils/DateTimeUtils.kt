@@ -56,4 +56,30 @@ object DateTimeUtils {
             else -> ""
         }
     }
+
+    fun formatLastSeen(lastSeen: Long): String? {
+        if (lastSeen == 0L) return null
+        val diff = System.currentTimeMillis() - lastSeen
+        val minutes = diff / 60_000
+        val hours = diff / 3_600_000
+        return when {
+            minutes < 1 -> "vừa xong"
+            minutes < 60 -> "$minutes phút"
+            hours < 24 -> "$hours giờ"
+            else -> null
+        }
+    }
+
+    fun formatLastSeenTopBar(lastSeen: Long): String? {
+        if (lastSeen == 0L) return null
+        val diff = System.currentTimeMillis() - lastSeen
+        val minutes = diff / 60_000
+        val hours = diff / 3_600_000
+        return when {
+            minutes < 1 -> "gần đây"
+            minutes < 60 -> "$minutes phút trước"
+            hours < 24 -> "$hours giờ trước"
+            else -> null
+        }
+    }
 }

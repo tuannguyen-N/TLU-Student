@@ -220,7 +220,8 @@ fun AppNavGraph(
                 MessagesViewModelFactory(
                     container.messageRepository,
                     container.studentUseCase,
-                    container.userRepository
+                    container.userRepository,
+                    container.presenceRepository
                 )
             }
 
@@ -755,7 +756,8 @@ fun AppNavGraph(
             val factory = remember(container) {
                 MessageViewModelFactory(
                     container.messageRepository,
-                    container.studentUseCase
+                    container.studentUseCase,
+                    container.presenceRepository
                 )
             }
 

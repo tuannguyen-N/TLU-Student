@@ -18,22 +18,32 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.example.project.domain.model.User
+import org.example.project.domain.model.UserUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.DateTimeUtils.formatLastSeenTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageTopBar(
-    chatUser: User,
+    chatUser: UserUiModel,
     onBack: () -> Unit = {}
 ) {
     val color = LocalExtendedColors.current
+
+    val presenceText = remember(chatUser.isOnline, chatUser.lastSeen) {
+        when {
+            chatUser.isOnline -> null
+            else -> formatLastSeenTopBar(chatUser.lastSeen)
+        }
+    }
+
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
         navigationIcon = {
@@ -62,13 +72,15 @@ fun MessageTopBar(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = "${chatUser.id} - ${chatUser.name}",
+                        text = "${chatUser.studentCode} - ${chatUser.name}",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold,
                         )
                     )
-                    if (chatUser.isOnline) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                    when {
+                        chatUser.isOnline -> Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Box(
                                 modifier = Modifier
                                     .size(8.dp)
@@ -83,6 +95,13 @@ fun MessageTopBar(
                                 )
                             )
                         }
+
+                        presenceText != null -> Text(
+                            text = "Hoạt động $presenceText",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = color.gray
+                            )
+                        )
                     }
                 }
             }

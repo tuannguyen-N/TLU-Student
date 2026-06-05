@@ -4,13 +4,14 @@ import android.net.Uri
 import org.example.project.data.remote.dto.student_search.StudentData
 import org.example.project.domain.model.MessageUiState
 import org.example.project.domain.model.User
+import org.example.project.domain.model.UserUiModel
 
 data class MessageState(
     val message: String = "",
     val isLoading: Boolean = true,
 
     val isLoadingMore: Boolean = false,
-    val hasMoreMessages: Boolean = true,
+    val hasMoreMessages: Boolean = false,
 
     val pendingMessages: List<MessageUiState> = emptyList(),
     val olderMessages: List<MessageUiState> = emptyList(),
@@ -22,5 +23,5 @@ data class MessageState(
     val selectedFileBytes: ByteArray? = null,
 
     val chatStudent: StudentData? = null,
-    val chatUser: User? = null
+    val chatUser: UserUiModel? = null
 )

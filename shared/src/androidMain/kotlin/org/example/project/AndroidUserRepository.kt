@@ -45,9 +45,7 @@ class AndroidUserRepository : UserRepository {
                 User(
                     id = it.getString("id") ?: "",
                     name = it.getString("name") ?: "",
-                    avatarUrl = it.getString("avatarUrl") ?: "",
-                    isOnline = it.getBoolean("isOnline") ?: false,
-                    lastSeen = it.getLong("lastSeen") ?: 0L
+                    avatarUrl = it.getString("avatarUrl") ?: ""
                 )
             }
             .filter {
@@ -101,8 +99,7 @@ class AndroidUserRepository : UserRepository {
                         User(
                             id = it.getString("id") ?: "",
                             name = it.getString("name") ?: "",
-                            avatarUrl = it.getString("avatarUrl") ?: "",
-                            isOnline = it.getBoolean("isOnline") ?: false
+                            avatarUrl = it.getString("avatarUrl") ?: ""
                         )
                     }
                     ?.filter {
