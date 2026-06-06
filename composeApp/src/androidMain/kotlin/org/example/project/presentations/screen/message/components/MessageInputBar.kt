@@ -245,8 +245,7 @@ fun MessageInputBar(
                     value = state.message,
                     onValueChange = { onMessageChange(it) },
                     modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp),
+                        .weight(1f),
                     placeholder = {
                         Text(
                             "Nhập tin nhắn...",
