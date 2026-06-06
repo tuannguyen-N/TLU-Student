@@ -32,6 +32,7 @@ import org.example.project.domain.model.UserUiModel
 import org.example.project.domain.repository.MessageRepository
 import org.example.project.domain.repository.PresenceRepository
 import org.example.project.domain.usecase.StudentUseCase
+import org.example.project.presentations.utils.ChatPresenceManager
 import java.util.UUID
 
 class MessageViewModel(
@@ -62,8 +63,7 @@ class MessageViewModel(
 
     private var lastDocument: DocumentSnapshot? = null
 
-    private val remoteMessages = messageRepository
-        .observeMessages(roomId, currentUserId)
+    private val remoteMessages = messageRepository.observeMessages(roomId, currentUserId)
         .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     val messages: StateFlow<List<MessageUiState>> = combine(
@@ -75,8 +75,7 @@ class MessageViewModel(
         val stillPending = pending.filter { it.timestamp > latestRemoteTime }
         val remoteIds = remote.map { it.id }.toSet()
         val filteredOlder = older.filter { it.id !in remoteIds }
-        (filteredOlder + remote + stillPending)
-            .sortedBy { it.timestamp }
+        (filteredOlder + remote + stillPending).sortedBy { it.timestamp }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
@@ -86,20 +85,18 @@ class MessageViewModel(
         observeAndMarkNewMessages()
         loadChatStudent()
         loadInitialMessages()
+        enterChatRoom()
     }
 
     private fun loadInitialMessages() {
         viewModelScope.launch {
             val page: MessagePage = messageRepository.loadOlderMessages(
-                roomId = roomId,
-                currentUserId = currentUserId,
-                lastDocument = null
+                roomId = roomId, currentUserId = currentUserId, lastDocument = null
             )
             lastDocument = page.lastDocument
             updateState {
                 copy(
-                    olderMessages = page.messages,
-                    hasMoreMessages = page.hasMore
+                    olderMessages = page.messages, hasMoreMessages = page.hasMore
                 )
             }
         }
@@ -122,9 +119,7 @@ class MessageViewModel(
             delay(1000)
             try {
                 val page: MessagePage = messageRepository.loadOlderMessages(
-                    roomId = roomId,
-                    currentUserId = currentUserId,
-                    lastDocument = lastDocument
+                    roomId = roomId, currentUserId = currentUserId, lastDocument = lastDocument
                 )
                 lastDocument = page.lastDocument
                 updateState {
@@ -148,8 +143,7 @@ class MessageViewModel(
 
     private fun observeUserOnlineStatus() {
         viewModelScope.launch {
-            presenceRepository.observePresence(chatUserId)
-                .collect { chatUserPresence ->
+            presenceRepository.observePresence(chatUserId).collect { chatUserPresence ->
                     updateState {
                         copy(
                             chatUser = chatUser?.copy(
@@ -164,10 +158,8 @@ class MessageViewModel(
 
     private fun observeAndMarkNewMessages() {
         viewModelScope.launch {
-            remoteMessages
-                .distinctUntilChangedBy { it.maxOfOrNull { m -> m.timestamp } ?: 0L }
-                .drop(1)
-                .filter { it.lastOrNull()?.isMe == false }
+            remoteMessages.distinctUntilChangedBy { it.maxOfOrNull { m -> m.timestamp } ?: 0L }
+                .drop(1).filter { it.lastOrNull()?.isMe == false }
                 .collect { messageRepository.markConversationAsRead(roomId, currentUserId) }
         }
     }
@@ -219,8 +211,10 @@ class MessageViewModel(
         updateState {
             copy(
                 message = "",
-                selectedImageUri = null, selectedImageBytes = null,
-                selectedFileUri = null, selectedFileBytes = null
+                selectedImageUri = null,
+                selectedImageBytes = null,
+                selectedFileUri = null,
+                selectedFileBytes = null
             )
         }
 
@@ -228,8 +222,7 @@ class MessageViewModel(
             imageBytes != null -> sendImageMessage(
                 imageUri = state.selectedImageUri,
                 imageBytes = imageBytes,
-                caption = text.ifBlank { null }
-            )
+                caption = text.ifBlank { null })
 
             fileBytes != null -> sendFileMessage(
                 fileUri = state.selectedFileUri,
@@ -253,9 +246,7 @@ class MessageViewModel(
 
     private fun sendImageMessage(imageUri: Uri?, imageBytes: ByteArray, caption: String?) {
         val pending = buildPendingMessage(
-            type = MessageType.IMAGE,
-            text = caption,
-            fileUrl = imageUri?.toString()
+            type = MessageType.IMAGE, text = caption, fileUrl = imageUri?.toString()
         )
         addPending(pending)
         viewModelScope.launch {
@@ -269,11 +260,7 @@ class MessageViewModel(
     }
 
     private fun sendFileMessage(
-        fileUri: Uri?,
-        fileBytes: ByteArray,
-        caption: String?,
-        fileName: String?,
-        fileSize: String?
+        fileUri: Uri?, fileBytes: ByteArray, caption: String?, fileName: String?, fileSize: String?
     ) {
         val pending = buildPendingMessage(
             type = MessageType.FILE,
@@ -314,6 +301,14 @@ class MessageViewModel(
         fileSize = fileSize
     )
 
+    fun enterChatRoom() {
+        ChatPresenceManager.currentRoom.value = roomId
+    }
+
+    fun leaveChatRoom() {
+        ChatPresenceManager.currentRoom.value = null
+    }
+
     private fun addPending(message: MessageUiState) {
         updateState { copy(pendingMessages = pendingMessages + message) }
     }
@@ -324,4 +319,9 @@ class MessageViewModel(
 
     private fun generateRoomId(user1: String, user2: String): String =
         listOf(user1, user2).sorted().joinToString("_")
+
+    override fun onCleared() {
+        leaveChatRoom()
+        super.onCleared()
+    }
 }

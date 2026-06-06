@@ -26,7 +26,6 @@ class AuthRepository(
             tokenStorage.saveRefreshToken(refreshToken)
             imageStorage.saveImageBase64(imageBase64)
             AppResult.Success(Unit)
-
         } catch (e: Exception) {
             AppResult.Failure(message = e.message)
         }
@@ -37,5 +36,6 @@ class AuthRepository(
         tokenStorage.clearRefreshToken()
         imageStorage.clearImageBase64()
         firebaseStorage.clearAllTopics()
+        // TODO: delete token cloud in firestore
     }
 }

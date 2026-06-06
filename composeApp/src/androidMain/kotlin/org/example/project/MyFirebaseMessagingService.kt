@@ -7,13 +7,25 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import org.example.project.presentations.utils.ChatPresenceManager
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val title = message.notification?.title
-        val body = message.notification?.body
+        val incomingRoomId = message.data["roomId"]
+
+        if (incomingRoomId == ChatPresenceManager.currentRoom.value) {
+            return
+        }
+//        Log.e("FCM", "onMessageReceived: $message", )
+//        val title = message.notification?.title
+//        val body = message.notification?.body
+//        showNotification(title, body)
+
+        val title = message.data["title"]
+        val body = message.data["body"]
+
         showNotification(title, body)
 
         val work = OneTimeWorkRequestBuilder<SyncNotificationWorker>().build()

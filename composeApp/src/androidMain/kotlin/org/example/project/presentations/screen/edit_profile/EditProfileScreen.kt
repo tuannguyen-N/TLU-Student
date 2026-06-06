@@ -1,6 +1,9 @@
 package org.example.project.presentations.screen.edit_profile
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -16,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.presentations.components.Base64Image
@@ -43,6 +48,12 @@ fun EditProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val imageBase64 = uiState.avatarBase64
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+//        uri?.let { onAddImage(it) }
+    }
 
     viewModel.events.CollectWithLifecycle { event ->
         when (event) {
@@ -109,19 +120,19 @@ fun EditProfileScreen(
                                 .padding(20.dp)
                         )
                     }
-//
-//                    IconButton(
-//                        onClick = {
-//                            launcher.launch("image/*")
-//                        }, modifier = Modifier
-//                            .size(35.dp)
-//                            .align(Alignment.BottomEnd)
-//                    ) {
-//                        Image(
-//                            painter = painterResource(R.drawable.icon_change_avatar),
-//                            contentDescription = null
-//                        )
-//                    }
+
+                    IconButton(
+                        onClick = {
+                            launcher.launch("image/*")
+                        }, modifier = Modifier
+                            .size(35.dp)
+                            .align(Alignment.BottomEnd)
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.icon_change_avatar),
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }

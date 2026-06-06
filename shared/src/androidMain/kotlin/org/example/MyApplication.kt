@@ -64,6 +64,7 @@ class MyApplication : Application() {
             Log.d("FCM", "Current Token: $newToken")
             if (newToken != oldToken) {
                 androidAppContainer.firebaseStorage.saveFirebaseToken(newToken)
+                // TODO: update in firestore 
             }
         }
     }

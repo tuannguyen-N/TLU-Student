@@ -61,7 +61,7 @@ class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
         fileUploadApi = FileUploadApi(httpClient)
     )
 
-    val userRepository = AndroidUserRepository()
+    val userRepository = AndroidUserRepository(firebaseStorage)
 
     val presenceRepository = AndroidPresenceRepository()
 

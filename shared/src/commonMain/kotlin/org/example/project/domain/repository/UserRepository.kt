@@ -5,11 +5,6 @@ import org.example.project.data.remote.dto.student_search.StudentSummary
 import org.example.project.domain.model.User
 
 interface UserRepository {
-    suspend fun updateOnlineStatus(
-        isOnline: Boolean,
-        currentUserId: String
-    )
-
     suspend fun getUsers(
         size: Int,
         excludeUserId: String? = null
@@ -17,6 +12,10 @@ interface UserRepository {
 
     suspend fun uploadUsers(
         students: List<StudentSummary>
+    )
+
+    suspend fun uploadUser(
+        student: StudentSummary
     )
 
     fun observeUsers(

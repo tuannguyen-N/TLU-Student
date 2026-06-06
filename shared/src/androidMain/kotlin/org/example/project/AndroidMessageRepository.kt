@@ -130,9 +130,6 @@ class AndroidMessageRepository(
         }
 
         return combine(messagesFlow, lastReadAtFlow) { messages, lastReadAt ->
-//            val otherUserId = lastReadAt.keys.firstOrNull {
-//                !it.equals(currentUserId, ignoreCase = true)
-//            }
             Log.d("DEBUG_READ", "lastReadAt map = $lastReadAt")
             Log.d("DEBUG_READ", "currentUserId = $currentUserId")
 
@@ -195,7 +192,6 @@ class AndroidMessageRepository(
                 )
             }
 
-        // Ép kiểu MessagePage sang K
         return MessagePage(
             messages = messages,
             lastDocument = snapshot.documents.lastOrNull(),
@@ -310,7 +306,7 @@ class AndroidMessageRepository(
             "senderId" to senderId,
             "text" to (caption ?: ""),
             "fileUrl" to imageUrl.data.url,
-            "fileName" to null,               // Image không có fileName
+            "fileName" to null,
             "type" to MessageType.IMAGE.name,
             "timestamp" to currentTimeMillis
         )
@@ -435,7 +431,6 @@ class AndroidMessageRepository(
                         id = snapshot.getString("id") ?: "",
                         name = snapshot.getString("name") ?: "",
                         avatarUrl = snapshot.getString("avatarUrl"),
-//                        isOnline = snapshot.getBoolean("isOnline") ?: false
                     )
                     usersState.update { it + (userId to user) }
                 }

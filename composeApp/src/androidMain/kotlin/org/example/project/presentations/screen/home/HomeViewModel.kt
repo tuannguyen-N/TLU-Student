@@ -3,20 +3,18 @@ package org.example.project.presentations.screen.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.data.mapper.getTodayDayOfWeek
+import org.example.project.data.remote.dto.student_search.StudentSummary
 import org.example.project.data.remote.interceptor.AuthPluginConfig
-import org.example.project.domain.model.HomeUiEvent
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
@@ -52,30 +50,12 @@ class HomeViewModel(
         initialValue = HomeState()
     )
 
-    private val _event = Channel<HomeUiEvent>()
-    val event = _event.receiveAsFlow()
-
     init {
         observeStudentInfo()
         observeReadNotifications()
         observeAlerts()
         observeSemester()
         loadInitData()
-
-        uploadUserOnFirebase()
-    }
-
-    private fun uploadUserOnFirebase() {
-        viewModelScope.launch {
-            studentUseCase.getAllStudents()
-                .onSuccess { students ->
-                    viewModelScope.launch {
-                        userRepository.uploadUsers(students.content)
-                    }
-                }
-                .onFailure {
-                }
-        }
     }
 
     private fun observeSemester() {
@@ -113,7 +93,6 @@ class HomeViewModel(
         viewModelScope.launch { loadSemester() }
         viewModelScope.launch { loadStudentInfo() }
         viewModelScope.launch { loadCourseClasses() }
-        viewModelScope.launch { loadExamSchedule() }
         viewModelScope.launch { loadNews() }
         viewModelScope.launch { loadDailyQuote() }
         viewModelScope.launch { loadAlert() }
@@ -131,10 +110,6 @@ class HomeViewModel(
 
     private suspend fun loadSemester() {
         semesterUseCase.getSemesters(true)
-    }
-
-    private fun loadExamSchedule() {
-
     }
 
     private suspend fun loadAlert() {
@@ -159,7 +134,6 @@ class HomeViewModel(
         withDelayedLoading(
             onLoading = { updateState { copy(loadingEventList = it) } }
         ) {
-            delay(400L)
             newsRepository.getTop5News().fold(
                 onSuccess = { updateState { copy(newsAndEvents = it) } },
                 onFailure = { Log.e("123123", "loadNews: $it") }
@@ -182,8 +156,16 @@ class HomeViewModel(
         withDelayedLoading(
             onLoading = { updateState { copy(loadingStudentInfo = it) } }
         ) {
-            delay(400L)
-            studentUseCase.getStudentInfo()
+            studentUseCase.getStudentInfo().onSuccess {
+                viewModelScope.launch {
+                    userRepository.uploadUser(
+                        StudentSummary(
+                            studentCode = it.studentCode,
+                            fullName = it.fullName
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -200,7 +182,7 @@ class HomeViewModel(
                 loadCourseClasses()
                 loadAlert()
             } finally {
-                delay(1000L)
+                delay(400)
                 updateState { copy(isRefreshing = false) }
             }
         }
@@ -208,9 +190,5 @@ class HomeViewModel(
 
     private fun updateState(newState: HomeState.() -> HomeState) {
         _uiState.update(newState)
-    }
-
-    private fun sendUiEvent(event: HomeUiEvent) {
-        _event.trySend(event)
     }
 }

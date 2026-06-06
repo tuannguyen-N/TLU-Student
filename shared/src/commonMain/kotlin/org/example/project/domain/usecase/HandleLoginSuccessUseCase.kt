@@ -16,13 +16,17 @@ class HandleLoginSuccessUseCase(
             is AppResult.Failure -> loginResult
 
             is AppResult.Success -> {
-                notificationRepository.prepareNotification()
-                val readIds = notificationRepository.getReadNotifications()
-                when (val markResult = notificationRepository.markReadNotification(readIds)) {
-                    is AppResult.Failure -> markResult
-                    is AppResult.Success -> AppResult.Success(Unit)
-                }
+                prepareNotification()
             }
+        }
+    }
+
+    private suspend fun prepareNotification(): AppResult<Unit> {
+        notificationRepository.prepareNotification()
+        val readIds = notificationRepository.getReadNotifications()
+        return when (val markResult = notificationRepository.markReadNotification(readIds)) {
+            is AppResult.Failure -> markResult
+            is AppResult.Success -> AppResult.Success(Unit)
         }
     }
 }

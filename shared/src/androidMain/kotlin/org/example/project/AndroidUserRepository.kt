@@ -1,33 +1,21 @@
 package org.example.project
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import org.example.project.data.local.FirebaseStorage
 import org.example.project.data.remote.dto.student_search.StudentSummary
 import org.example.project.domain.model.User
 import org.example.project.domain.repository.UserRepository
 
-class AndroidUserRepository : UserRepository {
+class AndroidUserRepository(
+    private val firebaseStorage: FirebaseStorage
+) : UserRepository {
     val firestore = FirebaseFirestore.getInstance()
-
-    override suspend fun updateOnlineStatus(
-        isOnline: Boolean,
-        currentUserId: String
-    ) {
-        firestore
-            .collection("users")
-            .document(currentUserId)
-            .update(
-                mapOf(
-                    "isOnline" to isOnline,
-                    "lastSeen" to System.currentTimeMillis()
-                )
-            )
-            .await()
-    }
 
     override suspend fun getUsers(
         size: Int,
@@ -76,6 +64,34 @@ class AndroidUserRepository : UserRepository {
         }
 
         batch.commit().await()
+    }
+
+    override suspend fun uploadUser(student: StudentSummary) {
+        val studentId = student.studentCode.lowercase()
+        val fcmToken = firebaseStorage.getFirebaseToken()
+
+        val docRef = firestore
+            .collection("users")
+            .document(studentId)
+
+        val snapshot = docRef.get().await()
+
+        if (!snapshot.exists()) {
+            docRef.set(
+                mapOf(
+                    "id" to studentId,
+                    "name" to student.fullName,
+                    "avatarUrl" to "",
+                    "fcmTokens" to listOf(fcmToken)
+                )
+            ).await()
+        } else {
+            docRef.update(
+                mapOf(
+                    "fcmTokens" to FieldValue.arrayUnion(fcmToken)
+                )
+            ).await()
+        }
     }
 
     override fun observeUsers(
