@@ -12,6 +12,7 @@ import org.example.project.data.remote.dto.notification_payload.NotificationPayl
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
+import ua.naiksoftware.stomp.dto.StompHeader
 
 class StompNotificationSocket(
     private val json: Json,
@@ -41,20 +42,24 @@ class StompNotificationSocket(
             okHttpClient
         )
 
-        stompClient!!.lifecycle()
-            .subscribe(
+        stompClient?.lifecycle()
+            ?.subscribe(
                 { event ->
                     Log.d("STOMP", "event=${event.type}")
                     if (event.type == LifecycleEvent.Type.ERROR) {
                         Log.e("STOMP", "connection error", event.exception)
                     }
                 },
-                {
-                    Log.e("STOMP", "lifecycle error", it)
-                }
+                { Log.e("STOMP", "lifecycle error", it) }
             )
 
-        stompClient!!.connect()
+        stompClient!!.connect(
+            listOf(
+                StompHeader("Authorization", "Bearer $token"),
+                StompHeader("accept-version", "1.1,1.2"),
+                StompHeader("heart-beat", "0,0")
+            )
+        )
     }
 
     override suspend fun disconnect() {
