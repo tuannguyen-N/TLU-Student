@@ -27,7 +27,7 @@ class HandleLoginSuccessUseCase(
             return AppResult.Failure(result.message, result.cause)
         }
 
-//        notificationRepository.startRealtime()
+        notificationRepository.startRealtime()
 
         val readIds = notificationRepository.getReadNotifications()
         return when (
