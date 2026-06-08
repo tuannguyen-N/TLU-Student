@@ -13,7 +13,6 @@ import org.example.project.domain.usecase.StudentUseCase
 
 class ProfileViewModel(
     private val studentUseCase: StudentUseCase,
-    private val authPluginConfig: AuthPluginConfig
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileState())
     val uiState = _uiState.asStateFlow()
@@ -23,12 +22,6 @@ class ProfileViewModel(
 
     init {
         observeStudentInfo()
-        loadImage()
-    }
-
-    private fun loadImage() {
-        val image = authPluginConfig.imageStorage.getImageBase64()
-        updateState { copy(avatarBase64 = image) }
     }
 
     private fun observeStudentInfo() {

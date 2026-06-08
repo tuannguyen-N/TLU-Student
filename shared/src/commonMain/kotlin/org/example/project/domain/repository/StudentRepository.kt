@@ -3,6 +3,7 @@ package org.example.project.domain.repository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.example.project.data.remote.api.StudentApi
+import org.example.project.data.remote.dto.me.SelfUpdateRequest
 import org.example.project.data.remote.dto.me.StudentData
 import org.example.project.data.remote.dto.student_search.StudentPageData
 import org.example.project.domain.model.AppResult
@@ -65,6 +66,35 @@ class StudentRepository(
             val data =
                 response.data ?: return AppResult.Failure(message = "Không tìm thấy sinh viên")
             AppResult.Success(data)
+        } catch (e: Exception) {
+            AppResult.Failure(message = e.message, cause = e)
+        }
+    }
+
+    suspend fun updateStudentInfo(request: SelfUpdateRequest): AppResult<Unit> {
+        return try {
+            val response = studentApi.updateStudentInfo(request)
+            if (response.code == 0) {
+                AppResult.Success(Unit)
+            } else {
+                AppResult.Failure(message = response.message)
+            }
+        } catch (e: Exception) {
+            AppResult.Failure(message = e.message, cause = e)
+        }
+    }
+
+    suspend fun updateAvatar(
+        fileName: String,
+        fileBytes: ByteArray
+    ): AppResult<Unit> {
+        return try {
+            val response = studentApi.updateAvatar(fileName, fileBytes)
+            if (response.code == 0) {
+                AppResult.Success(Unit)
+            } else {
+                AppResult.Failure(message = response.message)
+            }
         } catch (e: Exception) {
             AppResult.Failure(message = e.message, cause = e)
         }

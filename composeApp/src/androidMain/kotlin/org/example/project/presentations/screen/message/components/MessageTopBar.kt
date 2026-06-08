@@ -23,8 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import org.example.project.R
 import org.example.project.domain.model.UserUiModel
 import org.example.project.presentations.theme.LocalExtendedColors
 import org.example.project.presentations.utils.DateTimeUtils.formatLastSeenTopBar
@@ -57,26 +61,44 @@ fun MessageTopBar(
         },
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(color.gray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = chatUser.name.first().uppercase(),
-                        style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
+
+                if (!chatUser.avatarUrl.isNullOrEmpty()) {
+                    AsyncImage(
+                        model = chatUser.avatarUrl,
+                        contentDescription = "Avatar",
+                        placeholder = painterResource(R.drawable.icon_teacher_notification),
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(color.gray),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = chatUser.name.firstOrNull()?.uppercase() ?: "",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                color = Color.White
+                            )
+                        )
+                    }
                 }
+
                 Spacer(modifier = Modifier.width(10.dp))
+
                 Column {
                     Text(
                         text = "${chatUser.studentCode} - ${chatUser.name}",
                         style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold,
+                            fontWeight = FontWeight.SemiBold
                         )
                     )
+
                     when {
                         chatUser.isOnline -> Row(
                             verticalAlignment = Alignment.CenterVertically

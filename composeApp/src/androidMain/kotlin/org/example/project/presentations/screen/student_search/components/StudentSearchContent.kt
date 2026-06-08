@@ -54,7 +54,7 @@ fun StudentSearchContent(
     onClearQuery: () -> Unit = {},
     onRemoveRecentSearch: (String) -> Unit = {},
     onClearAllRecentSearches: () -> Unit = {},
-    onOpenMessage: (String, String) -> Unit,
+    onOpenMessage: (String, String, String?) -> Unit,
     onSearch: () -> Unit = {},
     onClickRecentSearch: (String) -> Unit = {}
 ) {
@@ -237,7 +237,7 @@ private fun RecentSearchesSection(
 @Composable
 private fun SearchResultsSection(
     searchResults: List<StudentSummary>,
-    onOpenMessage: (String, String) -> Unit
+    onOpenMessage: (String, String, String?) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -264,7 +264,7 @@ private fun SearchResultsSection(
             searchResults.forEach { student ->
                 StudentResultCard(
                     student = student,
-                    onMessageClick = { onOpenMessage(student.studentCode, student.fullName) }
+                    onMessageClick = { onOpenMessage(student.studentCode, student.fullName, student.avatarUrl) }
                 )
             }
         }

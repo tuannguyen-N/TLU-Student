@@ -54,6 +54,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Composable
 fun FileBubble(
     message: MessageUiState,
+    avatarUrl: String?,
     isMe: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -62,7 +63,8 @@ fun FileBubble(
     val bubbleColor = if (isMe) color.midBlue else Color(0xFFE5E5E5)
     val textColor = if (isMe) Color.White else color.blackBackground
     val iconBgColor = if (isMe) color.lightBlue else Color(0xFFD0D0D0)
-    val subTextColor = if (isMe) Color.White.copy(alpha = 0.75f) else color.blackBackground.copy(alpha = 0.55f)
+    val subTextColor =
+        if (isMe) Color.White.copy(alpha = 0.75f) else color.blackBackground.copy(alpha = 0.55f)
 
     Column(
         modifier = modifier
@@ -127,7 +129,9 @@ fun MessageBubble(
     isLast: Boolean,
     onClick: () -> Unit,
     onClickImage: (url: String) -> Unit,
-    onClickFile: (String) -> Unit
+    onClickFile: (String) -> Unit,
+    avatarUrl: String?,
+    chatUserName: String
 ) {
     val isMe = message.isMe
     val color = LocalExtendedColors.current
@@ -147,18 +151,33 @@ fun MessageBubble(
                 verticalAlignment = Alignment.Bottom
             ) {
                 if (!isMe) {
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 6.dp)
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFFBDBDBD)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "N",
-                            style = MaterialTheme.typography.labelMedium.copy(color = Color.White)
+                    if (!avatarUrl.isNullOrEmpty()) {
+                        AsyncImage(
+                            model = avatarUrl,
+                            contentDescription = "Avatar",
+                            modifier = Modifier
+                                .padding(end = 6.dp)
+                                .size(32.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
                         )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .padding(end = 6.dp)
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFBDBDBD)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = chatUserName.substringAfterLast(" ").firstOrNull()
+                                    ?.uppercase() ?: "N",
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    color = Color.White
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -180,12 +199,14 @@ fun MessageBubble(
                             indication = null,
                             onClick = {
                                 when (message.type) {
-                                    MessageType.IMAGE.name ->{
+                                    MessageType.IMAGE.name -> {
                                         message.fileUrl?.let { url -> onClickImage(url) }
                                     }
+
                                     MessageType.FILE.name -> {
                                         message.fileUrl?.let { url -> onClickFile(url) }
                                     }
+
                                     else -> onClick()
                                 }
                             }
@@ -211,6 +232,7 @@ fun MessageBubble(
                         MessageType.FILE.name -> FileBubble(
                             message = message,
                             isMe = isMe,
+                            avatarUrl = avatarUrl,
                             modifier = Modifier.align(Alignment.Center)
                         )
 

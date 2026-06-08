@@ -93,9 +93,7 @@ class AppContainer(
         firebaseStorage = firebaseStorage
     )
 
-    val authPluginConfig = AuthPluginConfig().apply {
-        this.imageStorage = imageStorage
-    }
+    val authPluginConfig = AuthPluginConfig()
 
     //for database
     private val database = createDatabase(getDatabaseBuilder(context))

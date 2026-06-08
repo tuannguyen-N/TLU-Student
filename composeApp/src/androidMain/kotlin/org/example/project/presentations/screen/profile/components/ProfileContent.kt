@@ -45,7 +45,7 @@ fun ProfileContent(
                 majorName = student?.major?.majorName.orEmpty(),
                 onClickSetting = onOpenSetting,
                 onClickBack = onBack,
-                avatarBase64 = avatar
+                avatarUrl = avatar
             )
         }
     ) { paddingValues ->

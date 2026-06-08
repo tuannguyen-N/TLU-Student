@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.model.QrState
 import org.example.project.domain.usecase.CountdownTimerUseCase
 import org.example.project.domain.usecase.GenerateQrUseCase
@@ -21,7 +20,6 @@ class DigitalStudentCardViewModel(
     private val studentUseCase: StudentUseCase,
     private val timerUseCase: CountdownTimerUseCase,
     private val generateQrUseCase: GenerateQrUseCase,
-    private val authPluginConfig: AuthPluginConfig,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DigitalStudentCardState())
     val uiState = _uiState.asStateFlow()
@@ -30,12 +28,6 @@ class DigitalStudentCardViewModel(
 
     init {
         observeStudentInfo()
-        loadImage()
-    }
-
-    private fun loadImage() {
-        val imageBase64 = authPluginConfig.imageStorage.getImageBase64()
-        updateState { copy(imageBase64 = imageBase64) }
     }
 
     private fun observeStudentInfo() {

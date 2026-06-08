@@ -17,7 +17,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun MessagesScreen(
     viewModel: MessagesViewModel,
     onOpenNotificationScreen: () -> Unit,
-    onOpenMessage: (studentId: String, chatName: String) -> Unit,
+    onOpenMessage: (studentId: String, chatName: String, avatarUrl: String?) -> Unit,
     onOpenStudentSearch: () -> Unit
 ) {
     val conversations by viewModel.conversations.collectAsStateWithLifecycle()

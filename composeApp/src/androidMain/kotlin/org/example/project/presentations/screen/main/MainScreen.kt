@@ -46,7 +46,7 @@ fun MainScreen(
     onOpenGpaTracker: () -> Unit,
     openAlertsAndActionsScreen: () -> Unit,
     onViewMaterials: () -> Unit,
-    onOpenMessage: (chatUserId: String, chatUserName: String) -> Unit,
+    onOpenMessage: (chatUserId: String, chatUserName: String, chatUserAvatarUrl: String?) -> Unit,
     onOpenStudentSearch: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })

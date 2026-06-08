@@ -25,7 +25,7 @@ fun StudentClassContent(
     uiState: StudentClassState,
     onBack: () -> Unit,
     onCopy: (String, String) -> Unit,
-    onMessageClick: (String, String) -> Unit,
+    onMessageClick: (String, String, String?) -> Unit,
 ) {
     val classInfoData = uiState.studentClassInfoData
     val color = LocalExtendedColors.current

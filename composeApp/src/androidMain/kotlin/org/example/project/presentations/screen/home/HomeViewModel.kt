@@ -32,7 +32,6 @@ class HomeViewModel(
     private val featureRepository: FeatureRepository,
     private val newsRepository: NewsRepository,
     private val quoteRepository: QuoteRepository,
-    private val authPluginConfig: AuthPluginConfig,
     private val notificationRepository: NotificationRepository,
     private val examScheduleRepository: ExamScheduleRepository,
     private val semesterUseCase: SemesterUseCase,
@@ -97,7 +96,6 @@ class HomeViewModel(
         viewModelScope.launch { loadDailyQuote() }
         viewModelScope.launch { loadAlert() }
         viewModelScope.launch { loadExamDaySchedule() }
-        loadImage()
     }
 
     private suspend fun loadExamDaySchedule() {
@@ -123,11 +121,6 @@ class HomeViewModel(
     private suspend fun loadDailyQuote() {
         val dailyQuote = quoteRepository.getDailyQuote()
         updateState { copy(dailyQuote = dailyQuote) }
-    }
-
-    private fun loadImage() {
-        val imageBase64 = authPluginConfig.imageStorage.getImageBase64()
-        updateState { copy(imageBase64 = imageBase64) }
     }
 
     private suspend fun loadNews() {
@@ -161,7 +154,8 @@ class HomeViewModel(
                     userRepository.uploadUser(
                         StudentSummary(
                             studentCode = it.studentCode,
-                            fullName = it.fullName
+                            fullName = it.fullName,
+                            avatarUrl = it.avatarUrl
                         )
                     )
                 }

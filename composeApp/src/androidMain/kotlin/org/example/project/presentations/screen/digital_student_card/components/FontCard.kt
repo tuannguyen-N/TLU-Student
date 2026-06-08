@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,8 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import org.example.project.R
-import org.example.project.presentations.components.Base64Image
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -90,9 +89,10 @@ fun FrontCard(
                     modifier = Modifier.size(80.dp)
                 )
             } else {
-                Base64Image(
-                    base64String = avatarUrl,
-                    modifier = Modifier.fillMaxSize(),
+                AsyncImage(
+                    model = avatarUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
                 )
             }
         }
@@ -118,7 +118,9 @@ fun FrontCard(
             Image(
                 painter = painterResource(logoFactory),
                 contentDescription = null,
-                modifier = Modifier.fillMaxWidth().scale(1.01f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .scale(1.01f),
                 contentScale = ContentScale.Crop
             )
 

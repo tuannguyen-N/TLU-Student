@@ -15,7 +15,7 @@ import org.example.project.presentations.screen.student_class.components.Student
 fun StudentClassScreen(
     viewModel: StudentClassViewModel,
     onBack: () -> Unit,
-    onMessageClick: (String, String) -> Unit,
+    onMessageClick: (String, String, String?) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val clipboard = LocalClipboard.current

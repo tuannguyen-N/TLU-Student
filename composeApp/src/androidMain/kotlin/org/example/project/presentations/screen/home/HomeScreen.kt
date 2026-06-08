@@ -51,7 +51,7 @@ fun HomeScreen(
                 onOpenProfile = onOpenProfileScreen,
                 onOpenNotification = onOpenNotificationScreen,
                 isProfileReady = !uiState.loadingStudentInfo && uiState.studentInfo != null,
-                imageBase64 = uiState.imageBase64,
+                avatarUrl = uiState.studentInfo?.avatarUrl,
                 onOpenChat = onOpenChat,
                 isNotificationBadgeVisible = !uiState.isAllNotificationsRead
             )

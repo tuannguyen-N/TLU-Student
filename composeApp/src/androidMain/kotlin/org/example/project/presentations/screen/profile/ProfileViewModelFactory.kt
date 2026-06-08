@@ -6,15 +6,13 @@ import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.usecase.StudentUseCase
 
 class ProfileViewModelFactory(
-    private val studentUseCase: StudentUseCase,
-    private val authPluginConfig: AuthPluginConfig
+    private val studentUseCase: StudentUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
             return ProfileViewModel(
-                studentUseCase,
-                authPluginConfig
+                studentUseCase
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

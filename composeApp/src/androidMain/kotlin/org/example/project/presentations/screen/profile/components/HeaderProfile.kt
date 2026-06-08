@@ -32,14 +32,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.fontscaling.MathUtils.lerp
 import androidx.compose.ui.unit.lerp
+import coil.compose.AsyncImage
 import org.example.project.R
-import org.example.project.presentations.components.Base64Image
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @SuppressLint("RestrictedApi")
 @Composable
 fun HeaderProfile(
-    avatarBase64: String?,
+    avatarUrl: String?,
     studentName: String,
     majorName: String,
     progress: Float,
@@ -88,9 +88,10 @@ fun HeaderProfile(
                 }
             }
 
-            if (avatarBase64 != null && avatarBase64 != "") {
-                Base64Image(
-                    base64String = avatarBase64,
+            if (!avatarUrl.isNullOrEmpty()) {
+                AsyncImage(
+                    model = avatarUrl,
+                    contentDescription = "Avatar",
                     modifier = Modifier
                         .graphicsLayer {
                             scaleX = scale
@@ -98,7 +99,8 @@ fun HeaderProfile(
                         }
                         .size(120.dp)
                         .clip(CircleShape)
-                        .border(1.dp, Color.White, CircleShape)
+                        .border(1.dp, Color.White, CircleShape),
+                    contentScale = ContentScale.Crop
                 )
             } else {
                 Icon(

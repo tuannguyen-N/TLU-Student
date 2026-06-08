@@ -24,9 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import org.example.project.data.remote.dto.student_search.StudentSummary
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -48,31 +50,32 @@ fun StudentResultCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(modifier = Modifier.size(52.dp)) {
-//                if (student.avatarUrl != null) {
-//                    AsyncImage(
-//                        model = student.avatarUrl,
-//                        contentDescription = student.name,
-//                        modifier = Modifier
-//                            .size(52.dp)
-//                            .clip(CircleShape),
-//                        contentScale = ContentScale.Crop
-//                    )
-//                } else {
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFD0D5E8)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = student.fullName.first().toString(),
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        color = Color(0xFF4A5080)
+                if (student.avatarUrl != null) {
+                    AsyncImage(
+                        model = student.avatarUrl,
+                        contentDescription = student.fullName,
+                        modifier = Modifier
+                            .size(52.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
-//                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFD0D5E8)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = student.fullName.substringAfterLast(" ").firstOrNull()
+                                ?.uppercase() ?: "N",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            color = Color(0xFF4A5080)
+                        )
+                    }
                 }
             }
 

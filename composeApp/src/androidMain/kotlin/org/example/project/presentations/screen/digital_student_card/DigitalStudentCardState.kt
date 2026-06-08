@@ -6,7 +6,6 @@ import org.example.project.domain.model.QrState
 data class DigitalStudentCardState(
     val studentInfo: StudentData? = null,
     val qrState: QrState = QrState.Idle,
-    val imageBase64: String? = null,
     val isLoading: Boolean = false
 ) {
     val isFlipped: Boolean get() = qrState !is QrState.Idle

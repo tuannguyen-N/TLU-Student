@@ -6,7 +6,6 @@ import org.example.project.data.local.TokenStorage
 
 class AuthPluginConfig {
     lateinit var tokenStorage: TokenStorage
-    lateinit var imageStorage: ImageBase64Storage
 }
 
 val AuthPlugin = createClientPlugin(

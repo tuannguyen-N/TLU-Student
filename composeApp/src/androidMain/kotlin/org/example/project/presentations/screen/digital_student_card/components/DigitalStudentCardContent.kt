@@ -46,7 +46,7 @@ fun DigitalStudentCardContent(
             DigitalStudentCard(
                 studentInfo = uiState.studentInfo ?: return@Column,
                 qrState = uiState.qrState,
-                avatarUrl = uiState.imageBase64,
+                avatarUrl = uiState.studentInfo.avatarUrl,
                 onCreateQr = onCreateQr,
                 onRegenerateQr = onRegenerateQr,
                 onBackToFrontCard = onBackToFrontCard

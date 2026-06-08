@@ -81,7 +81,7 @@ class AndroidUserRepository(
                 mapOf(
                     "id" to studentId,
                     "name" to student.fullName,
-                    "avatarUrl" to "",
+                    "avatarUrl" to student.avatarUrl,
                     "fcmTokens" to listOf(fcmToken)
                 )
             ).await()

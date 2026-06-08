@@ -11,7 +11,7 @@ import org.example.project.presentations.screen.student_search.components.Studen
 fun StudentSearchScreen(
     viewModel: StudentSearchViewModel,
     onBack: () -> Unit,
-    onOpenMessage: (String, String) -> Unit
+    onOpenMessage: (String, String, String?) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

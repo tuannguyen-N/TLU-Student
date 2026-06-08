@@ -11,7 +11,6 @@ class DigitalStudentCardViewModelFactory(
     private val studentUseCase: StudentUseCase,
     private val timerUseCase: CountdownTimerUseCase,
     private val generateQrUseCase: GenerateQrUseCase,
-    private val authPluginConfig: AuthPluginConfig,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
@@ -20,7 +19,6 @@ class DigitalStudentCardViewModelFactory(
                 studentUseCase,
                 timerUseCase,
                 generateQrUseCase,
-                authPluginConfig
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StudentSummary(
     val studentCode: String,
-    val fullName: String
+    val fullName: String,
+    val avatarUrl: String?
 )

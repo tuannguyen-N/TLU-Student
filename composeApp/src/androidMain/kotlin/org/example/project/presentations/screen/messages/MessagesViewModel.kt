@@ -19,7 +19,7 @@ class MessagesViewModel(
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
     val studentUseCase: StudentUseCase,
-    private val presenceRepository: PresenceRepository
+    presenceRepository: PresenceRepository
 ) : ViewModel() {
     val conversations = combine(
         studentUseCase.studentInfo.filterNotNull(),

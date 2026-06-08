@@ -28,16 +28,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import org.example.project.R
-import org.example.project.presentations.components.Base64Image
 import org.example.project.presentations.components.shimmerEffect
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -48,7 +48,7 @@ fun HomeHeader(
     studentCode: String,
     onOpenProfile: () -> Unit,
     onOpenNotification: () -> Unit,
-    imageBase64: String?,
+    avatarUrl: String?,
     isProfileReady: Boolean,
     isNotificationBadgeVisible: Boolean = false,
     onOpenChat: () -> Unit
@@ -74,16 +74,18 @@ fun HomeHeader(
                 enabled = isProfileReady
             ) {
                 if (isProfileReady) {
-                    if (imageBase64 != null && imageBase64 != "") {
-                        Base64Image(
-                            base64String = imageBase64,
+                    if (avatarUrl != null && avatarUrl != "") {
+                        AsyncImage(
+                            model = avatarUrl,
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
                                 .border(
                                     BorderStroke(1.dp, Color.White),
                                     CircleShape
-                                )
+                                ),
+                            contentDescription = "Profile Avatar",
+                            contentScale = ContentScale.Crop
                         )
                     } else {
                         Icon(
@@ -167,7 +169,7 @@ fun HomeHeader(
                         contentDescription = null,
                     )
 
-                    if(isNotificationBadgeVisible){
+                    if (isNotificationBadgeVisible) {
                         Spacer(
                             Modifier
                                 .padding(5.dp)

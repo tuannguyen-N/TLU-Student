@@ -1,5 +1,7 @@
 package org.example.project.presentations.navigation
 
+import android.net.Uri
+
 object AppRoute {
     const val Splash = "splash_screen"
     const val Login = "login_screen"
@@ -32,9 +34,19 @@ object AppRoute {
     const val GpaTracker = "gpa_tracker_screen"
     const val TempSchedule = "temp_schedule_screen"
     const val AlertsAndActions = "alerts_and_actions_screen"
-    const val MessageRoute = "message_screen/{studentId}/{chatName}"
-    fun messageDetail(studentId: String, chatName: String) =
-        "message_screen/$studentId/${chatName.replace("/", "_")}"
+    const val MessageRoute =
+        "message_screen/{studentId}/{chatName}/{avatarUrl}"
+
+    fun messageDetail(
+        studentId: String,
+        chatName: String,
+        avatarUrl: String?
+    ): String {
+        return "message_screen/" +
+                Uri.encode(studentId) + "/" +
+                Uri.encode(chatName) + "/" +
+                Uri.encode(avatarUrl ?: "")
+    }
 
     const val StudentSearch = "student_search_screen"
 }

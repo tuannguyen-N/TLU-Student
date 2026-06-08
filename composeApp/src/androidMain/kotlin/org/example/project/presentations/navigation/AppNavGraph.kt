@@ -195,7 +195,6 @@ fun AppNavGraph(
                     container.featureRepository,
                     container.newsRepository,
                     container.quoteRepository,
-                    container.authPluginConfig,
                     container.notificationRepository,
                     container.examScheduleRepository,
                     container.semesterUseCase,
@@ -261,8 +260,8 @@ fun AppNavGraph(
                     context.startActivity(intent)
                 },
                 messagesViewModel = messagesViewModel,
-                onOpenMessage = { studentId, chatName ->
-                    navController.navigate(AppRoute.messageDetail(studentId, chatName))
+                onOpenMessage = { studentId, chatName, avatarUrl ->
+                    navController.navigate(AppRoute.messageDetail(studentId, chatName, avatarUrl))
                 },
                 onOpenStudentSearch = { navController.navigate(AppRoute.StudentSearch) }
             )
@@ -299,8 +298,7 @@ fun AppNavGraph(
             val container = LocalAppContainer.current
             val factory = remember(container) {
                 ProfileViewModelFactory(
-                    container.studentUseCase,
-                    container.authPluginConfig
+                    container.studentUseCase
                 )
             }
             val profileViewModel: ProfileViewModel = viewModel(factory = factory)
@@ -527,8 +525,7 @@ fun AppNavGraph(
                 DigitalStudentCardViewModelFactory(
                     container.studentUseCase,
                     CountdownTimerUseCase(),
-                    GenerateQrUseCase(),
-                    container.authPluginConfig
+                    GenerateQrUseCase()
                 )
             }
             val digitalStudentCardViewModel: DigitalStudentCardViewModel =
@@ -550,8 +547,8 @@ fun AppNavGraph(
             StudentClassScreen(
                 viewModel = studentClassViewModel,
                 onBack = { navController.popBackStack() },
-                onMessageClick = { studentCode, name ->
-                    navController.navigate(AppRoute.messageDetail(studentCode, name))
+                onMessageClick = { studentCode, name, avatarUrl ->
+                    navController.navigate(AppRoute.messageDetail(studentCode, name, avatarUrl))
                 }
             )
         }
@@ -751,6 +748,9 @@ fun AppNavGraph(
                 },
                 navArgument("chatName") {
                     type = NavType.StringType
+                },
+                navArgument("avatarUrl") {
+                    type = NavType.StringType
                 }
             )
         ) { backStackEntry ->
@@ -795,8 +795,8 @@ fun AppNavGraph(
             StudentSearchScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
-                onOpenMessage = { studentId, chatName ->
-                    navController.navigate(AppRoute.messageDetail(studentId, chatName))
+                onOpenMessage = { studentId, chatName, avatarUrl ->
+                    navController.navigate(AppRoute.messageDetail(studentId, chatName, avatarUrl))
                 }
             )
         }

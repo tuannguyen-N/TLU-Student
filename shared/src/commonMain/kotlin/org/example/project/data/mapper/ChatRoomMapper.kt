@@ -22,7 +22,8 @@ fun ChatRoom.toConversationUiState(
         lastMessageTimeFormatted = DateTimeUtils.formatRelativeTime(lastMessageTime),
         lastMessageType = MessageType.valueOf(lastMessageType),
         isLastMessageFromMe = lastSenderId == currentUserId,
-        studentId = otherUser?.id ?: "Unknown"
+        studentId = otherUser?.id ?: "Unknown",
+        avatarUrl = otherUser?.avatarUrl
     )
 }
 

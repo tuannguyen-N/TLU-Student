@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import org.example.project.domain.model.MessageUiState
+import org.example.project.domain.model.UserUiModel
 import org.example.project.domain.utils.DateTimeUtils
 import org.example.project.presentations.theme.LocalExtendedColors
 import java.util.Calendar
@@ -41,6 +42,7 @@ fun MessageContent(
     messages: List<MessageUiState>,
     hasMoreMessages: Boolean,
     isLoadingMore: Boolean,
+    chatUser: UserUiModel?,
     modifier: Modifier = Modifier,
     onClickFile: (String) -> Unit,
     onClickImage: (String) -> Unit,
@@ -117,7 +119,9 @@ fun MessageContent(
                             },
                             isLast = msg == messagesForDate.last(),
                             onClickImage = onClickImage,
-                            onClickFile = onClickFile
+                            onClickFile = onClickFile,
+                            avatarUrl = chatUser?.avatarUrl,
+                            chatUserName = chatUser?.name ?: ""
                         )
                     }
 

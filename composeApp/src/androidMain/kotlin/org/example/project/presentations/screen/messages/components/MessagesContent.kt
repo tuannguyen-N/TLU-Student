@@ -27,8 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import org.example.project.domain.model.ConversationUiState
-import org.example.project.domain.model.MessageType
-import org.example.project.domain.model.User
 import org.example.project.domain.model.UserUiModel
 
 @Composable
@@ -36,7 +34,7 @@ fun MessagesContent(
     modifier: Modifier = Modifier,
     conversations: List<ConversationUiState>,
     users: List<UserUiModel>,
-    onOpenMessage: (chatUserId: String, chatUserName: String) -> Unit,
+    onOpenMessage: (chatUserId: String, chatUserName: String, chatUserAvatarUrl: String?) -> Unit,
     onStartNewChat: () -> Unit = {}
 ) {
     LazyColumn(
@@ -46,8 +44,8 @@ fun MessagesContent(
         item {
             ActiveUsersSection(
                 users = users,
-                onOpenMessage = { studentId, studentName ->
-                    onOpenMessage(studentId, studentName)
+                onOpenMessage = { studentId, studentName, studentAvatarUrl ->
+                    onOpenMessage(studentId, studentName, studentAvatarUrl)
                 }
             )
         }
@@ -71,7 +69,7 @@ fun MessagesContent(
                 ConversationItem(
                     conversation = conversation,
                     onOpenMessage = {
-                        onOpenMessage(conversation.studentId, conversation.chatName)
+                        onOpenMessage(conversation.studentId, conversation.chatName, conversation.avatarUrl)
                     }
                 )
                 HorizontalDivider(
@@ -87,7 +85,7 @@ fun MessagesContent(
 @Composable
 fun ActiveUsersSection(
     users: List<UserUiModel>,
-    onOpenMessage: (String, String) -> Unit
+    onOpenMessage: (String, String, String?) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         LazyRow(
@@ -100,7 +98,7 @@ fun ActiveUsersSection(
                     avatarUrl = user.avatarUrl,
                     isOnline = user.isOnline,
                     onClick = {
-                        onOpenMessage(user.studentCode, user.name)
+                        onOpenMessage(user.studentCode, user.name, user.avatarUrl)
                     }
                 )
             }

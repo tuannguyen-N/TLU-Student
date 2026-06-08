@@ -4,6 +4,16 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
+import org.example.project.data.remote.dto.Response
+import org.example.project.data.remote.dto.me.SelfUpdateRequest
 import org.example.project.data.remote.dto.me.StudentInformationResponse
 import org.example.project.data.remote.dto.student_search.StudentInfoResponse
 import org.example.project.data.remote.dto.student_search.StudentListResponse
@@ -33,5 +43,34 @@ class StudentApi(
             parameter("size", size)
             parameter("sort", sort)
         }.body()
+    }
+
+    suspend fun updateStudentInfo(request: SelfUpdateRequest): Response {
+        return client.post("/api/v1/students/me/update") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body()
+    }
+
+    suspend fun updateAvatar(
+        fileName: String,
+        fileBytes: ByteArray
+    ): Response {
+        return client.submitFormWithBinaryData(
+            url = "/api/v1/students/me/avatar",
+            formData = formData {
+                append(
+                    key = "file",
+                    value = fileBytes,
+                    headers = Headers.build {
+                        append(HttpHeaders.ContentType, "image/*")
+                        append(
+                            HttpHeaders.ContentDisposition,
+                            "filename=\"$fileName\""
+                        )
+                    }
+                )
+            }
+        ).body()
     }
 }

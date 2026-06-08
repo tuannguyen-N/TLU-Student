@@ -67,7 +67,8 @@ class StudentSearchViewModel(
                         val students = result.data.content.map {
                             StudentSummary(
                                 studentCode = it.studentCode,
-                                fullName = it.fullName
+                                fullName = it.fullName,
+                                avatarUrl = it.avatarUrl
                             )
                         }
 

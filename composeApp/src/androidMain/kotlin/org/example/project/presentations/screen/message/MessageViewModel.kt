@@ -44,6 +44,7 @@ class MessageViewModel(
 
     private val chatUserId: String = savedStateHandle["studentId"] ?: ""
     private val chatUserName: String = savedStateHandle["chatName"] ?: ""
+    private val chatUserAvatarUrl: String = savedStateHandle["avatarUrl"] ?: ""
 
     private val currentUserId: String =
         studentUseCase.studentInfo.value?.studentCode?.lowercase() ?: ""
@@ -55,6 +56,7 @@ class MessageViewModel(
             chatUser = UserUiModel(
                 studentCode = chatUserId,
                 name = chatUserName,
+                avatarUrl = chatUserAvatarUrl
             )
         )
     )

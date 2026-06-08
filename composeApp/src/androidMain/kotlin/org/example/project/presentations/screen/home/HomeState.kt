@@ -22,7 +22,6 @@ data class HomeState(
     val dayScheduleList: List<DaySchedule> = emptyList(),
     val examDayScheduleList: List<DaySchedule> = emptyList(),
     val newsAndEvents: List<EventAndNewUiModel> = emptyList(),
-    val imageBase64: String? = null,
     val dailyQuote: QuoteEntity? = null,
     val currentSemester: Semester? = null,
 
