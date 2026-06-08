@@ -2,6 +2,7 @@ package org.example.project
 
 import android.annotation.SuppressLint
 import android.util.Log
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.serialization.json.Json
@@ -19,7 +20,10 @@ class AndroidPaymentSocket(
     private val tokenStorage: TokenStorage
 ) : PaymentSocket {
 
-    private val _events = MutableSharedFlow<PaymentStatusPayload>()
+    private val _events = MutableSharedFlow<PaymentStatusPayload>(
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     private var stompClient: StompClient? = null
 
     @SuppressLint("CheckResult")

@@ -30,6 +30,7 @@ fun NotificationScreen(
         onShowBottomSheet = viewModel::onShowBottomSheet,
         onRefresh = viewModel::onRefreshData,
         onTabSelected = viewModel::onTabSelected,
-        onMarkAllRead = viewModel::onMarkAllRead
+        onMarkAllRead = viewModel::onMarkAllRead,
+        onLoadMore = viewModel::onLoadMore
     )
 }

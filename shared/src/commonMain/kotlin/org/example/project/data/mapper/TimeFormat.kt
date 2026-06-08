@@ -2,6 +2,7 @@ package org.example.project.data.mapper
 
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
@@ -12,6 +13,7 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 val today: LocalDate
     get() = Clock.System.now()
@@ -132,30 +134,25 @@ fun String.toCreatedDate(): String {
 }  // "02/04/2026"
 
 fun String.toCreatedAgo(): String {
-    val dateTimePart = this.substringBefore(".")         // "2026-04-02T16:34:06"
-    val datePart = dateTimePart.substringBefore("T")     // "2026-04-02"
-    val timePart = dateTimePart.substringAfter("T")      // "16:34:06"
+    val dateTimePart = this.substringBefore(".")
+    val datePart = dateTimePart.substringBefore("T")
+    val timePart = dateTimePart.substringAfter("T")
 
-    val createdDate = LocalDate.parse(datePart)
-    val createdTime = LocalTime.parse(timePart)
+    val createdInstant = LocalDateTime(
+        LocalDate.parse(datePart),
+        LocalTime.parse(timePart)
+    ).toInstant(TimeZone.UTC)
 
-    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-    val nowDate = now.date
-    val nowTime = now.time
+    val now = Clock.System.now()
 
-    val createdTotalMinutes = createdDate.toEpochDays() * 24 * 60 +
-            createdTime.hour * 60 + createdTime.minute
-    val nowTotalMinutes = nowDate.toEpochDays() * 24 * 60 +
-            nowTime.hour * 60 + nowTime.minute
-
-    val diffMinutes = nowTotalMinutes - createdTotalMinutes
+    val diffMinutes = maxOf(0, (now - createdInstant).inWholeMinutes)
 
     return when {
-        diffMinutes < 1 -> "Vừa xong"
-        diffMinutes < 60 -> "${diffMinutes} phút trước"
-        diffMinutes < 1440 -> "${diffMinutes / 60} giờ trước"       // < 24 giờ
-        diffMinutes < 43200 -> "${diffMinutes / 1440} ngày trước"   // < 30 ngày
-        else -> "${diffMinutes / 43200} tháng trước"
+        diffMinutes < 1     -> "Vừa xong"
+        diffMinutes < 60    -> "$diffMinutes phút trước"
+        diffMinutes < 1440  -> "${diffMinutes / 60} giờ trước"
+        diffMinutes < 43200 -> "${diffMinutes / 1440} ngày trước"
+        else                -> "${diffMinutes / 43200} tháng trước"
     }
 }
 

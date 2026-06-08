@@ -15,17 +15,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(message)
         val incomingRoomId = message.data["roomId"]
 
-        if (incomingRoomId == ChatPresenceManager.currentRoom.value) {
+        if (incomingRoomId != null && incomingRoomId == ChatPresenceManager.currentRoom.value) {
             return
         }
-//        Log.e("FCM", "onMessageReceived: $message", )
-//        val title = message.notification?.title
-//        val body = message.notification?.body
-//        showNotification(title, body)
 
         val title = message.data["title"]
         val body = message.data["body"]
-
         showNotification(title, body)
 
         val work = OneTimeWorkRequestBuilder<SyncNotificationWorker>().build()

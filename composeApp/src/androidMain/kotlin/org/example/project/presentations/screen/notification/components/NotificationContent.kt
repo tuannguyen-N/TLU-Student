@@ -27,7 +27,8 @@ fun NotificationContent(
     onShowBottomSheet: () -> Unit,
     onRefresh: () -> Unit,
     onTabSelected: (Int) -> Unit,
-    onMarkAllRead: () -> Unit
+    onMarkAllRead: () -> Unit,
+    onLoadMore: () -> Unit
 ) {
     val pullRefreshState = rememberPullToRefreshState()
     val color = LocalExtendedColors.current
@@ -63,6 +64,9 @@ fun NotificationContent(
                     selectedTab = uiState.selectedTab,
                     onShowBottomSheet = onShowBottomSheet,
                     onClickNotification = onClickNotification,
+                    isLoadingMore = uiState.isLoadingMore,
+                    hasMore = uiState.hasMore,
+                    onLoadMore = onLoadMore,
                     modifier = Modifier
                         .fillMaxHeight()
                         .background(

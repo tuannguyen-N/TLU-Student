@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.example.project.data.cache.CacheManager
 import org.example.project.data.local.FirebaseStorage
 import org.example.project.data.local.dao.AlertDao
 import org.example.project.data.local.dao.MarkedNotificationDao
@@ -22,14 +21,12 @@ import org.example.project.data.mapper.toUiModel
 import org.example.project.data.remote.api.NotificationApi
 import org.example.project.data.remote.api.NotificationSocket
 import org.example.project.data.remote.dto.notification.MarkReadNotificationResponse
-import org.example.project.data.remote.dto.notification.NotificationData
 import org.example.project.data.remote.dto.notification_detail.NotificationDetailData
 import org.example.project.data.remote.dto.notification_prepare.PrepareNotificationData
 import org.example.project.domain.TopicSubscriber
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.domain.model.AppResult
 import org.example.project.domain.model.NotificationUiModel
-import kotlin.time.Duration.Companion.minutes
 
 class NotificationRepository(
     private val notificationApi: NotificationApi,
@@ -42,7 +39,7 @@ class NotificationRepository(
 ) {
     private lateinit var prepareNotificationData: PrepareNotificationData
 
-    private val notificationCache = CacheManager<String, NotificationData>(5.minutes)
+    private var isLastPage = false
     val readNotificationIds = markedNotificationDao.observeReadNotifications()
 
     val notifications = combine(
@@ -51,9 +48,7 @@ class NotificationRepository(
     ) { notifications, readIds ->
         val readSet = readIds.toSet()
         notifications.map {
-            it.toUiModel().copy(
-                isRead = it.id in readSet
-            )
+            it.toUiModel().copy(isRead = it.id in readSet)
         }
     }
 
@@ -64,28 +59,35 @@ class NotificationRepository(
     private var realtimeJob: Job? = null
 
     suspend fun getNotifications(
-        forceRefresh: Boolean = false
-    ): AppResult<Unit> {
-
+        forceRefresh: Boolean = false,
+        page: Int = 0,
+        size: Int = 15
+    ): AppResult<Boolean> {
         return try {
+            if (forceRefresh) {
+                isLastPage = false
+            }
 
-            val data =
-                notificationCache.getOrFetch(
-                    key = "notification",
-                    forceRefresh = forceRefresh
-                ) {
-                    notificationApi.getNotifications(
-                        prepareNotificationData.oauthUserId,
-                        prepareNotificationData.facultyId,
-                        prepareNotificationData.studentClassId
-                    ).data ?: error("Empty")
-                }
+            if (isLastPage) return AppResult.Success(false)
+
+            val data = notificationApi.getNotifications(
+                oauthUserId = prepareNotificationData.oauthUserId,
+                facultyId = prepareNotificationData.facultyId,
+                studentClassId = prepareNotificationData.studentClassId,
+                page = page,
+                size = size
+            ).data ?: error("Empty")
+
+            if (forceRefresh && page == 0) {
+                notificationDao.clearNotifications()
+            }
 
             notificationDao.insertNotifications(
                 data.content.map { it.toEntity() }
             )
 
-            AppResult.Success(Unit)
+            isLastPage = data.last
+            AppResult.Success(!isLastPage)
 
         } catch (e: Exception) {
             AppResult.Failure(e.message, e)

@@ -10,7 +10,7 @@ import org.example.project.data.local.entity.NotificationEntity
 @Dao
 interface NotificationDao {
 
-    @Query("SELECT * FROM notifications")
+    @Query("SELECT * FROM notifications ORDER BY createdAt DESC, id DESC")
     fun observeNotifications(): Flow<List<NotificationEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -18,4 +18,7 @@ interface NotificationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNotification(notification: NotificationEntity)
+
+    @Query("DELETE FROM notifications")
+    suspend fun clearNotifications()
 }

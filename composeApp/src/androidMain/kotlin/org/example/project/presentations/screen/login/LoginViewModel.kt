@@ -28,29 +28,20 @@ class LoginViewModel(
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
 
-            MsalHelper.checkExistingAccount(
-                onSuccess = { _, token ->
-                    Log.e("123123", "onLoginClick: $token")
-                    onSignMsalSuccess(token, deviceProvider.getDeviceId())
-                },
-                onRequireLogin = {
-                    MsalHelper.signOut {
-                        MsalHelper.signIn(activity) { newToken, isNoInternet ->
-                            if (newToken != null) {
-                                onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
-                            } else if (isNoInternet) {
-                                sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
-                                updateState { copy(isLoading = false) }
-                            } else {
-                                updateState {
-                                    copy(error = "Đăng nhập thất bại")
-                                }
-                                updateState { copy(isLoading = false) }
-                            }
+            MsalHelper.signOut {
+                MsalHelper.signIn(activity) { newToken, isNoInternet ->
+                    when {
+                        newToken != null -> onSignMsalSuccess(newToken, deviceProvider.getDeviceId())
+                        isNoInternet -> {
+                            sendUiEvent(LoginUiEvent.ShowNoInternetDialog)
+                            updateState { copy(isLoading = false) }
+                        }
+                        else -> {
+                            updateState { copy(error = "Đăng nhập thất bại", isLoading = false) }
                         }
                     }
                 }
-            )
+            }
         }
     }
 

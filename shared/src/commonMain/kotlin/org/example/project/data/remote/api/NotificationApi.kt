@@ -20,9 +20,11 @@ class NotificationApi(
     suspend fun getNotifications(
         oauthUserId: Int,
         facultyId: Int,
-        studentClassId: Int
+        studentClassId: Int,
+        page: Int,
+        size: Int
     ): NotificationResponse {
-        return client.post("/api/v1/notification") {
+        return client.post("/api/v1/notification?size=$size&page=$page") {
             contentType(ContentType.Application.Json)
             setBody(
                 NotificationRequest(

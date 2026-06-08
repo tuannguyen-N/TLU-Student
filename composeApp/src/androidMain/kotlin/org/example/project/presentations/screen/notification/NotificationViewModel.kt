@@ -22,36 +22,64 @@ class NotificationViewModel(
     private val _uiState = MutableStateFlow(NotificationState())
     val uiState = _uiState.asStateFlow()
 
-    val notifications = notificationRepository.notifications
-    val filteredNotifications =
-        combine(
-            notifications,
-            uiState.map { it.selectedTab }
-        ) { notifications, tab ->
-
-            when (tab) {
-                1 -> notifications.filter {
-                    it.sender == NotificationSender.SYSTEM
-                }
-
-                2 -> notifications.filter {
-                    it.sender == NotificationSender.LECTURER
-                }
-
-                3 -> notifications.filter {
-                    it.sender == NotificationSender.FACULTY
-                }
-
-                else -> notifications
-            }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            emptyList()
-        )
+    val filteredNotifications = combine(
+        notificationRepository.notifications,
+        uiState.map { it.selectedTab }
+    ) { notifications, tab ->
+        when (tab) {
+            1 -> notifications.filter { it.sender == NotificationSender.SYSTEM }
+            2 -> notifications.filter { it.sender == NotificationSender.LECTURER }
+            3 -> notifications.filter { it.sender == NotificationSender.FACULTY }
+            else -> notifications
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
-        loadData()
+        loadData(forceRefresh = true)
+    }
+
+    private fun loadData(forceRefresh: Boolean = false) {
+        viewModelScope.launch {
+            val page = if (forceRefresh) 0 else _uiState.value.currentPage
+            notificationRepository.getNotifications(
+                forceRefresh = forceRefresh,
+                page = page
+            ).onSuccess { hasMore ->
+                Log.e("NotificationViewModel", "load_data: $hasMore", )
+                updateState {
+                    copy(
+                        currentPage = if (forceRefresh) 1 else currentPage + 1,
+                        hasMore = hasMore
+                    )
+                }
+            }
+        }
+    }
+
+    fun onLoadMore() {
+        val state = _uiState.value
+        if (state.isLoadingMore || !state.hasMore) return
+
+        viewModelScope.launch {
+            updateState { copy(isLoadingMore = true) }
+            try {
+                val currentPage = _uiState.value.currentPage
+                notificationRepository.getNotifications(
+                    forceRefresh = false,
+                    page = currentPage
+                ).onSuccess { hasMore ->
+                    Log.e("NotificationViewModel", "onLoadMore: $hasMore", )
+                    updateState {
+                        copy(
+                            currentPage = currentPage + 1,
+                            hasMore = hasMore
+                        )
+                    }
+                }
+            } finally {
+                updateState { copy(isLoadingMore = false) }
+            }
+        }
     }
 
     fun onTabSelected(index: Int) {
@@ -64,20 +92,11 @@ class NotificationViewModel(
         }
     }
 
-    private fun loadData() {
-        viewModelScope.launch {
-            delay(50L)
-            notificationRepository.getNotifications(true).onFailure {
-                Log.e("NotificationViewModel", "loadData: $it")
-            }
-        }
-    }
-
     fun onRefreshData() {
         viewModelScope.launch {
             updateState { copy(isRefreshing = true) }
             try {
-                notificationRepository.getNotifications(true)
+                loadData(forceRefresh = true)
             } finally {
                 delay(1000L)
                 updateState { copy(isRefreshing = false) }
