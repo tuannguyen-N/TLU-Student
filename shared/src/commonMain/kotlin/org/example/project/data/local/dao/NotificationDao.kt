@@ -10,15 +10,12 @@ import org.example.project.data.local.entity.NotificationEntity
 @Dao
 interface NotificationDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertReedNotification(notificationId: NotificationEntity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertReedNotifications(notifications: List<NotificationEntity>)
-
     @Query("SELECT * FROM notifications")
-    suspend fun getReadNotifications(): List<NotificationEntity>
+    fun observeNotifications(): Flow<List<NotificationEntity>>
 
-    @Query("SELECT id FROM notifications")
-    fun observeReadNotifications(): Flow<List<Int>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNotifications(notifications: List<NotificationEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNotification(notification: NotificationEntity)
 }

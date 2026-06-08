@@ -26,6 +26,10 @@ dependencyResolutionManagement {
         }
         mavenCentral()
 
+        maven {
+            url = uri("https://jitpack.io")
+        }
+
         // Needed for com.microsoft.device.display:display-mask library
         maven {
             url = uri("https://pkgs.dev.azure.com/MicrosoftDeviceSDK/DuoSDK-Public/_packaging/Duo-SDK-Feed/maven/v1")

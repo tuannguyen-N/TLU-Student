@@ -21,6 +21,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @OptIn(ExperimentalMaterial3Api::class)
 fun NotificationContent(
     uiState: NotificationState,
+    notifications: List<NotificationUiModel>,
     onBack: () -> Unit,
     onClickNotification: (NotificationUiModel) -> Unit,
     onShowBottomSheet: () -> Unit,
@@ -49,7 +50,7 @@ fun NotificationContent(
                 color = color,
                 selectedTab = uiState.selectedTab,
                 onTabSelected = onTabSelected,
-                notifications = uiState.listFullNotifications
+                notifications = notifications
             )
             PullToRefreshBox(
                 isRefreshing = uiState.isRefreshing,
@@ -58,28 +59,17 @@ fun NotificationContent(
             ) {
                 NotificationList(
                     color = color,
-                    notifications = uiState.filteredNotifications,
-                    newNotificationIds = uiState.newNotificationIds,
+                    notifications = notifications,
                     selectedTab = uiState.selectedTab,
                     onShowBottomSheet = onShowBottomSheet,
                     onClickNotification = onClickNotification,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .background(LocalExtendedColors.current.background)
+                        .background(
+                            LocalExtendedColors.current.background
+                        )
                 )
             }
         }
-
-//        if (uiState.isShowBottomSheet) {
-//            ModalBottomSheet(
-//                onDismissRequest = onHideBottomSheet,
-//                dragHandle = null,
-//                shape = RoundedCornerShape(0, 0, 0, 0),
-//            ) {
-//                NotificationBottomSheetContent(
-//                    onDismiss = onHideBottomSheet,
-//                )
-//            }
-//        }
     }
 }

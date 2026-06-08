@@ -1,20 +1,26 @@
 package org.example.project.domain.repository
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.example.project.data.cache.CacheManager
 import org.example.project.data.local.FirebaseStorage
 import org.example.project.data.local.dao.AlertDao
+import org.example.project.data.local.dao.MarkedNotificationDao
 import org.example.project.data.local.dao.NotificationDao
 import org.example.project.data.local.entity.PerformedAlertEntity
 import org.example.project.data.mapper.toAlertUiModels
 import org.example.project.data.mapper.toEntity
-import org.example.project.data.mapper.toListNotificationUiModel
+import org.example.project.data.mapper.toMarkedEntity
+import org.example.project.data.mapper.toUiModel
 import org.example.project.data.remote.api.NotificationApi
+import org.example.project.data.remote.api.NotificationSocket
 import org.example.project.data.remote.dto.notification.MarkReadNotificationResponse
 import org.example.project.data.remote.dto.notification.NotificationData
 import org.example.project.data.remote.dto.notification_detail.NotificationDetailData
@@ -29,18 +35,25 @@ class NotificationRepository(
     private val notificationApi: NotificationApi,
     private val firebaseStorage: FirebaseStorage,
     private val topicSubscriber: TopicSubscriber,
+    private val markedNotificationDao: MarkedNotificationDao,
     private val notificationDao: NotificationDao,
-    private val alertDao: AlertDao
+    private val alertDao: AlertDao,
+    private val notificationSocket: NotificationSocket
 ) {
     private lateinit var prepareNotificationData: PrepareNotificationData
 
     private val notificationCache = CacheManager<String, NotificationData>(5.minutes)
-    private val _notifications = MutableStateFlow<List<NotificationUiModel>>(emptyList())
-    val readNotificationIds = notificationDao.observeReadNotifications()
-    val notifications = combine(_notifications, readNotificationIds) { notifications, readIds ->
-        val readIdsSet = readIds.toSet()
+    val readNotificationIds = markedNotificationDao.observeReadNotifications()
+
+    val notifications = combine(
+        notificationDao.observeNotifications(),
+        readNotificationIds
+    ) { notifications, readIds ->
+        val readSet = readIds.toSet()
         notifications.map {
-            it.copy(isRead = readIdsSet.contains(it.id))
+            it.toUiModel().copy(
+                isRead = it.id in readSet
+            )
         }
     }
 
@@ -48,32 +61,73 @@ class NotificationRepository(
         list.any { !it.isRead }
     }
 
-    suspend fun getNotifications(forceRefresh: Boolean = false): AppResult<List<NotificationUiModel>> {
+    private var realtimeJob: Job? = null
+
+    suspend fun getNotifications(
+        forceRefresh: Boolean = false
+    ): AppResult<Unit> {
+
         return try {
+
             val data =
-                notificationCache.getOrFetch(key = "notification", forceRefresh = forceRefresh) {
+                notificationCache.getOrFetch(
+                    key = "notification",
+                    forceRefresh = forceRefresh
+                ) {
                     notificationApi.getNotifications(
                         prepareNotificationData.oauthUserId,
                         prepareNotificationData.facultyId,
                         prepareNotificationData.studentClassId
-                    ).data ?: throw Exception("Thông báo trống")
+                    ).data ?: error("Empty")
                 }
-            val newList = data.toListNotificationUiModel()
-            val readIds = notificationDao.getReadNotifications().map { it.id }.toSet()
-            val mergedList = newList.map {
-                if (it.id in readIds) it.copy(isRead = true) else it
-            }
 
-            _notifications.update { currentList ->
-                val currentIds = currentList.map { it.id }.toSet()
-                val incoming = mergedList.filter { it.id !in currentIds }
-                incoming + currentList
-            }
+            notificationDao.insertNotifications(
+                data.content.map { it.toEntity() }
+            )
 
-            AppResult.Success(mergedList)
+            AppResult.Success(Unit)
+
         } catch (e: Exception) {
             AppResult.Failure(e.message, e)
         }
+    }
+
+    fun startRealtime() {
+        if (realtimeJob?.isActive == true) return
+        realtimeJob = CoroutineScope(
+            SupervisorJob() + Dispatchers.Default
+        ).launch {
+            notificationSocket.connect()
+
+            notificationSocket.subscribe(
+                "/topic/notification/global"
+            )
+
+            notificationSocket.subscribe(
+                "/topic/notification/faculty/${prepareNotificationData.facultyId}"
+            )
+
+            notificationSocket.subscribe(
+                "/topic/notification/class/${prepareNotificationData.studentClassId}"
+            )
+
+            notificationSocket.subscribe(
+                "/user/queue/notification"
+            )
+
+            notificationSocket.notifications()
+                .collect { payload ->
+                    notificationDao.insertNotification(
+                        payload.toEntity()
+                    )
+                }
+        }
+    }
+
+    suspend fun stopRealtime() {
+        realtimeJob?.cancel()
+        realtimeJob = null
+        notificationSocket.disconnect()
     }
 
     suspend fun prepareNotification(): AppResult<PrepareNotificationData> {
@@ -110,15 +164,15 @@ class NotificationRepository(
     }
 
     suspend fun insertReadNotification(notification: NotificationUiModel) {
-        notificationDao.insertReedNotification(notification.toEntity())
+        markedNotificationDao.insertReadNotification(notification.toMarkedEntity())
     }
 
     suspend fun insertReadNotifications(notifications: List<NotificationUiModel>) {
-        notificationDao.insertReedNotifications(notifications.map { it.toEntity() })
+        markedNotificationDao.insertReadNotifications(notifications.map { it.toMarkedEntity() })
     }
 
     suspend fun getReadNotifications(): List<Int> {
-        return notificationDao.getReadNotifications().map { it.id }
+        return markedNotificationDao.getReadNotifications().map { it.id }
     }
 
     suspend fun getNotificationDetail(id: Int): AppResult<NotificationDetailData> {

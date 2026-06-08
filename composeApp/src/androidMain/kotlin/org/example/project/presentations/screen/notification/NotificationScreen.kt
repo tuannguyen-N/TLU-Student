@@ -15,11 +15,13 @@ fun NotificationScreen(
     onBack: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val notifications by viewModel.filteredNotifications.collectAsState()
 
     StatusBarStyle(darkIcons = true)
 
     NotificationContent(
         uiState = uiState,
+        notifications = notifications,
         onBack = onBack,
         onClickNotification = {
             viewModel.onRead(it)

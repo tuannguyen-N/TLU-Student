@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NotificationData(
-    val content: List<Content>,
+    val content: List<NotificationContent>,
     val first: Boolean,
     val last: Boolean,
     val page: Int,

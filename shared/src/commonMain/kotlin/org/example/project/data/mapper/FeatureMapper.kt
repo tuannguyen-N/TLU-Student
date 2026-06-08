@@ -3,7 +3,7 @@ package org.example.project.data.mapper
 import org.example.project.data.local.entity.FeatureEntity
 import org.example.project.domain.model.FeatureUiModel
 
-fun FeatureUiModel.toEntity(order: Int) = FeatureEntity(
+fun FeatureUiModel.toMarkedEntity(order: Int) = FeatureEntity(
     name = name,
     type = type,
     order = order

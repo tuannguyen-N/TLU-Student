@@ -22,11 +22,20 @@ class HandleLoginSuccessUseCase(
     }
 
     private suspend fun prepareNotification(): AppResult<Unit> {
-        notificationRepository.prepareNotification()
+        val result = notificationRepository.prepareNotification()
+        if (result is AppResult.Failure) {
+            return AppResult.Failure(result.message, result.cause)
+        }
+
+//        notificationRepository.startRealtime()
+
         val readIds = notificationRepository.getReadNotifications()
-        return when (val markResult = notificationRepository.markReadNotification(readIds)) {
+        return when (
+            val markResult = notificationRepository.markReadNotification(readIds)
+        ) {
             is AppResult.Failure -> markResult
-            is AppResult.Success -> AppResult.Success(Unit)
+            is AppResult.Success ->
+                AppResult.Success(Unit)
         }
     }
 }

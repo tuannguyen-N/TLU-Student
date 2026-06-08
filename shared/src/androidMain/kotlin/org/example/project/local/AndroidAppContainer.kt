@@ -4,12 +4,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import kotlinx.serialization.json.Json
 import org.example.project.AndroidMessageRepository
+import org.example.project.AndroidPaymentSocket
 import org.example.project.AndroidPresenceRepository
 import org.example.project.AndroidSearchHistoryRepository
 import org.example.project.AndroidTopicSubscriber
 import org.example.project.AndroidUserRepository
 import org.example.project.DeviceProvider
+import org.example.project.StompNotificationSocket
 import org.example.project.data.AndroidLocationRepository
 import org.example.project.data.local.AppPreferences
 import org.example.project.data.local.FirebaseStorage
@@ -66,4 +69,18 @@ class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
     val presenceRepository = AndroidPresenceRepository()
 
     val searchHistoryRepository = AndroidSearchHistoryRepository()
+
+    val notificationSocket = StompNotificationSocket(
+        Json {
+            ignoreUnknownKeys = true
+        },
+        tokenStorage
+    )
+
+    val paymentSocket = AndroidPaymentSocket(
+        Json {
+            ignoreUnknownKeys = true
+        },
+        tokenStorage
+    )
 }

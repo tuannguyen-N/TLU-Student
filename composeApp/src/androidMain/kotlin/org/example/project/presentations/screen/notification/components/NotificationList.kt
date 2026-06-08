@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.notification.components
 
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +20,6 @@ fun NotificationList(
     color: ExtendedColors,
     onShowBottomSheet: () -> Unit,
     notifications: List<NotificationUiModel>,
-    newNotificationIds: Set<Int>,
     selectedTab: Int,
     onClickNotification: (NotificationUiModel) -> Unit
 ) {
@@ -39,16 +37,11 @@ fun NotificationList(
             items = notifications,
             key = { it.id }
         ) { item ->
-            val isNew = item.id in newNotificationIds
-
             NotificationItem(
                 notification = item,
                 color = color,
                 modifier = Modifier
-                    .animateItem(
-                        fadeInSpec = if (isNew) tween(300) else null,
-                        placementSpec = null
-                    )
+                    .animateItem()
                     .combinedClickable(
                         onLongClick = { onShowBottomSheet() },
                         onClick = {

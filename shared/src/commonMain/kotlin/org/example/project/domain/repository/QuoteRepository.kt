@@ -2,7 +2,7 @@ package org.example.project.domain.repository
 
 import org.example.project.data.local.dao.QuoteDao
 import org.example.project.data.local.entity.QuoteEntity
-import org.example.project.data.mapper.toEntity
+import org.example.project.data.mapper.toMarkedEntity
 import org.example.project.data.mapper.today
 import org.example.project.data.remote.api.QuoteApi
 import org.example.project.data.remote.dto.quote.QuoteResponse
@@ -17,7 +17,7 @@ class QuoteRepository(
         if (localQuote != null) {
             return localQuote
         } else {
-            val remote = getRemoteQuote().toEntity()
+            val remote = getRemoteQuote().toMarkedEntity()
             dao.replaceQuote(remote)
             return remote
         }

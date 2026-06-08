@@ -29,6 +29,30 @@ class TuitionPaymentViewModel(
     init {
         loadData()
         observePaymentDeepLink()
+        observePaymentRealtime()
+        paymentRepository.startRealtime()
+    }
+
+    private fun observePaymentRealtime() {
+        viewModelScope.launch {
+            paymentRepository.paymentEvents.collect { event ->
+
+                val currentDetail = _uiState.value.selectedTuitionDetail
+                if (currentDetail != null && currentDetail.tuitionId == event.tuitionId) {
+                    tuitionRepository
+                        .getDetailTuition(event.tuitionId)
+                        .onSuccess { detail ->
+                            updateState { copy(selectedTuitionDetail = detail) }
+                        }
+                }
+
+                tuitionRepository
+                    .getTuition()
+                    .onSuccess { list ->
+                        updateState { copy(allTuition = list) }
+                    }
+            }
+        }
     }
 
     private fun observePaymentDeepLink() {
@@ -128,13 +152,12 @@ class TuitionPaymentViewModel(
         }
     }
 
-    fun onBackFromPayment(isRefresh: Boolean = true) {
+    fun onBackFromPayment() {
         updateState {
             copy(
                 isInPaymentScreen = false, selectedTuitionDetail = null, paymentUrl = null
             )
         }
-        if(isRefresh) onRefreshData()
     }
 
     private suspend fun onPaymentReturn() {
@@ -152,5 +175,12 @@ class TuitionPaymentViewModel(
 
     private fun updateState(block: TuitionStatus.() -> TuitionStatus) {
         _uiState.value = _uiState.value.block()
+    }
+
+    override fun onCleared() {
+        viewModelScope.launch {
+            paymentRepository.stopRealtime()
+        }
+        super.onCleared()
     }
 }

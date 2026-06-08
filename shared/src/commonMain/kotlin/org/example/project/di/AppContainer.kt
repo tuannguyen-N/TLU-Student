@@ -15,7 +15,9 @@ import org.example.project.data.remote.api.EnrollmentApi
 import org.example.project.data.remote.api.ExamScheduleApi
 import org.example.project.data.remote.api.NewsApi
 import org.example.project.data.remote.api.NotificationApi
+import org.example.project.data.remote.api.NotificationSocket
 import org.example.project.data.remote.api.PaymentApi
+import org.example.project.data.remote.api.PaymentSocket
 import org.example.project.data.remote.api.QuoteApi
 import org.example.project.data.remote.api.ScheduleApi
 import org.example.project.data.remote.api.SemesterApi
@@ -73,7 +75,9 @@ class AppContainer(
     val messageRepository: MessageRepository,
     val userRepository: UserRepository,
     val searchHistoryRepository: SearchHistoryRepository,
-    val presenceRepository: PresenceRepository
+    val presenceRepository: PresenceRepository,
+    notificationSocket: NotificationSocket,
+    paymentSocket: PaymentSocket
 ) {
     private val httpClient = createHttpClient(tokenStorage, triggerLogout = {
         // TODO:  
@@ -84,19 +88,35 @@ class AppContainer(
             // TODO:  
         })
 
+    val authPluginConfig = AuthPluginConfig()
+
+    //for database
+    private val database = createDatabase(getDatabaseBuilder(context))
+
+    //for notification
+    private val markedNotificationDao = database.markedNotificationDao()
+    private val notificationDao = database.notificationDao()
+    private val notificationApi = NotificationApi(httpClient)
+    private val alertDao = database.alertDao()
+    val notificationRepository = NotificationRepository(
+        notificationApi,
+        firebaseStorage,
+        topicSubscriber,
+        markedNotificationDao,
+        notificationDao,
+        alertDao,
+        notificationSocket
+    )
+
     // for auth
     private val authApi = AuthApi(httpClient)
     private val authRepository = AuthRepository(
         authApi = authApi,
         tokenStorage = tokenStorage,
         imageStorage = imageStorage,
-        firebaseStorage = firebaseStorage
+        firebaseStorage = firebaseStorage,
+        notificationRepository = notificationRepository
     )
-
-    val authPluginConfig = AuthPluginConfig()
-
-    //for database
-    private val database = createDatabase(getDatabaseBuilder(context))
 
     //for student
     private val studentApi = StudentApi(httpClient)
@@ -143,19 +163,7 @@ class AppContainer(
     private val tuitionApi = TuitionApi(httpClient)
     val tuitionRepository = TuitionRepository(tuitionApi)
     private val paymentApi = PaymentApi(httpClient)
-    val paymentRepository = PaymentRepository(paymentApi)
-
-    //for notification
-    private val notificationDao = database.notificationDao()
-    private val notificationApi = NotificationApi(httpClient)
-    private val alertDao = database.alertDao()
-    val notificationRepository = NotificationRepository(
-        notificationApi,
-        firebaseStorage,
-        topicSubscriber,
-        notificationDao,
-        alertDao
-    )
+    val paymentRepository = PaymentRepository(paymentApi, paymentSocket)
 
     val handleLoginSuccessUseCase =
         HandleLoginSuccessUseCase(authRepository, notificationRepository)

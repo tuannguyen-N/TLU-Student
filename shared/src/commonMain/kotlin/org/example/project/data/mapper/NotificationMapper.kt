@@ -5,9 +5,11 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlinx.datetime.until
+import org.example.project.data.local.entity.MarkedNotificationEntity
 import org.example.project.data.local.entity.NotificationEntity
-import org.example.project.data.remote.dto.notification.Content
+import org.example.project.data.remote.dto.notification.NotificationContent
 import org.example.project.data.remote.dto.notification.NotificationData
+import org.example.project.data.remote.dto.notification_payload.NotificationPayload
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.domain.model.NotificationReferenceType
 import org.example.project.domain.model.NotificationSender
@@ -24,7 +26,35 @@ fun NotificationData.toListNotificationUiModel(): List<NotificationUiModel> {
     }
 }
 
-fun Content.toUiModel(): NotificationUiModel = NotificationUiModel(
+fun NotificationContent.toUiModel(): NotificationUiModel = NotificationUiModel(
+    id = id,
+    title = title,
+    content = content,
+    sender = createdBy?.toNotificationSender() ?: SYSTEM,
+    deadline = deadLine,
+    isRead = isRead,
+    createdAt = createdAt,
+    createdTime = createdAt.toCreatedTime(),
+    createdDate = createdAt.toCreatedDate(),
+    createdAgo = createdAt.toCreatedAgo(),
+    referenceType = referenceType?.toNotificationReferenceType()
+)
+
+fun NotificationContent.toEntity(): NotificationEntity = NotificationEntity(
+    id = id,
+    title = title,
+    content = content,
+    sender = createdBy?.toNotificationSender() ?: SYSTEM,
+    deadline = deadLine,
+    isRead = isRead,
+    createdAt = createdAt,
+    createdTime = createdAt.toCreatedTime(),
+    createdDate = createdAt.toCreatedDate(),
+    createdAgo = createdAt.toCreatedAgo(),
+    referenceType = referenceType?.toNotificationReferenceType()
+)
+
+fun NotificationPayload.toEntity(): NotificationEntity = NotificationEntity(
     id = id,
     title = title,
     content = content,
@@ -87,8 +117,8 @@ fun String.toNotificationSender(): NotificationSender {
     }
 }
 
-fun NotificationUiModel.toEntity(): NotificationEntity {
-    return NotificationEntity(
+fun NotificationUiModel.toMarkedEntity(): MarkedNotificationEntity {
+    return MarkedNotificationEntity(
         id = id,
 //        title = title,
 //        content = content,
@@ -102,17 +132,18 @@ fun NotificationUiModel.toEntity(): NotificationEntity {
     )
 }
 
-//fun NotificationEntity.toUiModel(): NotificationUiModel {
-//    return NotificationUiModel(
-//        id = id,
-//        title = title,
-//        content = content,
-//        sender = sender,
-//        deadline = deadline,
-//        isRead = isRead,
-//        createdAt = createdAt,
-//        createdTime = createdTime,
-//        createdDate = createdDate,
-//        createdAgo = createdAgo
-//    )
-//}
+fun NotificationEntity.toUiModel(): NotificationUiModel {
+    return NotificationUiModel(
+        id = id,
+        title = title,
+        content = content,
+        sender = sender,
+        deadline = deadline,
+        isRead = isRead,
+        createdAt = createdAt,
+        createdTime = createdTime,
+        createdDate = createdDate,
+        createdAgo = createdAgo,
+        referenceType = referenceType
+    )
+}

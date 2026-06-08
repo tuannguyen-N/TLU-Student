@@ -43,7 +43,9 @@ class MyApplication : Application() {
             androidAppContainer.messageRepository,
             androidAppContainer.userRepository,
             androidAppContainer.searchHistoryRepository,
-            androidAppContainer.presenceRepository
+            androidAppContainer.presenceRepository,
+            androidAppContainer.notificationSocket,
+            androidAppContainer.paymentSocket
         )
         handleFirebaseToken()
 

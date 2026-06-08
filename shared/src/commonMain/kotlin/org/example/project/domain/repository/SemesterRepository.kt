@@ -7,7 +7,7 @@ import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.AppResult
 
 import org.example.project.data.local.dao.SemesterDao
-import org.example.project.data.mapper.toEntity
+import org.example.project.data.mapper.toMarkedEntity
 import org.example.project.data.mapper.toSemester
 
 class SemesterRepository(
@@ -22,7 +22,7 @@ class SemesterRepository(
             val data = semesterApi.getSemesters().data
                 ?: return AppResult.Failure(message = "Không có dữ liệu học kỳ")
 
-            semesterDao.insertSemesters(data.map { it.toEntity() })
+            semesterDao.insertSemesters(data.map { it.toMarkedEntity() })
 
             _semesters.value = data
             AppResult.Success(data)

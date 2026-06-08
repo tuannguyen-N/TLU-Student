@@ -13,7 +13,6 @@ import org.example.project.data.remote.dto.payment.CreateOrderPaymentResponse
 class PaymentApi(
     private val client: HttpClient
 ) {
-
     suspend fun createOrderPayment(invoiceId: Int, provider: String): CreateOrderPaymentResponse {
         return client.post("/api/v1/payments/create-order") {
             contentType(ContentType.Application.Json)

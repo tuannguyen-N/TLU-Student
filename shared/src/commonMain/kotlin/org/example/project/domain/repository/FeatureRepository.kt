@@ -3,7 +3,7 @@ package org.example.project.domain.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.example.project.data.local.dao.FeatureDao
-import org.example.project.data.mapper.toEntity
+import org.example.project.data.mapper.toMarkedEntity
 import org.example.project.data.mapper.toUiModel
 import org.example.project.domain.model.FeatureUiModel
 
@@ -16,18 +16,18 @@ class FeatureRepository(
     suspend fun seedDefaultsIfNeeded() {
         if (dao.getQuickAccessCount() == 0) {
             val defaults = FeatureUiModel.getQuickAccessList()
-            dao.insertAll(defaults.mapIndexed { index, item -> item.toEntity(index) })
+            dao.insertAll(defaults.mapIndexed { index, item -> item.toMarkedEntity(index) })
         }
     }
 
     suspend fun addToQuickAccess(feature: FeatureUiModel, order: Int) =
-        dao.insert(feature.toEntity(order))
+        dao.insert(feature.toMarkedEntity(order))
 
     suspend fun removeFromQuickAccess(feature: FeatureUiModel) =
-        dao.delete(feature.toEntity(0))
+        dao.delete(feature.toMarkedEntity(0))
 
     suspend fun reorderQuickAccess(reorderedList: List<FeatureUiModel>) {
-        val entities = reorderedList.mapIndexed { index, item -> item.toEntity(index) }
+        val entities = reorderedList.mapIndexed { index, item -> item.toMarkedEntity(index) }
         dao.insertAll(entities)
     }
 }

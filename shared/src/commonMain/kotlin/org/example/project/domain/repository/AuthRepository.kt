@@ -10,7 +10,8 @@ class AuthRepository(
     private val authApi: AuthApi,
     private val tokenStorage: TokenStorage,
     private val imageStorage: ImageBase64Storage,
-    private val firebaseStorage: FirebaseStorage
+    private val firebaseStorage: FirebaseStorage,
+    private val notificationRepository: NotificationRepository
 ) {
     suspend fun login(microsoftAccessToken: String, deviceId: String): AppResult<Unit> {
         return try {
@@ -36,6 +37,7 @@ class AuthRepository(
         tokenStorage.clearRefreshToken()
         imageStorage.clearImageBase64()
         firebaseStorage.clearAllTopics()
+        notificationRepository.stopRealtime()
         // TODO: delete token cloud in firestore
     }
 }

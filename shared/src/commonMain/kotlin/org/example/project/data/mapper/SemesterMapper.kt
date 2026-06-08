@@ -10,7 +10,7 @@ import org.example.project.data.remote.dto.semester.Semester
 
 import org.example.project.data.local.entity.SemesterEntity
 
-fun Semester.toEntity(): SemesterEntity {
+fun Semester.toMarkedEntity(): SemesterEntity {
     return SemesterEntity(
         id = id,
         semesterName = semesterName,

@@ -50,6 +50,11 @@ kotlin {
             implementation("com.google.firebase:firebase-firestore")
             implementation("com.google.firebase:firebase-auth")
             implementation("com.google.firebase:firebase-database")
+            implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+            implementation("org.java-websocket:Java-WebSocket:1.5.2")
+            implementation("com.squareup.okhttp3:okhttp:4.12.0")
+            implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+            implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
