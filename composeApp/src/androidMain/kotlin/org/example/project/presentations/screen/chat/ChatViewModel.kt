@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -34,11 +35,7 @@ class ChatViewModel(
 
     private fun loadChatContext() {
         viewModelScope.launch {
-            chatRepository.getChatbotContext().onSuccess {
-                updateState { copy(chatbotContext = it) }
-            }.onFailure {
-                updateState { copy(error = it.message) }
-            }
+            chatRepository.refreshChatbotContext()
         }
     }
 
@@ -63,13 +60,12 @@ class ChatViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             chatRepository.streamChat(
                 prompt,
-                messages = _uiState.value.messages.take(3).map {
+                messages = _uiState.value.messages.take(5).map {
                     ChatMessageContext(
                         content = it.text,
                         role = if (it.isUser) "user" else "assistant"
                     )
-                },
-                _uiState.value.chatbotContext!!
+                }
             )
                 .onStart { updateState { copy(isLoading = true) } }
                 .onEach { event ->
@@ -79,6 +75,7 @@ class ChatViewModel(
                                 .replace("\\n", "\n")
                                 .replace("\\r", "")
                                 .replace("\\t", "\t")
+                            Log.e("STREAM", "token=${decodedText}")
 
                             val currentMessages = _uiState.value.messages
                             val lastMsg = currentMessages.lastOrNull()
@@ -109,9 +106,5 @@ class ChatViewModel(
                 }
                 .launchIn(this)
         }
-    }
-
-    fun clearError() {
-        updateState { copy(error = null) }
     }
 }

@@ -25,7 +25,8 @@ class NotificationApi(
         size: Int,
         search: String?
     ): NotificationResponse {
-        return client.post("/api/v1/notification?size=$size&page=$page&search=$search") {
+
+        return client.post("/api/v1/notification?size=$size&page=$page${if (search == null)"" else "&search=$search"}") {
             contentType(ContentType.Application.Json)
             setBody(
                 NotificationRequest(

@@ -6,9 +6,11 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
@@ -24,14 +26,36 @@ class ChatRepository(
     private val httpClient: HttpClient,
     private val chatApi: ChatApi
 ) {
+
     private val json = Json { ignoreUnknownKeys = true }
+
+    private val _chatbotContext = MutableStateFlow<ChatbotContextData?>(null)
+
+    suspend fun refreshChatbotContext(): AppResult<ChatbotContextData> {
+        return try {
+            val data = chatApi.getChatbotContext().data
+            if (data != null) {
+                _chatbotContext.value = data
+                AppResult.Success(data)
+            } else {
+                AppResult.Failure(null)
+            }
+        } catch (e: Exception) {
+            AppResult.Failure(e.message, e)
+        }
+    }
 
     fun streamChat(
         prompt: String,
-        messages: List<ChatMessageContext>,
-        chatbotContext: ChatbotContextData
+        messages: List<ChatMessageContext>
     ): Flow<SseEvent> = flow {
-        val request = ChatRequest(prompt = prompt, context = chatbotContext, messages = messages)
+        val context = _chatbotContext.value
+
+        val request = ChatRequest(
+            prompt = prompt,
+            context = context,
+            messages = messages
+        )
 
         httpClient.preparePost(
             "https://tl-chatbot.nhokthanh3211.workers.dev/api/v1/agent-chat-stream"
@@ -39,7 +63,8 @@ class ChatRepository(
             contentType(ContentType.Application.Json)
             setBody(request)
         }.execute { response ->
-            val channel: ByteReadChannel = response.bodyAsChannel()
+            val channel = response.bodyAsChannel()
+
             try {
                 while (!channel.isClosedForRead) {
                     val line = channel.readUTF8Line() ?: break
@@ -70,19 +95,6 @@ class ChatRepository(
             } catch (e: Exception) {
                 emit(SseEvent.Error(e.message ?: "Stream error"))
             }
-        }
-    }
-
-    suspend fun getChatbotContext(): AppResult<ChatbotContextData> {
-        try {
-            val data = chatApi.getChatbotContext().data
-            return if (data != null) {
-                AppResult.Success(data)
-            } else {
-                AppResult.Failure(null)
-            }
-        } catch (e: Exception) {
-            return AppResult.Failure(e.message, e)
         }
     }
 }

@@ -1,6 +1,10 @@
 package org.example.project.domain.model
 
-enum class MessageType { TEXT, FILE, IMAGE }
+enum class MessageType {
+    TEXT,
+    FILE,
+    IMAGE
+}
 
 data class Message(
     val id: String = "",
@@ -10,5 +14,6 @@ data class Message(
     val fileName: String? = null,
     val fileSize: String? = null,
     val type: String = MessageType.TEXT.name,
-    val timestamp: Long = 0L
+    val timestamp: Long = 0L,
+    val senderType: String = "USER"
 )

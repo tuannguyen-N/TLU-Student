@@ -10,6 +10,5 @@ data class ChatState(
     val isLoading: Boolean = false,
     val error: String? = null,
 
-    val messageContext: List<ChatMessageContext> = emptyList(),
     val chatbotContext: ChatbotContextData? = null
 )

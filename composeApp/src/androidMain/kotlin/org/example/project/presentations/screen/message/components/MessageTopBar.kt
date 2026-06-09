@@ -71,8 +71,8 @@ import org.example.project.presentations.utils.DateTimeUtils.formatLastSeenTopBa
 fun MessageTopBar(
     chatUser: UserUiModel,
     onBack: () -> Unit = {},
-    isExpanded: Boolean,                    // nhận từ ngoài
-    onExpandChange: (Boolean) -> Unit,      // nhận từ ngoài
+    isExpanded: Boolean,
+    onExpandChange: (Boolean) -> Unit,
     expandedContent: @Composable (() -> Unit)? = null
 ) {
     val color = LocalExtendedColors.current
@@ -131,7 +131,6 @@ fun MessageTopBar(
                 )
             }
 
-            // Avatar Box — giữ nguyên layout modifier
             Box(
                 modifier = Modifier
                     .fillMaxSize()

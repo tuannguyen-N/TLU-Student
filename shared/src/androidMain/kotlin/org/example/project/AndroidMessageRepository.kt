@@ -22,6 +22,7 @@ import org.example.project.domain.model.Message
 import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
+import org.example.project.domain.model.SenderType
 import org.example.project.domain.model.User
 import org.example.project.domain.repository.MessageRepository
 
@@ -235,6 +236,7 @@ class AndroidMessageRepository(
     override suspend fun sendMessage(
         roomId: String,
         currentUserId: String,
+        senderType: SenderType,
         message: String
     ) {
         val participantIds = roomId.split("_")
@@ -257,13 +259,12 @@ class AndroidMessageRepository(
             "senderId" to currentUserId,
             "text" to message,
             "type" to MessageType.TEXT.name,
+            "senderType" to senderType.name,
             "timestamp" to currentTimeMillis
         )
 
         firestore.runTransaction { transaction ->
-
             transaction.set(messageRef, messageData)
-
             transaction.update(
                 roomRef,
                 mapOf(

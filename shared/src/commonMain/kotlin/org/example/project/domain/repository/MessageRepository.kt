@@ -3,6 +3,7 @@ package org.example.project.domain.repository
 import kotlinx.coroutines.flow.Flow
 import org.example.project.domain.model.ConversationUiState
 import org.example.project.domain.model.MessageUiState
+import org.example.project.domain.model.SenderType
 
 interface MessageRepository {
     fun observeConversations(
@@ -28,6 +29,7 @@ interface MessageRepository {
     suspend fun sendMessage(
         roomId: String,
         currentUserId: String,
+        senderType: SenderType,
         message: String
     )
 

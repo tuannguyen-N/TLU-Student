@@ -6,6 +6,7 @@ import org.example.project.domain.model.Message
 import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
+import org.example.project.domain.model.SenderType
 import org.example.project.domain.model.User
 import org.example.project.domain.utils.DateTimeUtils
 
@@ -41,6 +42,7 @@ fun Message.toUiState(
         type = type,
         timestamp = timestamp,
         isMe = senderId.equals(currentUserId, ignoreCase = true),
-        status = status
+        status = status,
+        senderType = SenderType.valueOf(senderType)
     )
 }

@@ -760,7 +760,8 @@ fun AppNavGraph(
                 MessageViewModelFactory(
                     container.messageRepository,
                     container.studentUseCase,
-                    container.presenceRepository
+                    container.presenceRepository,
+                    container.chatRepository
                 )
             }
 

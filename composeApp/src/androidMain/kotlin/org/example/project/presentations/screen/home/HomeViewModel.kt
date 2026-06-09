@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.example.project.data.mapper.getTodayDayOfWeek
 import org.example.project.data.remote.dto.student_search.StudentSummary
-import org.example.project.data.remote.interceptor.AuthPluginConfig
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.repository.FeatureRepository
 import org.example.project.domain.repository.NewsRepository
@@ -73,6 +72,7 @@ class HomeViewModel(
 
     private fun observeReadNotifications() {
         notificationRepository.hasUnreadNotifications.onEach { hasUnread ->
+            Log.d("HomeVM", "hasUnread = $hasUnread")
             updateState { copy(isAllNotificationsRead = !hasUnread) }
         }.launchIn(viewModelScope)
     }
@@ -94,27 +94,28 @@ class HomeViewModel(
         viewModelScope.launch { loadCourseClasses() }
         viewModelScope.launch { loadNews() }
         viewModelScope.launch { loadDailyQuote() }
-        viewModelScope.launch { loadAlert() }
-        viewModelScope.launch { loadExamDaySchedule() }
+        viewModelScope.launch { loadNotification() }
     }
 
-    private suspend fun loadExamDaySchedule() {
-        examScheduleRepository.getExamDaySchedule(
-            _uiState.value.currentSemester?.semesterCode ?: ""
-        ).onSuccess {
-            updateState { copy(examDayScheduleList = it) }
-        }
+    private suspend fun loadNotification() {
+        notificationRepository.getInitialNotifications()
     }
 
     private suspend fun loadSemester() {
-        semesterUseCase.getSemesters(true)
+        semesterUseCase.getSemesters().onSuccess { semesterList ->
+            viewModelScope.launch {
+                loadExamDaySchedule(semesterList?.lastOrNull()?.semesterCode ?: "")
+            }
+        }
     }
 
-    private suspend fun loadAlert() {
-        withDelayedLoading(
-            onLoading = { updateState { copy(loadingAlertList = it) } }
-        ) {
-            notificationRepository.getNotifications(forceRefresh = true)
+    private suspend fun loadExamDaySchedule(semester: String) {
+        examScheduleRepository.getExamDaySchedule(
+            semester
+        ).onSuccess {
+            updateState { copy(examDayScheduleList = it) }
+        }.onFailure {
+            Log.e("123123", "loadExamDaySchedule: $it")
         }
     }
 
@@ -174,7 +175,7 @@ class HomeViewModel(
             updateState { copy(isRefreshing = true) }
             try {
                 loadCourseClasses()
-                loadAlert()
+                loadNotification()
             } finally {
                 delay(400)
                 updateState { copy(isRefreshing = false) }

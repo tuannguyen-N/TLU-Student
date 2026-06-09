@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -65,32 +68,58 @@ fun NotificationList(
     LazyColumn(
         modifier = modifier, state = listState
     ) {
-        items(items = notifications, key = { it.id }) { item ->
-            NotificationItem(
-                notification = item,
-                color = color,
-                modifier = Modifier
-                    .animateItem()
-                    .combinedClickable(
-                        onLongClick = { onShowBottomSheet() },
-                        onClick = { onClickNotification(item) })
-            )
-            HorizontalDivider(
-                thickness = 0.2.dp,
-                color = LocalExtendedColors.current.gray,
-                modifier = Modifier.padding(start = 60.dp)
-            )
-        }
-
-        item {
-            when {
-                isLoadingMore -> Box(
+        if (notifications.isEmpty()) {
+            item {
+                val senderLabel = when (selectedTab) {
+                    1 -> "Hệ thống"
+                    2 -> "Giảng viên"
+                    3 -> "Khoa"
+                    else -> null
+                }
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
+                        .fillParentMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    Text(
+                        text = if (senderLabel != null) "Không có thông báo từ $senderLabel"
+                        else "Không có thông báo nào",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = color.gray
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        } else {
+
+            items(items = notifications, key = { it.id }) { item ->
+                NotificationItem(
+                    notification = item,
+                    color = color,
+                    modifier = Modifier
+                        .animateItem()
+                        .combinedClickable(
+                            onLongClick = { onShowBottomSheet() },
+                            onClick = { onClickNotification(item) })
+                )
+                HorizontalDivider(
+                    thickness = 0.2.dp,
+                    color = LocalExtendedColors.current.gray,
+                    modifier = Modifier.padding(start = 60.dp)
+                )
+            }
+
+            item {
+                when {
+                    isLoadingMore -> Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    }
                 }
             }
         }

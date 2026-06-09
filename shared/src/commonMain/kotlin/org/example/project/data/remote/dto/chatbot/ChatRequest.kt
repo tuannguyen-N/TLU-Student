@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class ChatRequest(
     val prompt: String,
     val messages: List<ChatMessageContext> = emptyList(),
-    val context: ChatbotContextData
+    val context: ChatbotContextData?
 )
 
 @Serializable

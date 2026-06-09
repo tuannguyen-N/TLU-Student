@@ -95,7 +95,7 @@ fun HomeScreen(
                         modifier = Modifier.padding(horizontal = 20.dp),
                         onClickViewTomorrow = onOpenScheduleScreen,
                         color = color,
-                        daySchedule = uiState.dayScheduleList
+                        daySchedule = uiState.upcomingSchedules
                     )
                 }
 

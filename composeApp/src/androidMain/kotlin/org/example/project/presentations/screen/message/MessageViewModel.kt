@@ -3,6 +3,8 @@ package org.example.project.presentations.screen.message
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,22 +15,32 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.example.project.data.remote.dto.chatbot.ChatMessageContext
 import org.example.project.domain.MessagePage
 import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
+import org.example.project.domain.model.SenderType
+import org.example.project.domain.model.SseEvent
 import org.example.project.domain.model.UserUiModel
+import org.example.project.domain.repository.ChatRepository
 import org.example.project.domain.repository.MessageRepository
 import org.example.project.domain.repository.PresenceRepository
 import org.example.project.domain.usecase.StudentUseCase
@@ -39,7 +51,8 @@ class MessageViewModel(
     savedStateHandle: SavedStateHandle,
     private val messageRepository: MessageRepository,
     private val studentUseCase: StudentUseCase,
-    private val presenceRepository: PresenceRepository
+    private val presenceRepository: PresenceRepository,
+    private val chatRepository: ChatRepository
 ) : ViewModel() {
 
     private val chatUserId: String = savedStateHandle["studentId"] ?: ""
@@ -74,11 +87,20 @@ class MessageViewModel(
         uiState.map { it.olderMessages }.distinctUntilChanged()
     ) { remote, pending, older ->
         val latestRemoteTime = remote.maxOfOrNull { it.timestamp } ?: 0L
-        val stillPending = pending.filter { it.timestamp > latestRemoteTime }
         val remoteIds = remote.map { it.id }.toSet()
+        val stillPending = pending.filter { p ->
+            when {
+                p.senderType == SenderType.AI && p.status == MessageStatus.SENDING -> true
+                p.senderType == SenderType.AI && p.status == MessageStatus.SENT ->
+                    remote.none { r -> r.senderType == SenderType.AI && r.text == p.text }
+                else -> p.timestamp > latestRemoteTime
+            }
+        }
         val filteredOlder = older.filter { it.id !in remoteIds }
-        (filteredOlder + remote + stillPending).sortedBy { it.timestamp }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        (filteredOlder + remote + stillPending)
+            .sortedBy { messageSortKey(it, latestRemoteTime, remoteIds) }
+    }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         observeMessagesLoaded()
@@ -88,6 +110,13 @@ class MessageViewModel(
         loadChatStudent()
         loadInitialMessages()
         enterChatRoom()
+        loadChatContext()
+    }
+
+    private fun loadChatContext() {
+        viewModelScope.launch {
+            chatRepository.refreshChatbotContext()
+        }
     }
 
     private fun loadInitialMessages() {
@@ -146,15 +175,15 @@ class MessageViewModel(
     private fun observeUserOnlineStatus() {
         viewModelScope.launch {
             presenceRepository.observePresence(chatUserId).collect { chatUserPresence ->
-                    updateState {
-                        copy(
-                            chatUser = chatUser?.copy(
-                                isOnline = chatUserPresence.isOnline,
-                                lastSeen = chatUserPresence.lastSeen
-                            )
+                updateState {
+                    copy(
+                        chatUser = chatUser?.copy(
+                            isOnline = chatUserPresence.isOnline,
+                            lastSeen = chatUserPresence.lastSeen
                         )
-                    }
+                    )
                 }
+            }
         }
     }
 
@@ -173,7 +202,14 @@ class MessageViewModel(
     }
 
     fun onMessageChange(message: String) {
-        updateState { copy(message = message) }
+        updateState {
+            copy(
+                message = TextFieldValue(
+                    text = message,
+                    selection = TextRange(message.length)
+                )
+            )
+        }
     }
 
     fun onImageSelected(uri: Uri?, context: Context) {
@@ -204,7 +240,7 @@ class MessageViewModel(
 
     fun onSend(fileName: String? = null, fileSize: String? = null) {
         val state = _uiState.value
-        val text = state.message.trim()
+        val text = state.message.text.trim()
         val imageBytes = state.selectedImageBytes
         val fileBytes = state.selectedFileBytes
 
@@ -212,7 +248,7 @@ class MessageViewModel(
 
         updateState {
             copy(
-                message = "",
+                message = TextFieldValue(text = "", selection = TextRange(0)),
                 selectedImageUri = null,
                 selectedImageBytes = null,
                 selectedFileUri = null,
@@ -242,8 +278,170 @@ class MessageViewModel(
         val pending = buildPendingMessage(type = MessageType.TEXT, text = text)
         addPending(pending)
         viewModelScope.launch {
-            messageRepository.sendMessage(roomId, currentUserId, text)
+            messageRepository.sendMessage(roomId, currentUserId, SenderType.USER, text)
         }
+
+        if (isMentionTluAi(text)) {
+            askTluAi(text, afterTimestamp = pending.timestamp)
+        }
+    }
+
+    private fun askTluAi(message: String, afterTimestamp: Long = 0L) {
+        val prompt = message
+            .replace("@tlu_ai", "")
+            .trim()
+
+        val aiMessageId = UUID.randomUUID().toString()
+        val aiTimestamp = maxOf(
+            messages.value.maxOfOrNull { it.timestamp } ?: 0L,
+            _uiState.value.pendingMessages.maxOfOrNull { it.timestamp } ?: 0L,
+            afterTimestamp,
+            System.currentTimeMillis()
+        ) + 1
+
+        updateState {
+            copy(
+                isAiReplying = true,
+                pendingMessages = pendingMessages + MessageUiState(
+                    id = aiMessageId,
+                    senderId = "tlu_ai",
+                    text = "",
+                    timestamp = aiTimestamp,
+                    isMe = false,
+                    status = MessageStatus.SENDING,
+                    type = MessageType.TEXT.name,
+                    senderType = SenderType.AI
+                )
+            )
+        }
+
+        val contextMessages = messages.value
+            .filter {
+                it.senderType == SenderType.AI ||
+                        (it.senderType == SenderType.USER && isMentionTluAi(it.text ?: ""))
+            }
+            .takeLast(3)
+            .map {
+                ChatMessageContext(
+                    content = it.text?.replace(Regex("(?<!\\w)@tlu_ai(?!\\w)"), "")?.trim()
+                        ?: "",
+                    role = if (it.senderType == SenderType.AI) "assistant" else "user"
+                )
+            }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            chatRepository.streamChat(
+                prompt = prompt,
+                messages = contextMessages,
+            )
+                .onStart { updateState { copy(isAiReplying = true) } }
+                .onEach { event ->
+                    when (event) {
+                        is SseEvent.Token -> {
+                            val decodedText = event.text
+                                .replace("\\n", "\n")
+                                .replace("\\r", "")
+                                .replace("\\t", "\t")
+                            Log.e("STREAM", "token=${decodedText}")
+
+                            updateState {
+                                val existing = pendingMessages.find { it.id == aiMessageId }
+                                if (existing == null) {
+                                    copy(
+                                        pendingMessages = pendingMessages +
+                                                MessageUiState(
+                                                    id = aiMessageId,
+                                                    senderId = "tlu_ai",
+                                                    text = decodedText,
+                                                    timestamp = aiTimestamp,
+                                                    isMe = false,
+                                                    status = MessageStatus.SENDING,
+                                                    type = MessageType.TEXT.name,
+                                                    senderType = SenderType.AI
+                                                )
+                                    )
+                                } else {
+                                    copy(
+                                        pendingMessages =
+                                            pendingMessages.map {
+                                                if (it.id == aiMessageId) {
+                                                    it.copy(text = (it.text ?: "") + decodedText)
+                                                } else {
+                                                    it
+                                                }
+                                            }
+                                    )
+                                }
+                            }
+                        }
+
+                        is SseEvent.Done -> {
+                            val aiMessage =
+                                _uiState.value.pendingMessages.find { it.id == aiMessageId }
+
+                            updateState {
+                                copy(
+                                    isAiReplying = false,
+                                    pendingMessages =
+                                        pendingMessages.map {
+                                            if (it.id == aiMessageId) {
+                                                it.copy(status = MessageStatus.SENT)
+                                            } else {
+                                                it
+                                            }
+                                        }
+                                )
+                            }
+
+                            aiMessage?.text?.let { content ->
+                                messageRepository.sendMessage(
+                                    roomId = roomId,
+                                    currentUserId = "tlu_ai",
+                                    senderType = SenderType.AI,
+                                    message = content
+                                )
+                            }
+                        }
+
+                        is SseEvent.Error -> {
+                            updateState {
+                                copy(
+                                    isAiReplying = false,
+                                    pendingMessages =
+                                        pendingMessages.map {
+                                            if (it.id == aiMessageId) {
+                                                it.copy(status = MessageStatus.FAILED)
+                                            } else {
+                                                it
+                                            }
+                                        }
+                                )
+                            }
+                        }
+                    }
+                }
+                .catch {
+                    updateState {
+                        copy(
+                            isAiReplying = false,
+                            pendingMessages =
+                                pendingMessages.map {
+                                    if (it.id == aiMessageId) {
+                                        it.copy(status = MessageStatus.FAILED)
+                                    } else {
+                                        it
+                                    }
+                                }
+                        )
+                    }
+                }
+                .launchIn(this)
+        }
+    }
+
+    private fun isMentionTluAi(text: String): Boolean {
+        return Regex("(?<!\\w)@tlu_ai(?!\\w)")
+            .containsMatchIn(text)
     }
 
     private fun sendImageMessage(imageUri: Uri?, imageBytes: ByteArray, caption: String?) {
@@ -321,6 +519,17 @@ class MessageViewModel(
 
     private fun generateRoomId(user1: String, user2: String): String =
         listOf(user1, user2).sorted().joinToString("_")
+
+    private fun messageSortKey(
+        msg: MessageUiState,
+        latestRemoteTime: Long,
+        remoteIds: Set<String>
+    ): Long {
+        if (msg.senderType == SenderType.AI && msg.id !in remoteIds) {
+            return maxOf(msg.timestamp, latestRemoteTime + 1)
+        }
+        return msg.timestamp
+    }
 
     override fun onCleared() {
         leaveChatRoom()

@@ -82,7 +82,7 @@ fun MessageScreen(
             bottomBar = {
                 MessageInputBar(
                     state = uiState,
-                    onMessageChange = viewModel::onMessageChange,
+                    onMessageChange = { viewModel.onMessageChange(it.text) },
                     onSend = viewModel::onSend,
                     onImagePick = { viewModel.onImageSelected(it, context) },
                     onRemoveImage = viewModel::onRemoveImage,
@@ -103,7 +103,8 @@ fun MessageScreen(
                     onLoadMoreMessage = viewModel::loadMoreMessages,
                     isLoadingMore = uiState.isLoadingMore,
                     hasMoreMessages = uiState.hasMoreMessages,
-                    chatUser = uiState.chatUser
+                    chatUser = uiState.chatUser,
+                    isAiReplying = uiState.isAiReplying
                 )
             }
         }

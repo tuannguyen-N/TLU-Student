@@ -181,7 +181,7 @@ fun MessageItem(message: ChatMessage) {
 
 @Preview
 @Composable
-private fun TypingIndicator(modifier: Modifier = Modifier) {
+fun TypingIndicator(modifier: Modifier = Modifier) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.typing_indicator)
     )

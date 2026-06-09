@@ -2,6 +2,7 @@ package org.example.project.presentations.screen.message.components
 
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,7 +25,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -41,30 +42,33 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import org.example.project.presentations.screen.message.MessageState
 import org.example.project.presentations.theme.LocalExtendedColors
+import org.example.project.presentations.utils.buildMentionText
 
 @Composable
 fun MessageInputBar(
     modifier: Modifier = Modifier,
     state: MessageState,
-    onMessageChange: (String) -> Unit,
+    onMessageChange: (TextFieldValue) -> Unit,
     onSend: (fileName: String?, fileSize: String?) -> Unit,
     onImagePick: (Uri) -> Unit = {},
     onRemoveImage: () -> Unit = {},
@@ -73,9 +77,47 @@ fun MessageInputBar(
 ) {
     val color = LocalExtendedColors.current
     val context = LocalContext.current
-    val hasText = state.message.isNotBlank()
+    val hasText = state.message.text.isNotBlank()
     val hasImage = state.selectedImageUri != null
     val hasFile = state.selectedFileUri != null
+
+    val mentionSuggestions = listOf("tlu_ai")
+
+    val mentionQuery = run {
+        val lastAt = state.message.text.lastIndexOf('@')
+        if (lastAt >= 0) {
+            val after = state.message.text.substring(lastAt + 1)
+            if (!after.contains(' ')) after else null
+        } else {
+            null
+        }
+    }
+
+    val filteredMentions = mentionQuery?.let { query ->
+        mentionSuggestions.filter {
+            it.startsWith(query, ignoreCase = true)
+        }
+    } ?: emptyList()
+
+    val showMentionSuggestions = filteredMentions.isNotEmpty()
+
+    LaunchedEffect(state.message) {
+        Log.d("MENTION", "message=${state.message}")
+        Log.d("MENTION", "query=$mentionQuery")
+        Log.d("MENTION", "show=$showMentionSuggestions")
+    }
+
+    fun onMentionSelect(mention: String) {
+        val lastAt = state.message.text.lastIndexOf('@')
+        if (lastAt >= 0) {
+            val newText =
+                state.message.text.take(lastAt) + "@$mention "
+
+            onMessageChange(
+                TextFieldValue(text = newText, selection = TextRange(newText.length))
+            )
+        }
+    }
 
     val fileName = remember(state.selectedFileUri) {
         state.selectedFileUri?.let { uri ->
@@ -118,6 +160,69 @@ fun MessageInputBar(
         modifier = modifier.fillMaxWidth()
     ) {
         Column {
+            AnimatedVisibility(
+                visible = showMentionSuggestions,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+
+                    filteredMentions.forEach { mention ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFFF0F4FF))
+                                .border(
+                                    width = 1.dp,
+                                    color = Color(0xFFD0DCFF),
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .clickable { onMentionSelect(mention) }
+                                .padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF1A73E8)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "AI",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                )
+                            }
+                            Column {
+                                Text(
+                                    text = "@$mention",
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color(0xFF1A73E8)
+                                    )
+                                )
+                                Text(
+                                    text = "TLU AI Assistant",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = Color(0xFF8E8E93)
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             AnimatedVisibility(
                 visible = hasImage,
                 enter = fadeIn() + expandVertically(),
@@ -238,32 +343,47 @@ fun MessageInputBar(
             }
 
             Row(
-                modifier = Modifier.padding(horizontal = 8.dp).padding(top = 4.dp, bottom = 8.dp),
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .padding(top = 4.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedTextField(
+                BasicTextField(
                     value = state.message,
-                    onValueChange = { onMessageChange(it) },
+                    onValueChange = onMessageChange,
                     modifier = Modifier
-                        .weight(1f),
-                    placeholder = {
-                        Text(
-                            "Nhập tin nhắn...",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color(0xFF8E8E93)
-                            )
+                        .weight(1f)
+                        .border(
+                            width = 1.dp,
+                            color = Color(0xFFE0E0E0),
+                            shape = RoundedCornerShape(18.dp)
                         )
-                    },
-                    shape = RoundedCornerShape(18.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF1A73E8),
-                        unfocusedBorderColor = Color(0xFFE0E0E0),
-                        focusedContainerColor = Color(0xFFF5F5F5),
-                        unfocusedContainerColor = Color(0xFFF5F5F5)
+                        .background(
+                            Color(0xFFF5F5F5),
+                            RoundedCornerShape(18.dp)
+                        )
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        color = Color.Transparent
                     ),
-                    textStyle = MaterialTheme.typography.bodyMedium,
-                    maxLines = 4,
-                    singleLine = false
+                    cursorBrush = SolidColor(Color(0xFF1A73E8)),
+                    decorationBox = { innerTextField ->
+                        Box {
+                            if (state.message.text.isEmpty()) {
+                                Text(
+                                    text = "Nhập tin nhắn...",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = Color(0xFF8E8E93)
+                                    )
+                                )
+                            }
+                            Text(
+                                text = buildMentionText(state.message.text),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            innerTextField()
+                        }
+                    }
                 )
 
                 Spacer(modifier = Modifier.width(6.dp))

@@ -46,7 +46,8 @@ fun MessageContent(
     modifier: Modifier = Modifier,
     onClickFile: (String) -> Unit,
     onClickImage: (String) -> Unit,
-    onLoadMoreMessage: () -> Unit
+    onLoadMoreMessage: () -> Unit,
+    isAiReplying: Boolean
 ) {
     var visibleTimeId by remember { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
@@ -121,7 +122,8 @@ fun MessageContent(
                             onClickImage = onClickImage,
                             onClickFile = onClickFile,
                             avatarUrl = chatUser?.avatarUrl,
-                            chatUserName = chatUser?.name ?: ""
+                            chatUserName = chatUser?.name ?: "",
+                            isAiReplying = isAiReplying
                         )
                     }
 

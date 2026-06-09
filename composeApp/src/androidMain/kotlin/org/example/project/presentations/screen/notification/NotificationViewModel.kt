@@ -81,7 +81,6 @@ class NotificationViewModel(
     private fun loadInitialData() {
         viewModelScope.launch {
             val results = notificationRepository.getInitialNotifications()
-
             _tabPagination.update { current ->
                 current.toMutableMap().apply {
                     results.forEach { (sender, result) ->

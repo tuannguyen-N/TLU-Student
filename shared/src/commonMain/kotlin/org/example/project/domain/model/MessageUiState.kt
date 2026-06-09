@@ -10,5 +10,11 @@ data class MessageUiState(
     val type: String,
     val timestamp: Long,
     val isMe: Boolean,
-    val status: MessageStatus = MessageStatus.SENDING
+    val status: MessageStatus = MessageStatus.SENDING,
+    val senderType: SenderType = SenderType.USER
 )
+
+enum class SenderType {
+    USER,
+    AI
+}

@@ -106,13 +106,17 @@ class NotificationRepository(
                 page = page,
                 size = size,
                 search = sender
-            ).data ?: error("Empty")
+            ).data
+                ?: error("Empty")
 
             if (forceRefresh && page == 0) {
-                if (sender == null)
+                if (sender == null) {
                     notificationDao.clearNotifications()
-                else
+                    print("NOTI CLEAR ALL")
+                } else {
                     notificationDao.clearNotificationsBySender(sender)
+                    print("NOTI INSERT ${data.content.size}")
+                }
             }
 
             notificationDao.insertNotifications(data.content.map { it.toEntity() })
