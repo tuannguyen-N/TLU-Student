@@ -39,7 +39,7 @@ fun TypeFeedbackMenu(
         ) {
             LazyColumn(
                 modifier = Modifier
-                    .width(400.dp)
+                    .width(300.dp)
                     .background(Color.White),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -56,10 +56,9 @@ fun TypeFeedbackMenu(
                             text = item.description,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 13.dp),
+                                .padding(vertical = 13.dp, horizontal = 10.dp),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black,
-                            textAlign = TextAlign.Center
+                            color = Color.Black
                         )
                     }
 

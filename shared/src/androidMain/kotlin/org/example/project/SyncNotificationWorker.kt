@@ -16,7 +16,7 @@ class SyncNotificationWorker(
     }
 
     override suspend fun doWork(): Result {
-        return notificationRepository.getNotifications(true).fold(
+        return notificationRepository.getNotifications(forceRefresh = true).fold(
             onSuccess = { Result.success() },
             onFailure = { Result.retry() }
         )

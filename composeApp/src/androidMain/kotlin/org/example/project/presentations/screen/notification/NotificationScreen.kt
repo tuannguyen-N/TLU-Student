@@ -16,13 +16,17 @@ fun NotificationScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val notifications by viewModel.filteredNotifications.collectAsState()
+    val tabPagination by viewModel.currentTabPagination.collectAsState()
+    val unreadMap by viewModel.unreadMap.collectAsState()
 
     StatusBarStyle(darkIcons = true)
 
     NotificationContent(
         uiState = uiState,
+        tabPagination = tabPagination,
         notifications = notifications,
         onBack = onBack,
+        unreadMap = unreadMap,
         onClickNotification = {
             viewModel.onRead(it)
             onOpenNotificationDetail(it.id)

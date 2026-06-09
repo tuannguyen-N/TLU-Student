@@ -57,13 +57,19 @@ fun TuitionCard(
                     LabelView(
                         text = "Đã thanh toán",
                         backgroundColor = color.green,
-                        textColor = color.white
+                        textColor = color.white,
+                        textStyle = MaterialTheme.typography.labelSmall.copy(
+                            color = color.white
+                        )
                     )
                 } else {
                     LabelView(
                         text = "Hạn: $deadline",
                         backgroundColor = color.red,
-                        textColor = color.white
+                        textColor = color.white,
+                        textStyle = MaterialTheme.typography.labelSmall.copy(
+                            color = color.white
+                        )
                     )
                 }
             }

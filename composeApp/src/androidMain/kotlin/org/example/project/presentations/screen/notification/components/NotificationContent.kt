@@ -15,12 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.example.project.domain.model.NotificationUiModel
 import org.example.project.presentations.screen.notification.NotificationState
+import org.example.project.presentations.screen.notification.TabPaginationState
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun NotificationContent(
     uiState: NotificationState,
+    tabPagination: TabPaginationState,
+    unreadMap: Map<Int, Boolean>,
     notifications: List<NotificationUiModel>,
     onBack: () -> Unit,
     onClickNotification: (NotificationUiModel) -> Unit,
@@ -51,7 +54,7 @@ fun NotificationContent(
                 color = color,
                 selectedTab = uiState.selectedTab,
                 onTabSelected = onTabSelected,
-                notifications = notifications
+                unreadMap = unreadMap
             )
             PullToRefreshBox(
                 isRefreshing = uiState.isRefreshing,
@@ -64,8 +67,8 @@ fun NotificationContent(
                     selectedTab = uiState.selectedTab,
                     onShowBottomSheet = onShowBottomSheet,
                     onClickNotification = onClickNotification,
-                    isLoadingMore = uiState.isLoadingMore,
-                    hasMore = uiState.hasMore,
+                    isLoadingMore = tabPagination.isLoadingMore,
+                    hasMore = tabPagination.hasMore,
                     onLoadMore = onLoadMore,
                     modifier = Modifier
                         .fillMaxHeight()

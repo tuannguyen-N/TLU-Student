@@ -114,7 +114,7 @@ class HomeViewModel(
         withDelayedLoading(
             onLoading = { updateState { copy(loadingAlertList = it) } }
         ) {
-            notificationRepository.getNotifications(true)
+            notificationRepository.getNotifications(forceRefresh = true)
         }
     }
 

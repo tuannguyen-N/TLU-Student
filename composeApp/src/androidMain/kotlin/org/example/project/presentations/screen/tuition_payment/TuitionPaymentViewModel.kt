@@ -36,7 +36,6 @@ class TuitionPaymentViewModel(
     private fun observePaymentRealtime() {
         viewModelScope.launch {
             paymentRepository.paymentEvents.collect { event ->
-
                 val currentDetail = _uiState.value.selectedTuitionDetail
                 if (currentDetail != null && currentDetail.tuitionId == event.tuitionId) {
                     tuitionRepository

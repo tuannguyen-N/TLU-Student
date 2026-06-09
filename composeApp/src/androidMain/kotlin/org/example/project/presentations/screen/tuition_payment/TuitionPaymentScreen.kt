@@ -70,7 +70,7 @@ fun TuitionPaymentScreen(
         }
 
         uiState.isInPaymentScreen && uiState.selectedTuitionDetail != null -> {
-            val detail: TuitionDetailUiModel = uiState.selectedTuitionDetail!!
+            val detail= uiState.selectedTuitionDetail!!
             PaymentScreen(
                 tuitionDetail = detail,
                 selectedPaymentType = uiState.selectedPaymentType,

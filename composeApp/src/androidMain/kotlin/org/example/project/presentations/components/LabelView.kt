@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -15,7 +16,10 @@ fun LabelView(
     text: String,
     backgroundColor: Color,
     textColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.labelMedium.copy(
+        color = textColor
+    )
 ) {
     Surface(
         shape = RoundedCornerShape(50),
@@ -25,9 +29,7 @@ fun LabelView(
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-            style = MaterialTheme.typography.labelMedium.copy(
-                color = textColor
-            ),
+            style = textStyle,
         )
     }
 }

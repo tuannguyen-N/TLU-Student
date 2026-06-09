@@ -4,6 +4,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -39,8 +41,28 @@ class NotificationRepository(
 ) {
     private lateinit var prepareNotificationData: PrepareNotificationData
 
-    private var isLastPage = false
+    private val lastPageMap = mutableMapOf(
+        null to false,
+        "SYSTEM" to false,
+        "LECTURER" to false,
+        "FACULTY" to false
+    )
     val readNotificationIds = markedNotificationDao.observeReadNotifications()
+    val allNotifications = buildNotificationFlow(null)
+    val systemNotifications = buildNotificationFlow("SYSTEM")
+    val lecturerNotifications = buildNotificationFlow("LECTURER")
+    val facultyNotifications = buildNotificationFlow("FACULTY")
+
+    private fun buildNotificationFlow(sender: String?) = combine(
+        if (sender == null)
+            notificationDao.observeNotifications()
+        else
+            notificationDao.observeNotificationsBySender(sender),
+        readNotificationIds
+    ) { notifications, readIds ->
+        val readSet = readIds.toSet()
+        notifications.map { it.toUiModel().copy(isRead = it.id in readSet) }
+    }
 
     val notifications = combine(
         notificationDao.observeNotifications(),
@@ -59,38 +81,63 @@ class NotificationRepository(
     private var realtimeJob: Job? = null
 
     suspend fun getNotifications(
+        sender: String? = null,
         forceRefresh: Boolean = false,
         page: Int = 0,
         size: Int = 15
     ): AppResult<Boolean> {
+        if (forceRefresh) lastPageMap[sender] = false
+        if (lastPageMap[sender] == true) return AppResult.Success(false)
+
+        return fetchNotifications(sender, page, forceRefresh, size)
+    }
+
+    private suspend fun fetchNotifications(
+        sender: String?,
+        page: Int,
+        forceRefresh: Boolean = false,
+        size: Int = 15
+    ): AppResult<Boolean> {
         return try {
-            if (forceRefresh) {
-                isLastPage = false
-            }
-
-            if (isLastPage) return AppResult.Success(false)
-
             val data = notificationApi.getNotifications(
                 oauthUserId = prepareNotificationData.oauthUserId,
                 facultyId = prepareNotificationData.facultyId,
                 studentClassId = prepareNotificationData.studentClassId,
                 page = page,
-                size = size
+                size = size,
+                search = sender
             ).data ?: error("Empty")
 
             if (forceRefresh && page == 0) {
-                notificationDao.clearNotifications()
+                if (sender == null)
+                    notificationDao.clearNotifications()
+                else
+                    notificationDao.clearNotificationsBySender(sender)
             }
 
-            notificationDao.insertNotifications(
-                data.content.map { it.toEntity() }
-            )
-
-            isLastPage = data.last
-            AppResult.Success(!isLastPage)
+            notificationDao.insertNotifications(data.content.map { it.toEntity() })
+            lastPageMap[sender] = data.last
+            AppResult.Success(!data.last)
 
         } catch (e: Exception) {
             AppResult.Failure(e.message, e)
+        }
+    }
+
+    suspend fun getInitialNotifications(): Map<String?, AppResult<Boolean>> {
+        val senders = listOf(null, "SYSTEM", "LECTURER", "FACULTY")
+        return coroutineScope {
+            senders.map { sender ->
+                sender to async {
+                    fetchNotifications(
+                        sender = sender,
+                        page = 0,
+                        forceRefresh = true
+                    )
+                }
+            }.associate { (sender, deferred) ->
+                sender to deferred.await()
+            }
         }
     }
 

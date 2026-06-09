@@ -9,7 +9,6 @@ import org.example.project.data.local.entity.NotificationEntity
 
 @Dao
 interface NotificationDao {
-
     @Query("SELECT * FROM notifications ORDER BY createdAt DESC, id DESC")
     fun observeNotifications(): Flow<List<NotificationEntity>>
 
@@ -21,4 +20,10 @@ interface NotificationDao {
 
     @Query("DELETE FROM notifications")
     suspend fun clearNotifications()
+
+    @Query("SELECT * FROM notifications WHERE sender = :sender ORDER BY createdAt DESC")
+    fun observeNotificationsBySender(sender: String): Flow<List<NotificationEntity>>
+
+    @Query("DELETE FROM notifications WHERE sender = :sender")
+    suspend fun clearNotificationsBySender(sender: String)
 }

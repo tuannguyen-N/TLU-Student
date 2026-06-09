@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.notification
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.example.project.domain.model.NotificationSender
 import org.example.project.domain.model.NotificationUiModel
 import org.example.project.domain.repository.NotificationRepository
 
@@ -22,62 +20,113 @@ class NotificationViewModel(
     private val _uiState = MutableStateFlow(NotificationState())
     val uiState = _uiState.asStateFlow()
 
+    private val tabSenderKeys = mapOf(0 to null, 1 to "SYSTEM", 2 to "LECTURER", 3 to "FACULTY")
+    private val _tabPagination = MutableStateFlow(
+        tabSenderKeys.values.associateWith { TabPaginationState() }
+    )
+
+    val allNotifications = notificationRepository.allNotifications
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val systemNotifications = notificationRepository.systemNotifications
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val lecturerNotifications = notificationRepository.lecturerNotifications
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val facultyNotifications = notificationRepository.facultyNotifications
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val unreadMap = combine(
+        allNotifications,
+        systemNotifications,
+        lecturerNotifications,
+        facultyNotifications
+    ) { all, system, lecturer, faculty ->
+        mapOf(
+            0 to all.any { !it.isRead },
+            1 to system.any { !it.isRead },
+            2 to lecturer.any { !it.isRead },
+            3 to faculty.any { !it.isRead }
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
+
+    val currentTabPagination = combine(
+        uiState.map { it.selectedTab },
+        _tabPagination
+    ) { tab, paginationMap ->
+        val sender = tabSenderKeys[tab]
+        paginationMap[sender] ?: TabPaginationState()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TabPaginationState())
+
     val filteredNotifications = combine(
-        notificationRepository.notifications,
-        uiState.map { it.selectedTab }
-    ) { notifications, tab ->
+        uiState.map { it.selectedTab },
+        notificationRepository.allNotifications,
+        notificationRepository.systemNotifications,
+        notificationRepository.lecturerNotifications,
+        notificationRepository.facultyNotifications
+    ) { tab, all, system, lecturer, faculty ->
         when (tab) {
-            1 -> notifications.filter { it.sender == NotificationSender.SYSTEM }
-            2 -> notifications.filter { it.sender == NotificationSender.LECTURER }
-            3 -> notifications.filter { it.sender == NotificationSender.FACULTY }
-            else -> notifications
+            1 -> system
+            2 -> lecturer
+            3 -> faculty
+            else -> all
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
-        loadData(forceRefresh = true)
+        loadInitialData()
     }
 
-    private fun loadData(forceRefresh: Boolean = false) {
+    private fun loadInitialData() {
         viewModelScope.launch {
-            val page = if (forceRefresh) 0 else _uiState.value.currentPage
-            notificationRepository.getNotifications(
-                forceRefresh = forceRefresh,
-                page = page
-            ).onSuccess { hasMore ->
-                Log.e("NotificationViewModel", "load_data: $hasMore", )
-                updateState {
-                    copy(
-                        currentPage = if (forceRefresh) 1 else currentPage + 1,
-                        hasMore = hasMore
-                    )
+            val results = notificationRepository.getInitialNotifications()
+
+            _tabPagination.update { current ->
+                current.toMutableMap().apply {
+                    results.forEach { (sender, result) ->
+                        result.onSuccess { hasMore ->
+                            this[sender] = TabPaginationState(currentPage = 1, hasMore = hasMore)
+                        }
+                    }
                 }
             }
         }
     }
 
     fun onLoadMore() {
-        val state = _uiState.value
-        if (state.isLoadingMore || !state.hasMore) return
+        val currentTab = _uiState.value.selectedTab
+        val sender = tabSenderKeys[currentTab]
+        val pagination = _tabPagination.value[sender] ?: return
+
+        if (pagination.isLoadingMore || !pagination.hasMore) return
 
         viewModelScope.launch {
-            updateState { copy(isLoadingMore = true) }
+            updateTabPagination(sender) { copy(isLoadingMore = true) }
             try {
-                val currentPage = _uiState.value.currentPage
                 notificationRepository.getNotifications(
+                    sender = sender,
                     forceRefresh = false,
-                    page = currentPage
+                    page = pagination.currentPage
                 ).onSuccess { hasMore ->
-                    Log.e("NotificationViewModel", "onLoadMore: $hasMore", )
-                    updateState {
-                        copy(
-                            currentPage = currentPage + 1,
-                            hasMore = hasMore
-                        )
+                    updateTabPagination(sender) {
+                        copy(currentPage = currentPage + 1, hasMore = hasMore)
                     }
                 }
             } finally {
-                updateState { copy(isLoadingMore = false) }
+                updateTabPagination(sender) { copy(isLoadingMore = false) }
+            }
+        }
+    }
+
+    fun onRefreshData() {
+        viewModelScope.launch {
+            updateState { copy(isRefreshing = true) }
+            try {
+                loadInitialData()
+            } finally {
+                delay(1000L)
+                updateState { copy(isRefreshing = false) }
             }
         }
     }
@@ -89,18 +138,6 @@ class NotificationViewModel(
     fun onMarkAllRead() {
         viewModelScope.launch {
             notificationRepository.insertReadNotifications(filteredNotifications.value)
-        }
-    }
-
-    fun onRefreshData() {
-        viewModelScope.launch {
-            updateState { copy(isRefreshing = true) }
-            try {
-                loadData(forceRefresh = true)
-            } finally {
-                delay(1000L)
-                updateState { copy(isRefreshing = false) }
-            }
         }
     }
 
@@ -118,6 +155,17 @@ class NotificationViewModel(
 
     fun onHideBottomSheet() {
         updateState { copy(isShowBottomSheet = false) }
+    }
+
+    private fun updateTabPagination(
+        sender: String?,
+        update: TabPaginationState.() -> TabPaginationState
+    ) {
+        _tabPagination.update { current ->
+            current.toMutableMap().apply {
+                this[sender] = (this[sender] ?: TabPaginationState()).update()
+            }
+        }
     }
 
     private fun updateState(newState: NotificationState.() -> NotificationState) {

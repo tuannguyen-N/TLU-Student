@@ -21,26 +21,10 @@ import org.example.project.presentations.theme.ExtendedColors
 fun NotificationTabs(
     selectedTab: Int,
     color: ExtendedColors,
-    notifications: List<NotificationUiModel>,
+    unreadMap: Map<Int, Boolean>,
     onTabSelected: (Int) -> Unit
 ) {
     val tabs = listOf("Tất cả", "Trường", "Giáo viên", "Khoa")
-    val hasUnreadAll = notifications.any { !it.isRead }
-    val hasUnreadSystem = notifications.any {
-        !it.isRead && it.sender == NotificationSender.SYSTEM
-    }
-    val hasUnreadLecturer = notifications.any {
-        !it.isRead && it.sender == NotificationSender.LECTURER
-    }
-    val hasUnreadFaculty = notifications.any {
-        !it.isRead && it.sender == NotificationSender.FACULTY
-    }
-    val unreadMap = mapOf(
-        0 to hasUnreadAll,
-        1 to hasUnreadSystem,
-        2 to hasUnreadLecturer,
-        3 to hasUnreadFaculty
-    )
 
     PrimaryTabRow(
         selectedTabIndex = selectedTab,

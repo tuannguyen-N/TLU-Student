@@ -45,7 +45,6 @@ fun ApplicationDetailContent(
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -125,13 +124,14 @@ fun ApplicationDetailContent(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             attachments.forEach { attachment ->
+                                val url = "https://res.cloudinary.com/dm5ev1isi/${attachment.resourceType?:"raw"}/upload/${attachment.fileKey}"
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(Color(0xFFF5F5F5))
                                         .clickable {
-                                            onOpenUrl("https://res.cloudinary.com/dm5ev1isi/image/upload/${attachment.fileKey}")
+                                            onOpenUrl(url)
                                         }
                                         .padding(12.dp),
                                     verticalAlignment = Alignment.CenterVertically

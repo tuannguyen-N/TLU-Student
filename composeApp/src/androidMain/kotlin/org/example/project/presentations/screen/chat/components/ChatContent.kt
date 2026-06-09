@@ -61,9 +61,12 @@ fun ChatContent(
 
     StatusBarStyle(darkIcons = true)
 
-    Box(modifier = Modifier
-        .statusBarsPadding()
-        .background(color.background)) {
+    Box(
+        modifier = Modifier
+            .statusBarsPadding()
+            .imePadding()
+            .background(color.background)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,7 +76,6 @@ fun ChatContent(
                     text = "Xin chào,\nTôi có thể giúp gì cho bạn ?",
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .imePadding()
                         .padding(15.dp),
                     style = MaterialTheme.typography.titleLarge,
                     color = LocalExtendedColors.current.mainBlue
@@ -84,8 +86,7 @@ fun ChatContent(
                 state = listState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 80.dp)
-                    .imePadding(),
+                    .padding(bottom = 80.dp),
                 reverseLayout = true
             ) {
                 item {
@@ -102,7 +103,6 @@ fun ChatContent(
             MessageInputField(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .imePadding()
                     .padding(15.dp),
                 text = uiState.prompt,
                 onTextChange = onPromptChange,

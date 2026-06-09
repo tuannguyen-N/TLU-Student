@@ -69,7 +69,7 @@ fun ApplicationContent(
                 readOnly = true,
                 placeholder = {
                     Text(
-                        text = "Chọn chủ đề phản hồi",
+                        text = "Chọn loại đơn",
                         color = LocalExtendedColors.current.gray,
                         style = MaterialTheme.typography.bodyMedium
                     )

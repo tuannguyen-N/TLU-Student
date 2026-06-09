@@ -31,7 +31,7 @@ class ApplicationApi(
                         key = "file",
                         value = fileBytes,
                         headers = Headers.build {
-                            append(HttpHeaders.ContentType, "application/pdf")
+                            append(HttpHeaders.ContentType, "application/octet-stream")
                             append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
                         }
                     )

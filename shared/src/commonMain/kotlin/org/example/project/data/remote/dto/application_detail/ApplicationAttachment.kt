@@ -7,5 +7,6 @@ data class ApplicationAttachment(
     val id: Int,
     val fileKey: String,
     val originalFilename: String,
-    val fileSize: Long
+    val fileSize: Long,
+    val resourceType: String?
 )

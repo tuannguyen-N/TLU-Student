@@ -22,9 +22,10 @@ class NotificationApi(
         facultyId: Int,
         studentClassId: Int,
         page: Int,
-        size: Int
+        size: Int,
+        search: String?
     ): NotificationResponse {
-        return client.post("/api/v1/notification?size=$size&page=$page") {
+        return client.post("/api/v1/notification?size=$size&page=$page&search=$search") {
             contentType(ContentType.Application.Json)
             setBody(
                 NotificationRequest(
