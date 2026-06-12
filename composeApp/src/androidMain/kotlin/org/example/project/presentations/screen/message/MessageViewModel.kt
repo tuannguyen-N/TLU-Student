@@ -24,10 +24,8 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -201,14 +199,9 @@ class MessageViewModel(
         }
     }
 
-    fun onMessageChange(message: String) {
+    fun onMessageChange(value: TextFieldValue) {
         updateState {
-            copy(
-                message = TextFieldValue(
-                    text = message,
-                    selection = TextRange(message.length)
-                )
-            )
+            copy(message = value)
         }
     }
 

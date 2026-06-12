@@ -96,7 +96,7 @@ fun MessageContent(
     }
 
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
     ) {
         LazyColumn(
             state = listState,

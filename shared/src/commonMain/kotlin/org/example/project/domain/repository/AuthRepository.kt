@@ -21,11 +21,9 @@ class AuthRepository(
             val token = response.data?.accessToken
                 ?: return AppResult.Failure(message = response.message)
             val refreshToken = response.data.refreshToken
-            val imageBase64 = response.data.avatar
 
             tokenStorage.saveAccessToken(token)
             tokenStorage.saveRefreshToken(refreshToken)
-            imageStorage.saveImageBase64(imageBase64)
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Failure(message = e.message)

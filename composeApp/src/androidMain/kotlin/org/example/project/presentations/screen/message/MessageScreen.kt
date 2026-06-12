@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -78,33 +79,35 @@ fun MessageScreen(
                         }
                     )
                 }
-            },
-            bottomBar = {
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                when {
+                    uiState.isLoading -> LoadingView()
+                    messages.isEmpty() -> EmptyMessageContent(modifier = Modifier.padding(innerPadding))
+                    else -> MessageContent(
+                        messages = messages,
+                        modifier = Modifier.weight(1f),
+                        onClickFile = onClickFile,
+                        onClickImage = { url -> selectedImageUrl = url },
+                        onLoadMoreMessage = viewModel::loadMoreMessages,
+                        isLoadingMore = uiState.isLoadingMore,
+                        hasMoreMessages = uiState.hasMoreMessages,
+                        chatUser = uiState.chatUser,
+                        isAiReplying = uiState.isAiReplying
+                    )
+                }
                 MessageInputBar(
                     state = uiState,
-                    onMessageChange = { viewModel.onMessageChange(it.text) },
+                    onMessageChange = { viewModel.onMessageChange(it) },
                     onSend = viewModel::onSend,
                     onImagePick = { viewModel.onImageSelected(it, context) },
                     onRemoveImage = viewModel::onRemoveImage,
                     onFilePick = { viewModel.onFileSelected(it, context) },
                     onRemoveFile = viewModel::onRemoveFile,
                     modifier = Modifier.imePadding()
-                )
-            }
-        ) { innerPadding ->
-            when {
-                uiState.isLoading -> LoadingView()
-                messages.isEmpty() -> EmptyMessageContent(modifier = Modifier.padding(innerPadding))
-                else -> MessageContent(
-                    messages = messages,
-                    modifier = Modifier.padding(innerPadding),
-                    onClickFile = onClickFile,
-                    onClickImage = { url -> selectedImageUrl = url },
-                    onLoadMoreMessage = viewModel::loadMoreMessages,
-                    isLoadingMore = uiState.isLoadingMore,
-                    hasMoreMessages = uiState.hasMoreMessages,
-                    chatUser = uiState.chatUser,
-                    isAiReplying = uiState.isAiReplying
                 )
             }
         }
