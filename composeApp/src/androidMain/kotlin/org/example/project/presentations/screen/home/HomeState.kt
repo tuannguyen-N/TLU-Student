@@ -4,15 +4,12 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.local.entity.QuoteEntity
-import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.data.remote.dto.me.StudentData
 import org.example.project.data.remote.dto.semester.Semester
-import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.domain.model.DaySchedule
 import org.example.project.domain.model.EventAndNewUiModel
 import org.example.project.domain.model.FeatureUiModel
-import org.example.project.domain.model.SemesterUiModel
 import kotlin.time.Clock
 
 data class HomeState(

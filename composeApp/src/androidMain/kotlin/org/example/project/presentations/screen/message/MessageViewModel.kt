@@ -41,7 +41,9 @@ import org.example.project.domain.model.UserUiModel
 import org.example.project.domain.repository.ChatRepository
 import org.example.project.domain.repository.MessageRepository
 import org.example.project.domain.repository.PresenceRepository
+import org.example.project.domain.repository.SummaryRepository
 import org.example.project.domain.usecase.StudentUseCase
+import org.example.project.domain.usecase.SummaryUseCase
 import org.example.project.presentations.utils.ChatPresenceManager
 import java.util.UUID
 
@@ -50,7 +52,8 @@ class MessageViewModel(
     private val messageRepository: MessageRepository,
     private val studentUseCase: StudentUseCase,
     private val presenceRepository: PresenceRepository,
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
+    private val summaryUseCase: SummaryUseCase
 ) : ViewModel() {
 
     private val chatUserId: String = savedStateHandle["studentId"] ?: ""
@@ -161,6 +164,98 @@ class MessageViewModel(
                 updateState { copy(isLoadingMore = false) }
             }
         }
+    }
+
+    fun summarize(messageId: String) {
+        val aiMessageId = UUID.randomUUID().toString()
+        val aiTimestamp = maxOf(
+            messages.value.maxOfOrNull { it.timestamp } ?: 0L,
+            _uiState.value.pendingMessages.maxOfOrNull { it.timestamp } ?: 0L,
+            System.currentTimeMillis()
+        ) + 1
+
+        updateState {
+            copy(
+                isAiReplying = true,
+                pendingMessages = pendingMessages + MessageUiState(
+                    id = aiMessageId,
+                    senderId = "tlu_ai",
+                    text = "",
+                    timestamp = aiTimestamp,
+                    isMe = false,
+                    status = MessageStatus.SENDING,
+                    type = MessageType.TEXT.name,
+                    senderType = SenderType.AI
+                )
+            )
+        }
+
+        summaryUseCase.summarize(roomId, messageId)
+            .onEach { event ->
+                when (event) {
+                    is SseEvent.Token -> {
+                        val decoded = event.text
+                            .replace("\\n", "\n")
+                            .replace("\\r", "")
+                            .replace("\\t", "\t")
+
+                        updateState {
+                            copy(
+                                pendingMessages = pendingMessages.map {
+                                    if (it.id == aiMessageId) {
+                                        it.copy(text = (it.text ?: "") + decoded)
+                                    } else it
+                                }
+                            )
+                        }
+                    }
+
+                    is SseEvent.Done -> {
+                        updateState {
+                            copy(
+                                isAiReplying = false,
+                                pendingMessages = pendingMessages.map {
+                                    if (it.id == aiMessageId) {
+                                        it.copy(status = MessageStatus.SENT)
+                                    } else it
+                                }
+                            )
+                        }
+                    }
+
+                    is SseEvent.Error -> {
+                        updateState {
+                            copy(
+                                isAiReplying = false,
+                                pendingMessages = pendingMessages.map {
+                                    if (it.id == aiMessageId) {
+                                        it.copy(
+                                            text = event.message,
+                                            status = MessageStatus.FAILED
+                                        )
+                                    } else it
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            .catch {
+                updateState {
+                    copy(
+                        isAiReplying = false,
+                        pendingMessages = pendingMessages.map {
+                            if (it.id == aiMessageId) {
+                                it.copy(
+                                    text = "Server đang bận",
+                                    status = MessageStatus.FAILED
+                                )
+                            } else it
+                        }
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeMessagesLoaded() {

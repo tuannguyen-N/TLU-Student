@@ -761,7 +761,8 @@ fun AppNavGraph(
                     container.messageRepository,
                     container.studentUseCase,
                     container.presenceRepository,
-                    container.chatRepository
+                    container.chatRepository,
+                    container.summaryUseCase
                 )
             }
 

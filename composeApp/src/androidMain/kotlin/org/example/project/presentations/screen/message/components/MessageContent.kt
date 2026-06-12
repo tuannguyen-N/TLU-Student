@@ -47,6 +47,7 @@ fun MessageContent(
     onClickFile: (String) -> Unit,
     onClickImage: (String) -> Unit,
     onLoadMoreMessage: () -> Unit,
+    onSummarize: (String) -> Unit,
     isAiReplying: Boolean
 ) {
     var visibleTimeId by remember { mutableStateOf<String?>(null) }
@@ -123,7 +124,8 @@ fun MessageContent(
                             onClickFile = onClickFile,
                             avatarUrl = chatUser?.avatarUrl,
                             chatUserName = chatUser?.name ?: "",
-                            isAiReplying = isAiReplying
+                            isAiReplying = isAiReplying,
+                            onSummarize = onSummarize
                         )
                     }
 

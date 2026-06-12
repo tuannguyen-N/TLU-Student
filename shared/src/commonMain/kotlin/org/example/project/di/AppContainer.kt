@@ -24,6 +24,7 @@ import org.example.project.data.remote.api.SemesterApi
 import org.example.project.data.remote.api.StudentApi
 import org.example.project.data.remote.api.StudentClassApi
 import org.example.project.data.remote.api.StudyProgramApi
+import org.example.project.data.remote.api.SummaryApi
 import org.example.project.data.remote.api.TranscriptApi
 import org.example.project.data.remote.api.TuitionApi
 import org.example.project.data.remote.createExternalHttpClient
@@ -50,6 +51,7 @@ import org.example.project.domain.repository.SearchHistoryRepository
 import org.example.project.domain.repository.SemesterRepository
 import org.example.project.domain.repository.StudentClassRepository
 import org.example.project.domain.repository.StudentRepository
+import org.example.project.domain.repository.SummaryRepository
 import org.example.project.domain.repository.TranscriptRepository
 import org.example.project.domain.repository.TuitionRepository
 import org.example.project.domain.repository.UserRepository
@@ -59,6 +61,7 @@ import org.example.project.domain.usecase.LogoutUseCase
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.StudentUseCase
+import org.example.project.domain.usecase.SummaryUseCase
 import org.example.project.domain.usecase.TranscriptUseCase
 
 class AppContainer(
@@ -188,4 +191,9 @@ class AppContainer(
     private val attendanceApi = AttendanceApi(httpClient)
     val attendanceRepository = AttendanceRepository(attendanceApi)
     val getLocationUseCase = GetLocationUseCase(locationRepository)
+
+    //for summary
+    private val summaryApi = SummaryApi(chatHttpClient)
+    val summaryRepository = SummaryRepository(summaryApi)
+    val summaryUseCase = SummaryUseCase(summaryRepository, messageRepository)
 }

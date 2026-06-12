@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,9 +53,14 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownColor
 import com.mikepenz.markdown.m3.markdownTypography
+import org.example.project.R
 import org.example.project.domain.model.MessageStatus
 import org.example.project.domain.model.MessageType
 import org.example.project.domain.model.MessageUiState
@@ -65,9 +71,7 @@ import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
 fun FileBubble(
-    message: MessageUiState,
-    isMe: Boolean,
-    modifier: Modifier = Modifier
+    message: MessageUiState, isMe: Boolean, modifier: Modifier = Modifier
 ) {
     val color = LocalExtendedColors.current
 
@@ -78,8 +82,7 @@ fun FileBubble(
         if (isMe) Color.White.copy(alpha = 0.75f) else color.blackBackground.copy(alpha = 0.55f)
 
     Column(
-        modifier = modifier
-            .background(bubbleColor, RoundedCornerShape(16.dp))
+        modifier = modifier.background(bubbleColor, RoundedCornerShape(16.dp))
     ) {
         Row(
             modifier = Modifier
@@ -91,8 +94,7 @@ fun FileBubble(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(iconBgColor),
-                contentAlignment = Alignment.Center
+                    .background(iconBgColor), contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.InsertDriveFile,
@@ -106,8 +108,7 @@ fun FileBubble(
                 Text(
                     text = message.fileName.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = textColor,
-                        fontWeight = FontWeight.Medium
+                        color = textColor, fontWeight = FontWeight.Medium
                     )
                 )
                 Text(
@@ -119,14 +120,10 @@ fun FileBubble(
 
         if (!message.text.isNullOrBlank()) {
             Text(
-                text = message.text!!,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = textColor,
-                    lineHeight = 22.sp
-                ),
-                modifier = Modifier.padding(
-                    start = 14.dp, end = 14.dp,
-                    top = 0.dp
+                text = message.text!!, style = MaterialTheme.typography.bodyMedium.copy(
+                    color = textColor, lineHeight = 22.sp
+                ), modifier = Modifier.padding(
+                    start = 14.dp, end = 14.dp, top = 0.dp
                 )
             )
         }
@@ -143,11 +140,18 @@ fun MessageBubble(
     onClickFile: (String) -> Unit,
     avatarUrl: String?,
     chatUserName: String,
-    isAiReplying: Boolean
+    isAiReplying: Boolean,
+    onSummarize: (String) -> Unit
 ) {
     val isMe = message.isMe
     val isAi = message.senderType == SenderType.AI
     val color = LocalExtendedColors.current
+    val isSummarizable =
+        message.type == MessageType.FILE.name && message.fileName?.lowercase()?.let { name ->
+            name.endsWith(".pdf") || name.endsWith(".doc") || name.endsWith(".docx") || name.endsWith(
+                ".xls"
+            ) || name.endsWith(".xlsx")
+        } == true
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -158,6 +162,15 @@ fun MessageBubble(
             horizontalArrangement = if (isMe) Arrangement.End else Arrangement.Start,
             verticalAlignment = Alignment.Bottom
         ) {
+            if (isMe && isSummarizable) {
+                SummarizeButton(
+                    onClick = { onSummarize(message.id) },
+                    modifier = Modifier
+                        .padding(end = 6.dp)
+                        .align(Alignment.CenterVertically)
+                )
+            }
+
             if (!isMe) {
                 if (isAi) {
                     Box(
@@ -169,8 +182,7 @@ fun MessageBubble(
                                 brush = Brush.linearGradient(
                                     colors = listOf(Color(0xFF6C63FF), Color(0xFF48CAE4))
                                 )
-                            ),
-                        contentAlignment = Alignment.Center
+                            ), contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.AutoAwesome,
@@ -195,12 +207,11 @@ fun MessageBubble(
                             .padding(end = 6.dp)
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFBDBDBD)),
-                        contentAlignment = Alignment.Center
+                            .background(Color(0xFFBDBDBD)), contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = chatUserName.substringAfterLast(" ").firstOrNull()
-                                ?.uppercase() ?: "N",
+                            text = chatUserName.substringAfterLast(" ").firstOrNull()?.uppercase()
+                                ?: "N",
                             style = MaterialTheme.typography.labelMedium.copy(color = Color.White)
                         )
                     }
@@ -245,34 +256,22 @@ fun MessageBubble(
                                     MessageType.FILE.name -> message.fileUrl?.let { onClickFile(it) }
                                     else -> onClick()
                                 }
-                            }
-                        )
+                            })
                         .padding(
-                            start = if (message.type == MessageType.FILE.name
-                                || message.type == MessageType.IMAGE.name
-                            ) 0.dp else 14.dp,
-                            end = if (message.type == MessageType.FILE.name
-                                || message.type == MessageType.IMAGE.name
-                            ) 0.dp else 14.dp,
-                            top = if (message.type == MessageType.FILE.name
-                                || message.type == MessageType.IMAGE.name
-                            ) 0.dp else 10.dp,
-                            bottom = if (message.type == MessageType.IMAGE.name
-                                && !message.text.isNullOrBlank()
-                            ) 10.dp
+                            start = if (message.type == MessageType.FILE.name || message.type == MessageType.IMAGE.name) 0.dp else 14.dp,
+                            end = if (message.type == MessageType.FILE.name || message.type == MessageType.IMAGE.name) 0.dp else 14.dp,
+                            top = if (message.type == MessageType.FILE.name || message.type == MessageType.IMAGE.name) 0.dp else 10.dp,
+                            bottom = if (message.type == MessageType.IMAGE.name && !message.text.isNullOrBlank()) 10.dp
                             else if (message.type == MessageType.IMAGE.name) 0.dp
                             else 10.dp
-                        )
-                ) {
+                        )) {
                     if (isAi) {
                         Column {
                             Text(
-                                text = "TLU AI",
-                                style = MaterialTheme.typography.labelSmall.copy(
+                                text = "TLU AI", style = MaterialTheme.typography.labelSmall.copy(
                                     color = Color.White.copy(alpha = 0.85f),
                                     fontWeight = FontWeight.SemiBold
-                                ),
-                                modifier = Modifier.padding(top = 6.dp, bottom = 5.dp)
+                                ), modifier = Modifier.padding(top = 6.dp, bottom = 5.dp)
                             )
                             AiBubbleContent(message = message)
                         }
@@ -293,8 +292,7 @@ fun MessageBubble(
                             )
 
                             MessageType.IMAGE.name -> ImageBubble(
-                                message = message,
-                                isMe = isMe
+                                message = message, isMe = isMe
                             )
                         }
                     }
@@ -303,25 +301,29 @@ fun MessageBubble(
 
             if (isMe && isLast) {
                 MessageStatusIcon(
-                    status = message.status,
-                    modifier = Modifier.padding(horizontal = 2.dp)
+                    status = message.status, modifier = Modifier.padding(horizontal = 2.dp)
+                )
+            }
+
+            if (!isMe && isSummarizable) {
+                SummarizeButton(
+                    onClick = { onSummarize(message.id) },
+                    modifier = Modifier
+                        .padding(start = 6.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
         }
 
         AnimatedVisibility(
-            visible = showTime,
-            enter = expandVertically(),
-            exit = shrinkVertically()
+            visible = showTime, enter = expandVertically(), exit = shrinkVertically()
         ) {
             Text(
                 text = DateTimeUtils.formatTime(message.timestamp),
                 style = MaterialTheme.typography.labelSmall.copy(color = color.gray),
                 modifier = Modifier
                     .padding(
-                        start = if (isMe) 0.dp else 40.dp,
-                        top = 4.dp,
-                        end = 16.dp
+                        start = if (isMe) 0.dp else 40.dp, top = 4.dp, end = 16.dp
                     )
                     .fillMaxWidth(),
                 textAlign = if (isMe) TextAlign.End else TextAlign.Start
@@ -330,74 +332,34 @@ fun MessageBubble(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
-private fun MessageBubblePreview() {
-    val fakeAiMessage = MessageUiState(
-        id = "1",
-        senderId = "tlu_ai",
-        text = "Xin chào! Tôi là TLU AI, tôi có thể g là TLU AI, tôi có thể giú là TLU AI, tôi có thể giú là TLU AI, tôi có thể giúiúp gì cho bạn?",
-        type = MessageType.TEXT.name,
-        timestamp = System.currentTimeMillis(),
-        isMe = false,
-        status = MessageStatus.SENT,
-        senderType = SenderType.AI
+private fun SummarizeButton(
+    onClick: () -> Unit, modifier: Modifier = Modifier
+) {
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.icon_summary)
     )
 
-    val fakeUserMessage = MessageUiState(
-        id = "2",
-        senderId = "user123",
-        text = "@tlu_ai cho tôi hỏi về lịch học",
-        type = MessageType.TEXT.name,
-        timestamp = System.currentTimeMillis(),
-        isMe = true,
-        status = MessageStatus.SENT,
-        senderType = SenderType.USER
-    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    val color = LocalExtendedColors.current
+    Box(
+        modifier = modifier
+            .size(32.dp)
+            .clip(CircleShape)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(color.lightGray, color.white)
+                )
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            ), contentAlignment = Alignment.Center
     ) {
-        // Bubble user gửi
-        MessageBubble(
-            message = fakeUserMessage,
-            showTime = false,
-            isLast = true,
-            onClick = {},
-            onClickImage = {},
-            onClickFile = {},
-            avatarUrl = null,
-            chatUserName = "Nguyen Van A",
-            isAiReplying = false
-        )
-
-        // Bubble AI trả lời
-        MessageBubble(
-            message = fakeAiMessage,
-            showTime = false,
-            isLast = true,
-            onClick = {},
-            onClickImage = {},
-            onClickFile = {},
-            avatarUrl = null,
-            chatUserName = "TLU AI",
-            isAiReplying = false
-        )
-
-        // AI đang typing
-        MessageBubble(
-            message = fakeAiMessage.copy(id = "3", text = ""),
-            showTime = false,
-            isLast = true,
-            onClick = {},
-            onClickImage = {},
-            onClickFile = {},
-            avatarUrl = null,
-            chatUserName = "TLU AI",
-            isAiReplying = true
+        LottieAnimation(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            modifier = Modifier.size(18.dp)
         )
     }
 }
@@ -405,15 +367,11 @@ private fun MessageBubblePreview() {
 @Composable
 private fun AiBubbleContent(message: MessageUiState) {
     Markdown(
-        content = message.text.orEmpty(),
-        colors = markdownColor(
-            text = Color.White,
-            codeBackground = Color.White.copy(alpha = 0.1f)
-        ),
-        typography = markdownTypography(
+        content = message.text.orEmpty(), colors = markdownColor(
+            text = Color.White, codeBackground = Color.White.copy(alpha = 0.1f)
+        ), typography = markdownTypography(
             text = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 22.sp
+                fontSize = 16.sp, lineHeight = 22.sp
             )
         )
     )
@@ -421,25 +379,19 @@ private fun AiBubbleContent(message: MessageUiState) {
 
 @Composable
 private fun ImageBubble(
-    message: MessageUiState,
-    isMe: Boolean
+    message: MessageUiState, isMe: Boolean
 ) {
     val color = LocalExtendedColors.current
     Column {
         Box {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(
-                        if (message.status == MessageStatus.SENDING
-                            && message.fileUrl?.startsWith("content://") == true
-                        ) {
+                model = ImageRequest.Builder(LocalContext.current).data(
+                        if (message.status == MessageStatus.SENDING && message.fileUrl?.startsWith("content://") == true) {
                             message.fileUrl!!.toUri()
                         } else {
                             message.fileUrl
                         }
-                    )
-                    .crossfade(true)
-                    .build(),
+                    ).crossfade(true).build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 placeholder = ColorPainter(Color(0xFFE0E0E0)),
@@ -457,8 +409,7 @@ private fun ImageBubble(
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
-                        color = Color.White,
-                        modifier = Modifier.size(32.dp)
+                        color = Color.White, modifier = Modifier.size(32.dp)
                     )
                 }
             }
@@ -466,14 +417,10 @@ private fun ImageBubble(
 
         if (!message.text.isNullOrBlank()) {
             Text(
-                text = message.text!!,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = if (isMe) Color.White else color.blackBackground,
-                    lineHeight = 22.sp
-                ),
-                modifier = Modifier.padding(
-                    start = 14.dp, end = 14.dp,
-                    top = 8.dp, bottom = 0.dp
+                text = message.text!!, style = MaterialTheme.typography.bodyMedium.copy(
+                    color = if (isMe) Color.White else color.blackBackground, lineHeight = 22.sp
+                ), modifier = Modifier.padding(
+                    start = 14.dp, end = 14.dp, top = 8.dp, bottom = 0.dp
                 )
             )
         }
@@ -482,8 +429,7 @@ private fun ImageBubble(
 
 @Composable
 fun MessageStatusIcon(
-    status: MessageStatus,
-    modifier: Modifier = Modifier
+    status: MessageStatus, modifier: Modifier = Modifier
 ) {
     val tint = when (status) {
         MessageStatus.FAILED -> Color(0xFFE53935)
@@ -517,6 +463,110 @@ fun MessageStatusIcon(
             contentDescription = "Đang gửi",
             tint = tint,
             modifier = modifier.size(14.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Composable
+private fun MessageBubblePreview() {
+    val fakeAiMessage = MessageUiState(
+        id = "1",
+        senderId = "tlu_ai",
+        text = "Xin chào! Tôi là TLU AI, tôi có thể giúp gì cho bạn?",
+        type = MessageType.TEXT.name,
+        timestamp = System.currentTimeMillis(),
+        isMe = false,
+        status = MessageStatus.SENT,
+        senderType = SenderType.AI
+    )
+
+    val fakeUserMessage = MessageUiState(
+        id = "2",
+        senderId = "user123",
+        text = "@tlu_ai cho tôi hỏi về lịch học",
+        type = MessageType.TEXT.name,
+        timestamp = System.currentTimeMillis(),
+        isMe = true,
+        status = MessageStatus.SENT,
+        senderType = SenderType.USER
+    )
+
+    val fakePdfMessageMe = MessageUiState(
+        id = "4",
+        senderId = "user123",
+        text = null,
+        type = MessageType.FILE.name,
+        timestamp = System.currentTimeMillis(),
+        isMe = true,
+        status = MessageStatus.SENT,
+        senderType = SenderType.USER,
+        fileName = "document.pdf",
+        fileSize = "2.4 MB",
+        fileUrl = "https://example.com/document.pdf"
+    )
+
+    val fakePdfMessageOther = MessageUiState(
+        id = "5",
+        senderId = "user456",
+        text = null,
+        type = MessageType.FILE.name,
+        timestamp = System.currentTimeMillis(),
+        isMe = false,
+        status = MessageStatus.SENT,
+        senderType = SenderType.USER,
+        fileName = "bai_tap.pdf",
+        fileSize = "1.1 MB",
+        fileUrl = "https://example.com/bai_tap.pdf"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+
+        // AI đang typing
+        MessageBubble(
+            message = fakeAiMessage.copy(id = "3", text = ""),
+            showTime = false,
+            isLast = true,
+            onClick = {},
+            onClickImage = {},
+            onClickFile = {},
+            onSummarize = {},
+            avatarUrl = null,
+            chatUserName = "TLU AI",
+            isAiReplying = true
+        )
+
+        // PDF do mình gửi (button tóm tắt bên trái bubble)
+        MessageBubble(
+            message = fakePdfMessageMe,
+            showTime = false,
+            isLast = true,
+            onClick = {},
+            onClickImage = {},
+            onClickFile = {},
+            onSummarize = {},
+            avatarUrl = null,
+            chatUserName = "Nguyen Van A",
+            isAiReplying = false
+        )
+
+        // PDF do người khác gửi (button tóm tắt bên phải bubble)
+        MessageBubble(
+            message = fakePdfMessageOther,
+            showTime = false,
+            isLast = true,
+            onClick = {},
+            onClickImage = {},
+            onClickFile = {},
+            onSummarize = {},
+            avatarUrl = null,
+            chatUserName = "Nguyen Van B",
+            isAiReplying = false
         )
     }
 }

@@ -96,7 +96,8 @@ fun MessageScreen(
                         isLoadingMore = uiState.isLoadingMore,
                         hasMoreMessages = uiState.hasMoreMessages,
                         chatUser = uiState.chatUser,
-                        isAiReplying = uiState.isAiReplying
+                        isAiReplying = uiState.isAiReplying,
+                        onSummarize = viewModel::summarize
                     )
                 }
                 MessageInputBar(
