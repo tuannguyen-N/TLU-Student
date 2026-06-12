@@ -28,7 +28,7 @@ fun LazyListScope.studentListItems(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     color: ExtendedColors,
-    onMessageClick: (String, String, String?) -> Unit,
+    onMessageClick: (String, String) -> Unit,
 ) {
     item(key = "student_list_header") {
         Spacer(modifier = Modifier.height(20.dp))

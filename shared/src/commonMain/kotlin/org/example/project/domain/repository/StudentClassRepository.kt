@@ -9,8 +9,11 @@ class StudentClassRepository(
 ) {
     suspend fun getStudentClassInfo(): AppResult<StudentClassInfoData>{
         try {
-            val data  = api.getStudentClassInfo().data ?: return AppResult.Failure("Không có dữ liệu")
-            return AppResult.Success(data = data)
+            val data  = api.getStudentClassInfo()
+            if (data.data == null){
+                return AppResult.Failure(message = data.message)
+            }
+            return AppResult.Success(data = data.data)
         }catch (e: Exception){
             return AppResult.Failure(message = e.message, cause = e)
         }

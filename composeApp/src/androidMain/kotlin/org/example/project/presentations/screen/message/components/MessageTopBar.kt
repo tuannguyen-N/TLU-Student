@@ -11,8 +11,6 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,22 +28,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
@@ -108,12 +99,10 @@ fun MessageTopBar(
                 .height(lerp(64.dp, 140.dp, expandProgress))
         ) {
             IconButton(
-                // Nếu đang expand thì collapse, không thì back
                 onClick = { if (isExpanded) onExpandChange(false) else onBack() },
                 modifier = Modifier
                     .align(Alignment.CenterStart)
             ) {
-                // Icon cũng animate từ arrow → close khi expand
                 val iconRotation by animateFloatAsState(
                     targetValue = if (isExpanded) 90f else 0f,
                     animationSpec = spring(
@@ -143,8 +132,16 @@ fun MessageTopBar(
                             val collapsedY = (constraints.maxHeight - placeable.height) / 2
                             val expandedX = (constraints.maxWidth - placeable.width) / 2
                             val expandedY = 16.dp.roundToPx()
-                            val x = lerp(collapsedX.toFloat(), expandedX.toFloat(), expandProgress).toInt()
-                            val y = lerp(collapsedY.toFloat(), expandedY.toFloat(), expandProgress).toInt()
+                            val x = lerp(
+                                collapsedX.toFloat(),
+                                expandedX.toFloat(),
+                                expandProgress
+                            ).toInt()
+                            val y = lerp(
+                                collapsedY.toFloat(),
+                                expandedY.toFloat(),
+                                expandProgress
+                            ).toInt()
                             placeable.placeRelative(x, y)
                         }
                     }
@@ -168,12 +165,22 @@ fun MessageTopBar(
                             val avatarCollapsedWidth = 40.dp.roundToPx()
                             val avatarExpandedWidth = 72.dp.roundToPx()
                             val gap = 10.dp.roundToPx()
-                            val collapsedX = iconButtonWidth + avatarCollapsedWidth + gap + 4.dp.roundToPx()
+                            val collapsedX =
+                                iconButtonWidth + avatarCollapsedWidth + gap + 4.dp.roundToPx()
                             val collapsedY = (constraints.maxHeight - placeable.height) / 2
                             val expandedX = (constraints.maxWidth - placeable.width) / 2
-                            val expandedY = 16.dp.roundToPx() + avatarExpandedWidth + 8.dp.roundToPx()
-                            val x = lerp(collapsedX.toFloat(), expandedX.toFloat(), expandProgress).toInt()
-                            val y = lerp(collapsedY.toFloat(), expandedY.toFloat(), expandProgress).toInt()
+                            val expandedY =
+                                16.dp.roundToPx() + avatarExpandedWidth + 8.dp.roundToPx()
+                            val x = lerp(
+                                collapsedX.toFloat(),
+                                expandedX.toFloat(),
+                                expandProgress
+                            ).toInt()
+                            val y = lerp(
+                                collapsedY.toFloat(),
+                                expandedY.toFloat(),
+                                expandProgress
+                            ).toInt()
                             placeable.placeRelative(x, y)
                         }
                     }
@@ -236,7 +243,7 @@ private fun AvatarView(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = chatUser.name.firstOrNull()?.uppercase() ?: "",
+                text = chatUser.name.substringAfterLast(" ").first().uppercase(),
                 style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
             )
         }
@@ -245,10 +252,10 @@ private fun AvatarView(
 
 @Composable
 private fun NamePresenceColumn(
+    modifier: Modifier = Modifier,
     chatUser: UserUiModel,
     color: ExtendedColors,
-    centerAlign: Boolean = false,
-    modifier: Modifier = Modifier
+    centerAlign: Boolean = false
 ) {
     val textAlign = if (centerAlign) TextAlign.Center else TextAlign.Start
     val horizontalAlignment = if (centerAlign) Alignment.CenterHorizontally else Alignment.Start
@@ -278,6 +285,7 @@ private fun NamePresenceColumn(
                     style = MaterialTheme.typography.bodySmall.copy(color = color.gray)
                 )
             }
+
             else -> {
                 val presenceText = formatLastSeenTopBar(chatUser.lastSeen)
                 if (presenceText != null) {

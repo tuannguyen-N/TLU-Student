@@ -7,6 +7,5 @@ data class Student(
     val studentCode: String,
     val fullName: String,
     val gender: String,
-    val avatarUrl: String?,
 //    val position: String
 )

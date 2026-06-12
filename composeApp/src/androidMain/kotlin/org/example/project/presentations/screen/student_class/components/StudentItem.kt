@@ -51,7 +51,7 @@ fun StudentItem(
     student: Student,
     role: StudentRole = StudentRole.NONE,
     color: ExtendedColors = LocalExtendedColors.current,
-    onMessageClick: (String, String, String?) -> Unit,
+    onMessageClick: (String, String) -> Unit,
 ) {
     val avatarLetter = student.fullName
         .trim()
@@ -140,7 +140,7 @@ fun StudentItem(
                     .size(30.dp)
                     .clip(CircleShape)
                     .background(LocalExtendedColors.current.mainBlue)
-                    .clickable { onMessageClick(student.studentCode, student.fullName, student.avatarUrl) },
+                    .clickable { onMessageClick(student.studentCode, student.fullName) },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

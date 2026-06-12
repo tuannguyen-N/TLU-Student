@@ -547,8 +547,8 @@ fun AppNavGraph(
             StudentClassScreen(
                 viewModel = studentClassViewModel,
                 onBack = { navController.popBackStack() },
-                onMessageClick = { studentCode, name, avatarUrl ->
-                    navController.navigate(AppRoute.messageDetail(studentCode, name, avatarUrl))
+                onMessageClick = { studentCode, name ->
+                    navController.navigate(AppRoute.messageDetail(studentCode, name, ""))
                 }
             )
         }

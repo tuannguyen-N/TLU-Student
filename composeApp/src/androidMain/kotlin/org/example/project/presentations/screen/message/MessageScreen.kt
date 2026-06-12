@@ -82,11 +82,18 @@ fun MessageScreen(
             }
         ) { innerPadding ->
             Column(
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .imePadding()
             ) {
                 when {
                     uiState.isLoading -> LoadingView()
-                    messages.isEmpty() -> EmptyMessageContent(modifier = Modifier.padding(innerPadding))
+                    messages.isEmpty() -> EmptyMessageContent(
+                        modifier = Modifier.padding(
+                            innerPadding
+                        )
+                    )
+
                     else -> MessageContent(
                         messages = messages,
                         modifier = Modifier.weight(1f),
@@ -107,8 +114,7 @@ fun MessageScreen(
                     onImagePick = { viewModel.onImageSelected(it, context) },
                     onRemoveImage = viewModel::onRemoveImage,
                     onFilePick = { viewModel.onFileSelected(it, context) },
-                    onRemoveFile = viewModel::onRemoveFile,
-                    modifier = Modifier.imePadding()
+                    onRemoveFile = viewModel::onRemoveFile
                 )
             }
         }

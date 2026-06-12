@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.data.mapper.toFormatAmount
 import org.example.project.domain.model.PaymentStatus
@@ -50,7 +51,10 @@ fun TuitionCard(
                     text = "$semester",
                     style = MaterialTheme.typography.bodyMedium,
                     color = color.grayNavy,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f)
                 )
 
                 if (status == PaymentStatus.PAID) {
