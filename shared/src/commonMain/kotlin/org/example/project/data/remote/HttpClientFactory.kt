@@ -4,6 +4,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.authProvider
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -25,6 +27,10 @@ import org.example.project.data.remote.dto.login.RefreshTokenResponse
 
 var isNetworkAvailable: () -> Boolean = { true }
 val showNoNetworkDialog = MutableStateFlow(false)
+
+fun HttpClient.clearBearerTokens() {
+    authProvider<BearerAuthProvider>()?.clearToken()
+}
 
 val NetworkCheckPlugin = createClientPlugin("NetworkCheckPlugin") {
     onRequest { _, _ ->

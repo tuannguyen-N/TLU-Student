@@ -79,6 +79,7 @@ fun ScheduleScreen(
                 modifier = Modifier.padding(top = 20.dp),
                 color = color,
                 onOpenTimetable = onOpenTimetable,
+                isLoading = uiState.isLoading,
                 courseClasses = uiState.courseClasses ?: emptyList(),
                 isToday = uiState.currentDay == uiState.selectedDayOfWeek,
                 daysUntil = daysUntil,

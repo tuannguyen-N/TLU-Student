@@ -18,6 +18,8 @@ interface UserRepository {
         student: StudentSummary
     )
 
+    suspend fun removeToken(userId: String)
+
     fun observeUsers(
         size: Int,
         excludeUserId: String?

@@ -14,6 +14,10 @@ class StudentRepository(
     private val _studentInfo = MutableStateFlow<StudentData?>(null)
     val studentInfo = _studentInfo.asStateFlow()
 
+    fun clearStudentInfo() {
+        _studentInfo.value = null
+    }
+
     suspend fun getStudentInfo(): AppResult<StudentData> {
         return try {
             val data = studentApi.getStudentInfo().data

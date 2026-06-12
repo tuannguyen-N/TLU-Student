@@ -27,6 +27,7 @@ import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.api.SummaryApi
 import org.example.project.data.remote.api.TranscriptApi
 import org.example.project.data.remote.api.TuitionApi
+import org.example.project.data.remote.clearBearerTokens
 import org.example.project.data.remote.createExternalHttpClient
 import org.example.project.data.remote.createExternalHttpClientWithAuthPlugin
 import org.example.project.data.remote.createHttpClient
@@ -80,7 +81,8 @@ class AppContainer(
     val searchHistoryRepository: SearchHistoryRepository,
     val presenceRepository: PresenceRepository,
     notificationSocket: NotificationSocket,
-    paymentSocket: PaymentSocket
+    paymentSocket: PaymentSocket,
+    private val onClearAuthCache: () -> Unit = {}
 ) {
     private val httpClient = createHttpClient(tokenStorage, triggerLogout = {
         // TODO:  
@@ -90,6 +92,12 @@ class AppContainer(
         createExternalHttpClientWithAuthPlugin(tokenStorage, triggerLogout = {
             // TODO:  
         })
+
+    private fun clearAuthCache() {
+        httpClient.clearBearerTokens()
+        chatHttpClient.clearBearerTokens()
+        onClearAuthCache()
+    }
 
     val authPluginConfig = AuthPluginConfig()
 
@@ -118,7 +126,8 @@ class AppContainer(
         tokenStorage = tokenStorage,
         imageStorage = imageStorage,
         firebaseStorage = firebaseStorage,
-        notificationRepository = notificationRepository
+        notificationRepository = notificationRepository,
+        clearAuthCache = ::clearAuthCache
     )
 
     //for student
@@ -154,9 +163,6 @@ class AppContainer(
     private val examScheduleApi = ExamScheduleApi(httpClient)
     val semesterUseCase = SemesterUseCase(semesterRepository)
     val examScheduleRepository = ExamScheduleRepository(examScheduleApi)
-
-    //for setting
-    val logoutUseCase = LogoutUseCase(authRepository)
 
     //for studentClass
     private val studentClassApi = StudentClassApi(httpClient)
@@ -196,4 +202,7 @@ class AppContainer(
     private val summaryApi = SummaryApi(chatHttpClient)
     val summaryRepository = SummaryRepository(summaryApi)
     val summaryUseCase = SummaryUseCase(summaryRepository, messageRepository)
+
+    //for setting
+    val logoutUseCase = LogoutUseCase(authRepository, userRepository, studentRepository)
 }

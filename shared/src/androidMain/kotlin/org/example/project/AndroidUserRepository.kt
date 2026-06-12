@@ -13,7 +13,8 @@ import org.example.project.domain.model.User
 import org.example.project.domain.repository.UserRepository
 
 class AndroidUserRepository(
-    private val firebaseStorage: FirebaseStorage
+    private val firebaseStorage: FirebaseStorage,
+    private val deviceProvider: DeviceProvider
 ) : UserRepository {
     val firestore = FirebaseFirestore.getInstance()
 
@@ -68,30 +69,60 @@ class AndroidUserRepository(
 
     override suspend fun uploadUser(student: StudentSummary) {
         val studentId = student.studentCode.lowercase()
-        val fcmToken = firebaseStorage.getFirebaseToken()
+        val fcmToken = firebaseStorage.getFirebaseToken()?: "con ca co"
+        val deviceId = deviceProvider.getDeviceId()
 
-        val docRef = firestore
-            .collection("users")
-            .document(studentId)
+        val userRef = firestore.collection("users").document(studentId)
+        val snapshot = userRef.get().await()
 
-        val snapshot = docRef.get().await()
+        removeTokenFromOtherUsers(studentId, fcmToken)
 
         if (!snapshot.exists()) {
-            docRef.set(
+            userRef.set(
                 mapOf(
                     "id" to studentId,
                     "name" to student.fullName,
                     "avatarUrl" to student.avatarUrl,
-                    "fcmTokens" to listOf(fcmToken)
                 )
             ).await()
         } else {
-            docRef.update(
+            if (snapshot.get("fcmTokens") != null) {
+                userRef.update("fcmTokens", FieldValue.delete()).await()
+            }
+        }
+
+        userRef.collection("fcmTokens")
+            .document(deviceId)
+            .set(
                 mapOf(
-                    "fcmTokens" to FieldValue.arrayUnion(fcmToken)
+                    "token" to fcmToken,
+                    "updatedAt" to FieldValue.serverTimestamp()
                 )
             ).await()
-        }
+    }
+
+    override suspend fun removeToken(userId: String) {
+        val deviceId = deviceProvider.getDeviceId()
+
+        firestore.collection("users")
+            .document(userId)
+            .collection("fcmTokens")
+            .document(deviceId)
+            .delete()
+            .await()
+    }
+
+    private suspend fun removeTokenFromOtherUsers(
+        currentUserId: String,
+        token: String
+    ) {
+        firestore.collectionGroup("fcmTokens")
+            .whereEqualTo("token", token)
+            .get()
+            .await()
+            .documents
+            .filter { it.reference.parent.parent?.id != currentUserId }
+            .forEach { it.reference.delete().await() }
     }
 
     override fun observeUsers(

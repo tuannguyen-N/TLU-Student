@@ -139,7 +139,7 @@ fun CardState(
                 isOngoing -> "Đang diễn ra"
                 daysUntil == 1 -> "Ngày mai"
                 daysUntil > 0 -> "Sau $daysUntil ngày"
-                else -> "Sắp diễn ra"
+                else -> "Đã kết thúc"
             },
             style = MaterialTheme.typography.labelSmall,
             color = if (isOngoing) Color(0xFF16A634) else Color(0xFF848484)

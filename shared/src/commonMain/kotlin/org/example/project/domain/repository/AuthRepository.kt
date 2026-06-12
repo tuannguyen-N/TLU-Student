@@ -11,12 +11,18 @@ class AuthRepository(
     private val tokenStorage: TokenStorage,
     private val imageStorage: ImageBase64Storage,
     private val firebaseStorage: FirebaseStorage,
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
+    private val clearAuthCache: () -> Unit
 ) {
     suspend fun login(microsoftAccessToken: String, deviceId: String): AppResult<Unit> {
         return try {
+            clearAuthCache()
+            tokenStorage.clearAccessToken()
+            tokenStorage.clearRefreshToken()
+
             val firebaseToken = firebaseStorage.getFirebaseToken()
                 ?: return AppResult.Failure(message = "Firebase token not found")
+
             val response = authApi.login(microsoftAccessToken, firebaseToken, deviceId)
             val token = response.data?.accessToken
                 ?: return AppResult.Failure(message = response.message)
@@ -36,6 +42,6 @@ class AuthRepository(
         imageStorage.clearImageBase64()
         firebaseStorage.clearAllTopics()
         notificationRepository.stopRealtime()
-        // TODO: delete token cloud in firestore
+        clearAuthCache()
     }
 }

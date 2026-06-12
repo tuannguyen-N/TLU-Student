@@ -19,6 +19,7 @@ import org.example.project.data.local.FirebaseStorage
 import org.example.project.data.local.ImageBase64Storage
 import org.example.project.data.local.TokenStorage
 import org.example.project.data.remote.api.FileUploadApi
+import org.example.project.data.remote.clearBearerTokens
 import org.example.project.data.remote.createHttpClient
 
 class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
@@ -64,7 +65,7 @@ class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
         fileUploadApi = FileUploadApi(httpClient)
     )
 
-    val userRepository = AndroidUserRepository(firebaseStorage)
+    val userRepository = AndroidUserRepository(firebaseStorage, deviceProvider)
 
     val presenceRepository = AndroidPresenceRepository()
 
@@ -83,4 +84,8 @@ class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
         },
         tokenStorage
     )
+
+    fun clearAuthCache() {
+        httpClient.clearBearerTokens()
+    }
 }

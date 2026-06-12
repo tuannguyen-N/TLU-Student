@@ -45,10 +45,10 @@ class ScheduleViewModel(
         ) { cache, selectedDay ->
             cache[selectedDay]
         }.onEach { data ->
-                data?.let {
-                    updateState { copy(courseClasses = it.courseClasses) }
-                }
-            }.launchIn(viewModelScope)
+            data?.let {
+                updateState { copy(courseClasses = it.courseClasses) }
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun loadData() {
@@ -70,8 +70,9 @@ class ScheduleViewModel(
 
     fun onChangeDayOfWeek(value: Int) {
         viewModelScope.launch {
-            updateState { copy(selectedDayOfWeek = value) }
+            updateState { copy(selectedDayOfWeek = value, isLoading = true) }
             scheduleUseCase.getDayStudySchedule(value)
+            updateState { copy(isLoading = false) }
         }
     }
 

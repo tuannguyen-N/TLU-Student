@@ -22,7 +22,7 @@ class MyApplication : Application() {
         super.onCreate()
         isNetworkAvailable = @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE) {
             val connectivityManager =
-                applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+                applicationContext.getSystemService(CONNECTIVITY_SERVICE) as? ConnectivityManager
             val activeNetwork = connectivityManager?.activeNetwork
             val capabilities = connectivityManager?.getNetworkCapabilities(activeNetwork)
             capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
@@ -45,7 +45,8 @@ class MyApplication : Application() {
             androidAppContainer.searchHistoryRepository,
             androidAppContainer.presenceRepository,
             androidAppContainer.notificationSocket,
-            androidAppContainer.paymentSocket
+            androidAppContainer.paymentSocket,
+            onClearAuthCache = { androidAppContainer.clearAuthCache() }
         )
         handleFirebaseToken()
 
