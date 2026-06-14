@@ -8,12 +8,12 @@ import org.example.project.domain.usecase.SemesterUseCase
 
 class ClassSignUpViewModelFactory(
     private val enrollmentRepository: EnrollmentRepository,
-    private val semesterUseCase: SemesterUseCase
+    private val semesterRepository: SemesterRepository
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ClassSignUpViewModel::class.java)) {
-            return ClassSignUpViewModel(enrollmentRepository,semesterUseCase) as T
+            return ClassSignUpViewModel(enrollmentRepository,semesterRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

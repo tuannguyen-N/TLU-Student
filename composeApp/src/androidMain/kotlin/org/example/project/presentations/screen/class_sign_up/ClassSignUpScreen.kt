@@ -16,7 +16,7 @@ import org.example.project.presentations.utils.CollectWithLifecycle
 fun ClassSignUpScreen(
     viewModel: ClassSignUpViewModel,
     onBack: () -> Unit,
-    onOpenSignedUpClass: () -> Unit
+    onOpenSignedUpClass: (semesterId: Int) -> Unit
 ) {
     StatusBarStyle(darkIcons = true)
 
@@ -64,6 +64,9 @@ fun ClassSignUpScreen(
         onSelectedSchedule = viewModel::openSelectedScheduleDialog,
         onDismissSelectedScheduleDialog = viewModel::dismissDialog,
         onEnrollClass = viewModel::enrollClass,
-        onOpenSignedUpClass = onOpenSignedUpClass
+        onOpenSignedUpClass = {
+            val semesterId = uiState.semesterId ?: return@ClassSignUpContent
+            onOpenSignedUpClass(semesterId)
+        }
     )
 }

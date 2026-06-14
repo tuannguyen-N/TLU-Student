@@ -161,7 +161,8 @@ fun AlertCard(
                                 text = "$totalCount",
                                 fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = color.white
+                                color = color.white,
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
                     }
@@ -181,8 +182,6 @@ fun AlertCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-
-
 
                     Text(
                         text = buildAnnotatedString {

@@ -12,14 +12,12 @@ import org.example.project.data.remote.dto.enroll.EnrollmentScheduleData
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.DailySchedule
 import org.example.project.data.remote.dto.week_schedule.WeeklyScheduleData
-import org.example.project.domain.model.AppResult
 import org.example.project.domain.repository.EnrollmentRepository
-import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.presentations.screen.timetable.TimetableState
 
 class TempTimetableViewModel(
     private val enrollmentRepository: EnrollmentRepository,
-    private val semesterUseCase: SemesterUseCase
+    private val semesterId: Int
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TimetableState())
@@ -42,18 +40,6 @@ class TempTimetableViewModel(
     private fun loadEnrollmentSchedule() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val semesterId = when (val result = semesterUseCase.getSemesters()) {
-                is AppResult.Success -> {
-                    result.data?.lastOrNull()?.id
-                }
-                is AppResult.Failure -> {
-                    null
-                }
-            }
-            if (semesterId == null) {
-                _uiState.update { it.copy(isLoading = false) }
-                return@launch
-            }
             enrollmentRepository.getEnrollmentSchedule(semesterId)
             _uiState.update { it.copy(isLoading = false) }
         }

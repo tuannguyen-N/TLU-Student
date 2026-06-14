@@ -40,6 +40,13 @@ interface MessageRepository {
         caption: String?
     )
 
+    suspend fun sendVideoMessage(
+        roomId: String,
+        senderId: String,
+        videoBytes: ByteArray,
+        caption: String?
+    )
+
     suspend fun sendFileMessage(
         roomId: String,
         senderId: String,
@@ -47,5 +54,11 @@ interface MessageRepository {
         fileName: String,
         fileSize: String,
         caption: String?
+    )
+
+    suspend fun preloadRecentMessages(
+        roomIds: List<String>,
+        currentUserId: String,
+        limit: Int = 3
     )
 }

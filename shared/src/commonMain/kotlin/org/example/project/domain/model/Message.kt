@@ -3,7 +3,8 @@ package org.example.project.domain.model
 enum class MessageType {
     TEXT,
     FILE,
-    IMAGE
+    IMAGE,
+    VIDEO
 }
 
 data class Message(

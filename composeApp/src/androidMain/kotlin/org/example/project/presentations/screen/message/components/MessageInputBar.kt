@@ -1,5 +1,6 @@
 package org.example.project.presentations.screen.message.components
 
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
@@ -15,6 +16,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,6 +41,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,8 +55,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -73,13 +78,16 @@ fun MessageInputBar(
     onImagePick: (Uri) -> Unit = {},
     onRemoveImage: () -> Unit = {},
     onFilePick: (Uri) -> Unit = {},
-    onRemoveFile: () -> Unit = {}
+    onRemoveFile: () -> Unit = {},
+    onVideoPick: (Uri) -> Unit = {},
+    onRemoveVideo: () -> Unit = {},
 ) {
     val color = LocalExtendedColors.current
     val context = LocalContext.current
     val hasText = state.message.text.isNotBlank()
     val hasImage = state.selectedImageUri != null
     val hasFile = state.selectedFileUri != null
+    val hasVideo = state.selectedVideoUri != null
 
     val mentionSuggestions = listOf("tlu_ai")
 
@@ -148,7 +156,16 @@ fun MessageInputBar(
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri -> uri?.let { onImagePick(it) } }
+    ) { uri ->
+        uri?.let {
+            val mimeType = context.contentResolver.getType(uri)
+            if (mimeType?.startsWith("video/") == true) {
+                onVideoPick(it)
+            } else {
+                onImagePick(it)
+            }
+        }
+    }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -257,6 +274,84 @@ fun MessageInputBar(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Remove image",
+                            tint = Color.White,
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                }
+            }
+
+            AnimatedVisibility(
+                visible = hasVideo,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                Box(
+                    modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 4.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(width = 120.dp, height = 72.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFF1A1A1A))
+                    ) {
+                        val isPreview = LocalInspectionMode.current
+                        if (!isPreview) {
+                            val ctx = LocalContext.current
+                            val thumbnailBitmap = remember(state.selectedVideoUri) {
+                                state.selectedVideoUri?.let { uri ->
+                                    val retriever = MediaMetadataRetriever()
+                                    try {
+                                        retriever.setDataSource(ctx, uri)
+                                        retriever.getFrameAtTime(0)
+                                    } catch (e: Exception) {
+                                        null
+                                    } finally {
+                                        retriever.release()
+                                    }
+                                }
+                            }
+                            thumbnailBitmap?.let {
+                                Image(
+                                    bitmap = it.asImageBitmap(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .background(Color.Black.copy(alpha = 0.4f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.PlayArrow,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                                    .padding(6.dp)
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .align(Alignment.TopEnd)
+                            .offset(x = 6.dp, y = (-6).dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF333333))
+                            .clickable { onRemoveVideo() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Remove video",
                             tint = Color.White,
                             modifier = Modifier.size(12.dp)
                         )
@@ -389,7 +484,7 @@ fun MessageInputBar(
                 Spacer(modifier = Modifier.width(6.dp))
 
                 AnimatedContent(
-                    targetState = hasText || hasImage || hasFile,
+                    targetState = hasText || hasImage || hasFile || hasVideo,
                     transitionSpec = {
                         (scaleIn(initialScale = 0.8f) + fadeIn()) togetherWith
                                 (scaleOut(targetScale = 0.8f) + fadeOut())
@@ -418,9 +513,10 @@ fun MessageInputBar(
                                 onClick = {
                                     imagePickerLauncher.launch(
                                         PickVisualMediaRequest(
-                                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            ActivityResultContracts.PickVisualMedia.ImageAndVideo
                                         )
                                     )
+
                                 },
                                 modifier = Modifier.size(38.dp)
                             ) {

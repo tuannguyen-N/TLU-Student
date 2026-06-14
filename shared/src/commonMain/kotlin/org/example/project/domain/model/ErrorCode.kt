@@ -25,7 +25,7 @@ sealed class AppError(open val code: Int, open val messageVi: String) {
         data object RegistrationNotFound : Enrollment(-2, "Chưa có lịch đăng ký học")
         data object ConditionNotMet : Enrollment(-100, "Không đủ điều kiện đăng ký")
         data object ScheduleConflict : Enrollment(-101, "Trùng lịch học")
-        data object PreRequisiteNotMet : Enrollment(-102, "Chưa đạt môn tiên quyết")
+        data object PreRequisiteNotMet : Enrollment(-102, "Chưa đạt môn tiên quyết là:")
         data object MaxCreditExceeded : Enrollment(-103, "Vượt quá số tín chỉ tối đa")
         data object DuplicateSubject : Enrollment(-104, "Môn học đã được đăng ký")
         data object DuplicateCourseClass : Enrollment(-105, "Lớp học phần đã được đăng ký")

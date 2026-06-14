@@ -23,6 +23,9 @@ data class MessageState(
     val selectedFileUri: Uri? = null,
     val selectedFileBytes: ByteArray? = null,
 
+    val selectedVideoUri: Uri? = null,
+    val selectedVideoBytes: ByteArray? = null,
+
     val chatStudent: StudentData? = null,
     val chatUser: UserUiModel? = null,
 

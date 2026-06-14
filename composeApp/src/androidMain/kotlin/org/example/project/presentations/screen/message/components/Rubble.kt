@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
@@ -27,13 +28,18 @@ import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material.icons.rounded.Pause
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,9 +56,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
+import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
+import coil.request.videoFrameMillis
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -70,67 +85,6 @@ import org.example.project.presentations.screen.chat.components.TypingIndicator
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
-fun FileBubble(
-    message: MessageUiState, isMe: Boolean, modifier: Modifier = Modifier
-) {
-    val color = LocalExtendedColors.current
-
-    val bubbleColor = if (isMe) color.midBlue else Color(0xFFE5E5E5)
-    val textColor = if (isMe) Color.White else color.blackBackground
-    val iconBgColor = if (isMe) color.lightBlue else Color(0xFFD0D0D0)
-    val subTextColor =
-        if (isMe) Color.White.copy(alpha = 0.75f) else color.blackBackground.copy(alpha = 0.55f)
-
-    Column(
-        modifier = modifier.background(bubbleColor, RoundedCornerShape(16.dp))
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .padding(top = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(iconBgColor), contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.InsertDriveFile,
-                    contentDescription = null,
-                    tint = if (isMe) Color.White else color.blackBackground,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Column {
-                Text(
-                    text = message.fileName.orEmpty(),
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = textColor, fontWeight = FontWeight.Medium
-                    )
-                )
-                Text(
-                    text = message.fileSize.orEmpty(),
-                    style = MaterialTheme.typography.bodySmall.copy(color = subTextColor)
-                )
-            }
-        }
-
-        if (!message.text.isNullOrBlank()) {
-            Text(
-                text = message.text!!, style = MaterialTheme.typography.bodyMedium.copy(
-                    color = textColor, lineHeight = 22.sp
-                ), modifier = Modifier.padding(
-                    start = 14.dp, end = 14.dp, top = 0.dp
-                )
-            )
-        }
-    }
-}
-
-@Composable
 fun MessageBubble(
     message: MessageUiState,
     showTime: Boolean,
@@ -141,7 +95,13 @@ fun MessageBubble(
     avatarUrl: String?,
     chatUserName: String,
     isAiReplying: Boolean,
-    onSummarize: (String) -> Unit
+    onSummarize: (String) -> Unit,
+    onClickVideo: (String) -> Unit = {},
+    exoPlayer: ExoPlayer,
+    playingVideoUrl: String?,
+    onPlayVideoInline: (String) -> Unit,
+    onPauseVideoInline: () -> Unit,
+    isDialogVisible: Boolean
 ) {
     val isMe = message.isMe
     val isAi = message.senderType == SenderType.AI
@@ -258,13 +218,14 @@ fun MessageBubble(
                                 }
                             })
                         .padding(
-                            start = if (message.type == MessageType.FILE.name || message.type == MessageType.IMAGE.name) 0.dp else 14.dp,
-                            end = if (message.type == MessageType.FILE.name || message.type == MessageType.IMAGE.name) 0.dp else 14.dp,
-                            top = if (message.type == MessageType.FILE.name || message.type == MessageType.IMAGE.name) 0.dp else 10.dp,
-                            bottom = if (message.type == MessageType.IMAGE.name && !message.text.isNullOrBlank()) 10.dp
-                            else if (message.type == MessageType.IMAGE.name) 0.dp
+                            start = if (message.type == MessageType.FILE.name || message.type == MessageType.VIDEO.name || message.type == MessageType.IMAGE.name) 0.dp else 14.dp,
+                            end = if (message.type == MessageType.FILE.name || message.type == MessageType.VIDEO.name || message.type == MessageType.IMAGE.name) 0.dp else 14.dp,
+                            top = if (message.type == MessageType.FILE.name || message.type == MessageType.VIDEO.name || message.type == MessageType.IMAGE.name) 0.dp else 10.dp,
+                            bottom = if ((message.type == MessageType.IMAGE.name || message.type == MessageType.VIDEO.name) && !message.text.isNullOrBlank()) 10.dp
+                            else if (message.type == MessageType.IMAGE.name || message.type == MessageType.VIDEO.name) 0.dp
                             else 10.dp
-                        )) {
+                        )
+                ) {
                     if (isAi) {
                         Column {
                             Text(
@@ -293,6 +254,17 @@ fun MessageBubble(
 
                             MessageType.IMAGE.name -> ImageBubble(
                                 message = message, isMe = isMe
+                            )
+
+                            MessageType.VIDEO.name -> VideoBubble(
+                                message = message,
+                                isMe = isMe,
+                                onClickVideo = onClickVideo,
+                                exoPlayer = exoPlayer,
+                                playingVideoUrl = playingVideoUrl,
+                                onPlayVideoInline = onPlayVideoInline,
+                                onPauseVideoInline = onPauseVideoInline,
+                                isDialogVisible = isDialogVisible
                             )
                         }
                     }
@@ -378,6 +350,229 @@ private fun AiBubbleContent(message: MessageUiState) {
 }
 
 @Composable
+fun FileBubble(
+    message: MessageUiState, isMe: Boolean, modifier: Modifier = Modifier
+) {
+    val color = LocalExtendedColors.current
+
+    val bubbleColor = if (isMe) color.midBlue else Color(0xFFE5E5E5)
+    val textColor = if (isMe) Color.White else color.blackBackground
+    val iconBgColor = if (isMe) color.lightBlue else Color(0xFFD0D0D0)
+    val subTextColor =
+        if (isMe) Color.White.copy(alpha = 0.75f) else color.blackBackground.copy(alpha = 0.55f)
+
+    Column(
+        modifier = modifier.background(bubbleColor, RoundedCornerShape(16.dp))
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .padding(top = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(iconBgColor), contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.InsertDriveFile,
+                    contentDescription = null,
+                    tint = if (isMe) Color.White else color.blackBackground,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Column {
+                Text(
+                    text = message.fileName.orEmpty(),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = textColor, fontWeight = FontWeight.Medium
+                    )
+                )
+                Text(
+                    text = message.fileSize.orEmpty(),
+                    style = MaterialTheme.typography.bodySmall.copy(color = subTextColor)
+                )
+            }
+        }
+
+        if (!message.text.isNullOrBlank()) {
+            Text(
+                text = message.text!!, style = MaterialTheme.typography.bodyMedium.copy(
+                    color = textColor, lineHeight = 22.sp
+                ), modifier = Modifier.padding(
+                    start = 14.dp, end = 14.dp, top = 0.dp
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun VideoBubble(
+    message: MessageUiState,
+    isMe: Boolean,
+    onClickVideo: (String) -> Unit = {},
+    exoPlayer: ExoPlayer,
+    playingVideoUrl: String?,
+    onPlayVideoInline: (String) -> Unit,
+    onPauseVideoInline: () -> Unit,
+    isDialogVisible: Boolean
+) {
+    val color = LocalExtendedColors.current
+    val isCurrentPlaying = playingVideoUrl == message.fileUrl
+    var isPlaying by remember { mutableStateOf(false) }
+    var videoSize by remember { mutableStateOf<Pair<Int, Int>?>(null) }
+
+    val isSending = message.status == MessageStatus.SENDING
+    val aspectRatio = videoSize?.let { (w, h) -> w.toFloat() / h.toFloat() } ?: (16f / 9f)
+
+    if (isCurrentPlaying) {
+        DisposableEffect(exoPlayer) {
+            val listener = object : Player.Listener {
+                override fun onVideoSizeChanged(size: VideoSize) {
+                    if (size.width > 0 && size.height > 0) {
+                        videoSize = size.width to size.height
+                    }
+                }
+                override fun onIsPlayingChanged(playing: Boolean) {
+                    isPlaying = playing
+                }
+            }
+            exoPlayer.addListener(listener)
+            isPlaying = exoPlayer.isPlaying
+            onDispose {
+                exoPlayer.removeListener(listener)
+                if (exoPlayer.isPlaying) {
+                    exoPlayer.pause()
+                }
+            }
+        }
+    }
+
+    Column {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(aspectRatio)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = { message.fileUrl?.let { onClickVideo(it) } }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isCurrentPlaying) {
+                AndroidView(
+                    factory = {
+                        PlayerView(it).apply {
+                            useController = false
+                            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                        }
+                    },
+                    update = { playerView ->
+                        if (isDialogVisible) {
+                            playerView.player = null
+                        } else {
+                            playerView.player = exoPlayer
+                        }
+                    },
+                    modifier = Modifier.matchParentSize()
+                )
+            } else {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(message.fileUrl)
+                        .videoFrameMillis(1000)
+                        .decoderFactory(VideoFrameDecoder.Factory())
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize(),
+                    onSuccess = { state ->
+                        val width = state.result.drawable.intrinsicWidth
+                        val height = state.result.drawable.intrinsicHeight
+                        if (width > 0 && height > 0) {
+                            videoSize = width to height
+                        }
+                    }
+                )
+            }
+
+            if (isSending) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(Color.Black.copy(alpha = 0.4f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+            } else {
+                val showDarkOverlay = !isCurrentPlaying || !isPlaying
+                if (showDarkOverlay) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(Color.Black.copy(alpha = 0.35f))
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.45f))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = {
+                                if (isCurrentPlaying) {
+                                    if (isPlaying) {
+                                        onPauseVideoInline()
+                                    } else {
+                                        if (exoPlayer.playbackState == Player.STATE_ENDED) {
+                                            exoPlayer.seekTo(0)
+                                        }
+                                        exoPlayer.play()
+                                    }
+                                } else {
+                                    message.fileUrl?.let { onPlayVideoInline(it) }
+                                }
+                            }
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (isCurrentPlaying && isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                        contentDescription = if (isCurrentPlaying && isPlaying) "Pause" else "Play",
+                        tint = Color.White,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
+        }
+
+        if (!message.text.isNullOrBlank()) {
+            Text(
+                text = message.text!!,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = if (isMe) Color.White else color.blackBackground,
+                    lineHeight = 22.sp
+                ),
+                modifier = Modifier.padding(start = 14.dp, end = 14.dp, top = 8.dp)
+            )
+        }
+    }
+}
+
+@Composable
 private fun ImageBubble(
     message: MessageUiState, isMe: Boolean
 ) {
@@ -386,12 +581,12 @@ private fun ImageBubble(
         Box {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(
-                        if (message.status == MessageStatus.SENDING && message.fileUrl?.startsWith("content://") == true) {
-                            message.fileUrl!!.toUri()
-                        } else {
-                            message.fileUrl
-                        }
-                    ).crossfade(true).build(),
+                    if (message.status == MessageStatus.SENDING && message.fileUrl?.startsWith("content://") == true) {
+                        message.fileUrl!!.toUri()
+                    } else {
+                        message.fileUrl
+                    }
+                ).crossfade(true).build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 placeholder = ColorPainter(Color(0xFFE0E0E0)),
@@ -463,110 +658,6 @@ fun MessageStatusIcon(
             contentDescription = "Đang gửi",
             tint = tint,
             modifier = modifier.size(14.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-@Composable
-private fun MessageBubblePreview() {
-    val fakeAiMessage = MessageUiState(
-        id = "1",
-        senderId = "tlu_ai",
-        text = "Xin chào! Tôi là TLU AI, tôi có thể giúp gì cho bạn?",
-        type = MessageType.TEXT.name,
-        timestamp = System.currentTimeMillis(),
-        isMe = false,
-        status = MessageStatus.SENT,
-        senderType = SenderType.AI
-    )
-
-    val fakeUserMessage = MessageUiState(
-        id = "2",
-        senderId = "user123",
-        text = "@tlu_ai cho tôi hỏi về lịch học",
-        type = MessageType.TEXT.name,
-        timestamp = System.currentTimeMillis(),
-        isMe = true,
-        status = MessageStatus.SENT,
-        senderType = SenderType.USER
-    )
-
-    val fakePdfMessageMe = MessageUiState(
-        id = "4",
-        senderId = "user123",
-        text = null,
-        type = MessageType.FILE.name,
-        timestamp = System.currentTimeMillis(),
-        isMe = true,
-        status = MessageStatus.SENT,
-        senderType = SenderType.USER,
-        fileName = "document.pdf",
-        fileSize = "2.4 MB",
-        fileUrl = "https://example.com/document.pdf"
-    )
-
-    val fakePdfMessageOther = MessageUiState(
-        id = "5",
-        senderId = "user456",
-        text = null,
-        type = MessageType.FILE.name,
-        timestamp = System.currentTimeMillis(),
-        isMe = false,
-        status = MessageStatus.SENT,
-        senderType = SenderType.USER,
-        fileName = "bai_tap.pdf",
-        fileSize = "1.1 MB",
-        fileUrl = "https://example.com/bai_tap.pdf"
-    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-
-        // AI đang typing
-        MessageBubble(
-            message = fakeAiMessage.copy(id = "3", text = ""),
-            showTime = false,
-            isLast = true,
-            onClick = {},
-            onClickImage = {},
-            onClickFile = {},
-            onSummarize = {},
-            avatarUrl = null,
-            chatUserName = "TLU AI",
-            isAiReplying = true
-        )
-
-        // PDF do mình gửi (button tóm tắt bên trái bubble)
-        MessageBubble(
-            message = fakePdfMessageMe,
-            showTime = false,
-            isLast = true,
-            onClick = {},
-            onClickImage = {},
-            onClickFile = {},
-            onSummarize = {},
-            avatarUrl = null,
-            chatUserName = "Nguyen Van A",
-            isAiReplying = false
-        )
-
-        // PDF do người khác gửi (button tóm tắt bên phải bubble)
-        MessageBubble(
-            message = fakePdfMessageOther,
-            showTime = false,
-            isLast = true,
-            onClick = {},
-            onClickImage = {},
-            onClickFile = {},
-            onSummarize = {},
-            avatarUrl = null,
-            chatUserName = "Nguyen Van B",
-            isAiReplying = false
         )
     }
 }

@@ -40,6 +40,7 @@ class MyApplication : Application() {
             androidAppContainer.topicSubscriber,
             androidAppContainer.locationRepository,
             applicationContext,
+            sharedDatabase = androidAppContainer.database,
             androidAppContainer.messageRepository,
             androidAppContainer.userRepository,
             androidAppContainer.searchHistoryRepository,
@@ -54,7 +55,6 @@ class MyApplication : Application() {
             .lifecycle
             .addObserver(
                 AndroidLifecycleObserver(
-                    androidAppContainer.userRepository,
                     appContainer.studentUseCase,
                     androidAppContainer.presenceRepository
                 )

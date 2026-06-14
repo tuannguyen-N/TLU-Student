@@ -16,7 +16,6 @@ import org.example.project.domain.repository.UserRepository
 import org.example.project.domain.usecase.StudentUseCase
 
 class AndroidLifecycleObserver(
-    private val userRepository: UserRepository,
     private val studentUseCase: StudentUseCase,
     private val presenceRepository: PresenceRepository
 ) : DefaultLifecycleObserver {
@@ -41,11 +40,6 @@ class AndroidLifecycleObserver(
             val studentId = student.studentCode.lowercase()
 
             presenceRepository.goOnline(studentId)
-
-//            userRepository.updateOnlineStatus(
-//                true,
-//                student.studentCode.lowercase()
-//            )
         }
     }
 
@@ -55,11 +49,6 @@ class AndroidLifecycleObserver(
             val studentId = student.studentCode.lowercase()
 
             presenceRepository.goOffline(studentId)
-
-//            userRepository.updateOnlineStatus(
-//                false,
-//                student.studentCode.lowercase()
-//            )
         }
     }
 }

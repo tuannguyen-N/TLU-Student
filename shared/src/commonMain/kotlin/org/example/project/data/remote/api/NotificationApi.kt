@@ -21,6 +21,7 @@ class NotificationApi(
         oauthUserId: Int,
         facultyId: Int,
         studentClassId: Int,
+        topics: List<String>,
         page: Int,
         size: Int,
         search: String?
@@ -32,7 +33,8 @@ class NotificationApi(
                 NotificationRequest(
                     oauthUserId = oauthUserId,
                     facultyId = facultyId,
-                    studentClassId = studentClassId
+                    studentClassId = studentClassId,
+                    topics = topics
                 )
             )
         }.body()

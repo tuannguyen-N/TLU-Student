@@ -18,26 +18,27 @@ fun SemesterInformation(
     semesterName: String,
     enrollmentStartTime: String? = null,
     enrollmentEndTime: String? = null,
-    hasSubjects: Boolean = true,
 ) {
-    val enrollmentStatusText = remember(enrollmentStartTime, enrollmentEndTime, hasSubjects) {
-        computeEnrollmentStatusText(enrollmentStartTime, enrollmentEndTime, hasSubjects)
+    val enrollmentStatusText = remember(enrollmentStartTime, enrollmentEndTime) {
+        computeEnrollmentStatusText(enrollmentStartTime, enrollmentEndTime)
     }
 
-    Spacer(Modifier.height(16.dp))
-    Text(
-        text = semesterName,
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.SemiBold,
-        color = MaterialTheme.colorScheme.onBackground
-    )
-    if (enrollmentStatusText != null) {
-        Spacer(Modifier.height(4.dp))
+    if (semesterName != ""){
+        Spacer(Modifier.height(16.dp))
         Text(
-            text = enrollmentStatusText,
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.Normal,
-            color = color.gray
+            text = semesterName,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onBackground
         )
+        if (enrollmentStatusText != null) {
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = enrollmentStatusText,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Normal,
+                color = color.gray
+            )
+        }
     }
 }

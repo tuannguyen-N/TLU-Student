@@ -104,14 +104,35 @@ class MessageViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
+//        observeMessagesLoaded()
+//        markAsRead()
+//        observeUserOnlineStatus()
+//        observeAndMarkNewMessages()
+//        loadChatStudent()
+//        loadInitialMessages()
+//        enterChatRoom()
+//        loadChatContext()
+
         observeMessagesLoaded()
-        markAsRead()
         observeUserOnlineStatus()
-        observeAndMarkNewMessages()
-        loadChatStudent()
-        loadInitialMessages()
         enterChatRoom()
-        loadChatContext()
+        loadInitialMessages()
+
+        viewModelScope.launch {
+            delay(300)
+            markAsRead()
+            observeAndMarkNewMessages()
+            loadChatStudent()
+        }
+    }
+
+    private var chatContextLoaded = false
+    private fun ensureChatContextLoaded() {
+        if (chatContextLoaded) return
+        chatContextLoaded = true
+        viewModelScope.launch {
+            chatRepository.refreshChatbotContext()
+        }
     }
 
     private fun loadChatContext() {
@@ -127,11 +148,31 @@ class MessageViewModel(
             )
             lastDocument = page.lastDocument
             updateState {
-                copy(
-                    olderMessages = page.messages, hasMoreMessages = page.hasMore
-                )
+                copy(olderMessages = page.messages, hasMoreMessages = page.hasMore)
             }
         }
+    }
+
+    private fun observeMessagesLoaded() {
+        viewModelScope.launch {
+            remoteMessages.first()
+            updateState { copy(isLoading = false) }
+        }
+    }
+
+    private fun observeUserOnlineStatus() {
+        presenceRepository.observePresence(chatUserId)
+            .onEach { chatUserPresence ->
+                updateState {
+                    copy(
+                        chatUser = chatUser?.copy(
+                            isOnline = chatUserPresence.isOnline,
+                            lastSeen = chatUserPresence.lastSeen
+                        )
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun loadChatStudent() {
@@ -258,34 +299,13 @@ class MessageViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun observeMessagesLoaded() {
-        viewModelScope.launch {
-            remoteMessages.first()
-            updateState { copy(isLoading = false) }
-        }
-    }
-
-    private fun observeUserOnlineStatus() {
-        viewModelScope.launch {
-            presenceRepository.observePresence(chatUserId).collect { chatUserPresence ->
-                updateState {
-                    copy(
-                        chatUser = chatUser?.copy(
-                            isOnline = chatUserPresence.isOnline,
-                            lastSeen = chatUserPresence.lastSeen
-                        )
-                    )
-                }
-            }
-        }
-    }
-
     private fun observeAndMarkNewMessages() {
-        viewModelScope.launch {
-            remoteMessages.distinctUntilChangedBy { it.maxOfOrNull { m -> m.timestamp } ?: 0L }
-                .drop(1).filter { it.lastOrNull()?.isMe == false }
-                .collect { messageRepository.markConversationAsRead(roomId, currentUserId) }
-        }
+        remoteMessages
+            .distinctUntilChangedBy { it.maxOfOrNull { m -> m.timestamp } ?: 0L }
+            .drop(1)
+            .filter { it.lastOrNull()?.isMe == false }
+            .onEach { messageRepository.markConversationAsRead(roomId, currentUserId) }
+            .launchIn(viewModelScope)
     }
 
     private fun markAsRead() {
@@ -326,13 +346,27 @@ class MessageViewModel(
         updateState { copy(selectedFileUri = null, selectedFileBytes = null) }
     }
 
+    fun onVideoSelected(uri: Uri?, context: Context){
+        updateState { copy(selectedVideoUri = uri, selectedVideoBytes = null) }
+        if (uri == null) return
+        viewModelScope.launch(Dispatchers.IO) {
+            val bytes = context.contentResolver.openInputStream(uri)?.readBytes()
+            updateState { copy(selectedVideoBytes = bytes) }
+        }
+    }
+
+    fun onRemoveVideo() {
+        updateState { copy(selectedVideoUri = null, selectedVideoBytes = null) }
+    }
+
     fun onSend(fileName: String? = null, fileSize: String? = null) {
         val state = _uiState.value
         val text = state.message.text.trim()
         val imageBytes = state.selectedImageBytes
+        val videoBytes = state.selectedVideoBytes
         val fileBytes = state.selectedFileBytes
 
-        if (text.isBlank() && imageBytes == null && fileBytes == null) return
+        if (text.isBlank() && imageBytes == null && fileBytes == null && videoBytes == null) return
 
         updateState {
             copy(
@@ -340,7 +374,9 @@ class MessageViewModel(
                 selectedImageUri = null,
                 selectedImageBytes = null,
                 selectedFileUri = null,
-                selectedFileBytes = null
+                selectedFileBytes = null,
+                selectedVideoUri = null,
+                selectedVideoBytes = null
             )
         }
 
@@ -358,6 +394,12 @@ class MessageViewModel(
                 fileSize = fileSize
             )
 
+            videoBytes != null -> sendVideoMessage(
+                videoUri = state.selectedVideoUri,
+                videoBytes = videoBytes,
+                caption = text.ifBlank { null }
+            )
+
             else -> sendTextMessage(text)
         }
     }
@@ -368,8 +410,8 @@ class MessageViewModel(
         viewModelScope.launch {
             messageRepository.sendMessage(roomId, currentUserId, SenderType.USER, text)
         }
-
         if (isMentionTluAi(text)) {
+            ensureChatContextLoaded()
             askTluAi(text, afterTimestamp = pending.timestamp)
         }
     }
@@ -542,6 +584,22 @@ class MessageViewModel(
                 roomId = roomId,
                 senderId = currentUserId,
                 imageBytes = imageBytes,
+                caption = caption
+            )
+        }
+    }
+
+    private fun sendVideoMessage(videoUri: Uri?, videoBytes: ByteArray, caption: String?){
+        val pending = buildPendingMessage(
+            type = MessageType.VIDEO, text = caption, fileUrl = videoUri?.toString()
+        )
+
+        addPending(pending)
+        viewModelScope.launch {
+            messageRepository.sendVideoMessage(
+                roomId = roomId,
+                senderId = currentUserId,
+                videoBytes = videoBytes,
                 caption = caption
             )
         }

@@ -44,6 +44,7 @@ import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.components.TopCenterScreenBar
+import org.example.project.presentations.screen.class_sign_up.components.EnrollLoadingDialog
 import org.example.project.presentations.screen.class_signed_up.SignedUpClassesState
 import org.example.project.presentations.screen.transcript_term.components.SubjectCode
 import org.example.project.presentations.theme.ExtendedColors
@@ -128,6 +129,10 @@ fun SignedUpClassesContent(
                 uiState = uiState,
                 onConfirm = onConfirm
             )
+
+            if (uiState.isLoading) {
+                EnrollLoadingDialog()
+            }
         }
     }
 }

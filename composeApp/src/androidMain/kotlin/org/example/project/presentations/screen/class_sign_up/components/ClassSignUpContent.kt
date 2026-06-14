@@ -82,10 +82,9 @@ fun ClassSignUpContent(
                 item {
                     SemesterInformation(
                         color,
-                        semesterName = uiState.currentSemester?.semesterName ?: "",
+                        semesterName = uiState.semesterName,
                         enrollmentStartTime = uiState.enrollmentStartTime,
                         enrollmentEndTime = uiState.enrollmentEndTime,
-                        hasSubjects = uiState.courses.isNotEmpty()
                     )
                 }
 
@@ -125,15 +124,13 @@ fun ClassSignUpContent(
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center)
                 )
-            }
-            else if (uiState.error != null) {
+            } else if (uiState.error != null) {
                 Text(
                     text = uiState.error,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Center)
                 )
-            }
-            else if (allCourses.isEmpty()) {
+            } else if (allCourses.isEmpty()) {
                 Text(
                     text = "Chưa đến thời gian đăng ký",
                     color = MaterialTheme.colorScheme.onBackground,
@@ -159,6 +156,10 @@ fun ClassSignUpContent(
                     enrolledClassCodes = uiState.enrolledClasses.map { it.classCode }.toSet(),
                     onSelect = onEnrollClass
                 )
+            }
+
+            if (uiState.isEnrolling) {
+                EnrollLoadingDialog()
             }
         }
     }

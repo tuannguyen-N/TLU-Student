@@ -1,14 +1,20 @@
 package org.example.project.domain.repository
 
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
 import org.example.project.data.mapper.ErrorMapper
 import org.example.project.data.remote.api.EnrollmentApi
 import org.example.project.data.remote.api.StudyProgramApi
 import org.example.project.data.remote.dto.enroll.CourseEnrollmentData
 import org.example.project.data.remote.dto.enroll.EnrollmentScheduleData
+import org.example.project.data.remote.dto.enroll.PrerequisiteInfo
 import org.example.project.data.remote.dto.enrollment_course_classes.CourseClassEnrollmentData
 import org.example.project.domain.model.AppResult
+import org.example.project.domain.model.ErrorResponse
 
 class EnrollmentRepository(
     private val api: EnrollmentApi,
@@ -34,8 +40,15 @@ class EnrollmentRepository(
             } else {
                 AppResult.Success(result.data)
             }
-        } catch (e: Exception) {
-            return AppResult.Failure(message = e.message, cause = e)
+        } catch (e: ClientRequestException) {
+            val body = e.response.bodyAsText()
+            val error = Json.decodeFromString<ErrorResponse>(body)
+            return AppResult.Failure(
+                message = ErrorMapper.mapEnrollment(
+                    error.code,
+                    error.message
+                ).messageVi
+            )
         }
     }
 
@@ -55,26 +68,51 @@ class EnrollmentRepository(
             } else {
                 AppResult.Success(result.data)
             }
-        } catch (e: Exception) {
-            return AppResult.Failure(message = e.message, cause = e)
+        } catch (e: ClientRequestException) {
+            val body = e.response.bodyAsText()
+            val error = Json.decodeFromString<ErrorResponse>(body)
+            return AppResult.Failure(
+                message = ErrorMapper.mapEnrollment(
+                    error.code,
+                    error.message
+                ).messageVi
+            )
         }
     }
 
-    suspend fun enrollClass(studyProgramId: Int, courseClassId: Int): AppResult<String> {
-        try {
-            val result = api.enrollClass(studyProgramId, courseClassId)
-            return if (result.code != 0) {
-                AppResult.Failure(
-                    message = ErrorMapper.mapEnrollment(
-                        result.code,
-                        result.message
-                    ).messageVi
+    suspend fun enrollClass(
+        studyProgramId: Int,
+        courseClassId: Int
+    ): AppResult<String> {
+
+        val result = api.enrollClass(studyProgramId, courseClassId)
+
+        return if (result.code == -102) {
+
+            val prerequisites =
+                Json.decodeFromJsonElement<List<PrerequisiteInfo>>(
+                    result.data!!
                 )
-            } else {
-                AppResult.Success(result.message)
-            }
-        } catch (e: Exception) {
-            return AppResult.Failure(message = e.message, cause = e)
+
+            val missingSubjects = prerequisites
+                .flatMap { it.missingSubjectCodes }
+                .distinct()
+                .joinToString(", ")
+
+            AppResult.Failure(
+                message = "Bạn chưa đạt điều kiện tiên quyết. Cần hoàn thành các môn: $missingSubjects"
+            )
+
+        } else if (result.code != 0) {
+            AppResult.Failure(
+                message = ErrorMapper.mapEnrollment(
+                    result.code,
+                    result.message
+                ).messageVi
+            )
+
+        } else {
+            AppResult.Success(result.message)
         }
     }
 
@@ -92,8 +130,15 @@ class EnrollmentRepository(
                     ).messageVi
                 )
             }
-        } catch (e: Exception) {
-            return AppResult.Failure(message = e.message, cause = e)
+        } catch (e: ClientRequestException) {
+            val body = e.response.bodyAsText()
+            val error = Json.decodeFromString<ErrorResponse>(body)
+            return AppResult.Failure(
+                message = ErrorMapper.mapEnrollment(
+                    error.code,
+                    error.message
+                ).messageVi
+            )
         }
     }
 
@@ -110,8 +155,15 @@ class EnrollmentRepository(
             } else {
                 AppResult.Success(result.message)
             }
-        } catch (e: Exception) {
-            return AppResult.Failure(message = e.message, cause = e)
+        } catch (e: ClientRequestException) {
+            val body = e.response.bodyAsText()
+            val error = Json.decodeFromString<ErrorResponse>(body)
+            return AppResult.Failure(
+                message = ErrorMapper.mapEnrollment(
+                    error.code,
+                    error.message
+                ).messageVi
+            )
         }
     }
 }

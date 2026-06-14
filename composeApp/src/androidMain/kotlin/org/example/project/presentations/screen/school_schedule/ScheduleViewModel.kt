@@ -2,18 +2,23 @@ package org.example.project.presentations.screen.school_schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.mapper.getTodayDayOfWeek
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.usecase.ScheduleUseCase
+import kotlin.time.Clock
 
 class ScheduleViewModel(
     private val scheduleUseCase: ScheduleUseCase,
@@ -29,7 +34,23 @@ class ScheduleViewModel(
     init {
         observeDayOfWeekSchedule()
         observeReadNotifications()
-        loadData()
+        observeCurrentTime()
+    }
+
+    private fun observeCurrentTime() {
+        flow {
+            while (true) {
+                emit(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
+                delay(120_000L)
+            }
+        }
+            .distinctUntilChanged { old, new ->
+                old.hour == new.hour && old.minute == new.minute
+            }
+            .onEach { time ->
+                updateState { copy(currentTime = time) }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeReadNotifications() {
@@ -49,18 +70,6 @@ class ScheduleViewModel(
                 updateState { copy(courseClasses = it.courseClasses) }
             }
         }.launchIn(viewModelScope)
-    }
-
-    private fun loadData() {
-        viewModelScope.launch {
-//            updateState { copy(isLoading = true) }
-//            scheduleUseCase.getDayOfWeekSchedule(getTodayDayOfWeek()).fold(onSuccess = {
-//                updateState { copy(isLoading = false) }
-//            }, onFailure = {
-//                Log.e("123123", "loadData: $it")
-//                updateState { copy(isLoading = false) }
-//            })
-        }
     }
 
     fun onClickViewTomorrow() {

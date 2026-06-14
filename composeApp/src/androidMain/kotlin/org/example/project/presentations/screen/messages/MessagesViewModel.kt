@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import org.example.project.domain.model.ConversationUiState
 import org.example.project.domain.model.UserUiModel
 import org.example.project.domain.repository.MessageRepository
@@ -56,6 +58,26 @@ class MessagesViewModel(
             SharingStarted.Eagerly,
             emptyList()
         )
+
+    init {
+        viewModelScope.launch {
+            combine(
+                studentUseCase.studentInfo.filterNotNull(),
+                conversations
+            ) { student, convs ->
+                student.studentCode.lowercase() to convs.map { it.roomId }
+            }
+                .distinctUntilChangedBy { it.second }
+                .collect { (studentId, roomIds) ->
+                    if (roomIds.isNotEmpty()) {
+                        messageRepository.preloadRecentMessages(
+                            roomIds = roomIds,
+                            currentUserId = studentId
+                        )
+                    }
+                }
+        }
+    }
 
     val users = combine(
         studentUseCase.studentInfo.filterNotNull(),

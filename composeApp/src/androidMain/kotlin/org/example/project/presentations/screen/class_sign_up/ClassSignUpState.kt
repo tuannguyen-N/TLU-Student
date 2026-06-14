@@ -2,7 +2,6 @@ package org.example.project.presentations.screen.class_sign_up
 
 import org.example.project.data.remote.dto.enroll.EnrollmentScheduleData
 import org.example.project.data.remote.dto.enrollment_course_classes.CourseClassEnrollmentData
-import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.model.CourseItem
 
 data class ClassSignUpState(
@@ -14,9 +13,11 @@ data class ClassSignUpState(
     val selectedCourseTitle: String = "",
     val totalSubjects: Int = 0,
     val totalCredits: Int = 0,
-    val currentSemester: Semester? = null,
+    val semesterId: Int? = null,
+    val semesterName: String = "",
     val courseClasses: List<CourseClassEnrollmentData> = emptyList(),
     val enrolledClasses: List<EnrollmentScheduleData> = emptyList(),
     val enrollmentStartTime: String? = null,
     val enrollmentEndTime: String? = null,
+    val isEnrolling: Boolean = false,
 )

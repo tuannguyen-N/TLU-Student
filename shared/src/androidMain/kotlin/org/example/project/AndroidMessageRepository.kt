@@ -5,14 +5,22 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.example.project.data.local.dao.MessageDao
 import org.example.project.data.mapper.toConversationUiState
+import org.example.project.data.mapper.toEntity
+import org.example.project.data.mapper.toMessage
 import org.example.project.data.mapper.toUiState
 import org.example.project.data.remote.api.FileUploadApi
 import org.example.project.domain.MessagePage
@@ -27,7 +35,8 @@ import org.example.project.domain.model.User
 import org.example.project.domain.repository.MessageRepository
 
 class AndroidMessageRepository(
-    private val fileUploadApi: FileUploadApi
+    private val fileUploadApi: FileUploadApi,
+    private val messageDao: MessageDao
 ) : MessageRepository {
     private val firestore = FirebaseFirestore.getInstance()
 
@@ -89,77 +98,122 @@ class AndroidMessageRepository(
     override fun observeMessages(
         roomId: String,
         currentUserId: String,
-    ): Flow<List<MessageUiState>> {
-        val messagesFlow = callbackFlow {
-            val listener = firestore
-                .collection("chatRooms")
-                .document(roomId)
-                .collection("messages")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .limit(30)
-                .addSnapshotListener { snapshot, error ->
-
-                    if (error != null) {
-                        close(error)
-                        return@addSnapshotListener
-                    }
-
-                    val messages =
-                        snapshot?.documents?.mapNotNull { doc ->
-                            doc.toObject(Message::class.java)
-                        } ?: emptyList()
-
-                    trySend(messages.reversed())
+    ): Flow<List<MessageUiState>> = channelFlow {
+        val listener = firestore
+            .collection("chatRooms")
+            .document(roomId)
+            .collection("messages")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(30)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("MessageSync", "Firestore sync failed for $roomId", error)
+                    return@addSnapshotListener
                 }
 
-            awaitClose { listener.remove() }
+                val messages = snapshot?.documents
+                    ?.mapNotNull { doc -> doc.toObject(Message::class.java) }
+                    ?.reversed()
+                    ?: emptyList()
+
+                launch(Dispatchers.IO) {
+                    if (messages.isNotEmpty()) {
+                        messageDao.insertMessages(messages.map { it.toEntity(roomId) })
+                    }
+                }
+            }
+
+        launch {
+            combine(
+                messageDao.observeMessages(roomId),
+                observeLastReadAt(roomId)
+            ) { entities, lastReadAt ->
+                mapMessagesWithReadStatus(
+                    messages = entities.map { it.toMessage() },
+                    lastReadAt = lastReadAt,
+                    currentUserId = currentUserId
+                )
+            }.collect { send(it) }
         }
 
-        val lastReadAtFlow = callbackFlow {
-            val listener = firestore
-                .collection("chatRooms")
-                .document(roomId)
-                .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        close(error); return@addSnapshotListener
+        awaitClose { listener.remove() }
+    }
+
+    override suspend fun preloadRecentMessages(
+        roomIds: List<String>,
+        currentUserId: String,
+        limit: Int
+    ) {
+        coroutineScope {
+            roomIds.distinct().map { roomId ->
+                async(Dispatchers.IO) {
+                    try {
+                        val snapshot = firestore
+                            .collection("chatRooms")
+                            .document(roomId)
+                            .collection("messages")
+                            .orderBy("timestamp", Query.Direction.DESCENDING)
+                            .limit(limit.toLong())
+                            .get()
+                            .await()
+
+                        val messages = snapshot.documents
+                            .mapNotNull { it.toObject(Message::class.java) }
+
+                        if (messages.isNotEmpty()) {
+                            messageDao.insertMessages(messages.map { it.toEntity(roomId) })
+                        }
+                    } catch (e: Exception) {
+                        Log.e("MessagePreload", "Failed to preload room=$roomId", e)
                     }
-                    @Suppress("UNCHECKED_CAST")
-                    val lastReadAt = snapshot?.get("lastReadAt") as? Map<String, Long> ?: emptyMap()
-                    trySend(lastReadAt)
                 }
-            awaitClose { listener.remove() }
+            }.forEach { it.await() }
+        }
+    }
+
+    private fun observeLastReadAt(roomId: String): Flow<Map<String, Long>> = callbackFlow {
+        val listener = firestore
+            .collection("chatRooms")
+            .document(roomId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                @Suppress("UNCHECKED_CAST")
+                val lastReadAt = snapshot?.get("lastReadAt") as? Map<String, Long> ?: emptyMap()
+                trySend(lastReadAt)
+            }
+        awaitClose { listener.remove() }
+    }
+
+    private fun mapMessagesWithReadStatus(
+        messages: List<Message>,
+        lastReadAt: Map<String, Long>,
+        currentUserId: String
+    ): List<MessageUiState> {
+        val otherUserId = lastReadAt.keys.firstOrNull {
+            !it.equals(currentUserId, ignoreCase = true)
+        }
+        val otherLastRead = otherUserId?.let { lastReadAt[it] } ?: 0L
+        val lastMyMessageIndex = messages.indexOfLast {
+            it.senderId.equals(currentUserId, ignoreCase = true)
         }
 
-        return combine(messagesFlow, lastReadAtFlow) { messages, lastReadAt ->
-            Log.d("DEBUG_READ", "lastReadAt map = $lastReadAt")
-            Log.d("DEBUG_READ", "currentUserId = $currentUserId")
-
-            val otherUserId = lastReadAt.keys.firstOrNull {
-                !it.equals(currentUserId, ignoreCase = true)
-            }
-            Log.d("DEBUG_READ", "otherUserId = $otherUserId")
-            Log.d("DEBUG_READ", "otherLastRead = ${otherUserId?.let { lastReadAt[it] }}")
-            val otherLastRead = otherUserId?.let { lastReadAt[it] } ?: 0L
-            val lastMyMessageIndex = messages.indexOfLast {
-                it.senderId.equals(currentUserId, ignoreCase = true)
-            }
-
-            messages.mapIndexed { index, message ->
-                val isMe = message.senderId.equals(currentUserId, ignoreCase = true)
-
-                val status = when {
-                    !isMe -> MessageStatus.SEEN
-                    index == lastMyMessageIndex -> {
-                        if (otherLastRead > 0L && otherLastRead >= message.timestamp)
-                            MessageStatus.SEEN
-                        else
-                            MessageStatus.SENT
+        return messages.mapIndexed { index, message ->
+            val isMe = message.senderId.equals(currentUserId, ignoreCase = true)
+            val status = when {
+                !isMe -> MessageStatus.SEEN
+                index == lastMyMessageIndex -> {
+                    if (otherLastRead > 0L && otherLastRead >= message.timestamp) {
+                        MessageStatus.SEEN
+                    } else {
+                        MessageStatus.SENT
                     }
-                    else -> MessageStatus.SENT
                 }
-
-                message.toUiState(currentUserId, status)
+                else -> MessageStatus.SENT
             }
+            message.toUiState(currentUserId, status)
         }
     }
 
@@ -186,15 +240,20 @@ class AndroidMessageRepository(
         val messages = snapshot.documents
             .mapNotNull { it.toObject(Message::class.java) }
             .reversed()
-            .map {
-                it.toUiState(
-                    currentUserId = currentUserId,
-                    status = MessageStatus.SEEN
-                )
-            }
+
+        if (messages.isNotEmpty()) {
+            messageDao.insertMessages(messages.map { it.toEntity(roomId) })
+        }
+
+        val uiMessages = messages.map {
+            it.toUiState(
+                currentUserId = currentUserId,
+                status = MessageStatus.SEEN
+            )
+        }
 
         return MessagePage(
-            messages = messages,
+            messages = uiMessages,
             lastDocument = snapshot.documents.lastOrNull(),
             hasMore = snapshot.documents.size == 30
         ) as K
@@ -318,6 +377,55 @@ class AndroidMessageRepository(
                 roomRef,
                 mapOf(
                     "lastMessageText" to "📷 Hình ảnh",
+                    "lastMessageTime" to currentTimeMillis,
+                    "lastSenderId" to senderId,
+                    "unreadCounts.$receiverId" to FieldValue.increment(1)
+                )
+            )
+        }.await()
+    }
+
+    override suspend fun sendVideoMessage(
+        roomId: String,
+        senderId: String,
+        videoBytes: ByteArray,
+        caption: String?
+    ) {
+        val participantIds = roomId.split("_")
+        val receiverId = participantIds.first { it != senderId }
+        createRoomIfNeeded(
+            roomId = roomId,
+            currentUserId = senderId,
+            receiverId = receiverId,
+            firstMessage = "📷 Video"
+        )
+
+        val currentTimeMillis = System.currentTimeMillis()
+
+        val videoUrl = fileUploadApi.uploadFile(
+            fileName = "${roomId}_$currentTimeMillis.jpg",
+            fileBytes = videoBytes
+        )
+
+        val roomRef = firestore.collection("chatRooms").document(roomId)
+        val messageRef = roomRef.collection("messages").document()
+
+        val messageData = hashMapOf(
+            "id" to messageRef.id,
+            "senderId" to senderId,
+            "text" to (caption ?: ""),
+            "fileUrl" to videoUrl.data.url,
+            "fileName" to null,
+            "type" to MessageType.VIDEO.name,
+            "timestamp" to currentTimeMillis
+        )
+
+        firestore.runTransaction { transaction ->
+            transaction.set(messageRef, messageData)
+            transaction.update(
+                roomRef,
+                mapOf(
+                    "lastMessageText" to "📷 Video",
                     "lastMessageTime" to currentTimeMillis,
                     "lastSenderId" to senderId,
                     "unreadCounts.$receiverId" to FieldValue.increment(1)

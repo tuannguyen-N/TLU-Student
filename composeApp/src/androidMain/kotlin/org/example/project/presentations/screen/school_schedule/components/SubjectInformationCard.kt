@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.example.project.R
+import org.example.project.data.mapper.ClassStatus
 import org.example.project.data.mapper.toHourMinuteAmPm
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -29,10 +30,11 @@ import org.example.project.presentations.theme.LocalExtendedColors
 fun SubjectInformationCard(
     modifier: Modifier = Modifier,
     courseClass: CourseClass,
-    isOngoing: Boolean = true,
+    status: ClassStatus,
     daysUntil: Int = 0,
     onClick: () -> Unit = {}
 ) {
+    val isOngoing = status == ClassStatus.IN_PROGRESS
     val backgroundColor = if (isOngoing) LocalExtendedColors.current.mainBlue else Color.White
     val primaryTextColor = if (isOngoing) Color.White else Color.Black
     val secondaryTextColor = if (isOngoing) Color(0xFFCFD3F5) else LocalExtendedColors.current.gray
@@ -63,7 +65,7 @@ fun SubjectInformationCard(
                 )
 
                 CardState(
-                    isOngoing = isOngoing,
+                    status = status,
                     daysUntil = daysUntil,
                     modifier = Modifier.padding(start = 10.dp)
                 )
@@ -123,9 +125,11 @@ fun InformationView(
 @Composable
 fun CardState(
     modifier: Modifier = Modifier,
-    isOngoing: Boolean,
+    status: ClassStatus,
     daysUntil: Int = 0,
 ) {
+    val isOngoing = status == ClassStatus.IN_PROGRESS
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(6.dp))
@@ -135,11 +139,14 @@ fun CardState(
             .padding(horizontal = 7.dp, vertical = 2.dp)
     ) {
         Text(
-            text = when {
-                isOngoing -> "Đang diễn ra"
-                daysUntil == 1 -> "Ngày mai"
-                daysUntil > 0 -> "Sau $daysUntil ngày"
-                else -> "Đã kết thúc"
+            text = when (status) {
+                ClassStatus.IN_PROGRESS -> "Đang diễn ra"
+                ClassStatus.UPCOMING -> when {
+                    daysUntil == 1 -> "Ngày mai"
+                    daysUntil > 0  -> "Sau $daysUntil ngày"
+                    else           -> "Sắp diễn ra"
+                }
+                ClassStatus.FINISHED -> "Đã kết thúc"
             },
             style = MaterialTheme.typography.labelSmall,
             color = if (isOngoing) Color(0xFF16A634) else Color(0xFF848484)

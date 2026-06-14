@@ -33,6 +33,7 @@ kotlin {
             implementation(libs.androidx.security.crypto.v110)
             implementation(libs.androidx.material.icons.extended)
             implementation(libs.coil.compose)
+            implementation("io.coil-kt:coil-video:2.7.0")
             implementation(libs.kotlinx.datetime)
             implementation(libs.compose.multiplatform.v2101)
             implementation(libs.core)
@@ -50,6 +51,9 @@ kotlin {
 
             implementation("com.google.firebase:firebase-firestore")
             implementation("com.google.firebase:firebase-auth")
+
+            implementation("androidx.media3:media3-exoplayer:1.3.1")
+            implementation("androidx.media3:media3-ui:1.3.1")
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

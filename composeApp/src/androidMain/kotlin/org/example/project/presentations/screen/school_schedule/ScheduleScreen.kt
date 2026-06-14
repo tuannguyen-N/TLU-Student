@@ -83,6 +83,7 @@ fun ScheduleScreen(
                 courseClasses = uiState.courseClasses ?: emptyList(),
                 isToday = uiState.currentDay == uiState.selectedDayOfWeek,
                 daysUntil = daysUntil,
+                currentTime = uiState.currentTime,
                 onOpenDetailCourseClass = viewModel::onOpenDetailCourseClass,
                 onClickViewTomorrow = viewModel::onClickViewTomorrow
             )

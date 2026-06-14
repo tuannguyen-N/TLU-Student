@@ -25,6 +25,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import kotlinx.datetime.LocalTime
 import org.example.project.R
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.data.remote.dto.week_schedule.Lecturer
@@ -38,6 +39,7 @@ fun TodayScheduleList(
     courseClasses: List<CourseClass> = emptyList(),
     isToday: Boolean = false,
     isLoading: Boolean = false,
+    currentTime: LocalTime,
     daysUntil: Int = 0,
     onOpenTimetable: () -> Unit = {},
     onOpenDetailCourseClass: (CourseClass) -> Unit = {},
@@ -71,9 +73,9 @@ fun TodayScheduleList(
             LazyColumn(modifier = Modifier) {
                 items(courseClasses) { courseClass ->
                     ScheduleItem(
-                        modifier = Modifier,
                         courseClass = courseClass,
                         isToday = isToday,
+                        currentTime = currentTime,
                         daysUntil = daysUntil,
                         onOpenDetailCourseClass = { onOpenDetailCourseClass(courseClass) }
                     )
@@ -111,67 +113,6 @@ fun TitleView(
             modifier = Modifier.clickable(
                 onClick = onOpenTimetable
             )
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TodayScheduleListPreview() {
-    val courseClasses = listOf(
-        CourseClass(
-            classCode = "INT2204 1",
-            dayOfWeek = 2,
-            subjectName = "Lập trình Android",
-            subjectCode = "INT2204",
-            credits = 3,
-            startPeriod = 1,
-            endPeriod = 3,
-            startTime = "07:00:00",
-            endTime = "09:30:00",
-            room = "A305",
-            lecturer = Lecturer(
-                lecturerCode = "GV001",
-                fullName = "Nguyễn Văn A",
-                phoneNumber = "0123456789",
-                email = "nguyenvana@example.com"
-            )
-        ),
-        CourseClass(
-            classCode = "INT2215 2",
-            dayOfWeek = 2,
-            subjectName = "Cơ sở dữ liệu",
-            subjectCode = "INT2215",
-            credits = 3,
-            startPeriod = 4,
-            endPeriod = 6,
-            startTime = "10:10:00",
-            endTime = "12:40:00",
-            room = "B201",
-            lecturer = Lecturer(
-                lecturerCode = "GV002",
-                fullName = "Trần Thị B",
-                phoneNumber = "0987654321",
-                email = "tranthib@example.com"
-            )
-        )
-    )
-
-    MaterialTheme {
-        TodayScheduleList(
-            color = ExtendedColors(
-                mainRed = Color(0xFFE53935),
-                red = Color.Red,
-                gray = Color.Gray,
-                white = Color.White
-            ),
-            courseClasses = courseClasses,
-            isToday = true,
-            daysUntil = 0,
-            isLoading = true,
-            onOpenTimetable = {},
-            onOpenDetailCourseClass = {},
-            onClickViewTomorrow = {}
         )
     }
 }

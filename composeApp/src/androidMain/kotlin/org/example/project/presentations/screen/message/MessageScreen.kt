@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +34,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import org.example.project.presentations.components.LoadingView
 import org.example.project.presentations.screen.message.components.EmptyMessageContent
 import org.example.project.presentations.screen.message.components.ImageViewerDialog
@@ -40,6 +43,7 @@ import org.example.project.presentations.screen.message.components.MessageConten
 import org.example.project.presentations.screen.message.components.MessageInputBar
 import org.example.project.presentations.screen.message.components.MessageTopBar
 import org.example.project.presentations.screen.message.components.StudentInfoSection
+import org.example.project.presentations.screen.message.components.VideoViewerDialog
 import org.example.project.presentations.theme.LocalExtendedColors
 
 @Composable
@@ -52,9 +56,39 @@ fun MessageScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var selectedImageUrl by remember { mutableStateOf<String?>(null) }
+    var selectedVideoUrl by remember { mutableStateOf<String?>(null) }
 
     var isTopBarExpanded by remember { mutableStateOf(false) }
     var topBarHeightPx by remember { mutableIntStateOf(0) }
+
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build()
+    }
+
+    var playingVideoUrl by remember { mutableStateOf<String?>(null) }
+
+    val onPlayVideoInline = remember {
+        { url: String ->
+            if (playingVideoUrl != url) {
+                playingVideoUrl = url
+                exoPlayer.setMediaItem(MediaItem.fromUri(url.toUri()))
+                exoPlayer.prepare()
+            }
+            exoPlayer.play()
+        }
+    }
+
+    val onPauseVideoInline = remember {
+        {
+            exoPlayer.pause()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
 
     BackHandler(enabled = isTopBarExpanded) {
         isTopBarExpanded = false
@@ -97,12 +131,25 @@ fun MessageScreen(
                         modifier = Modifier.weight(1f),
                         onClickFile = onClickFile,
                         onClickImage = { url -> selectedImageUrl = url },
+                        onClickVideo = { url ->
+                            if (playingVideoUrl != url) {
+                                playingVideoUrl = url
+                                exoPlayer.setMediaItem(MediaItem.fromUri(url.toUri()))
+                                exoPlayer.prepare()
+                            }
+                            selectedVideoUrl = url
+                        },
                         onLoadMoreMessage = viewModel::loadMoreMessages,
                         isLoadingMore = uiState.isLoadingMore,
                         hasMoreMessages = uiState.hasMoreMessages,
                         chatUser = uiState.chatUser,
                         isAiReplying = uiState.isAiReplying,
-                        onSummarize = viewModel::summarize
+                        onSummarize = viewModel::summarize,
+                        exoPlayer = exoPlayer,
+                        playingVideoUrl = playingVideoUrl,
+                        onPlayVideoInline = onPlayVideoInline,
+                        onPauseVideoInline = onPauseVideoInline,
+                        isDialogVisible = selectedVideoUrl != null
                     )
                 }
                 MessageInputBar(
@@ -113,6 +160,8 @@ fun MessageScreen(
                     onRemoveImage = viewModel::onRemoveImage,
                     onFilePick = { viewModel.onFileSelected(it, context) },
                     onRemoveFile = viewModel::onRemoveFile,
+                    onVideoPick = { viewModel.onVideoSelected(it, context) },
+                    onRemoveVideo = viewModel::onRemoveVideo,
                     modifier = Modifier
                         .navigationBarsPadding()
                         .imePadding()
@@ -150,6 +199,19 @@ fun MessageScreen(
                 }
             )
         }
+
+        selectedVideoUrl?.let { url ->
+            VideoViewerDialog(
+                videoUrl = url,
+                onDismiss = { selectedVideoUrl = null },
+                onDownload = { videoUrl ->
+                    val fileName = "VID_${System.currentTimeMillis()}.mp4"
+                    downloadVideo(context, videoUrl, fileName)
+                    Toast.makeText(context, "Đã tải xong!", Toast.LENGTH_SHORT).show()
+                },
+                exoPlayer = exoPlayer
+            )
+        }
     }
 }
 
@@ -165,4 +227,15 @@ fun downloadImage(context: Context, url: String, fileName: String) {
 
     val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     downloadManager.enqueue(request)
+}
+
+fun downloadVideo(context: Context, url: String, fileName: String) {
+    val request = DownloadManager.Request(url.toUri())
+        .setTitle(fileName)
+        .setDescription("Đang tải video...")
+        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        .setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES, fileName)
+        .setAllowedOverMetered(true)
+    val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    dm.enqueue(request)
 }

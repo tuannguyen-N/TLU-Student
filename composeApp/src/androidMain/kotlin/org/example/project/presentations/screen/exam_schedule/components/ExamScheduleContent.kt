@@ -151,8 +151,8 @@ fun ExamScheduleContent(
             SemesterSelector(
                 semesters = uiState.semesters,
                 selectedSemester = uiState.selectedSemester,
-                onSemesterSelected = {
-                    onSemesterChanged(it)
+                onSemesterSelected = { semester ->
+                    onSemesterChanged(semester)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

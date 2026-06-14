@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -17,12 +16,12 @@ import org.example.project.domain.model.CourseFilter
 import org.example.project.domain.model.CourseItem
 import org.example.project.domain.model.CourseStatus
 import org.example.project.domain.repository.EnrollmentRepository
-import org.example.project.domain.usecase.SemesterUseCase
+import org.example.project.domain.repository.SemesterRepository
 import org.example.project.presentations.utils.withDelayedLoading
 
 class ClassSignUpViewModel(
     private val enrollmentRepository: EnrollmentRepository,
-    private val semesterUseCase: SemesterUseCase
+    private val semesterRepository: SemesterRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ClassSignUpState())
     val uiState = _uiState.asStateFlow()
@@ -32,7 +31,6 @@ class ClassSignUpViewModel(
 
     init {
         observeEnrolledClasses()
-        observeSemesters()
         initData()
     }
 
@@ -45,27 +43,25 @@ class ClassSignUpViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun observeSemesters() {
-        semesterUseCase.semesters
-            .filterNotNull()
-            .onEach { semesters ->
-                _uiState.update { it.copy(currentSemester = semesters.last()) }
-            }
-            .launchIn(viewModelScope)
-    }
-
     private fun initData() {
         viewModelScope.launch {
-            val lastSemester = when (val semestersResult = semesterUseCase.getSemesters()) {
-                is AppResult.Success -> semestersResult.data?.lastOrNull()
-                is AppResult.Failure -> null
-            } ?: return@launch
-
-            _uiState.update { it.copy(currentSemester = lastSemester) }
-
-            launch { fetchCourses() }
-            launch { enrollmentRepository.getEnrollmentSchedule(lastSemester.id) }
+            getSemesterInfo()
+            fetchCourses()
         }
+    }
+
+    private suspend fun getSemesterInfo() {
+        semesterRepository.getSemesterPeriod().onSuccess { semester ->
+            _uiState.update {
+                it.copy(
+                    semesterName = semester.semesterName,
+                    semesterId = semester.semesterId,
+                    enrollmentStartTime = semester.startTime,
+                    enrollmentEndTime = semester.endTime
+                )
+            }
+        }
+            .onFailure { _uiState.update { it.copy(semesterName = "") } }
     }
 
     private suspend fun fetchCourses() {
@@ -90,10 +86,9 @@ class ClassSignUpViewModel(
                     it.copy(
                         isLoading = false,
                         courses = courseItems,
-                        enrollmentStartTime = result.data.startTime,
-                        enrollmentEndTime = result.data.endTime
                     )
                 }
+                enrollmentRepository.getEnrollmentSchedule(semesterId)
             }
 
             is AppResult.Failure -> {
@@ -127,11 +122,11 @@ class ClassSignUpViewModel(
 
     fun enrollClass(courseClass: CourseClassEnrollmentData) {
         viewModelScope.launch {
-            val semesterId = _uiState.value.currentSemester?.id ?: run {
+            val semesterId = _uiState.value.semesterId ?: run {
                 sendEvent(ClassSignUpEvent.EnrollClassFailure("Không xác định được học kỳ"))
                 return@launch
             }
-
+            _uiState.update { it.copy(showDialog = false, isEnrolling = true) }
             enrollmentRepository.enrollClass(
                 courseClassId = courseClass.id,
                 studyProgramId = semesterId,
@@ -143,10 +138,8 @@ class ClassSignUpViewModel(
                     sendEvent(ClassSignUpEvent.EnrollClassFailure(it.message ?: "Đã xảy ra lỗi"))
                 }
             )
-            enrollmentRepository.getEnrollmentSchedule(
-                _uiState.value.currentSemester?.id ?: return@launch
-            )
-            dismissDialog()
+            enrollmentRepository.getEnrollmentSchedule(semesterId)
+            _uiState.update { it.copy(isEnrolling = false) }
         }
     }
 

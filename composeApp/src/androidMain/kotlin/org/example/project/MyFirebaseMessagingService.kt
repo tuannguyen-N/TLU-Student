@@ -3,16 +3,14 @@ package org.example.project
 import android.app.NotificationManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.example.project.presentations.utils.ChatPresenceManager
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        Log.e("get_notification", "onMessageReceived: $message", )
         val incomingRoomId = message.data["roomId"]
 
         if (incomingRoomId != null && incomingRoomId == ChatPresenceManager.currentRoom.value) {
@@ -23,8 +21,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val body = message.data["body"]
         showNotification(title, body)
 
-        val work = OneTimeWorkRequestBuilder<SyncNotificationWorker>().build()
-        WorkManager.getInstance(applicationContext).enqueue(work)
+//        val work = OneTimeWorkRequestBuilder<SyncNotificationWorker>().build()
+//        WorkManager.getInstance(applicationContext).enqueue(work)
     }
 
     override fun onNewToken(token: String) {

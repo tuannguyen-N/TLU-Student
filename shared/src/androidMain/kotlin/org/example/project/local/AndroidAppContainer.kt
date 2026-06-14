@@ -15,7 +15,10 @@ import org.example.project.DeviceProvider
 import org.example.project.StompNotificationSocket
 import org.example.project.data.AndroidLocationRepository
 import org.example.project.data.local.AppPreferences
+import org.example.project.data.local.AppDatabase
 import org.example.project.data.local.FirebaseStorage
+import org.example.project.data.local.createDatabase
+import org.example.project.data.local.getDatabaseBuilder
 import org.example.project.data.local.ImageBase64Storage
 import org.example.project.data.local.TokenStorage
 import org.example.project.data.remote.api.FileUploadApi
@@ -23,6 +26,12 @@ import org.example.project.data.remote.clearBearerTokens
 import org.example.project.data.remote.createHttpClient
 
 class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
+    private val appContext = context.applicationContext
+
+    val database: AppDatabase by lazy {
+        createDatabase(getDatabaseBuilder(appContext))
+    }
+
     private val encryptedSharedPreferences: SharedPreferences by lazy {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -62,7 +71,8 @@ class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
     }
 
     val messageRepository = AndroidMessageRepository(
-        fileUploadApi = FileUploadApi(httpClient)
+        fileUploadApi = FileUploadApi(httpClient),
+        messageDao = database.messageDao()
     )
 
     val userRepository = AndroidUserRepository(firebaseStorage, deviceProvider)

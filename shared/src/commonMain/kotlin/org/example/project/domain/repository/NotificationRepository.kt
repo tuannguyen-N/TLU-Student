@@ -103,6 +103,7 @@ class NotificationRepository(
                 oauthUserId = prepareNotificationData.oauthUserId,
                 facultyId = prepareNotificationData.facultyId,
                 studentClassId = prepareNotificationData.studentClassId,
+                topics = prepareNotificationData.topics,
                 page = page,
                 size = size,
                 search = sender

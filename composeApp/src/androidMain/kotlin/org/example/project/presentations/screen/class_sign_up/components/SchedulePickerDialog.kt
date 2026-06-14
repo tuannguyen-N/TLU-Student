@@ -76,7 +76,7 @@ fun SchedulePickerDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column {
                         Text(
                             text = "Chọn nhóm học",
                             style = MaterialTheme.typography.titleMedium.copy(
@@ -187,13 +187,45 @@ fun ClassGroupCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    Text(
-                        text = group.className,
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.Bold,
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Text(
+                            text = group.className,
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                            ),
+                            modifier = Modifier.weight(1f)
                         )
-                    )
+
+                        Surface(
+                            shape = RoundedCornerShape(20.dp),
+                            color = badgeBackground
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "$badgeLabel ",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = badgeTextColor,
+                                        fontWeight = FontWeight.Medium,
+                                    )
+                                )
+                                Text(
+                                    text = "${group.enrolledCount}/${group.capacity}",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = badgeCountColor,
+                                        fontWeight = FontWeight.Bold,
+                                    )
+                                )
+                            }
+                        }
+                    }
 
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -210,31 +242,6 @@ fun ClassGroupCard(
                             text = group.lecturerName,
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = Color.Gray,
-                            )
-                        )
-                    }
-                }
-
-                Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = badgeBackground
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "$badgeLabel ",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = badgeTextColor,
-                                fontWeight = FontWeight.Medium,
-                            )
-                        )
-                        Text(
-                            text = "${group.enrolledCount}/${group.capacity}",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = badgeCountColor,
-                                fontWeight = FontWeight.Bold,
                             )
                         )
                     }
@@ -266,6 +273,17 @@ fun SessionItem(
     session: Schedule,
     color: ExtendedColors
 ) {
+    val dayText = when (session.dayOfWeek) {
+        1 -> "Thứ 2"
+        2 -> "Thứ 3"
+        3 -> "Thứ 4"
+        4 -> "Thứ 5"
+        5 -> "Thứ 6"
+        6 -> "Thứ 7"
+        7 -> "Chủ nhật"
+        else -> "Không xác định"
+    }
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
@@ -286,7 +304,7 @@ fun SessionItem(
             )
             Column {
                 Text(
-                    text = "Thứ ${session.dayOfWeek} (Tiết ${session.startPeriod}-${session.endPeriod})",
+                    text = "$dayText (Tiết ${session.startPeriod}-${session.endPeriod})",
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.SemiBold,
                     )
@@ -316,7 +334,7 @@ private fun SchedulePickerDialogPreview() {
         CourseClassEnrollmentData(
             capacity = 60,
             classCode = "CS202-01",
-            className = "Nhóm 1",
+            className = "Nhóm 1NhómNhómNhómNhómNhóm",
             enrolledCount = 45,
             id = 1,
             lecturerCode = "GV001",

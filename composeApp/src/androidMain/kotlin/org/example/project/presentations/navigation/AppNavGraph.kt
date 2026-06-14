@@ -558,7 +558,7 @@ fun AppNavGraph(
             val factory = remember(container) {
                 ClassSignUpViewModelFactory(
                     container.enrollmentRepository,
-                    container.semesterUseCase
+                    container.semesterRepository
                 )
             }
             val classSignUpViewModel: ClassSignUpViewModel = viewModel(factory = factory)
@@ -566,8 +566,8 @@ fun AppNavGraph(
             ClassSignUpScreen(
                 viewModel = classSignUpViewModel,
                 onBack = { navController.popBackStack() },
-                onOpenSignedUpClass = {
-                    navController.navigate(AppRoute.ClassSignUpDetail)
+                onOpenSignedUpClass = { semesterId ->
+                    navController.navigate(AppRoute.classSignUpDetail(semesterId))
                 }
             )
         }
@@ -673,19 +673,23 @@ fun AppNavGraph(
             )
         }
 
-        composable(AppRoute.ClassSignUpDetail) {
+        composable(
+            route = AppRoute.ClassSignUpDetail,
+            arguments = listOf(navArgument("semesterId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val semesterId = backStackEntry.arguments?.getInt("semesterId") ?: -1
             val container = LocalAppContainer.current
-            val factory = remember(container) {
+            val factory = remember(container, semesterId) {
                 SignedUpClassViewModelFactory(
                     container.enrollmentRepository,
-                    container.semesterUseCase
+                    semesterId
                 )
             }
             val signedUpClassesViewModel: SignedUpClassesViewModel = viewModel(factory = factory)
             SignedUpClassesScreen(
                 viewModel = signedUpClassesViewModel,
                 onBack = { navController.popBackStack() },
-                onOpenTempSchedule = { navController.navigate(AppRoute.TempSchedule) },
+                onOpenTempSchedule = { navController.navigate(AppRoute.tempSchedule(semesterId)) },
                 onBackToHome = {
                     navController.navigate(AppRoute.Main) {
                         popUpTo(navController.graph.startDestinationId) {
@@ -697,14 +701,18 @@ fun AppNavGraph(
             )
         }
 
-        composable(AppRoute.TempSchedule) {
+        composable(
+            route = AppRoute.TempSchedule,
+            arguments = listOf(navArgument("semesterId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val semesterId = backStackEntry.arguments?.getInt("semesterId") ?: -1
             val container = LocalAppContainer.current
             val context = LocalContext.current
             val factory =
-                remember(container) {
+                remember(container, semesterId) {
                     TempTimetableViewModelFactory(
                         container.enrollmentRepository,
-                        container.semesterUseCase
+                        semesterId
                     )
                 }
             val tempTimetableViewModel: TempTimetableViewModel = viewModel(factory = factory)

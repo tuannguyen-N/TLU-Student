@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.data.mapper.toExamCountdown
+import org.example.project.data.mapper.toHourMinuteAmPm
 import org.example.project.data.remote.dto.exam_schedule.ExamSchedule
 import org.example.project.presentations.theme.LocalExtendedColors
 
@@ -122,7 +123,7 @@ fun ExamCard(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = "${exam.startTime} - ${exam.endTime}",
+                            text = "${exam.startTime.toHourMinuteAmPm()} - ${exam.endTime.toHourMinuteAmPm()}",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = LocalExtendedColors.current.grayNavy
                             )

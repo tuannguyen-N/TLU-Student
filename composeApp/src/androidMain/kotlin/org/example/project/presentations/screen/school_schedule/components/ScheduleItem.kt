@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,8 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.LocalTime
 import org.example.project.R
-import org.example.project.data.mapper.isGoing
+import org.example.project.data.mapper.ClassStatus
+import org.example.project.data.mapper.getClassStatus
 import org.example.project.data.mapper.toHourMinuteAmPm
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.theme.LocalExtendedColors
@@ -34,10 +37,19 @@ fun ScheduleItem(
     modifier: Modifier = Modifier,
     courseClass: CourseClass,
     isToday: Boolean,
+    currentTime: LocalTime,
     daysUntil: Int = 0,
     onOpenDetailCourseClass: () -> Unit
 ) {
-    val isOngoing = courseClass.isGoing()
+    val status = remember(currentTime, isToday) {
+        when {
+            !isToday -> ClassStatus.UPCOMING
+            else -> courseClass.getClassStatus(currentTime)
+        }
+    }
+
+    val isOngoing = status == ClassStatus.IN_PROGRESS
+
     Row(
         modifier = modifier.height(IntrinsicSize.Min)
     ) {
@@ -46,10 +58,15 @@ fun ScheduleItem(
             shift = courseClass.startPeriod.toString(),
             startTime = courseClass.startTime
         )
-        ScheduleDotLine(isOngoing = isOngoing, modifier = Modifier.padding(horizontal = 20.dp).width(14.dp))
+        ScheduleDotLine(
+            isOngoing = isOngoing,
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .width(14.dp)
+        )
         SubjectInformationCard(
             courseClass = courseClass,
-            isOngoing = isOngoing && isToday,
+            status = status,
             daysUntil = if (!isToday) daysUntil else 0,
             modifier = Modifier.padding(bottom = 25.dp),
             onClick = onOpenDetailCourseClass

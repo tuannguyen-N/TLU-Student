@@ -140,6 +140,18 @@ fun MessageContent(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+
+                MessageType.VIDEO -> Text(
+                    text = prefix + "[Video]",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (hasUnread)
+                        MaterialTheme.colorScheme.onSurface
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = if (hasUnread) FontWeight.Medium else FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
 

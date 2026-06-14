@@ -1,6 +1,7 @@
 package org.example.project.di
 
 import org.example.project.DeviceProvider
+import org.example.project.data.local.AppDatabase
 import org.example.project.data.local.AppPreferences
 import org.example.project.data.local.FirebaseStorage
 import org.example.project.data.local.ImageBase64Storage
@@ -76,6 +77,7 @@ class AppContainer(
     topicSubscriber: TopicSubscriber,
     val locationRepository: LocationRepository,
     context: Any? = null,
+    sharedDatabase: AppDatabase? = null,
     val messageRepository: MessageRepository,
     val userRepository: UserRepository,
     val searchHistoryRepository: SearchHistoryRepository,
@@ -102,7 +104,7 @@ class AppContainer(
     val authPluginConfig = AuthPluginConfig()
 
     //for database
-    private val database = createDatabase(getDatabaseBuilder(context))
+    private val database = sharedDatabase ?: createDatabase(getDatabaseBuilder(context))
 
     //for notification
     private val markedNotificationDao = database.markedNotificationDao()
@@ -159,7 +161,7 @@ class AppContainer(
     //for exam schedule
     private val semesterDao = database.semesterDao()
     private val semesterApi = SemesterApi(httpClient)
-    private val semesterRepository = SemesterRepository(semesterApi, semesterDao)
+    val semesterRepository = SemesterRepository(semesterApi, semesterDao, studyProgramApi)
     private val examScheduleApi = ExamScheduleApi(httpClient)
     val semesterUseCase = SemesterUseCase(semesterRepository)
     val examScheduleRepository = ExamScheduleRepository(examScheduleApi)

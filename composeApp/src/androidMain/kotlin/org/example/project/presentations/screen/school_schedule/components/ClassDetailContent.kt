@@ -92,9 +92,12 @@ fun ClassDetailContent(
                 text = courseClass.subjectName,
                 style = MaterialTheme.typography.headlineSmall,
                 color = LocalExtendedColors.current.mainBlue,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 5.dp)
             )
-            Spacer(modifier = Modifier.weight(1f))
+
             SubjectCode(
                 name = courseClass.subjectCode,
                 modifier = Modifier.padding(start = 8.dp),

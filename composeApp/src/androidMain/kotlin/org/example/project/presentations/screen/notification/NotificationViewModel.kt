@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,6 +23,7 @@ class NotificationViewModel(
     val uiState = _uiState.asStateFlow()
 
     private val tabSenderKeys = mapOf(0 to null, 1 to "SYSTEM", 2 to "LECTURER", 3 to "FACULTY")
+
     private val _tabPagination = MutableStateFlow(
         tabSenderKeys.values.associateWith { TabPaginationState() }
     )
@@ -51,28 +54,25 @@ class NotificationViewModel(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
+    val filteredNotifications = uiState
+        .map { it.selectedTab }
+        .distinctUntilChanged()
+        .flatMapLatest { tab ->
+            when (tab) {
+                1 -> systemNotifications
+                2 -> lecturerNotifications
+                3 -> facultyNotifications
+                else -> allNotifications
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val currentTabPagination = combine(
-        uiState.map { it.selectedTab },
+        uiState.map { it.selectedTab }.distinctUntilChanged(),
         _tabPagination
     ) { tab, paginationMap ->
-        val sender = tabSenderKeys[tab]
-        paginationMap[sender] ?: TabPaginationState()
+        paginationMap[tabSenderKeys[tab]] ?: TabPaginationState()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TabPaginationState())
-
-    val filteredNotifications = combine(
-        uiState.map { it.selectedTab },
-        notificationRepository.allNotifications,
-        notificationRepository.systemNotifications,
-        notificationRepository.lecturerNotifications,
-        notificationRepository.facultyNotifications
-    ) { tab, all, system, lecturer, faculty ->
-        when (tab) {
-            1 -> system
-            2 -> lecturer
-            3 -> faculty
-            else -> all
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         loadInitialData()

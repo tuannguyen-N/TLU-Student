@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import org.example.project.domain.model.MessageUiState
@@ -46,18 +47,25 @@ fun MessageContent(
     modifier: Modifier = Modifier,
     onClickFile: (String) -> Unit,
     onClickImage: (String) -> Unit,
+    onClickVideo: (String) -> Unit,
     onLoadMoreMessage: () -> Unit,
     onSummarize: (String) -> Unit,
-    isAiReplying: Boolean
+    isAiReplying: Boolean,
+    exoPlayer: ExoPlayer,
+    playingVideoUrl: String?,
+    onPlayVideoInline: (String) -> Unit,
+    onPauseVideoInline: () -> Unit,
+    isDialogVisible: Boolean
 ) {
     var visibleTimeId by remember { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
 
     // ── Group by date ────────────────────────────────────────────────────────
     val messagesByDate = remember(messages) {
+        val cal = Calendar.getInstance()
         messages
             .groupBy { msg ->
-                val cal = Calendar.getInstance().apply { timeInMillis = msg.timestamp }
+                cal.timeInMillis = msg.timestamp
                 cal.get(Calendar.YEAR) to cal.get(Calendar.DAY_OF_YEAR)
             }
             .toSortedMap(compareBy({ it.first }, { it.second }))
@@ -121,11 +129,17 @@ fun MessageContent(
                             },
                             isLast = msg == messagesForDate.last(),
                             onClickImage = onClickImage,
+                            onClickVideo = onClickVideo,
                             onClickFile = onClickFile,
                             avatarUrl = chatUser?.avatarUrl,
                             chatUserName = chatUser?.name ?: "",
                             isAiReplying = isAiReplying,
-                            onSummarize = onSummarize
+                            onSummarize = onSummarize,
+                            exoPlayer = exoPlayer,
+                            playingVideoUrl = playingVideoUrl,
+                            onPlayVideoInline = onPlayVideoInline,
+                            onPauseVideoInline = onPauseVideoInline,
+                            isDialogVisible = isDialogVisible
                         )
                     }
 

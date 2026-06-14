@@ -1,8 +1,10 @@
 package org.example.project.presentations.screen.message.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,8 +17,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,20 +31,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 
 @Composable
-fun ImageViewerDialog(
-    imageUrl: String,
+fun VideoViewerDialog(
+    videoUrl: String,
     onDismiss: () -> Unit,
-    onDownload: (String) -> Unit
+    onDownload: (String) -> Unit,
+    exoPlayer: ExoPlayer
 ) {
-    val context = LocalContext.current
     var isVisible by remember { mutableStateOf(false) }
+    var isPlaying by remember { mutableStateOf(true) }
+
+    DisposableEffect(exoPlayer) {
+        val listener = object : Player.Listener {
+            override fun onIsPlayingChanged(playing: Boolean) {
+                isPlaying = playing
+            }
+        }
+        exoPlayer.addListener(listener)
+        onDispose {
+            exoPlayer.removeListener(listener)
+        }
+    }
 
     LaunchedEffect(Unit) { isVisible = true }
 
@@ -49,41 +69,92 @@ fun ImageViewerDialog(
         animationSpec = tween(300),
         label = "alpha"
     )
-    val scale by animateFloatAsState(
-        targetValue = if (isVisible) 1f else 0.85f,
-        animationSpec = spring(dampingRatio = 0.75f, stiffness = 400f),
-        label = "scale"
-    )
+
+    LaunchedEffect(videoUrl) {
+        val currentUri = exoPlayer.currentMediaItem?.localConfiguration?.uri
+        if (currentUri?.toString() != videoUrl) {
+            exoPlayer.setMediaItem(
+                MediaItem.fromUri(videoUrl.toUri())
+            )
+            exoPlayer.prepare()
+        }
+        exoPlayer.play()
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer { this.alpha = alpha }
-            .background(Color.Black.copy(alpha = 0.92f))
+            .background(Color.Black.copy(alpha = 0.96f))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = {
                     isVisible = false
+                    exoPlayer.pause()
                     onDismiss()
                 }
             ),
         contentAlignment = Alignment.Center
     ) {
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = "Full image",
-            contentScale = ContentScale.Fit,
+        AndroidView(
+            factory = {
+                PlayerView(it).apply {
+                    player = exoPlayer
+                    useController = false
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .graphicsLayer { scaleX = scale; scaleY = scale }
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = {}
+                    onClick = {
+                        if (isPlaying) {
+                            exoPlayer.pause()
+                        } else {
+                            if (exoPlayer.playbackState == Player.STATE_ENDED) {
+                                exoPlayer.seekTo(0)
+                            }
+                            exoPlayer.play()
+                        }
+                    }
                 )
         )
+
+        AnimatedVisibility(
+            visible = !isPlaying,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.2f))
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {
+                            if (exoPlayer.playbackState == Player.STATE_ENDED) {
+                                exoPlayer.seekTo(0)
+                            }
+                            exoPlayer.play()
+                        }
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.PlayArrow,
+                    contentDescription = "Play",
+                    tint = Color.White,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        }
 
         Box(
             modifier = Modifier
@@ -92,7 +163,7 @@ fun ImageViewerDialog(
                 .size(48.dp)
                 .clip(CircleShape)
                 .background(Color.White.copy(alpha = 0.15f))
-                .clickable { onDownload(imageUrl) },
+                .clickable { onDownload(videoUrl) },
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -112,6 +183,7 @@ fun ImageViewerDialog(
                 .background(Color.White.copy(alpha = 0.15f))
                 .clickable {
                     isVisible = false
+                    exoPlayer.pause()
                     onDismiss()
                 },
             contentAlignment = Alignment.Center

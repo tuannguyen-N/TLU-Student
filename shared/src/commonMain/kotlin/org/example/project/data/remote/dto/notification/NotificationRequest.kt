@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class NotificationRequest(
     val oauthUserId: Int,
     val facultyId: Int,
-    val studentClassId: Int
+    val studentClassId: Int,
+    val topics: List<String>
 )
