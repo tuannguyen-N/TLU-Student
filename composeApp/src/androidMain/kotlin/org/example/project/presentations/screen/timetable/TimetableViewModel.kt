@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.mapper.getCurrentWeek
 import org.example.project.data.mapper.getNextWeek
 import org.example.project.data.mapper.getPreviousWeek
@@ -23,6 +26,8 @@ import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.presentations.utils.withDelayedLoading
+import kotlin.math.absoluteValue
+import kotlin.time.Clock
 
 class TimetableViewModel(
     private val scheduleUseCase: ScheduleUseCase,
@@ -39,7 +44,19 @@ class TimetableViewModel(
 
     private fun observeSemesters() {
         semesterUseCase.semesters.onEach { semesters ->
-            val selected = semesters?.lastOrNull()
+            val today = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .date
+            val selected = semesters
+                ?.firstOrNull { semester ->
+                    val start = LocalDate.parse(semester.startDate)
+                    val end = LocalDate.parse(semester.endDate)
+                    today in start..end
+                }
+                ?: semesters?.minByOrNull { semester ->
+                    val end = LocalDate.parse(semester.endDate)
+                    (today - end).days.absoluteValue
+                }
             updateState {
                 copy(
                     semesters = semesters.orEmpty(),

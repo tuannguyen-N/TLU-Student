@@ -52,14 +52,7 @@ class HomeViewModel(
         observeStudentInfo()
         observeReadNotifications()
         observeAlerts()
-        observeSemester()
         loadInitData()
-    }
-
-    private fun observeSemester() {
-        semesterUseCase.semesters.onEach { semesterList ->
-            updateState { copy(currentSemester = semesterList?.lastOrNull()) }
-        }.launchIn(viewModelScope)
     }
 
     private fun observeAlerts() {

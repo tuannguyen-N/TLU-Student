@@ -9,6 +9,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import org.example.project.data.mapper.ErrorMapper
 import org.example.project.data.remote.api.EnrollmentApi
 import org.example.project.data.remote.api.StudyProgramApi
+import org.example.project.data.remote.dto.enroll.ConflictScheduleData
 import org.example.project.data.remote.dto.enroll.CourseEnrollmentData
 import org.example.project.data.remote.dto.enroll.EnrollmentScheduleData
 import org.example.project.data.remote.dto.enroll.PrerequisiteInfo
@@ -84,36 +85,46 @@ class EnrollmentRepository(
         studyProgramId: Int,
         courseClassId: Int
     ): AppResult<String> {
-
         val result = api.enrollClass(studyProgramId, courseClassId)
-
-        return if (result.code == -102) {
-
-            val prerequisites =
-                Json.decodeFromJsonElement<List<PrerequisiteInfo>>(
-                    result.data!!
+        return when (result.code) {
+            -102 -> {
+                val prerequisites =
+                    Json.decodeFromJsonElement<List<PrerequisiteInfo>>(result.data!!)
+                val missingSubjects = prerequisites
+                    .flatMap { it.missingSubjectCodes }
+                    .distinct()
+                    .joinToString(", ")
+                AppResult.Failure(
+                    message = "Bạn chưa đạt điều kiện tiên quyết. Cần hoàn thành các môn: $missingSubjects"
                 )
+            }
 
-            val missingSubjects = prerequisites
-                .flatMap { it.missingSubjectCodes }
-                .distinct()
-                .joinToString(", ")
+            -101 -> {
+                val conflictData =
+                    Json.decodeFromJsonElement<ConflictScheduleData>(result.data!!)
+                val dayLabel = mapDayOfWeek(conflictData.dayOfWeek)
+                AppResult.Failure(
+                    message = "Trùng lịch học với lớp ${conflictData.classOverlapCode} " +
+                            "($dayLabel, tiết ${conflictData.startPeriod}-${conflictData.endPeriod})"
+                )
+            }
 
-            AppResult.Failure(
-                message = "Bạn chưa đạt điều kiện tiên quyết. Cần hoàn thành các môn: $missingSubjects"
+            0 -> AppResult.Success(result.message)
+            else -> AppResult.Failure(
+                message = ErrorMapper.mapEnrollment(result.code, result.message).messageVi
             )
-
-        } else if (result.code != 0) {
-            AppResult.Failure(
-                message = ErrorMapper.mapEnrollment(
-                    result.code,
-                    result.message
-                ).messageVi
-            )
-
-        } else {
-            AppResult.Success(result.message)
         }
+    }
+
+    private fun mapDayOfWeek(day: Int): String = when (day) {
+        2 -> "Thứ 2"
+        3 -> "Thứ 3"
+        4 -> "Thứ 4"
+        5 -> "Thứ 5"
+        6 -> "Thứ 6"
+        7 -> "Thứ 7"
+        8 -> "Chủ nhật"
+        else -> "Thứ $day"
     }
 
     suspend fun getEnrollmentSchedule(semesterId: Int): AppResult<List<EnrollmentScheduleData>> {

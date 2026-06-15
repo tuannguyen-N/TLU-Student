@@ -20,7 +20,6 @@ data class HomeState(
     val examDayScheduleList: List<DaySchedule> = emptyList(),
     val newsAndEvents: List<EventAndNewUiModel> = emptyList(),
     val dailyQuote: QuoteEntity? = null,
-    val currentSemester: Semester? = null,
 
     val loadingStudentInfo: Boolean = false,
     val loadingAlertList: Boolean = false,

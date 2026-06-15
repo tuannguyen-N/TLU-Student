@@ -11,10 +11,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.mapper.toExamDays
 import org.example.project.data.remote.dto.semester.Semester
 import org.example.project.domain.repository.ExamScheduleRepository
 import org.example.project.domain.usecase.SemesterUseCase
+import kotlin.math.absoluteValue
+import kotlin.time.Clock
 
 class ExamScheduleViewModel(
     private val semesterUseCase: SemesterUseCase,
@@ -39,9 +44,21 @@ class ExamScheduleViewModel(
     private suspend fun getSemesters() {
         semesterUseCase.getSemesters().fold(
             onSuccess = { semesters ->
-                val latest = semesters?.lastOrNull() ?: return@fold
-                updateState { copy(selectedSemester = latest, currentSemester = latest) }
-                getExamSchedule(latest.semesterCode)
+                val today = Clock.System.now()
+                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                    .date
+                val selected = semesters
+                    ?.firstOrNull { semester ->
+                        val start = LocalDate.parse(semester.startDate)
+                        val end = LocalDate.parse(semester.endDate)
+                        today in start..end
+                    }
+                    ?: semesters?.minByOrNull { semester ->
+                        val end = LocalDate.parse(semester.endDate)
+                        (today - end).days.absoluteValue
+                    }
+                updateState { copy(selectedSemester = selected, currentSemester = selected) }
+                getExamSchedule(selected?.semesterCode ?: semesters?.last()?.semesterCode ?: "")
             },
             onFailure = {
                 Log.e("ExamViewModel", "getSemesters: Error $it")
@@ -68,7 +85,19 @@ class ExamScheduleViewModel(
 
     private fun observeSemesters() {
         semesterUseCase.semesters.onEach { semesters ->
-            val selected = semesters?.lastOrNull()
+            val today = Clock.System.now()
+                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .date
+            val selected = semesters
+                ?.firstOrNull { semester ->
+                    val start = LocalDate.parse(semester.startDate)
+                    val end = LocalDate.parse(semester.endDate)
+                    today in start..end
+                }
+                ?: semesters?.minByOrNull { semester ->
+                    val end = LocalDate.parse(semester.endDate)
+                    (today - end).days.absoluteValue
+                }
             updateState {
                 copy(
                     semesters = semesters.orEmpty(),

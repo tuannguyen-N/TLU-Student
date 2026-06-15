@@ -42,7 +42,7 @@ class StompNotificationSocket(
 
         stompClient = Stomp.over(
             Stomp.ConnectionProvider.OKHTTP,
-            "wss://tl-connect-app-latest.onrender.com/ws",
+            "https://tl-connect-app-latest.onrender.com/ws/websocket",
             null,
             okHttpClient
         )

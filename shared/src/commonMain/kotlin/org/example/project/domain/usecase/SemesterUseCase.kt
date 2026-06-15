@@ -12,17 +12,17 @@ import kotlin.time.Clock
 class SemesterUseCase(
     private val semesterRepository: SemesterRepository
 ) {
-    val semesters = semesterRepository.semesters.map {
+    val semesters = semesterRepository.semesters/*.map {
         it?.filter { semester -> checkingAvailableDate(semester.startDate) }
-    }
+    }*/
 
     suspend fun getSemesters(isOffline: Boolean = false): AppResult<List<Semester>?> {
         val caller = if (isOffline) semesterRepository.getSemestersOffline() else semesterRepository.getSemesters()
-        return caller.map {
+        return caller/*.map {
             it.filter { semester ->
                 checkingAvailableDate(semester.startDate)
             }
-        }
+        }*/
     }
 
     private fun checkingAvailableDate(startDate: String): Boolean {

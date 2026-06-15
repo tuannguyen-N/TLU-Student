@@ -40,7 +40,8 @@ fun ApplicationTypeMenu(
         ) {
             LazyColumn(
                 modifier = Modifier
-                    .width(200.dp)
+                    .width(230.dp)
+                    .height(400.dp)
                     .background(Color.White),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -57,10 +58,10 @@ fun ApplicationTypeMenu(
                             text = item.name,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 13.dp),
+                                .padding(vertical = 13.dp, horizontal = 7.dp),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.Black,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
                     }
 
