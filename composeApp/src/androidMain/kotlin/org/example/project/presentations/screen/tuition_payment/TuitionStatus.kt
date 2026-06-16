@@ -1,6 +1,5 @@
 package org.example.project.presentations.screen.tuition_payment
 
-import org.example.project.domain.model.PaymentResult
 import org.example.project.domain.model.PaymentType
 import org.example.project.domain.model.TuitionDetailUiModel
 import org.example.project.domain.model.TuitionUiModel

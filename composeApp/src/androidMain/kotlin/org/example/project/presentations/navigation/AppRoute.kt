@@ -24,7 +24,10 @@ object AppRoute {
     const val ClassSignUpDetail = "class_sign_up_detail_screen/{semesterId}"
     fun classSignUpDetail(semesterId: Int) = "class_sign_up_detail_screen/$semesterId"
     const val OfflineTimetableScreen = "offline_timetable_screen"
-    const val TuitionPayment = "tuition_payment_screen"
+    const val TuitionPayment = "tuition_payment_screen?notification_id={notification_id}"
+    fun tuitionPayment(notificationId: Int? = null) =
+        if (notificationId != null) "tuition_payment_screen?notification_id=$notificationId"
+        else "tuition_payment_screen"
     const val NewsScreen = "news_screen"
     const val Chat = "chat_screen"
     const val Application = "application_screen"
@@ -35,7 +38,8 @@ object AppRoute {
     const val GpaTracker = "gpa_tracker_screen"
     const val TempSchedule = "temp_schedule_screen/{semesterId}"
     fun tempSchedule(semesterId: Int) = "temp_schedule_screen/$semesterId"
-    const val AlertsAndActions = "alerts_and_actions_screen"
+    const val AlertsAndActions = "alerts_and_actions_screen/{notificationId}"
+    fun alertsAndActions(notificationId: Int) = "alerts_and_actions_screen/$notificationId"
     const val MessageRoute =
         "message_screen/{studentId}/{chatName}/{avatarUrl}"
 

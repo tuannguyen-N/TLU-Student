@@ -141,7 +141,7 @@ fun String.toCreatedAgo(): String {
     val createdInstant = LocalDateTime(
         LocalDate.parse(datePart),
         LocalTime.parse(timePart)
-    ).toInstant(TimeZone.UTC)
+    ).toInstant(TimeZone.of("Asia/Ho_Chi_Minh"))
 
     val now = Clock.System.now()
 

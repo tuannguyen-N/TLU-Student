@@ -121,7 +121,7 @@ private fun PaymentCard(
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = item.dueDate,
+                        text = "Hạn: ${item.dueDate}",
                         style = MaterialTheme.typography.bodySmall.copy(
                             color = color.gray
                         )
@@ -143,13 +143,13 @@ private fun PaymentCard(
                 }
             }
 
-            if (item.status == PaymentStatus.UNPAID || item.status == PaymentStatus.OVERDUE) {
+            if (item.status == PaymentStatus.UNPAID) {
                 Spacer(modifier = Modifier.height(12.dp))
                 ButtonView(
                     text = "Thanh toán",
                     enabled = true,
                     textColorRes = color.white,
-                    backgroundColorRes = if (item.status == PaymentStatus.OVERDUE) color.orange else color.red,
+                    backgroundColorRes = color.red,
                     shape = RoundedCornerShape(12.dp),
                     onClick = { onPayment(item) },
                     modifier = Modifier.padding(horizontal = 20.dp)

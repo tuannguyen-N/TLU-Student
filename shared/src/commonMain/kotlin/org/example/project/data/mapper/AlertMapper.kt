@@ -60,5 +60,6 @@ fun AlertUiModel.toAlertActionItem(): AlertActionItem {
         description = content,
         referenceType = notificationReferenceType,
         actionLabel = actionLabel,
+        id = id
     )
 }

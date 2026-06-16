@@ -370,6 +370,17 @@ private fun TimePeriod(
     startPeriod: Int,
     endPeriod: Int
 ) {
+    val dayText = when (dayOfWeek) {
+        1 -> "Thứ 2"
+        2 -> "Thứ 3"
+        3 -> "Thứ 4"
+        4 -> "Thứ 5"
+        5 -> "Thứ 6"
+        6 -> "Thứ 7"
+        7 -> "Chủ nhật"
+        else -> "Không xác định"
+    }
+
     val color = LocalExtendedColors.current
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -387,7 +398,7 @@ private fun TimePeriod(
                 modifier = Modifier.size(18.dp)
             )
             Text(
-                text = "Thứ ${dayOfWeek}: Tiết ${startPeriod}-${endPeriod}",
+                text = "$dayText: Tiết ${startPeriod}-${endPeriod}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = color.gray
             )

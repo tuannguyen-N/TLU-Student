@@ -288,7 +288,7 @@ class MessageViewModel(
                         pendingMessages = pendingMessages.map {
                             if (it.id == aiMessageId) {
                                 it.copy(
-                                    text = "Server đang bận",
+                                    text = "Server đang bận, vui lòng thử lại sau!",
                                     status = MessageStatus.FAILED
                                 )
                             } else it

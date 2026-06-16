@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.example.project.R
 import org.example.project.data.mapper.toAlertActionItem
@@ -48,17 +47,15 @@ import org.example.project.domain.model.AlertActionItem
 import org.example.project.domain.model.AlertPriority
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.domain.model.NotificationReferenceType
-import org.example.project.domain.model.NotificationSeverity
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.components.TopScreenBar
 import org.example.project.presentations.theme.LocalExtendedColors
 
-@Preview(showBackground = true)
 @Composable
 fun AlertsAndActionsContent(
-    onBack: () -> Unit = {},
-    items: List<AlertUiModel> = mockAlertItems,
-    onAction: (NotificationReferenceType) -> Unit = {}
+    onBack: () -> Unit,
+    items: List<AlertUiModel>,
+    onAction: (AlertActionItem) -> Unit = {}
 ) {
     val color = LocalExtendedColors.current
 
@@ -103,47 +100,12 @@ fun AlertsAndActionsContent(
             items(items.map { it.toAlertActionItem() }) { item ->
                 AlertActionCard(
                     item = item,
-                    onActionClick = { onAction(item.referenceType) }
+                    onActionClick = { onAction(item) }
                 )
             }
         }
     }
 }
-
-val mockAlertItems = listOf(
-    AlertUiModel(
-        title = "Nộp học phí kỳ 2",
-        content = "Vui lòng hoàn tất thanh toán để tránh bị hủy đăng ký môn học.",
-        severity = NotificationSeverity.WARNING,
-        notificationReferenceType = NotificationReferenceType.TUITION,
-        deadline = "Hạn: 25/08",
-        daysUntil = 10
-    ),
-    AlertUiModel(
-        title = "Khảo sát chất lượng giảng dạy",
-        content = "Đánh giá các học phần đã học trong học kỳ qua.",
-        severity = NotificationSeverity.UPCOMING,
-        notificationReferenceType = NotificationReferenceType.EXAM_SCHEDULE,
-        deadline = "Hạn: 30/09",
-        daysUntil = 10
-    ),
-    AlertUiModel(
-        title = "Nộp học phí kỳ 1",
-        content = "Học phí kỳ 1 đã quá hạn thanh toán. Vui lòng liên hệ phòng tài vụ.",
-        severity = NotificationSeverity.OVERDUE,
-        notificationReferenceType = NotificationReferenceType.TUITION,
-        deadline = "Hết hạn: 15/07",
-        daysUntil = 10
-    ),
-    AlertUiModel(
-        title = "Đăng ký môn học kỳ 2",
-        content = "Bạn đã hoàn thành đăng ký môn học cho kỳ 2 thành công.",
-        severity = NotificationSeverity.COMPLETED,
-        notificationReferenceType = NotificationReferenceType.EXAM_SCHEDULE,
-        deadline = "Hoàn thành: 10/08",
-        daysUntil = 10
-    )
-)
 
 @Composable
 fun AlertActionCard(
@@ -288,7 +250,7 @@ fun AlertActionCard(
                     }
                 }
 
-                if (!isCompleted && item.actionLabel.isNotBlank()) {
+                if (!isCompleted && item.actionLabel.isNotBlank() && item.referenceType != NotificationReferenceType.IMPORTANCE) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     if (isUrgent || isOverdue) {
@@ -350,7 +312,7 @@ private fun AlertPriority.toIconTint(): Color {
 
 private fun NotificationReferenceType.toIconRes(): Int {
     return when (this) {
-        NotificationReferenceType.TUITION -> R.drawable.icon_caution
         NotificationReferenceType.EXAM_SCHEDULE -> R.drawable.icon_upcoming
+        else -> R.drawable.icon_caution
     }
 }

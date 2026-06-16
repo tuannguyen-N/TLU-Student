@@ -20,16 +20,14 @@ import org.example.project.presentations.theme.LocalExtendedColors
 @Preview(showBackground = true)
 @Composable
 fun GridBackground(
-    totalDays: Int = 6,
+    totalDays: Int = 7,
     totalPeriods: Int = 15,
     cellWidth: Dp = 100.dp,
     cellHeight: Dp = 60.dp,
     leftColumnWidth: Dp = 50.dp
 ) {
     Column {
-
         Row {
-
             Box(
                 Modifier
                     .width(leftColumnWidth)
@@ -53,7 +51,7 @@ fun GridBackground(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "Thứ ${day + 2}",
+                        if (day != 6) "Thứ ${day + 2}" else "Chủ Nhật",
                         style = MaterialTheme.typography.labelLarge,
                         color = if (day == getTodayDayOfWeek() - 1) LocalExtendedColors.current.red else LocalExtendedColors.current.mainBlue
                     )

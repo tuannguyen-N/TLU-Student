@@ -6,6 +6,7 @@ import org.example.project.data.remote.dto.PaymentStatusPayload.PaymentStatusPay
 interface PaymentSocket {
     suspend fun connect()
     suspend fun disconnect()
+    fun reconnectIfNeeded()
     fun subscribe(destination: String)
     fun events(): Flow<PaymentStatusPayload>
 }

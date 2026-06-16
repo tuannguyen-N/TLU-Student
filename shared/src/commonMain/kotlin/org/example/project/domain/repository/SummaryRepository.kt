@@ -27,7 +27,7 @@ class SummaryRepository(private val summaryApi: SummaryApi) {
                 }
             )
         } catch (e: Exception) {
-            trySend(SseEvent.Error("Server đang bận"))
+            trySend(SseEvent.Error("Server đang bận, vui lòng thử lại sau!"))
             close()
         }
 

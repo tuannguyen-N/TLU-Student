@@ -12,7 +12,7 @@ import org.example.project.data.remote.dto.week_schedule.DailySchedule
 @Composable
 fun TimetableGrid(
     dailySchedules: List<DailySchedule>,
-    totalDays: Int = 6,
+    totalDays: Int = 7,
     totalPeriods: Int = 15,
     onShowSubjectDetail: (CourseClass) -> Unit = {}
 ) {

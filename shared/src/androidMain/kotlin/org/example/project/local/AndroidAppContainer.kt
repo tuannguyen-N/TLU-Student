@@ -12,7 +12,7 @@ import org.example.project.AndroidSearchHistoryRepository
 import org.example.project.AndroidTopicSubscriber
 import org.example.project.AndroidUserRepository
 import org.example.project.DeviceProvider
-import org.example.project.StompNotificationSocket
+import org.example.project.AndroidNotificationSocket
 import org.example.project.data.AndroidLocationRepository
 import org.example.project.data.local.AppPreferences
 import org.example.project.data.local.AppDatabase
@@ -81,7 +81,7 @@ class AndroidAppContainer(context: Context, triggerLogout: () -> Unit) {
 
     val searchHistoryRepository = AndroidSearchHistoryRepository()
 
-    val notificationSocket = StompNotificationSocket(
+    val notificationSocket = AndroidNotificationSocket(
         Json {
             ignoreUnknownKeys = true
         },

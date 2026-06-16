@@ -282,7 +282,8 @@ fun AppNavGraph(
             val container = LocalAppContainer.current
             val factory = remember(container) {
                 AlertsAndActionsViewModelFactory(
-                    container.notificationRepository
+                    container.notificationRepository,
+                    container.studentUseCase
                 )
             }
             val viewModel: AlertsAndActionsViewModel = viewModel(factory = factory)
@@ -290,7 +291,9 @@ fun AppNavGraph(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
                 onNavigateToExamSchedule = { navController.navigate(AppRoute.ExamSchedule) },
-                onNavigateToTuition = { navController.navigate(AppRoute.TuitionPayment) }
+                onNavigateToTuition = { notificationId ->
+                    navController.navigate(AppRoute.tuitionPayment(notificationId))
+                }
             )
         }
 
@@ -572,12 +575,23 @@ fun AppNavGraph(
             )
         }
 
-        composable(AppRoute.TuitionPayment) {
+        composable(
+            AppRoute.TuitionPayment,
+            arguments = listOf(
+                navArgument("notification_id") {
+                    type = NavType.IntType
+                    nullable = false
+                    defaultValue = -1
+                }
+            )
+        ) {
             val container = LocalAppContainer.current
             val factory = remember(container) {
                 TuitionPaymentViewModelFactory(
                     container.tuitionRepository,
-                    container.paymentRepository
+                    container.paymentRepository,
+                    container.notificationRepository,
+                    container.studentUseCase
                 )
             }
             val tuitionPaymentViewModel: TuitionPaymentViewModel = viewModel(factory = factory)

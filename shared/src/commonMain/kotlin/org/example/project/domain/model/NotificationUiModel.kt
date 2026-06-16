@@ -2,6 +2,7 @@ package org.example.project.domain.model
 
 data class NotificationUiModel(
     val id: Int,
+    val isImportance: Boolean,
     val title: String,
     val content: String,
     val sender: NotificationSender,

@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.example.project.R
-import org.example.project.data.mapper.toHourMinute
+import org.example.project.data.mapper.toHourMinuteAmPm
 import org.example.project.data.remote.dto.week_schedule.CourseClass
 import org.example.project.presentations.components.ButtonView
 import org.example.project.presentations.screen.transcript_term.components.SubjectCode
@@ -123,7 +123,7 @@ fun ClassDetailContent(
                 modifier = Modifier.weight(1f),
                 icon = Icons.Outlined.AccessTime,
                 label = "THỜI GIAN",
-                primaryText = "${courseClass.startTime.toHourMinute()} - ${courseClass.endTime.toHourMinute()}",
+                primaryText = "${courseClass.startTime.toHourMinuteAmPm()} - ${courseClass.endTime.toHourMinuteAmPm()}",
                 secondaryText = "Ca ${courseClass.startPeriod} - ${courseClass.endPeriod}"
             )
         }

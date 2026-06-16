@@ -18,5 +18,6 @@ data class NotificationEntity(
     val createdTime: String,
     val createdDate: String,
     val createdAgo: String,
-    val referenceType: NotificationReferenceType?
+    val referenceType: NotificationReferenceType?,
+    val isImportant: Boolean
 )

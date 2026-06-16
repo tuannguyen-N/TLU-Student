@@ -11,4 +11,6 @@ interface NotificationSocket {
     fun notifications(): Flow<NotificationPayload>
 
     fun subscribe(destination: String)
+
+    fun reconnectIfNeeded()
 }

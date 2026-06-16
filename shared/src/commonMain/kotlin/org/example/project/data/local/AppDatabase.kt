@@ -10,13 +10,15 @@ import org.example.project.data.local.dao.FeatureDao
 import org.example.project.data.local.dao.MarkedNotificationDao
 import org.example.project.data.local.dao.MessageDao
 import org.example.project.data.local.dao.NotificationDao
+import org.example.project.data.local.dao.PaymentStatusDao
 import org.example.project.data.local.dao.QuoteDao
 import org.example.project.data.local.dao.ScheduleDao
 import org.example.project.data.local.dao.SemesterDao
 import org.example.project.data.local.entity.FeatureEntity
-import org.example.project.data.local.entity.MessageEntity
 import org.example.project.data.local.entity.MarkedNotificationEntity
+import org.example.project.data.local.entity.MessageEntity
 import org.example.project.data.local.entity.NotificationEntity
+import org.example.project.data.local.entity.PaymentStatusEntity
 import org.example.project.data.local.entity.PerformedAlertEntity
 import org.example.project.data.local.entity.QuoteEntity
 import org.example.project.data.local.entity.SemesterEntity
@@ -29,8 +31,8 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
 }
 
 @Database(
-    entities = [FeatureEntity::class, WeeklyScheduleEntity::class, SemesterEntity::class, MarkedNotificationEntity::class, QuoteEntity::class, PerformedAlertEntity::class, NotificationEntity::class, MessageEntity::class],
-    version = 5
+    entities = [FeatureEntity::class, WeeklyScheduleEntity::class, SemesterEntity::class, MarkedNotificationEntity::class, QuoteEntity::class, PerformedAlertEntity::class, NotificationEntity::class, MessageEntity::class, PaymentStatusEntity::class],
+    version = 6
 )
 @TypeConverters(ScheduleTypeConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -43,4 +45,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun quoteDao(): QuoteDao
     abstract fun alertDao(): AlertDao
     abstract fun messageDao(): MessageDao
+    abstract fun paymentStatusDao(): PaymentStatusDao
 }

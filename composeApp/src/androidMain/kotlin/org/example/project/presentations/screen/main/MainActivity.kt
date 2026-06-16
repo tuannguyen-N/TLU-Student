@@ -49,6 +49,11 @@ class MainActivity : ComponentActivity() {
         handleDeepLink(intent)
     }
 
+    override fun onResume() {
+        super.onResume()
+        appContainer.notificationRepository.reconnectIfNeeded()
+    }
+
     fun testFirestore() {
         FirebaseFirestore.getInstance()
             .collection("chatRooms")

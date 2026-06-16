@@ -8,7 +8,6 @@ import kotlinx.datetime.until
 import org.example.project.data.local.entity.MarkedNotificationEntity
 import org.example.project.data.local.entity.NotificationEntity
 import org.example.project.data.remote.dto.notification.NotificationContent
-import org.example.project.data.remote.dto.notification.NotificationData
 import org.example.project.data.remote.dto.notification_payload.NotificationPayload
 import org.example.project.domain.model.AlertUiModel
 import org.example.project.domain.model.NotificationReferenceType
@@ -19,12 +18,6 @@ import org.example.project.domain.model.NotificationSender.SYSTEM
 import org.example.project.domain.model.NotificationSeverity
 import org.example.project.domain.model.NotificationUiModel
 import kotlin.time.Clock
-
-fun NotificationData.toListNotificationUiModel(): List<NotificationUiModel> {
-    return content.map {
-        it.toUiModel()
-    }
-}
 
 fun NotificationContent.toUiModel(): NotificationUiModel = NotificationUiModel(
     id = id,
@@ -37,7 +30,8 @@ fun NotificationContent.toUiModel(): NotificationUiModel = NotificationUiModel(
     createdTime = createdAt.toCreatedTime(),
     createdDate = createdAt.toCreatedDate(),
     createdAgo = createdAt.toCreatedAgo(),
-    referenceType = referenceType?.toNotificationReferenceType()
+    referenceType = referenceType?.toNotificationReferenceType(),
+    isImportance = isImportant
 )
 
 fun NotificationContent.toEntity(): NotificationEntity = NotificationEntity(
@@ -51,7 +45,8 @@ fun NotificationContent.toEntity(): NotificationEntity = NotificationEntity(
     createdTime = createdAt.toCreatedTime(),
     createdDate = createdAt.toCreatedDate(),
     createdAgo = createdAt.toCreatedAgo(),
-    referenceType = referenceType?.toNotificationReferenceType()
+    referenceType = referenceType?.toNotificationReferenceType(),
+    isImportant = isImportant
 )
 
 fun NotificationPayload.toEntity(): NotificationEntity = NotificationEntity(
@@ -65,7 +60,8 @@ fun NotificationPayload.toEntity(): NotificationEntity = NotificationEntity(
     createdTime = createdAt.toCreatedTime(),
     createdDate = createdAt.toCreatedDate(),
     createdAgo = createdAt.toCreatedAgo(),
-    referenceType = referenceType?.toNotificationReferenceType()
+    referenceType = referenceType?.toNotificationReferenceType(),
+    isImportant = isImportant
 )
 
 fun List<NotificationUiModel>.toAlertUiModels(): List<AlertUiModel> {
@@ -73,7 +69,8 @@ fun List<NotificationUiModel>.toAlertUiModels(): List<AlertUiModel> {
 
     return mapNotNull { notification ->
         val deadline = notification.deadline ?: return@mapNotNull null
-        val referenceType = notification.referenceType ?: return@mapNotNull null
+        val referenceType = notification.referenceType
+            ?: if (notification.isImportance) NotificationReferenceType.IMPORTANCE else return@mapNotNull null
 
         val deadlineDate = runCatching {
             LocalDate.parse(deadline)
@@ -82,13 +79,15 @@ fun List<NotificationUiModel>.toAlertUiModels(): List<AlertUiModel> {
         val daysUntil = today.until(deadlineDate, DateTimeUnit.DAY)
 
         val severity = when {
-            daysUntil < 0    -> return@mapNotNull null
-            daysUntil <= 3   -> NotificationSeverity.WARNING
+            daysUntil < 0 -> return@mapNotNull null
+            daysUntil <= 3 -> NotificationSeverity.WARNING
             daysUntil <= 100 -> NotificationSeverity.UPCOMING
-            else             -> NotificationSeverity.NORMAL
+            else -> NotificationSeverity.NORMAL
         }
 
-        val formattedDeadline = "Hạn: ${deadlineDate.dayOfMonth.toString().padStart(2, '0')}/${deadlineDate.monthNumber.toString().padStart(2, '0')}"
+        val formattedDeadline = "Hạn: ${
+            deadlineDate.dayOfMonth.toString().padStart(2, '0')
+        }/${deadlineDate.monthNumber.toString().padStart(2, '0')}"
 
         AlertUiModel(
             title = notification.title,
@@ -96,7 +95,8 @@ fun List<NotificationUiModel>.toAlertUiModels(): List<AlertUiModel> {
             severity = severity,
             notificationReferenceType = referenceType,
             deadline = formattedDeadline,
-            daysUntil = daysUntil
+            daysUntil = daysUntil,
+            id = notification.id
         )
     }
 }
@@ -144,6 +144,7 @@ fun NotificationEntity.toUiModel(): NotificationUiModel {
         createdTime = createdTime,
         createdDate = createdDate,
         createdAgo = createdAgo,
-        referenceType = referenceType
+        referenceType = referenceType,
+        isImportance = isImportant
     )
 }

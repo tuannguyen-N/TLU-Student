@@ -12,14 +12,14 @@ fun AlertsAndActionsScreen(
     viewModel: AlertsAndActionsViewModel,
     onBack: () -> Unit,
     onNavigateToExamSchedule: () -> Unit,
-    onNavigateToTuition: () -> Unit
+    onNavigateToTuition: (notificationId: Int) -> Unit
 ) {
     val alertList by viewModel.alertList.collectAsStateWithLifecycle()
 
     viewModel.uiEvent.CollectWithLifecycle { event ->
         when (event) {
             AlertsAndActionUiEvent.NavigateToExamScheduleScreen -> onNavigateToExamSchedule()
-            AlertsAndActionUiEvent.NavigateToTuitionScreen -> onNavigateToTuition()
+            is AlertsAndActionUiEvent.NavigateToTuitionScreen -> onNavigateToTuition(event.notificationId)
         }
     }
 

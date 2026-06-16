@@ -1,26 +1,37 @@
 package org.example.project.presentations.screen.tuition_payment
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.example.project.domain.model.PaymentResult
+import org.example.project.domain.model.PaymentStatus
 import org.example.project.domain.model.PaymentType
 import org.example.project.domain.model.TuitionUiModel
+import org.example.project.domain.repository.NotificationRepository
 import org.example.project.domain.repository.PaymentRepository
 import org.example.project.domain.repository.TuitionRepository
+import org.example.project.domain.usecase.StudentUseCase
 import org.example.project.presentations.utils.PaymentDeepLinkEvent
 import org.example.project.presentations.utils.withDelayedLoading
 
 class TuitionPaymentViewModel(
     private val tuitionRepository: TuitionRepository,
-    private val paymentRepository: PaymentRepository
+    private val paymentRepository: PaymentRepository,
+    savedStateHandle: SavedStateHandle,
+    private val notificationRepository: NotificationRepository,
+    private val studentUseCase: StudentUseCase
 ) : ViewModel() {
+    private val notificationId: Int? = savedStateHandle["notification_id"]
+
     private val _uiState = MutableStateFlow(TuitionStatus())
     val uiState = _uiState.asStateFlow()
     private val _uiEvent = Channel<TuitionUiEvent>(Channel.BUFFERED)
@@ -29,29 +40,19 @@ class TuitionPaymentViewModel(
     init {
         loadData()
         observePaymentDeepLink()
-        observePaymentRealtime()
+        observeTuitionList()
         paymentRepository.startRealtime()
     }
 
-    private fun observePaymentRealtime() {
-        viewModelScope.launch {
-            paymentRepository.paymentEvents.collect { event ->
-                val currentDetail = _uiState.value.selectedTuitionDetail
-                if (currentDetail != null && currentDetail.tuitionId == event.tuitionId) {
-                    tuitionRepository
-                        .getDetailTuition(event.tuitionId)
-                        .onSuccess { detail ->
-                            updateState { copy(selectedTuitionDetail = detail) }
-                        }
-                }
-
-                tuitionRepository
-                    .getTuition()
-                    .onSuccess { list ->
-                        updateState { copy(allTuition = list) }
-                    }
+    private fun observeTuitionList() {
+        tuitionRepository.tuitionList.onEach { tuitionList ->
+            updateState { copy(allTuition = tuitionList) }
+            val latestTuition = tuitionList.maxByOrNull { it.invoiceId } ?: return@onEach
+            if (latestTuition.status == PaymentStatus.PAID && notificationId != null) {
+                val studentId = studentUseCase.studentInfo.value?.studentCode ?: return@onEach
+                notificationRepository.insertPerformedAlert(studentId, notificationId)
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun observePaymentDeepLink() {
@@ -88,10 +89,36 @@ class TuitionPaymentViewModel(
             tuitionRepository.getDetailTuition(tuition.invoiceId).onSuccess { detail ->
                 updateState {
                     copy(
-                        selectedTuitionDetail = detail, isInPaymentScreen = true
+                        selectedTuitionDetail = detail,
+                        isInPaymentScreen = true
                     )
                 }
+                observePaymentRealtime(detail.tuitionId)
             }
+        }
+    }
+
+    private fun observePaymentRealtime(tuitionId: Int) {
+        viewModelScope.launch {
+            paymentRepository.getPaymentStatus(tuitionId).collect { entity ->
+                entity ?: return@collect
+                tuitionRepository
+                    .getDetailTuition(entity.tuitionId)
+                    .onSuccess { detail ->
+                        updateState { copy(selectedTuitionDetail = detail) }
+                    }
+                tuitionRepository
+                    .getTuition()
+                    .onSuccess { list ->
+                        updateState { copy(allTuition = list) }
+                    }
+            }
+        }
+    }
+
+    fun reconnectIfNeeded() {
+        viewModelScope.launch {
+            paymentRepository.reconnectIfNeeded()
         }
     }
 

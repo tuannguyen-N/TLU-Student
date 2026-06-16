@@ -4,23 +4,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import org.example.project.data.local.dao.PaymentStatusDao
+import org.example.project.data.local.entity.PaymentStatusEntity
 import org.example.project.data.remote.api.PaymentApi
 import org.example.project.data.remote.api.PaymentSocket
-import org.example.project.data.remote.dto.PaymentStatusPayload.PaymentStatusPayload
 import org.example.project.data.remote.dto.Response
 import org.example.project.data.remote.dto.payment.CreateOrderPaymentData
 import org.example.project.domain.model.AppResult
 
 class PaymentRepository(
     private val paymentApi: PaymentApi,
-    private val paymentSocket: PaymentSocket
+    private val paymentSocket: PaymentSocket,
+    private val paymentStatusDao: PaymentStatusDao,
+    private val tuitionRepository: TuitionRepository
 ) {
-    private val _paymentEvents = MutableSharedFlow<PaymentStatusPayload>()
-
-    val paymentEvents = _paymentEvents.asSharedFlow()
+    private var paymentJob: Job? = null
 
     suspend fun createOrderPayment(
         invoiceId: Int, provider: String
@@ -45,17 +45,33 @@ class PaymentRepository(
         }
     }
 
-    private var paymentJob: Job? = null
+    fun getPaymentStatus(tuitionId: Int): Flow<PaymentStatusEntity?> =
+        paymentStatusDao.getByTuitionId(tuitionId)
 
     fun startRealtime() {
         if (paymentJob?.isActive == true) return
 
-        paymentJob = CoroutineScope(
-            SupervisorJob() + Dispatchers.Default
-        ).launch {
+        paymentJob = CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
             paymentSocket.connect()
-            paymentSocket.subscribe("/user/queue/payment")
-            paymentSocket.events().collect { _paymentEvents.emit(it) }
+            paymentSocket.events().collect { payload ->
+                paymentStatusDao.insert(
+                    PaymentStatusEntity(
+                        transactionCode = payload.transactionCode,
+                        userId = payload.userId,
+                        tuitionId = payload.tuitionId,
+                        status = payload.status
+                    )
+                )
+            }
+        }
+    }
+
+    suspend fun reconnectIfNeeded() {
+        if (paymentJob?.isActive == true) {
+            paymentSocket.reconnectIfNeeded()
+            tuitionRepository.getTuition()
+        } else {
+            startRealtime()
         }
     }
 

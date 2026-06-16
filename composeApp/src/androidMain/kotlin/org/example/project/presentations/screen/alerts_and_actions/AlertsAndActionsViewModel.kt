@@ -6,27 +6,37 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import org.example.project.domain.model.AlertActionItem
 import org.example.project.domain.model.NotificationReferenceType
 import org.example.project.domain.repository.NotificationRepository
+import org.example.project.domain.usecase.StudentUseCase
 
 class AlertsAndActionsViewModel(
-    private val notificationRepository: NotificationRepository
+    val notificationRepository: NotificationRepository,
+    val studentUseCase: StudentUseCase
 ) : ViewModel() {
 
-    val alertList = notificationRepository.getFullAlertList()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    val alertList =
+        notificationRepository.getAlertList(studentUseCase.studentInfo.value?.studentCode!!)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
 
     private val _uiEvent = Channel<AlertsAndActionUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun onAction(referenceType: NotificationReferenceType) {
-        when(referenceType){
+    fun onAction(alertActionItem: AlertActionItem) {
+        when (alertActionItem.referenceType) {
             NotificationReferenceType.EXAM_SCHEDULE -> sendUiEvent(AlertsAndActionUiEvent.NavigateToExamScheduleScreen)
-            NotificationReferenceType.TUITION -> sendUiEvent(AlertsAndActionUiEvent.NavigateToTuitionScreen)
+            NotificationReferenceType.TUITION -> sendUiEvent(
+                AlertsAndActionUiEvent.NavigateToTuitionScreen(
+                    alertActionItem.id
+                )
+            )
+
+            else -> Unit
         }
     }
 

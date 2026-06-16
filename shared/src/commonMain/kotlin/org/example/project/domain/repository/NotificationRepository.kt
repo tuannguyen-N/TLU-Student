@@ -148,33 +148,30 @@ class NotificationRepository(
 
     fun startRealtime() {
         if (realtimeJob?.isActive == true) return
-        realtimeJob = CoroutineScope(
-            SupervisorJob() + Dispatchers.Default
-        ).launch {
+        if (!::prepareNotificationData.isInitialized) return
+
+        realtimeJob = CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
             notificationSocket.connect()
 
-            notificationSocket.subscribe(
-                "/topic/notification/global"
-            )
-
-            notificationSocket.subscribe(
-                "/topic/notification/faculty/${prepareNotificationData.facultyId}"
-            )
-
-            notificationSocket.subscribe(
-                "/topic/notification/class/${prepareNotificationData.studentClassId}"
-            )
-
-            notificationSocket.subscribe(
-                "/user/queue/notification"
-            )
+            notificationSocket.subscribe("/topic/notification/global")
+            notificationSocket.subscribe("/topic/notification/faculty/${prepareNotificationData.facultyId}")
+            notificationSocket.subscribe("/topic/notification/class/${prepareNotificationData.studentClassId}")
+            notificationSocket.subscribe("/user/queue/notification")
 
             notificationSocket.notifications()
                 .collect { payload ->
-                    notificationDao.insertNotification(
-                        payload.toEntity()
-                    )
+                    notificationDao.insertNotification(payload.toEntity())
                 }
+        }
+    }
+
+    fun reconnectIfNeeded() {
+        if (!::prepareNotificationData.isInitialized) return
+
+        if (realtimeJob?.isActive == true) {
+            notificationSocket.reconnectIfNeeded()
+        } else {
+            startRealtime()
         }
     }
 
@@ -256,10 +253,6 @@ class NotificationRepository(
                     compareBy { it.daysUntil }
                 )
         }.distinctUntilChanged()
-    }
-
-    fun getFullAlertList(): Flow<List<AlertUiModel>> {
-        return notifications.map { it.toAlertUiModels() }
     }
 
     suspend fun getPerformedAlerts(studentId: String): List<PerformedAlertEntity> {

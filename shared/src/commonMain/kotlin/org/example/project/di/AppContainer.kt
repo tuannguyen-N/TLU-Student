@@ -174,7 +174,9 @@ class AppContainer(
     private val tuitionApi = TuitionApi(httpClient)
     val tuitionRepository = TuitionRepository(tuitionApi)
     private val paymentApi = PaymentApi(httpClient)
-    val paymentRepository = PaymentRepository(paymentApi, paymentSocket)
+    private val paymentStatusDao = database.paymentStatusDao()
+    val paymentRepository =
+        PaymentRepository(paymentApi, paymentSocket, paymentStatusDao, tuitionRepository)
 
     val handleLoginSuccessUseCase =
         HandleLoginSuccessUseCase(authRepository, notificationRepository)

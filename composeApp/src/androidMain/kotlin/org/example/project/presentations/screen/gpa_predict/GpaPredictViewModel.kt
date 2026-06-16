@@ -8,12 +8,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toLocalDateTime
 import org.example.project.data.mapper.TranscriptMapper
 import org.example.project.domain.model.SubjectScore
 import org.example.project.domain.usecase.GpaPredictUseCase
 import org.example.project.domain.usecase.ScheduleUseCase
 import org.example.project.domain.usecase.SemesterUseCase
 import org.example.project.domain.usecase.TranscriptUseCase
+import kotlin.math.absoluteValue
+import kotlin.time.Clock
 
 class GpaPredictViewModel(
     private val semesterUseCase: SemesterUseCase,
@@ -41,35 +47,34 @@ class GpaPredictViewModel(
     }
 
     private suspend fun loadSemester() {
-        semesterUseCase.getSemesters().fold(
-            onSuccess = { semesters ->
-                val latest = semesters?.lastOrNull() ?: return@fold
-                scheduleUseCase.getSemesterSubjects(latest.semesterName).fold(
-                    onSuccess = {
-                        updateState { copy(subjects = it) }
-                    },
-                    onFailure = {
-                        Log.e("GPA Predict", "getSemesters: $it")
-                    }
-                )
-            },
-            onFailure = {
-                Log.e("ExamViewModel", "getSemesters: Error $it")
+        semesterUseCase.getSemesters().fold(onSuccess = { semesters ->
+            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            val selected = semesters?.firstOrNull { semester ->
+                    val start = LocalDate.parse(semester.startDate)
+                    val end = LocalDate.parse(semester.endDate)
+                    today in start..end
+                } ?: semesters?.minByOrNull { semester ->
+                val end = LocalDate.parse(semester.endDate)
+                (today - end).days.absoluteValue
             }
-        )
+            scheduleUseCase.getSemesterSubjects(selected?.semesterCode ?: "").fold(onSuccess = {
+                updateState { copy(subjects = it) }
+            }, onFailure = {
+                Log.e("GPA Predict", "getSemesters: $it")
+            })
+        }, onFailure = {
+            Log.e("ExamViewModel", "getSemesters: Error $it")
+        })
     }
 
     private suspend fun loadTranscript() {
-        transcriptUseCase.getTranscript().fold(
-            onSuccess = {
-                val gpa = TranscriptMapper.getGpa(it)
-                val credits = TranscriptMapper.getTotalCredit(it)
-                updateState { copy(realGpa = gpa, passedRealCredit = credits) }
-            },
-            onFailure = {
-                Log.e("GPA Predict", "loadData: $it")
-            }
-        )
+        transcriptUseCase.getTranscript().fold(onSuccess = {
+            val gpa = TranscriptMapper.getGpa(it)
+            val credits = TranscriptMapper.getTotalCredit(it)
+            updateState { copy(realGpa = gpa, passedRealCredit = credits) }
+        }, onFailure = {
+            Log.e("GPA Predict", "loadData: $it")
+        })
     }
 
     fun onMidtermChange(subjectCode: String, value: String) {
@@ -89,9 +94,7 @@ class GpaPredictViewModel(
     fun onPredictGpa() {
         updateFailedSubject()
         val (predictGpa, passPredictCredit) = gpaPredictUseCase.predictGpa(
-            _uiState.value.scores,
-            _uiState.value.realGpa,
-            _uiState.value.passedRealCredit
+            _uiState.value.scores, _uiState.value.realGpa, _uiState.value.passedRealCredit
         )
         updateState {
             copy(
