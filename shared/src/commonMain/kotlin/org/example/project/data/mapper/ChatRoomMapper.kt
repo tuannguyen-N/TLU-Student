@@ -30,7 +30,7 @@ fun ChatRoom.toConversationUiState(
 
 fun Message.toUiState(
     currentUserId: String,
-    status: MessageStatus = MessageStatus.SENT
+    status: MessageStatus = this.status
 ): MessageUiState {
     return MessageUiState(
         id = id,

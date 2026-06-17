@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.IncompleteCircle
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
@@ -415,6 +417,7 @@ private fun VideoBubble(
     message: MessageUiState,
     isMe: Boolean,
     onClickVideo: (String) -> Unit = {},
+    onRetryClick: () -> Unit = {},
     exoPlayer: ExoPlayer,
     playingVideoUrl: String?,
     onPlayVideoInline: (String) -> Unit,
@@ -427,6 +430,8 @@ private fun VideoBubble(
     var videoSize by remember { mutableStateOf<Pair<Int, Int>?>(null) }
 
     val isSending = message.status == MessageStatus.SENDING
+    val isFailed = message.status == MessageStatus.FAILED
+    val isLocalUri = (isSending || isFailed) && message.fileUrl?.startsWith("content://") == true
     val aspectRatio = videoSize?.let { (w, h) -> w.toFloat() / h.toFloat() } ?: (16f / 9f)
 
     if (isCurrentPlaying) {
@@ -460,7 +465,10 @@ private fun VideoBubble(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onClick = { message.fileUrl?.let { onClickVideo(it) } }
+                    onClick = {
+                        if (isFailed) onRetryClick()
+                        else message.fileUrl?.let { onClickVideo(it) }
+                    }
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -473,18 +481,14 @@ private fun VideoBubble(
                         }
                     },
                     update = { playerView ->
-                        if (isDialogVisible) {
-                            playerView.player = null
-                        } else {
-                            playerView.player = exoPlayer
-                        }
+                        playerView.player = if (isDialogVisible) null else exoPlayer
                     },
                     modifier = Modifier.matchParentSize()
                 )
             } else {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(message.fileUrl)
+                        .data(if (isLocalUri) message.fileUrl!!.toUri() else message.fileUrl)
                         .videoFrameMillis(1000)
                         .decoderFactory(VideoFrameDecoder.Factory())
                         .crossfade(true)
@@ -502,59 +506,81 @@ private fun VideoBubble(
                 )
             }
 
-            if (isSending) {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(Color.Black.copy(alpha = 0.4f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        modifier = Modifier.size(36.dp)
-                    )
-                }
-            } else {
-                val showDarkOverlay = !isCurrentPlaying || !isPlaying
-                if (showDarkOverlay) {
+            when {
+                isSending -> {
                     Box(
                         modifier = Modifier
                             .matchParentSize()
-                            .background(Color.Black.copy(alpha = 0.35f))
-                    )
+                            .background(Color.Black.copy(alpha = 0.4f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
 
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.45f))
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = {
-                                if (isCurrentPlaying) {
-                                    if (isPlaying) {
-                                        onPauseVideoInline()
-                                    } else {
-                                        if (exoPlayer.playbackState == Player.STATE_ENDED) {
-                                            exoPlayer.seekTo(0)
+                isFailed -> {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(Color.Black.copy(alpha = 0.4f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Rounded.ErrorOutline,
+                                contentDescription = "Gửi lại",
+                                tint = Color.White,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
+                }
+
+                else -> {
+                    val showDarkOverlay = !isCurrentPlaying || !isPlaying
+                    if (showDarkOverlay) {
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .background(Color.Black.copy(alpha = 0.35f))
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                            .background(Color.Black.copy(alpha = 0.45f))
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = {
+                                    if (isCurrentPlaying) {
+                                        if (isPlaying) {
+                                            onPauseVideoInline()
+                                        } else {
+                                            if (exoPlayer.playbackState == Player.STATE_ENDED) {
+                                                exoPlayer.seekTo(0)
+                                            }
+                                            exoPlayer.play()
                                         }
-                                        exoPlayer.play()
+                                    } else {
+                                        message.fileUrl?.let { onPlayVideoInline(it) }
                                     }
-                                } else {
-                                    message.fileUrl?.let { onPlayVideoInline(it) }
                                 }
-                            }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (isCurrentPlaying && isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                        contentDescription = if (isCurrentPlaying && isPlaying) "Pause" else "Play",
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp)
-                    )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isCurrentPlaying && isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                            contentDescription = if (isCurrentPlaying && isPlaying) "Pause" else "Play",
+                            tint = Color.White,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
                 }
             }
         }
@@ -574,18 +600,20 @@ private fun VideoBubble(
 
 @Composable
 private fun ImageBubble(
-    message: MessageUiState, isMe: Boolean
+    message: MessageUiState,
+    isMe: Boolean,
+    onRetryClick: () -> Unit = {}
 ) {
     val color = LocalExtendedColors.current
+    val isSending = message.status == MessageStatus.SENDING
+    val isFailed = message.status == MessageStatus.FAILED
+    val isLocalUri = (isSending || isFailed) && message.fileUrl?.startsWith("content://") == true
+
     Column {
         Box {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(
-                    if (message.status == MessageStatus.SENDING && message.fileUrl?.startsWith("content://") == true) {
-                        message.fileUrl!!.toUri()
-                    } else {
-                        message.fileUrl
-                    }
+                    if (isLocalUri) message.fileUrl!!.toUri() else message.fileUrl
                 ).crossfade(true).build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -596,16 +624,41 @@ private fun ImageBubble(
                     .heightIn(min = 120.dp, max = 240.dp)
             )
 
-            if (message.status == MessageStatus.SENDING) {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(Color.Black.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = Color.White, modifier = Modifier.size(32.dp)
-                    )
+            when {
+                isSending -> {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(Color.Black.copy(alpha = 0.3f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = Color.White, modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
+
+                isFailed -> {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(Color.Black.copy(alpha = 0.4f))
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = onRetryClick
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                imageVector = Icons.Rounded.ErrorOutline,
+                                contentDescription = "Gửi lại",
+                                tint = Color.White,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

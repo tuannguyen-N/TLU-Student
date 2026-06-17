@@ -16,5 +16,6 @@ data class Message(
     val fileSize: String? = null,
     val type: String = MessageType.TEXT.name,
     val timestamp: Long = 0L,
-    val senderType: String = "USER"
+    val senderType: String = "USER",
+    val status: MessageStatus = MessageStatus.SENT
 )

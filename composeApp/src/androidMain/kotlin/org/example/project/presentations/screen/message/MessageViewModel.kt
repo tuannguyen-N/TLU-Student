@@ -55,7 +55,6 @@ class MessageViewModel(
     private val chatRepository: ChatRepository,
     private val summaryUseCase: SummaryUseCase
 ) : ViewModel() {
-
     private val chatUserId: String = savedStateHandle["studentId"] ?: ""
     private val chatUserName: String = savedStateHandle["chatName"] ?: ""
     private val chatUserAvatarUrl: String = savedStateHandle["avatarUrl"] ?: ""
@@ -584,7 +583,8 @@ class MessageViewModel(
                 roomId = roomId,
                 senderId = currentUserId,
                 imageBytes = imageBytes,
-                caption = caption
+                caption = caption,
+                localImageUri = imageUri?.toString()!!
             )
         }
     }
@@ -600,7 +600,8 @@ class MessageViewModel(
                 roomId = roomId,
                 senderId = currentUserId,
                 videoBytes = videoBytes,
-                caption = caption
+                caption = caption,
+                localVideoUri = videoUri?.toString()!!
             )
         }
     }
@@ -623,7 +624,8 @@ class MessageViewModel(
                 fileBytes = fileBytes,
                 caption = caption,
                 fileName = fileName ?: fileUri?.lastPathSegment ?: "File",
-                fileSize = fileSize ?: "36kb"
+                fileSize = fileSize ?: "36kb",
+                localFileUri = fileUri?.toString()!!
             )
         }
     }

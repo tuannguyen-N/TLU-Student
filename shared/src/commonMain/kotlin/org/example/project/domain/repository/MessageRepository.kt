@@ -37,6 +37,7 @@ interface MessageRepository {
         roomId: String,
         senderId: String,
         imageBytes: ByteArray,
+        localImageUri: String,
         caption: String?
     )
 
@@ -44,6 +45,7 @@ interface MessageRepository {
         roomId: String,
         senderId: String,
         videoBytes: ByteArray,
+        localVideoUri: String,
         caption: String?
     )
 
@@ -53,6 +55,7 @@ interface MessageRepository {
         fileBytes: ByteArray,
         fileName: String,
         fileSize: String,
+        localFileUri: String,
         caption: String?
     )
 

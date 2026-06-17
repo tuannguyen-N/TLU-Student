@@ -199,11 +199,11 @@ class AndroidMessageRepository(
         val lastMyMessageIndex = messages.indexOfLast {
             it.senderId.equals(currentUserId, ignoreCase = true)
         }
-
         return messages.mapIndexed { index, message ->
             val isMe = message.senderId.equals(currentUserId, ignoreCase = true)
             val status = when {
                 !isMe -> MessageStatus.SEEN
+                message.status == MessageStatus.SENDING || message.status == MessageStatus.FAILED -> message.status
                 index == lastMyMessageIndex -> {
                     if (otherLastRead > 0L && otherLastRead >= message.timestamp) {
                         MessageStatus.SEEN
@@ -300,138 +300,184 @@ class AndroidMessageRepository(
     ) {
         val participantIds = roomId.split("_")
         val receiverId = participantIds.first { it != currentUserId }
-
-        createRoomIfNeeded(
-            roomId = roomId,
-            currentUserId = currentUserId,
-            receiverId = receiverId,
-            firstMessage = message
-        )
-
-        val roomRef = firestore.collection("chatRooms").document(roomId)
-        val messageRef = roomRef.collection("messages").document()
-
+        val messageId = firestore.collection("chatRooms").document().id
         val currentTimeMillis = System.currentTimeMillis()
 
-        val messageData = hashMapOf(
-            "id" to messageRef.id,
-            "senderId" to currentUserId,
-            "text" to message,
-            "type" to MessageType.TEXT.name,
-            "senderType" to senderType.name,
-            "timestamp" to currentTimeMillis
+        val pendingMessage = Message(
+            id = messageId,
+            senderId = currentUserId,
+            text = message,
+            type = MessageType.TEXT.name,
+            senderType = senderType.name,
+            timestamp = currentTimeMillis
         )
+        messageDao.insertMessages(listOf(pendingMessage.toEntity(roomId, status = MessageStatus.SENDING)))
 
-        firestore.runTransaction { transaction ->
-            transaction.set(messageRef, messageData)
-            transaction.update(
-                roomRef,
-                mapOf(
-                    "lastMessageText" to message,
-                    "lastMessageTime" to currentTimeMillis,
-                    "lastSenderId" to currentUserId,
-                    "unreadCounts.$receiverId" to FieldValue.increment(1)
-                )
+        try {
+            createRoomIfNeeded(roomId, currentUserId, receiverId, message)
+
+            val roomRef = firestore.collection("chatRooms").document(roomId)
+            val messageRef = roomRef.collection("messages").document(messageId)
+            val messageData = hashMapOf(
+                "id" to messageId,
+                "senderId" to currentUserId,
+                "text" to message,
+                "type" to MessageType.TEXT.name,
+                "senderType" to senderType.name,
+                "timestamp" to currentTimeMillis
             )
-        }.await()
+
+            firestore.runTransaction { transaction ->
+                transaction.set(messageRef, messageData)
+                transaction.update(
+                    roomRef,
+                    mapOf(
+                        "lastMessageText" to message,
+                        "lastMessageTime" to currentTimeMillis,
+                        "lastSenderId" to currentUserId,
+                        "unreadCounts.$receiverId" to FieldValue.increment(1)
+                    )
+                )
+            }.await()
+
+            messageDao.updateStatus(messageId, MessageStatus.SENT)
+
+        } catch (e: Exception) {
+            Log.e("SendMessage", "Failed to send message $messageId", e)
+            // 3. Thất bại - đánh dấu FAILED để UI hiện nút thử lại
+            messageDao.updateStatus(messageId, MessageStatus.FAILED)
+        }
     }
 
     override suspend fun sendImageMessage(
         roomId: String,
         senderId: String,
         imageBytes: ByteArray,
+        localImageUri: String,
         caption: String?
     ) {
         val participantIds = roomId.split("_")
         val receiverId = participantIds.first { it != senderId }
-        createRoomIfNeeded(
-            roomId = roomId,
-            currentUserId = senderId,
-            receiverId = receiverId,
-            firstMessage = "📷 Hình ảnh"
-        )
-
+        val messageId = firestore.collection("chatRooms").document().id
         val currentTimeMillis = System.currentTimeMillis()
 
-        val imageUrl = fileUploadApi.uploadFile(
-            fileName = "${roomId}_$currentTimeMillis.jpg",
-            fileBytes = imageBytes
+        val pendingMessage = Message(
+            id = messageId,
+            senderId = senderId,
+            text = caption ?: "",
+            fileUrl = localImageUri,
+            fileName = null,
+            type = MessageType.IMAGE.name,
+            timestamp = currentTimeMillis
         )
+        messageDao.insertMessages(listOf(pendingMessage.toEntity(roomId, status = MessageStatus.SENDING)))
 
-        val roomRef = firestore.collection("chatRooms").document(roomId)
-        val messageRef = roomRef.collection("messages").document()
-
-        val messageData = hashMapOf(
-            "id" to messageRef.id,
-            "senderId" to senderId,
-            "text" to (caption ?: ""),
-            "fileUrl" to imageUrl.data.url,
-            "fileName" to null,
-            "type" to MessageType.IMAGE.name,
-            "timestamp" to currentTimeMillis
-        )
-
-        firestore.runTransaction { transaction ->
-            transaction.set(messageRef, messageData)
-            transaction.update(
-                roomRef,
-                mapOf(
-                    "lastMessageText" to "📷 Hình ảnh",
-                    "lastMessageTime" to currentTimeMillis,
-                    "lastSenderId" to senderId,
-                    "unreadCounts.$receiverId" to FieldValue.increment(1)
-                )
+        try {
+            createRoomIfNeeded(roomId, senderId, receiverId, "📷 Hình ảnh")
+            val uploadResult = fileUploadApi.uploadFile(
+                fileName = "${roomId}_$currentTimeMillis.jpg",
+                fileBytes = imageBytes
             )
-        }.await()
+            val imageUrl = uploadResult.data.url
+
+            val roomRef = firestore.collection("chatRooms").document(roomId)
+            val messageRef = roomRef.collection("messages").document(messageId)
+
+            val messageData = hashMapOf(
+                "id" to messageId,
+                "senderId" to senderId,
+                "text" to (caption ?: ""),
+                "fileUrl" to imageUrl,
+                "fileName" to null,
+                "type" to MessageType.IMAGE.name,
+                "timestamp" to currentTimeMillis
+            )
+
+            firestore.runTransaction { transaction ->
+                transaction.set(messageRef, messageData)
+                transaction.update(
+                    roomRef,
+                    mapOf(
+                        "lastMessageText" to "📷 Hình ảnh",
+                        "lastMessageTime" to currentTimeMillis,
+                        "lastSenderId" to senderId,
+                        "unreadCounts.$receiverId" to FieldValue.increment(1)
+                    )
+                )
+            }.await()
+
+            messageDao.updateFileUrlAndStatus(messageId, imageUrl, MessageStatus.SENT)
+
+        } catch (e: Exception) {
+            Log.e("SendImageMessage", "Failed to send image $messageId", e)
+            messageDao.updateStatus(messageId, MessageStatus.FAILED)
+        }
     }
 
     override suspend fun sendVideoMessage(
         roomId: String,
         senderId: String,
         videoBytes: ByteArray,
+        localVideoUri: String, // dùng để preview ngay + lưu lại phục vụ retry
         caption: String?
     ) {
         val participantIds = roomId.split("_")
         val receiverId = participantIds.first { it != senderId }
-        createRoomIfNeeded(
-            roomId = roomId,
-            currentUserId = senderId,
-            receiverId = receiverId,
-            firstMessage = "📷 Video"
-        )
-
+        val messageId = firestore.collection("chatRooms").document().id
         val currentTimeMillis = System.currentTimeMillis()
 
-        val videoUrl = fileUploadApi.uploadFile(
-            fileName = "${roomId}_$currentTimeMillis.jpg",
-            fileBytes = videoBytes
+        val pendingMessage = Message(
+            id = messageId,
+            senderId = senderId,
+            text = caption ?: "",
+            fileUrl = localVideoUri,
+            fileName = null,
+            type = MessageType.VIDEO.name,
+            timestamp = currentTimeMillis
         )
+        messageDao.insertMessages(listOf(pendingMessage.toEntity(roomId, status = MessageStatus.SENDING)))
 
-        val roomRef = firestore.collection("chatRooms").document(roomId)
-        val messageRef = roomRef.collection("messages").document()
+        try {
+            createRoomIfNeeded(roomId, senderId, receiverId, "📷 Video")
 
-        val messageData = hashMapOf(
-            "id" to messageRef.id,
-            "senderId" to senderId,
-            "text" to (caption ?: ""),
-            "fileUrl" to videoUrl.data.url,
-            "fileName" to null,
-            "type" to MessageType.VIDEO.name,
-            "timestamp" to currentTimeMillis
-        )
-
-        firestore.runTransaction { transaction ->
-            transaction.set(messageRef, messageData)
-            transaction.update(
-                roomRef,
-                mapOf(
-                    "lastMessageText" to "📷 Video",
-                    "lastMessageTime" to currentTimeMillis,
-                    "lastSenderId" to senderId,
-                    "unreadCounts.$receiverId" to FieldValue.increment(1)
-                )
+            val uploadResult = fileUploadApi.uploadFile(
+                fileName = "${roomId}_$currentTimeMillis.mp4",
+                fileBytes = videoBytes
             )
-        }.await()
+            val videoUrl = uploadResult.data.url
+
+            val roomRef = firestore.collection("chatRooms").document(roomId)
+            val messageRef = roomRef.collection("messages").document(messageId)
+
+            val messageData = hashMapOf(
+                "id" to messageId,
+                "senderId" to senderId,
+                "text" to (caption ?: ""),
+                "fileUrl" to videoUrl,
+                "fileName" to null,
+                "type" to MessageType.VIDEO.name,
+                "timestamp" to currentTimeMillis
+            )
+
+            firestore.runTransaction { transaction ->
+                transaction.set(messageRef, messageData)
+                transaction.update(
+                    roomRef,
+                    mapOf(
+                        "lastMessageText" to "📷 Video",
+                        "lastMessageTime" to currentTimeMillis,
+                        "lastSenderId" to senderId,
+                        "unreadCounts.$receiverId" to FieldValue.increment(1)
+                    )
+                )
+            }.await()
+
+            messageDao.updateFileUrlAndStatus(messageId, videoUrl, MessageStatus.SENT)
+
+        } catch (e: Exception) {
+            Log.e("SendVideoMessage", "Failed to send video $messageId", e)
+            messageDao.updateStatus(messageId, MessageStatus.FAILED)
+        }
     }
 
     override suspend fun sendFileMessage(
@@ -440,50 +486,68 @@ class AndroidMessageRepository(
         fileBytes: ByteArray,
         fileName: String,
         fileSize: String,
+        localFileUri: String,
         caption: String?
     ) {
         val participantIds = roomId.split("_")
         val receiverId = participantIds.first { it != senderId }
-        createRoomIfNeeded(
-            roomId = roomId,
-            currentUserId = senderId,
-            receiverId = receiverId,
-            firstMessage = "📎 Tệp đính kèm"
-        )
-
+        val messageId = firestore.collection("chatRooms").document().id
         val currentTimeMillis = System.currentTimeMillis()
 
-        val fileUrl = fileUploadApi.uploadFile(
-            fileName = "file_${roomId}_$currentTimeMillis",
-            fileBytes = fileBytes
+        val pendingMessage = Message(
+            id = messageId,
+            senderId = senderId,
+            text = caption ?: "",
+            fileUrl = localFileUri,
+            fileName = fileName,
+            fileSize = fileSize,
+            type = MessageType.FILE.name,
+            timestamp = currentTimeMillis
         )
+        messageDao.insertMessages(listOf(pendingMessage.toEntity(roomId, status = MessageStatus.SENDING)))
 
-        val roomRef = firestore.collection("chatRooms").document(roomId)
-        val messageRef = roomRef.collection("messages").document()
+        try {
+            createRoomIfNeeded(roomId, senderId, receiverId, "📎 Tệp đính kèm")
 
-        val messageData = hashMapOf(
-            "id" to messageRef.id,
-            "senderId" to senderId,
-            "text" to (caption ?: ""),
-            "fileUrl" to fileUrl.data.url,
-            "fileName" to fileName,
-            "fileSize" to fileSize,
-            "type" to MessageType.FILE.name,
-            "timestamp" to currentTimeMillis
-        )
-
-        firestore.runTransaction { transaction ->
-            transaction.set(messageRef, messageData)
-            transaction.update(
-                roomRef,
-                mapOf(
-                    "lastMessageText" to "📎 $fileName",
-                    "lastMessageTime" to currentTimeMillis,
-                    "lastSenderId" to senderId,
-                    "unreadCounts.$receiverId" to FieldValue.increment(1)
-                )
+            val uploadResult = fileUploadApi.uploadFile(
+                fileName = "file_${roomId}_$currentTimeMillis",
+                fileBytes = fileBytes
             )
-        }.await()
+            val fileUrl = uploadResult.data.url
+
+            val roomRef = firestore.collection("chatRooms").document(roomId)
+            val messageRef = roomRef.collection("messages").document(messageId)
+
+            val messageData = hashMapOf(
+                "id" to messageId,
+                "senderId" to senderId,
+                "text" to (caption ?: ""),
+                "fileUrl" to fileUrl,
+                "fileName" to fileName,
+                "fileSize" to fileSize,
+                "type" to MessageType.FILE.name,
+                "timestamp" to currentTimeMillis
+            )
+
+            firestore.runTransaction { transaction ->
+                transaction.set(messageRef, messageData)
+                transaction.update(
+                    roomRef,
+                    mapOf(
+                        "lastMessageText" to "📎 $fileName",
+                        "lastMessageTime" to currentTimeMillis,
+                        "lastSenderId" to senderId,
+                        "unreadCounts.$receiverId" to FieldValue.increment(1)
+                    )
+                )
+            }.await()
+
+            messageDao.updateFileUrlAndStatus(messageId, fileUrl, MessageStatus.SENT)
+
+        } catch (e: Exception) {
+            Log.e("SendFileMessage", "Failed to send file $messageId", e)
+            messageDao.updateStatus(messageId, MessageStatus.FAILED)
+        }
     }
 
     private suspend fun createRoomIfNeeded(
