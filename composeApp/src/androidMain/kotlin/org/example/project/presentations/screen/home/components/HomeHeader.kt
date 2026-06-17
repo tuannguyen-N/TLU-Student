@@ -51,7 +51,8 @@ fun HomeHeader(
     avatarUrl: String?,
     isProfileReady: Boolean,
     isNotificationBadgeVisible: Boolean = false,
-    onOpenChat: () -> Unit
+    onOpenChat: () -> Unit,
+    onOpenSearch: () -> Unit
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.ai_star)
@@ -136,6 +137,20 @@ fun HomeHeader(
                     fontWeight = FontWeight.Normal
                 )
             }
+
+            IconButton(
+                onClick = onOpenSearch,
+                modifier = Modifier.size(30.dp)
+            ) {
+                Box {
+                    Image(
+                        painter = painterResource(R.drawable.icon_search_top_bar_1),
+                        contentDescription = null,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(5.dp))
 
             IconButton(
                 onClick = onOpenChat,

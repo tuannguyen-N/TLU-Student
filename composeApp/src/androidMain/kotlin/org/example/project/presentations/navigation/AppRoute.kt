@@ -55,4 +55,5 @@ object AppRoute {
     }
 
     const val StudentSearch = "student_search_screen"
+    const val FeatureSearch = "feature_search_screen"
 }

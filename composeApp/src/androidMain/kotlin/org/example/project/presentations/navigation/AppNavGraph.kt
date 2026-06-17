@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.studentapp.search.SearchScreen
 import org.example.project.domain.model.FeatureType
 import org.example.project.domain.model.FeatureUiModel
 import org.example.project.domain.usecase.CountdownTimerUseCase
@@ -52,6 +53,7 @@ import org.example.project.presentations.screen.edit_profile.EditProfileViewMode
 import org.example.project.presentations.screen.exam_schedule.ExamScheduleScreen
 import org.example.project.presentations.screen.exam_schedule.ExamScheduleViewModel
 import org.example.project.presentations.screen.exam_schedule.ExamScheduleViewModelFactory
+import org.example.project.presentations.screen.feature_search.SearchViewModel
 import org.example.project.presentations.screen.features.FeaturesScreen
 import org.example.project.presentations.screen.features.FeaturesViewModel
 import org.example.project.presentations.screen.features.FeaturesViewModelFactory
@@ -263,7 +265,8 @@ fun AppNavGraph(
                 onOpenMessage = { studentId, chatName, avatarUrl ->
                     navController.navigate(AppRoute.messageDetail(studentId, chatName, avatarUrl))
                 },
-                onOpenStudentSearch = { navController.navigate(AppRoute.StudentSearch) }
+                onOpenStudentSearch = { navController.navigate(AppRoute.StudentSearch) },
+                onOpenSearch = { navController.navigate(AppRoute.FeatureSearch) }
             )
         }
 
@@ -822,6 +825,15 @@ fun AppNavGraph(
                 onOpenMessage = { studentId, chatName, avatarUrl ->
                     navController.navigate(AppRoute.messageDetail(studentId, chatName, avatarUrl))
                 }
+            )
+        }
+
+        composable(AppRoute.FeatureSearch) {
+            val viewModel: SearchViewModel = viewModel()
+            SearchScreen(
+                viewModel = viewModel,
+                navController = navController,
+                onBack = { navController.popBackStack() }
             )
         }
     }

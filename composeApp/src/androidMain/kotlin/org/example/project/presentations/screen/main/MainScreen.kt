@@ -47,7 +47,8 @@ fun MainScreen(
     openAlertsAndActionsScreen: () -> Unit,
     onViewMaterials: () -> Unit,
     onOpenMessage: (chatUserId: String, chatUserName: String, chatUserAvatarUrl: String?) -> Unit,
-    onOpenStudentSearch: () -> Unit
+    onOpenStudentSearch: () -> Unit,
+    onOpenSearch: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 4 })
     val coroutineScope = rememberCoroutineScope()
@@ -82,7 +83,8 @@ fun MainScreen(
                         onOpenNewsScreen = onOpenNewsScreen,
                         onOpenNews = onOpenNews,
                         onOpenChat = onOpenChat,
-                        openAlertsAndActionsScreen = openAlertsAndActionsScreen
+                        openAlertsAndActionsScreen = openAlertsAndActionsScreen,
+                        onOpenSearch = onOpenSearch
                     )
 
                     1 -> ScheduleScreen(
